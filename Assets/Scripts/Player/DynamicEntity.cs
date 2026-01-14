@@ -62,8 +62,8 @@ public class DynamicEntity : MonoBehaviour
         }
     }
 
-
-    private void FixedUpdate()
+    protected virtual void Update() { }
+    protected virtual void FixedUpdate()
     {
         fdt = Time.deltaTime;
 

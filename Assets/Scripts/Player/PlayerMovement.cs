@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem.XInput;
 using UnityEngine.Windows;
@@ -7,6 +8,9 @@ public class PlayerMovement : DynamicEntity
 {
     public float MoveSpeed = 5;
     public float JumpSpeed = 5;
+    public delegate void OnGround();
+
+    public OnGround onGround;
     protected override void Update()
     {
         base.Update();
@@ -20,6 +24,13 @@ public class PlayerMovement : DynamicEntity
         
     }
 
+    
+
+    protected override void OnGrounded(RaycastHit2D groundHit)
+    {
+        base.OnGrounded(groundHit);
+        onGround?.Invoke();
+    }
     // MoveInput => (every real frame) bool holdingRight = true;
     // CheckMove => (every fixed frame) move right if holdingRight
 

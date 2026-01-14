@@ -1380,6 +1380,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityManager
   AbilityPrefabs:
   - {fileID: 8542037949156900107}
+  player: {fileID: 765079914}
   playerMovement: {fileID: 765079918}
 --- !u!4 &1074582780
 Transform:

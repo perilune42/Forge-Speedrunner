@@ -9,8 +9,9 @@ public class PlayerMovement : DynamicEntity
     public float MoveSpeed = 5;
     public float JumpSpeed = 5;
     public delegate void OnGround();
-
     public OnGround onGround;
+    public delegate void OnJump();
+    public OnJump onJump;
     protected override void Update()
     {
         base.Update();
@@ -53,6 +54,7 @@ public class PlayerMovement : DynamicEntity
         if (jumpInput && CanJump())
         {
             Velocity = new Vector2(Velocity.x, JumpSpeed);
+            onJump?.Invoke();
         }
 
     }

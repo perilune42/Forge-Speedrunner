@@ -12,7 +12,7 @@ public abstract class Ability : MonoBehaviour
     /// </summary>
     public AbilityData data;
     [HideInInspector] public int Level;
-    [HideInInspector] public PlayerMovement PlayerMovement;
+    public PlayerMovement PlayerMovement;
     
     /// <summary>
     /// Calls starting code for this Ability.
@@ -20,13 +20,14 @@ public abstract class Ability : MonoBehaviour
     /// since PlayerMovement is still null when those methods
     /// are called.
     /// </summary>
-    public virtual void Initialize()
+    public virtual void Start()
     {
+        PlayerMovement = GameObject.FindFirstObjectByType<PlayerMovement>();
         actionReference.action.performed += context => UseAbility();
         actionReference.action.Enable();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         // get cooldown UI stuff
     }

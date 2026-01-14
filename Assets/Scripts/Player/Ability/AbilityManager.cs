@@ -10,20 +10,21 @@ public class AbilityManager : Singleton<AbilityManager>
     /// https://discussions.unity.com/t/inputactionreference-not-saved-on-prefab/1699980/16
     /// </summary>
     public GameObject[] AbilityPrefabs;
-    [SerializeField] private PlayerMovement playerMovement;
-
+    [SerializeField] private GameObject player;
+    public PlayerMovement playerMovement;
     private void Start()
     {
         GivePlayerAbility(AbilityID.Dash);
     }
 
-    
-    
+    /*private void Update()
+    {
+        Debug.Log(pm == null);
+    }*/
+
     public void GivePlayerAbility(int index)
     {
-        Ability ability = Instantiate(AbilityPrefabs[index], playerMovement.transform).GetComponent<Ability>();
-        ability.PlayerMovement = playerMovement;
-        ability.Initialize();
+        Ability ability = Instantiate(AbilityPrefabs[index], player.transform).GetComponent<Ability>();
     }
 }
 

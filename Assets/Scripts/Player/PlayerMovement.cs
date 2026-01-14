@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem.XInput;
+using UnityEngine.Windows;
 using static UnityEngine.InputSystem.InputAction;
 
 public class PlayerMovement : DynamicEntity
 {
-    public float Speed = 5;
-
+    public float MoveSpeed = 5;
+    public float JumpSpeed = 5;
     protected override void Update()
     {
         base.Update();
@@ -22,21 +23,26 @@ public class PlayerMovement : DynamicEntity
     // MoveInput => (every real frame) bool holdingRight = true;
     // CheckMove => (every fixed frame) move right if holdingRight
 
+    private bool CanJump()
+    {
+        return State == BodyState.OnGround;
+    }
+
     public void MoveInput(CallbackContext context)
     {
         Vector2 inputVec = context.action.ReadValue<Vector2>();
-        Debug.Log(inputVec);
         float xinput = inputVec.x;
-        Velocity = new Vector2(xinput * Speed, Velocity.y);
+        Velocity = new Vector2(xinput * MoveSpeed, Velocity.y);
 
     }
 
     public void JumpInput(CallbackContext context)
     {
         bool jumpInput = context.action.WasPressedThisFrame();
-        Debug.Log(inputVec);
-        float xinput = inputVec.x;
-        Velocity = new Vector2(xinput * Speed, Velocity.y);
+        if (jumpInput && CanJump())
+        {
+            Velocity = new Vector2(Velocity.x, JumpSpeed);
+        }
 
     }
 

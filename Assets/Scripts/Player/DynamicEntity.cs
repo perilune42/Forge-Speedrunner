@@ -14,6 +14,7 @@ public enum BodyState
 }
 
 // Any entity that can move. By default gravity and collisions are enabled. 
+// Collision code courtesy of Ethan C for Mariposa
 public class DynamicEntity : MonoBehaviour
 {
     public BodyState State;

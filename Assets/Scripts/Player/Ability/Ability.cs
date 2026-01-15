@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public abstract class Ability : MonoBehaviour
 {
-    [SerializeField] private InputActionReference actionReference;
+    
     /// <summary>
     /// Used for UI in shops and stuff.
     /// Includes the name, description, and icon of the ability.
@@ -23,8 +23,6 @@ public abstract class Ability : MonoBehaviour
     public virtual void Start()
     {
         PlayerMovement = GameObject.FindFirstObjectByType<PlayerMovement>();
-        actionReference.action.performed += context => UseAbility();
-        actionReference.action.Enable();
     }
 
     protected virtual void Update()

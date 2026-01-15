@@ -47,7 +47,7 @@ public class PInput : Singleton<PInput>
         move = InputSystem.actions.FindAction("Move");
         Jump = new InputButton(InputSystem.actions.FindAction("Jump"), 8);
         Dash = new InputButton(InputSystem.actions.FindAction("Dash"), 8);
-        Ability1 = new InputButton(InputSystem.actions.FindAction("Ability1"), 8);
+        //Ability1 = new InputButton(InputSystem.actions.FindAction("Ability1"), 8);
     }
 
     private void FixedUpdate()
@@ -55,6 +55,6 @@ public class PInput : Singleton<PInput>
         MoveVector = move.ReadValue<Vector2>();
         Jump.Update();
         Dash.Update();
-        Ability1.Update();
+        //Ability1.Update();
     }
 }

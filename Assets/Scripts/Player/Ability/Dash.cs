@@ -8,15 +8,15 @@ public class Dash : Ability
 {
     private bool canDash;
     [SerializeField] private InputActionReference moveActionReference;
-    [SerializeField] private float cooldown, dashDuration;
-    private float curCooldown, curDashDuration;
+    [SerializeField] private int cooldown, dashDuration;
+    private int curCooldown, curDashDuration;
     private bool dashing;
     [SerializeField] private float dashVelocity;
     private List<Vector2> inputs = new();
     [SerializeField] private float inputStickyDuration;
     public bool CanDiagonalDash;
     private Vector2 dashVelocityVec;
-    private Vector2 moveSpeedSnapshot;
+    //private Vector2 moveSpeedSnapshot;
     public override void Start()
     {
         base.Start();
@@ -25,20 +25,14 @@ public class Dash : Ability
         moveActionReference.action.performed += ctx => StartCoroutine(SetDashDirection(ctx));
     }
     
+    
     protected override void Update()
     {
         // Debug.Log(PlayerMovement == null);
         base.Update();
         if (dashing)
         {
-            curCooldown -= Time.deltaTime;
-            curDashDuration -= Time.deltaTime;
             PlayerMovement.Velocity = dashVelocityVec;
-            if (curDashDuration <= 0f)
-            {
-                dashing = false;
-                PlayerMovement.Velocity = moveSpeedSnapshot;
-            }
         }
     }
 
@@ -49,18 +43,30 @@ public class Dash : Ability
             return;
         }
         if (PlayerMovement.State == BodyState.OnGround) canDash = true;
+        if (dashing)
+        {
+            
+            curCooldown--;
+            curDashDuration--;
+            if (curDashDuration <= 0)
+            {
+                dashing = false;
+                //PlayerMovement.Velocity = moveSpeedSnapshot;
+            }
+        }
+        if (PInput.Instance.Dash.HasPressed) UseAbility();
     }
 
     public override float GetCooldown()
     {
         if (!canDash) return 0.0f;
-        return (cooldown - curCooldown) / cooldown;
+        return (float)(cooldown - curCooldown) / cooldown;
     }
 
     public void CancelDash()
     {
         dashing = false;
-        curDashDuration = 0f;
+        curDashDuration = 0;
     }
 
     public override bool UseAbility()
@@ -73,7 +79,7 @@ public class Dash : Ability
             if (dashVec - vec != Vector2.zero) dashVec += vec;
         }
         if (dashVec == Vector2.zero) return false;
-        moveSpeedSnapshot = PlayerMovement.Velocity;
+        //moveSpeedSnapshot = PlayerMovement.Velocity;
         dashVelocityVec = dashVec.normalized * dashVelocity;
         canDash = false;
         curCooldown = cooldown;

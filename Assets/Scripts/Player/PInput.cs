@@ -40,6 +40,12 @@ public class PInput : Singleton<PInput>
             IsPressing = action.IsPressed();
             StoppedPressing = action.WasReleasedThisFrame();
         }
+
+        public void ConsumeBuffer()
+        {
+            // a valid input was accepted, clear the input buffer
+            bufferFramesLeft = 0;
+        }
     }
 
     private void Start()

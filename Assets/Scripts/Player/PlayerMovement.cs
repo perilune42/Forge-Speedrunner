@@ -21,27 +21,20 @@ public class PlayerMovement : DynamicEntity
     public int MaxJumpFrames = 20;
     private int jumpFrames = 0;
 
-    // this is awful, remove later
-    [SerializeField]
-    private InputActionReference moveAction;
 
     [SerializeField] TMP_Text speedText;
 
 
     protected override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Debug.Log("a");
-        }
         base.Update();
         speedText.SetText(Velocity.ToString());
     }
 
     protected override void FixedUpdate()
     {
-        moveDir = moveAction.action.ReadValue<Vector2>();
-        moveDir = new Vector2(Mathf.Round(moveDir.x), Mathf.Round(moveDir.y));
+        moveDir = PInput.Instance.MoveVector;
+        CheckInputs();
         base.FixedUpdate();
 
         
@@ -76,7 +69,7 @@ public class PlayerMovement : DynamicEntity
             float targetXVel = moveSpeed * moveDir.x;
             // if current speed is below max speed, and the player's movement input helps accelerate
             // the player towards the target max speed
-            if ((targetXVel < 0 && Velocity.x > targetXVel) || (targetXVel > 0 && Velocity.x < targetXVel))
+            if ((targetXVel < 0 && Velocity.x >= targetXVel) || (targetXVel > 0 && Velocity.x <= targetXVel))
             {
 
 
@@ -139,29 +132,22 @@ public class PlayerMovement : DynamicEntity
     // MoveInput => (every real frame) bool holdingRight = true;
     // CheckMove => (every fixed frame) move right if holdingRight
 
-    private bool CanJump()
+    private void CheckInputs()
     {
-        return State == BodyState.OnGround;
-    }
-
-    public void MoveInput(CallbackContext context)
-    {
-        Vector2 moveInput = context.action.ReadValue<Vector2>();
-        float xinput = Mathf.Sign(moveInput.x);
-        moveDir = new Vector2(xinput, 0);  // potentially allow for vertical movement inputs later
-    }
-
-    public void JumpInput(CallbackContext context)
-    {
-        bool jumpInput = context.action.WasPressedThisFrame();
-        if (jumpInput && CanJump())
+        if (PInput.Instance.Jump.HasPressed && CanJump())
         {
             Jump();
+            PInput.Instance.Jump.ConsumeBuffer();
         }
-        if (context.action.WasReleasedThisFrame())
+        if (PInput.Instance.Jump.StoppedPressing)
         {
             jumpFrames = Mathf.Min(3, jumpFrames);
         }
+    }
+
+    private bool CanJump()
+    {
+        return State == BodyState.OnGround;
     }
 
     private void Jump()

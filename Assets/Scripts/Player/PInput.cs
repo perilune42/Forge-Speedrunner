@@ -16,6 +16,8 @@ public class PInput : Singleton<PInput>
         private InputAction action;
         private int bufferFrames, bufferFramesLeft;
 
+        private bool queuePress, queueHold, queueRelease;
+
         public InputButton(InputAction act, int buf)
         {
             action = act;
@@ -26,8 +28,22 @@ public class PInput : Singleton<PInput>
         {
             if (action.WasPressedThisFrame())
             {
+                queuePress = true;
+            }
+            queueHold = action.IsPressed();
+            if (action.WasReleasedThisFrame())
+            {
+                queueRelease = true;
+            }
+        }
+
+        public void FixedUpdate()
+        {
+            if (queuePress)
+            {
                 HasPressed = true;
                 bufferFramesLeft = bufferFrames;
+                queuePress = false;
             }
             else if (bufferFramesLeft <= 0)
             {
@@ -37,8 +53,23 @@ public class PInput : Singleton<PInput>
             {
                 bufferFramesLeft--;
             }
-            IsPressing = action.IsPressed();
-            StoppedPressing = action.WasReleasedThisFrame();
+            if (queueHold)
+            {
+                IsPressing = true;
+                queueHold = false;
+            }
+            else
+            {
+                IsPressing = false;
+            }
+            if (queueRelease) {
+                StoppedPressing = true;
+                queueRelease = false;
+            }
+            else
+            {
+                StoppedPressing = false;
+            }
         }
 
         public void ConsumeBuffer()
@@ -56,11 +87,17 @@ public class PInput : Singleton<PInput>
         //Ability1 = new InputButton(InputSystem.actions.FindAction("Ability1"), 8);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         MoveVector = move.ReadValue<Vector2>();
         Jump.Update();
         Dash.Update();
         //Ability1.Update();
+    }
+
+    private void FixedUpdate()
+    {
+        Jump.FixedUpdate();
+        Dash.FixedUpdate();
     }
 }

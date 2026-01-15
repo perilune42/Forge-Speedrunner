@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XInput;
 using UnityEngine.Timeline;
-using UnityEngine.Windows;
 using static UnityEngine.InputSystem.InputAction;
 
 public class PlayerMovement : DynamicEntity
@@ -31,6 +30,10 @@ public class PlayerMovement : DynamicEntity
 
     protected override void Update()
     {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Debug.Log("a");
+        }
         base.Update();
         speedText.SetText(Velocity.ToString());
     }

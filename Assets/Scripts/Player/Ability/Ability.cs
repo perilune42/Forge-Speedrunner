@@ -36,12 +36,9 @@ public abstract class Ability : MonoBehaviour
     /// </summary>
     public abstract float GetCooldown();
 
-    public void TryUseAbility()
+    public virtual bool CanUseAbility()
     {
-        if (GetCooldown() >= 1f)
-        {
-            UseAbility();
-        }
+        return GetCooldown() >= 1f;
     }
     
     public abstract bool UseAbility();

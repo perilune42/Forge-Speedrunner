@@ -12,23 +12,18 @@ public class Dash : Ability
     private int curCooldown, curDashDuration;
     private bool dashing;
     [SerializeField] private float dashVelocity;
-    private List<Vector2> inputs = new();
-    [SerializeField] private float inputStickyDuration;
     public bool CanDiagonalDash;
     private Vector2 dashVelocityVec;
     //private Vector2 moveSpeedSnapshot;
     public override void Start()
     {
         base.Start();
-        Debug.Log(PlayerMovement == null);
         PlayerMovement.onJump += CancelDash;
-        moveActionReference.action.performed += ctx => StartCoroutine(SetDashDirection(ctx));
     }
     
     
     protected override void Update()
     {
-        // Debug.Log(PlayerMovement == null);
         base.Update();
         if (dashing)
         {
@@ -43,15 +38,13 @@ public class Dash : Ability
             return;
         }
         if (PlayerMovement.State == BodyState.OnGround) canDash = true;
+        if (curCooldown > 0) curCooldown--;
         if (dashing)
         {
-            
-            curCooldown--;
             curDashDuration--;
             if (curDashDuration <= 0)
             {
                 dashing = false;
-                //PlayerMovement.Velocity = moveSpeedSnapshot;
             }
         }
         if (PInput.Instance.Dash.HasPressed) UseAbility();
@@ -60,7 +53,12 @@ public class Dash : Ability
     public override float GetCooldown()
     {
         if (!canDash) return 0.0f;
-        return (float)(cooldown - curCooldown) / cooldown;
+        return ((float)(cooldown - curCooldown)) / cooldown;
+    }
+
+    public override bool CanUseAbility()
+    {
+        return base.CanUseAbility() && canDash && PInput.Instance.MoveVector != Vector2.zero;
     }
 
     public void CancelDash()
@@ -68,18 +66,13 @@ public class Dash : Ability
         dashing = false;
         curDashDuration = 0;
     }
-
+     
     public override bool UseAbility()
     {
-        if (inputs.Count == 0) return false;
-        Vector2 dashVec = Vector2.zero;
-        for (int i = 0; i < (CanDiagonalDash ? 2 : 1); i++)
-        {
-            Vector2 vec = inputs[inputs.Count - i - 1];
-            if (dashVec - vec != Vector2.zero) dashVec += vec;
-        }
-        if (dashVec == Vector2.zero) return false;
-        //moveSpeedSnapshot = PlayerMovement.Velocity;
+        if (!CanUseAbility()) return false;
+        Vector2 dashVec = PInput.Instance.MoveVector;
+        if (!CanDiagonalDash) dashVec.y = 0;
+        else if (dashVec.x == 0) return false; // no up-dash or down-dash
         dashVelocityVec = dashVec.normalized * dashVelocity;
         canDash = false;
         curCooldown = cooldown;
@@ -88,7 +81,7 @@ public class Dash : Ability
         return true;
     }
 
-    private IEnumerator SetDashDirection(InputAction.CallbackContext context)
+    /*private IEnumerator SetDashDirection(InputAction.CallbackContext context)
     {
         Vector2 inputVec = context.action.ReadValue<Vector2>();
         // If input is diagonal (player presses up/down and left/right on same frame),
@@ -102,5 +95,5 @@ public class Dash : Ability
         // Debug.Log(inputVec);
         yield return new WaitForSeconds(inputStickyDuration);
         inputs.Remove(inputVec);
-    }
+    }*/
 }

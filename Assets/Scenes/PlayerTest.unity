@@ -2363,20 +2363,51 @@ Transform:
   - {fileID: 5015158832009663466}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1603222187
+--- !u!1 &1589194532
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1589194534}
+  - component: {fileID: 1589194533}
+  m_Layer: 0
+  m_Name: PInput
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1589194533
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1589194532}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Player/Dash
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
-  m_Asset: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  m_ActionId: 421cfa78-511a-4f60-897b-d5b12e550358
+  m_Script: {fileID: 11500000, guid: 9fe59f4fe2026224f8b6edf53c921267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PInput
+  MoveVector: {x: 0, y: 0}
+--- !u!4 &1589194534
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1589194532}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1612889739
 GameObject:
   m_ObjectHideFlags: 0
@@ -2750,16 +2781,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb899b6878b54cd0f89f7b25bb4ba6d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
-  actionReference: {fileID: 1603222187}
   data: {fileID: 0}
   Level: 0
   PlayerMovement: {fileID: 0}
   moveActionReference: {fileID: 1807864923}
-  cooldown: 0.3
-  dashDuration: 0.2
+  cooldown: 10
+  dashDuration: 20
   dashVelocity: 15
-  inputStickyDuration: 0.2
-  CanDiagonalDash: 0
+  CanDiagonalDash: 1
 --- !u!4 &5015158832009663466
 Transform:
   m_ObjectHideFlags: 0
@@ -2803,3 +2832,4 @@ SceneRoots:
   - {fileID: 567384885}
   - {fileID: 765079916}
   - {fileID: 1074582780}
+  - {fileID: 1589194534}

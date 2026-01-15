@@ -33,7 +33,10 @@ public class DynamicEntity : MonoBehaviour
 
 
     public bool GravityEnabled = true;
+    public float GravityMultiplier = 1f;
     public bool CollisionsEnabled = true;
+
+
 
     [Tooltip("The maximum fall velocity")]
     public float TerminalVelocity;
@@ -79,7 +82,7 @@ public class DynamicEntity : MonoBehaviour
     protected virtual void Fall()
     {
         if (State != BodyState.InAir || !GravityEnabled) return;
-        Velocity.y = Mathf.Max(Velocity.y - Gravity * fdt, -TerminalVelocity); // Cap the velocity
+        Velocity.y = Mathf.Max(Velocity.y - Gravity * GravityMultiplier * fdt, -TerminalVelocity); // Cap the velocity
     }
 
     protected virtual void CheckGrounded()

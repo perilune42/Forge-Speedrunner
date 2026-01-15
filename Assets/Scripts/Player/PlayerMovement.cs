@@ -1,5 +1,7 @@
 using System;
+using System.Runtime.InteropServices;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XInput;
@@ -16,6 +18,9 @@ public class PlayerMovement : DynamicEntity
     public OnJump onJump;
 
     private Vector2 moveDir;
+
+    public int MaxJumpFrames = 20;
+    private int jumpFrames = 0;
 
     // this is awful, remove later
     [SerializeField]
@@ -70,8 +75,7 @@ public class PlayerMovement : DynamicEntity
             // the player towards the target max speed
             if ((targetXVel < 0 && Velocity.x > targetXVel) || (targetXVel > 0 && Velocity.x < targetXVel))
             {
-                // do not apply friction if player is attempting to move in the same direction of acceleration
-                ignoreFriction = Mathf.Sign(targetXVel) == Mathf.Sign(Velocity.x);
+
 
                 float dV = moveAccel * moveDir.x * fdt;
                 if (Mathf.Abs(Velocity.x + dV) < Mathf.Abs(targetXVel))
@@ -82,6 +86,9 @@ public class PlayerMovement : DynamicEntity
                 {
                     Velocity.x = targetXVel;
                 }
+
+                // do not apply friction if player is attempting to move in the same direction of acceleration
+                ignoreFriction = Mathf.Sign(targetXVel) == Mathf.Sign(Velocity.x);
             }
             // otherwise walking in the same direction as movement does nothing
         }
@@ -100,9 +107,23 @@ public class PlayerMovement : DynamicEntity
                 Velocity.x = 0;
             }
         }
-        
+
+        TickTimers();
+
     }
 
+    private void TickTimers()
+    {
+        if (jumpFrames > 0)
+        {
+            jumpFrames--;
+            if (jumpFrames == 0)
+            {
+                EndJump();
+            }
+        }
+            
+    }
     
 
     
@@ -125,7 +146,6 @@ public class PlayerMovement : DynamicEntity
         Vector2 moveInput = context.action.ReadValue<Vector2>();
         float xinput = Mathf.Sign(moveInput.x);
         moveDir = new Vector2(xinput, 0);  // potentially allow for vertical movement inputs later
-        Debug.Log(moveInput.x);
     }
 
     public void JumpInput(CallbackContext context)
@@ -133,10 +153,27 @@ public class PlayerMovement : DynamicEntity
         bool jumpInput = context.action.WasPressedThisFrame();
         if (jumpInput && CanJump())
         {
-            Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
-            onJump?.Invoke();
+            Jump();
         }
+        if (context.action.WasReleasedThisFrame())
+        {
+            jumpFrames = Mathf.Min(3, jumpFrames);
+        }
+    }
 
+    private void Jump()
+    {
+        Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
+        jumpFrames = MaxJumpFrames;
+        GravityMultiplier = 0.3f;
+        onJump?.Invoke();
+    }
+
+    private void EndJump()
+    { 
+        // a minimum jump lasts 4 frames
+        jumpFrames = 0;
+        GravityMultiplier = 1;
     }
 
 }

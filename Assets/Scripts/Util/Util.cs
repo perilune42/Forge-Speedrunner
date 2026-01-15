@@ -113,4 +113,10 @@ public static class Util
     {
         return Vector2.Dot(a, b) / b.magnitude * b;
     }
+
+    public static float SignOr0(float num)
+    {
+        if (Mathf.Approximately(num, 0)) return 0;
+        return Mathf.Sign(num);
+    }
 }

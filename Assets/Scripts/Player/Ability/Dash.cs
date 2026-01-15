@@ -27,7 +27,7 @@ public class Dash : Ability
     
     protected override void Update()
     {
-        Debug.Log(PlayerMovement == null);
+        // Debug.Log(PlayerMovement == null);
         base.Update();
         if (dashing)
         {
@@ -93,7 +93,7 @@ public class Dash : Ability
             inputVec = new Vector2(inputVec.x, 0);
         }
         inputs.Add(inputVec);
-        Debug.Log(inputVec);
+        // Debug.Log(inputVec);
         yield return new WaitForSeconds(inputStickyDuration);
         inputs.Remove(inputVec);
     }

@@ -146,7 +146,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 139957590}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4a111240c0d281d2bf1c2e4118b224e, type: 3}
+  m_Script: {fileID: 11500000, guid: 4fcdffb1524d4a0a1a21a6a55d1f7b3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
   activeRoom: {fileID: 11400000, guid: 8de348029e692a9828e98cf976741dda, type: 2}

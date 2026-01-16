@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using TMPro;
 using Unity.VisualScripting;
@@ -7,6 +8,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XInput;
 using UnityEngine.Timeline;
 using static UnityEngine.InputSystem.InputAction;
+
+
 
 public class PlayerMovement : DynamicEntity
 {
@@ -21,6 +24,12 @@ public class PlayerMovement : DynamicEntity
     public int MaxJumpFrames = 20;
     private int jumpFrames = 0;
 
+    private bool hangTime = false;
+
+    public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
+    public float PlayerWidth => ((BoxCollider2D)SurfaceCollider).size.x;
+
+    private bool isLedgeClimbing = false;
 
     [SerializeField] TMP_Text speedText;
 
@@ -33,12 +42,25 @@ public class PlayerMovement : DynamicEntity
 
     protected override void FixedUpdate()
     {
-        moveDir = PInput.Instance.MoveVector;
+        if (!isLedgeClimbing)
+        {
+            moveDir = PInput.Instance.MoveVector;
+        }
+        
         CheckInputs();
         base.FixedUpdate();
 
-        
+        if (Velocity.y < MovementParams.MinHangVelocity) EndHangTime();
 
+        ApplyForces();
+
+        TickTimers();
+
+    }
+
+    private void ApplyForces()
+    {
+        
         float moveSpeed, moveAccel, friction;
         if (State == BodyState.OnGround)
         {
@@ -103,9 +125,6 @@ public class PlayerMovement : DynamicEntity
                 Velocity.x = 0;
             }
         }
-
-        TickTimers();
-
     }
 
     private void TickTimers()
@@ -116,6 +135,10 @@ public class PlayerMovement : DynamicEntity
             if (jumpFrames == 0)
             {
                 EndJump();
+                if (PInput.Instance.Jump.IsPressing)
+                {
+                    StartHangTime();
+                }
             }
         }
             
@@ -129,19 +152,36 @@ public class PlayerMovement : DynamicEntity
         base.OnGrounded(groundHit);
         onGround?.Invoke();
     }
-    // MoveInput => (every real frame) bool holdingRight = true;
-    // CheckMove => (every fixed frame) move right if holdingRight
 
     private void CheckInputs()
     {
-        if (PInput.Instance.Jump.HasPressed && CanJump())
+        if (PInput.Instance.Jump.HasPressed )
         {
-            Jump();
-            PInput.Instance.Jump.ConsumeBuffer();
+            if (CanJump())
+            {
+                Jump();
+                PInput.Instance.Jump.ConsumeBuffer();
+            }
+            var dir = Vector2.right;
+            for (int i = 0; i < 2; i++)
+            {
+                if (CanLedgeClimb(dir))
+                {
+                    StartCoroutine(LedgeClimb(dir));
+                    PInput.Instance.Jump.ConsumeBuffer();
+                    break;
+                }
+                dir = Vector2.left;
+            }
         }
-        if (PInput.Instance.Jump.StoppedPressing)
+        else if (PInput.Instance.Jump.StoppedPressing)
         {
+            // a minimum jump lasts 3 frames
             jumpFrames = Mathf.Min(3, jumpFrames);
+            if (hangTime)
+            {
+                EndHangTime();
+            }
         }
     }
 
@@ -150,19 +190,74 @@ public class PlayerMovement : DynamicEntity
         return State == BodyState.OnGround;
     }
 
+    private bool CanLedgeClimb(Vector2 dir)
+    {
+        return IsTouching(dir) && (State == BodyState.InAir) && GetLedgeHeight(dir) < 0.75 && GetLedgeHeight(dir) > 0;
+    }
+
     private void Jump()
     {
         Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
         jumpFrames = MaxJumpFrames;
-        GravityMultiplier = 0.3f;
+        GravityMultiplier = MovementParams.JumpGravityMult;
         onJump?.Invoke();
     }
 
-    private void EndJump()
+    private void EndJump(bool force = false)
     { 
-        // a minimum jump lasts 4 frames
         jumpFrames = 0;
+        if (PInput.Instance.Jump.IsPressing)
+        {
+            StartHangTime();
+        }
+        else
+        {
+            EndHangTime();
+        }
+        
+    }
+
+    private void StartHangTime()
+    {
+        GravityMultiplier = MovementParams.HangGravityMult;
+        hangTime = true;
+    }
+
+    private void EndHangTime()
+    {
         GravityMultiplier = 1;
+        hangTime = false;
+    }
+
+    private float GetLedgeHeight(Vector2 dir)
+    {
+        // start a boxcast upwards and to either the left and right of the player, pointing downwards
+        Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight);
+        Vector2 origin = (Vector2)transform.position + offset;
+        Vector2 size = new (PlayerWidth, PlayerHeight);
+        RaycastHit2D groundHit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, PlayerHeight * 4, collisionLayer);
+
+
+        // how much the ledge is above the player's foot
+        float ledgeHeight = PlayerHeight - groundHit.distance;
+        return ledgeHeight;
+    }
+
+    private IEnumerator LedgeClimb(Vector2 dir)
+    {
+        // ascend the wall at jump speed, do a small hop once the top is reached.
+        isLedgeClimbing = true;
+        EndJump(force: true);
+        GravityMultiplier = 0f;
+        Velocity = new Vector2(0, MovementParams.JumpSpeed);
+        yield return new WaitForFixedUpdate();
+        while (GetLedgeHeight(dir) > 0)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        Velocity = new(dir.x * 2, MovementParams.JumpSpeed / 2);
+        GravityMultiplier = 1f;
+        isLedgeClimbing = false;
     }
 
 }
@@ -175,4 +270,6 @@ public struct MovementParams
     public float JumpSpeed;
     public float GroundAcceleration, AirAcceleration;
     public float GroundFriction, AirFriction;
+    public float JumpGravityMult, HangGravityMult;
+    public float MinHangVelocity;
 }

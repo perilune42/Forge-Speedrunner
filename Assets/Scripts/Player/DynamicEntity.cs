@@ -1,9 +1,11 @@
+using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 // The external forces this object can currently experience
 public enum BodyState
@@ -11,6 +13,11 @@ public enum BodyState
     OnGround, 
     InAir, // Experiences gravity and terminal drag
     Locked  // Cannot move and does not experience any force
+}
+
+public enum PDir
+{
+    Left, Right, Up, Down
 }
 
 // Any entity that can move. By default gravity and collisions are enabled. 
@@ -168,6 +175,18 @@ public class DynamicEntity : MonoBehaviour
 
         // Apply lingering movement
         transform.position += (Vector3)move;
+    }
+
+    public float GetSurfaceDistance(Vector2 dir, float maxDist = 10f)
+    {
+        var hit = Physics2D.BoxCast((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size, 0f, dir, maxDist, collisionLayer);
+        return hit.distance;
+    }
+
+    public bool IsTouching(Vector2 dir)
+    {
+        var hit = Physics2D.BoxCast((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size, 0f, dir, 1f, collisionLayer);
+        return hit.distance <= COLLISION_CHECK_DISTANCE;
     }
 
     // Drop entities in the air at the start of a scene or after an interaction

@@ -6425,7 +6425,9 @@ MonoBehaviour:
     JumpGravityMult: 0.25
     HangGravityMult: 0.6
     MinHangVelocity: 0
+  MoveDir: {x: 0, y: 0}
   MaxJumpFrames: 16
+  SpecialState: 0
   speedText: {fileID: 1869785645}
 --- !u!61 &1133796356
 BoxCollider2D:
@@ -6502,7 +6504,7 @@ Camera:
   m_GameObject: {fileID: 1267498672}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 4
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -6689,7 +6691,7 @@ MonoBehaviour:
   TargetOffset: {x: 0, y: 0, z: 0}
   Damping: {x: 1, y: 1, z: 1}
   Lookahead:
-    Enabled: 0
+    Enabled: 1
     Time: 0.5
     Smoothing: 2
     IgnoreY: 0
@@ -6800,10 +6802,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb899b6878b54cd0f89f7b25bb4ba6d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
-  data: {fileID: 0}
+  Data: {fileID: 0}
   Level: 0
-  PlayerMovement: {fileID: 0}
-  moveActionReference: {fileID: 0}
   cooldown: 10
   dashDuration: 20
   dashVelocity: 15

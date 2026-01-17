@@ -10,19 +10,12 @@ public abstract class Ability : MonoBehaviour
     /// Includes the name, description, and icon of the ability.
     /// More fields may be added once ability leveling is implemented.
     /// </summary>
-    public AbilityData data;
+    public AbilityData Data;
     [HideInInspector] public int Level;
-    public PlayerMovement PlayerMovement;
+    protected PlayerMovement PlayerMovement => Player.Instance.Movement;
     
-    /// <summary>
-    /// Calls starting code for this Ability.
-    /// Should be used instead of Awake() or Start(),
-    /// since PlayerMovement is still null when those methods
-    /// are called.
-    /// </summary>
     public virtual void Start()
     {
-        PlayerMovement = GameObject.FindFirstObjectByType<PlayerMovement>();
     }
 
     protected virtual void Update()

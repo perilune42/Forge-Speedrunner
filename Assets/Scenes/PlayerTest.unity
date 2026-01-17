@@ -2778,6 +2778,7 @@ GameObject:
   - component: {fileID: 765079916}
   - component: {fileID: 765079917}
   - component: {fileID: 765079918}
+  - component: {fileID: 765079919}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -2883,7 +2884,21 @@ MonoBehaviour:
     HangGravityMult: 0.6
     MinHangVelocity: 0
   MaxJumpFrames: 16
+  SpecialState: 0
   speedText: {fileID: 1940133657}
+--- !u!114 &765079919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765079914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57edc06d3025cae4b9ad7150a80846a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
+  Movement: {fileID: 765079918}
 --- !u!1 &1074582778
 GameObject:
   m_ObjectHideFlags: 0
@@ -3444,7 +3459,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Dash
   data: {fileID: 0}
   Level: 0
-  PlayerMovement: {fileID: 0}
   moveActionReference: {fileID: 1807864923}
   cooldown: 10
   dashDuration: 20

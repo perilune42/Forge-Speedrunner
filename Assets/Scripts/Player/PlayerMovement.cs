@@ -11,7 +11,7 @@ using static UnityEngine.InputSystem.InputAction;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb
+    Normal, Dash, LedgeClimb, GroundSlam
 }
 
 public class PlayerMovement : DynamicEntity

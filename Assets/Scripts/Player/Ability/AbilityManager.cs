@@ -10,6 +10,8 @@ public class AbilityManager : Singleton<AbilityManager>
     /// https://discussions.unity.com/t/inputactionreference-not-saved-on-prefab/1699980/16
     /// </summary>
     public GameObject[] AbilityPrefabs;
+    public GameObject AbilityInfoPrefab;
+    public GameObject AbilityInfoParent;
     [SerializeField] private GameObject player;
     public PlayerMovement playerMovement;
     private void Start()

@@ -1,4 +1,5 @@
 using DG.Tweening.Core.Easing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,7 +44,7 @@ public class DynamicEntity : MonoBehaviour
     public float GravityMultiplier = 1f;
     public bool CollisionsEnabled = true;
 
-
+    public Action OnHitWallLeft, OnHitWallRight;
 
     [Tooltip("The maximum fall velocity")]
     public float TerminalVelocity;
@@ -141,6 +142,8 @@ public class DynamicEntity : MonoBehaviour
             hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
         }
 
+        bool hitL = false, hitR = false;
+
         int substeps = 0; // This is to prevent infinite loops in case something goes wrong
         while (hit && !hit.collider.isTrigger)
         {
@@ -155,6 +158,17 @@ public class DynamicEntity : MonoBehaviour
             move -= Util.Vec2Proj(move, normal);
             Velocity -= Util.Vec2Proj(Velocity, normal);
 
+            if (!hitL && normal.x > 0)
+            {
+                OnHitWallLeft?.Invoke();
+                hitL = true;
+            }
+            else if (!hitR && normal.x < 0)
+            {
+                OnHitWallRight?.Invoke();
+                hitR = true;
+            }
+
             // These conditionals sidestep floating point imprecisions
             if (Mathf.Approximately(Velocity.sqrMagnitude, 0f))
             {
@@ -167,14 +181,23 @@ public class DynamicEntity : MonoBehaviour
                 break;
             }
 
+
+
             hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+
+
 
             substeps++;
             if (substeps > MAX_SUBSTEPS) break;
+
+
         }
 
         // Apply lingering movement
         transform.position += (Vector3)move;
+
+
+
     }
 
     public float GetSurfaceDistance(Vector2 dir, float maxDist = 10f)

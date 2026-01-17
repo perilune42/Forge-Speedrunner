@@ -6,6 +6,10 @@ using UnityEngine.InputSystem;
 
 public class Dash : Ability
 {
+
+    public static Dash Instance;    // temporary, will have a better way to reference
+                                    // existing abilities
+
     private bool canDash;
     [SerializeField] private int cooldown, dashDuration;
     private int curCooldown, curDashDuration;
@@ -13,9 +17,17 @@ public class Dash : Ability
     public bool CanDiagonalDash;
     private Vector2 dashVelocityVec;
     //private Vector2 moveSpeedSnapshot;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        Instance = this;
+    }
+
     public override void Start()
     {
         base.Start();
+        
         PlayerMovement.onJump += CancelDash;
     }
 
@@ -53,7 +65,7 @@ public class Dash : Ability
 
     public override bool CanUseAbility()
     {
-        return base.CanUseAbility() && canDash && PInput.Instance.MoveVector != Vector2.zero;
+        return base.CanUseAbility() && canDash;
     }
 
     public void CancelDash()
@@ -67,7 +79,11 @@ public class Dash : Ability
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
-        Vector2 dashVec = PInput.Instance.MoveVector;
+        Vector2 dashVec = PlayerMovement.MoveDir;
+        if (dashVec == Vector2.zero)
+        {
+            dashVec = PlayerMovement.FacingDir;
+        }
         if (!CanDiagonalDash) dashVec.y = 0;
         else if (dashVec.x == 0) return false; // no up-dash or down-dash
         dashVelocityVec = dashVec.normalized * dashVelocity;
@@ -75,6 +91,8 @@ public class Dash : Ability
         curCooldown = cooldown;
         curDashDuration = dashDuration;
         PlayerMovement.SpecialState = SpecialState.Dash;
+
+        base.UseAbility();
         return true;
     }
 

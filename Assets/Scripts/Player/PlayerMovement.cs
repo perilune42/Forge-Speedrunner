@@ -313,6 +313,10 @@ public class PlayerMovement : DynamicEntity
 
     private void DoCollosionChecks()
     {
+        if (SpecialState == SpecialState.Dash)
+        {
+            Dash.Instance.CancelDash();
+        }
         TryLedgeClimb();
         // if did not successfully start a ledge climb on collision, interrupt spring
         if (SpecialState != SpecialState.LedgeClimb)

@@ -10,7 +10,6 @@ public class Dash : Ability
     [SerializeField] private InputActionReference moveActionReference;
     [SerializeField] private int cooldown, dashDuration;
     private int curCooldown, curDashDuration;
-    private bool dashing;
     [SerializeField] private float dashVelocity;
     public bool CanDiagonalDash;
     private Vector2 dashVelocityVec;
@@ -20,8 +19,10 @@ public class Dash : Ability
         base.Start();
         PlayerMovement.onJump += CancelDash;
     }
-    
-    
+
+    private bool dashing => Player.Instance.Movement.SpecialState == SpecialState.Dash;
+
+
     protected override void Update()
     {
         base.Update();
@@ -44,7 +45,7 @@ public class Dash : Ability
             curDashDuration--;
             if (curDashDuration <= 0)
             {
-                dashing = false;
+                Player.Instance.Movement.SpecialState = SpecialState.Normal;
             }
         }
         if (PInput.Instance.Dash.HasPressed) UseAbility();
@@ -63,7 +64,7 @@ public class Dash : Ability
 
     public void CancelDash()
     {
-        dashing = false;
+        Player.Instance.Movement.SpecialState = SpecialState.Normal;
         curDashDuration = 0;
     }
      
@@ -77,7 +78,7 @@ public class Dash : Ability
         canDash = false;
         curCooldown = cooldown;
         curDashDuration = dashDuration;
-        dashing = true;
+        Player.Instance.Movement.SpecialState = SpecialState.Dash;
         return true;
     }
 

@@ -11,11 +11,12 @@ using static UnityEngine.InputSystem.InputAction;
 
 public enum SpecialState
 {
-    Dash, LedgeGrab
+    Normal, Dash, LedgeClimb
 }
 
 public class PlayerMovement : DynamicEntity
 {
+
     public MovementParams MovementParams;
     public delegate void OnGround();
     public OnGround onGround;
@@ -32,7 +33,7 @@ public class PlayerMovement : DynamicEntity
     public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
     public float PlayerWidth => ((BoxCollider2D)SurfaceCollider).size.x;
 
-    private bool isLedgeClimbing = false;
+    public SpecialState SpecialState;
 
     [SerializeField] TMP_Text speedText;
 
@@ -45,7 +46,7 @@ public class PlayerMovement : DynamicEntity
 
     protected override void FixedUpdate()
     {
-        if (!isLedgeClimbing)
+        if (SpecialState == SpecialState.Normal)
         {
             moveDir = PInput.Instance.MoveVector;
         }
@@ -57,7 +58,7 @@ public class PlayerMovement : DynamicEntity
 
         ApplyForces();
 
-        if (!isLedgeClimbing)
+        if (SpecialState != SpecialState.LedgeClimb)
         {
             if (CanLedgeClimb(Vector2.right))
             {
@@ -264,7 +265,7 @@ public class PlayerMovement : DynamicEntity
     private IEnumerator LedgeClimb(Vector2 dir)
     {
         // ascend the wall at jump speed, do a small hop once the top is reached.
-        isLedgeClimbing = true;
+        SpecialState = SpecialState.LedgeClimb;
         EndJump(force: true);
         GravityMultiplier = 0f;
         Velocity = new Vector2(0, MovementParams.JumpSpeed);
@@ -275,7 +276,7 @@ public class PlayerMovement : DynamicEntity
         }
         Velocity = new(dir.x * 2, MovementParams.JumpSpeed / 2);
         GravityMultiplier = 1f;
-        isLedgeClimbing = false;
+        SpecialState = SpecialState.Normal;
     }
 
 }

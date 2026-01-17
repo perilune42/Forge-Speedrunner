@@ -13,19 +13,21 @@ public abstract class Ability : MonoBehaviour
     public AbilityData Data;
     [HideInInspector] public int Level;
     protected PlayerMovement PlayerMovement => Player.Instance.Movement;
+    private AbilityInfo info;
     
+
     public virtual void Start()
     {
+        Debug.Log("ability start");
+        info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
+            AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
+        info.Ability = this;
     }
 
-    protected virtual void Update()
-    {
-        // get cooldown UI stuff
-    }
     
     /// <summary>
     /// Cooldown for this ability, as a float between 0.0 and 1.0
-    /// <para> If ability is unavailable, this should return 0.0 </para>
+    /// <para> If ability is available, this should return 1.0 </para>
     /// </summary>
     public abstract float GetCooldown();
 

@@ -18,16 +18,18 @@ public class PlayerMovement : DynamicEntity
 {
 
     public MovementParams MovementParams;
-    public delegate void OnGround();
-    public OnGround onGround;
-    public delegate void OnJump();
-    public OnJump onJump;
+    public Action onGround;
+    public Action onJump;
 
-    private Vector2 moveDir;
+    public Vector2 MoveDir;
 
     public int MaxJumpFrames = 20;
     private int jumpFrames = 0;
 
+    private int coyoteFrames = 0;
+    private int maxCoyoteFrames = 5;
+
+    private float retainedSpeed = 0;
     private bool hangTime = false;
 
     public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
@@ -48,23 +50,38 @@ public class PlayerMovement : DynamicEntity
     {
         if (SpecialState == SpecialState.Normal)
         {
-            moveDir = PInput.Instance.MoveVector;
+            MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
         }
         
         CheckInputs();
+
+        if (SpecialState != SpecialState.LedgeClimb)
+        {
+            // keep retained speed even after collision
+            retainedSpeed = Velocity.x;
+        }
+
         base.FixedUpdate();
 
+        if (State == BodyState.OnGround)
+        {
+            coyoteFrames = maxCoyoteFrames;
+        }
+        else if (coyoteFrames > 0)
+        {
+            coyoteFrames--;
+        }
         if (Velocity.y < MovementParams.MinHangVelocity) EndHangTime();
 
         ApplyForces();
 
         if (SpecialState != SpecialState.LedgeClimb)
         {
-            if (CanLedgeClimb(Vector2.right))
+            if (MoveDir == Vector2.right && CanLedgeClimb(Vector2.right))
             {
                 StartCoroutine(LedgeClimb(Vector2.right));
             }
-            else if (CanLedgeClimb(Vector2.left))
+            else if ( MoveDir == Vector2.left && CanLedgeClimb(Vector2.left))
             {
                 StartCoroutine(LedgeClimb(Vector2.left));
             }
@@ -103,16 +120,16 @@ public class PlayerMovement : DynamicEntity
         // air and ground movement
 
         
-        if (moveDir.x != 0)
+        if (MoveDir.x != 0)
         {
-            float targetXVel = moveSpeed * moveDir.x;
+            float targetXVel = moveSpeed * MoveDir.x;
             // if current speed is below max speed, and the player's movement input helps accelerate
             // the player towards the target max speed
             if ((targetXVel < 0 && Velocity.x >= targetXVel) || (targetXVel > 0 && Velocity.x <= targetXVel))
             {
 
 
-                float dV = moveAccel * moveDir.x * fdt;
+                float dV = moveAccel * MoveDir.x * fdt;
                 if (Mathf.Abs(Velocity.x + dV) < Mathf.Abs(targetXVel))
                 {
                     Velocity.x += dV;
@@ -206,7 +223,7 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanJump()
     {
-        return State == BodyState.OnGround;
+        return State == BodyState.OnGround || coyoteFrames > 0;
     }
 
     private bool CanLedgeClimb(Vector2 dir)
@@ -274,7 +291,7 @@ public class PlayerMovement : DynamicEntity
         {
             yield return new WaitForFixedUpdate();
         }
-        Velocity = new(dir.x * 2, MovementParams.JumpSpeed / 2);
+        Velocity = new(retainedSpeed, MovementParams.JumpSpeed / 2);
         GravityMultiplier = 1f;
         SpecialState = SpecialState.Normal;
     }

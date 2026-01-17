@@ -119,4 +119,9 @@ public static class Util
         if (Mathf.Approximately(num, 0)) return 0;
         return Mathf.Sign(num);
     }
+
+    public static Vector2 NormalizePerAxis(this Vector2 vec)
+    {
+        return new Vector2(SignOr0(vec.x), SignOr0(vec.y));
+    }
 }

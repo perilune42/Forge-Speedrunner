@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3030847514624786891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 23633458398469086}
+  - component: {fileID: 1247854949687196951}
+  m_Layer: 0
+  m_Name: BottomEntranceEntrance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &23633458398469086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3030847514624786891}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.54, y: -4.46, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8152726618141455284}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1247854949687196951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3030847514624786891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc3ebd0dfff742f8ab9b448c9e25364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Doorway
+  enclosingRoom: {fileID: 5793912812841873899}
+  passage: {fileID: 0}
 --- !u!1 &6205393859052280178
 GameObject:
   m_ObjectHideFlags: 0
@@ -761,6 +807,7 @@ GameObject:
   - component: {fileID: 8152726618141455284}
   - component: {fileID: 4265257403127675073}
   - component: {fileID: 5349320725020432714}
+  - component: {fileID: 5793912812841873899}
   m_Layer: 6
   m_Name: BottomEntrance
   m_TagString: Untagged
@@ -782,6 +829,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7374758581693909601}
+  - {fileID: 23633458398469086}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!156049354 &4265257403127675073
@@ -842,3 +890,27 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 18, y: 10}
   m_EdgeRadius: 0
+--- !u!114 &5793912812841873899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6529399143836512943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e3f8d4c371e24be8ddfc44c0c6b434, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Room
+  gridPosition: {x: 0, y: 0}
+  size: {x: 2, y: 1}
+  doorwaysUp:
+  - {fileID: 0}
+  - {fileID: 0}
+  doorwaysDown:
+  - {fileID: 0}
+  - {fileID: 1247854949687196951}
+  doorwaysLeft:
+  - {fileID: 0}
+  doorwaysRight:
+  - {fileID: 0}

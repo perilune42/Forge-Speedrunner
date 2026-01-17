@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2431095935671807432}
   - component: {fileID: 1834817891222487098}
   - component: {fileID: 9207868309731082232}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PileHallway
   m_TagString: Untagged
   m_Icon: {fileID: 0}

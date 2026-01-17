@@ -728,7 +728,7 @@ GameObject:
   - component: {fileID: 3485332376407225755}
   - component: {fileID: 2620900117731249756}
   - component: {fileID: 206768629755952660}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: EmptyDoorOnRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}

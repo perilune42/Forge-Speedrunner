@@ -808,7 +808,7 @@ GameObject:
   - component: {fileID: 4265257403127675073}
   - component: {fileID: 5349320725020432714}
   - component: {fileID: 5793912812841873899}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: BottomEntrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}

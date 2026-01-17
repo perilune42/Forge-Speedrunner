@@ -138,7 +138,8 @@ public class PlayerMovement : DynamicEntity
 
 
                 float dV = moveAccel * MoveDir.x * fdt;
-                if (Mathf.Abs(Velocity.x + dV) < Mathf.Abs(targetXVel))
+                if ((targetXVel > 0 && Velocity.x + dV < targetXVel)
+                    || (targetXVel < 0 && Velocity.x + dV > targetXVel))
                 {
                     Velocity.x += dV;
                 }

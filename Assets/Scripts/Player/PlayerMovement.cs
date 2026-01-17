@@ -74,7 +74,6 @@ public class PlayerMovement : DynamicEntity
             {
                 FacingDir = new Vector2(MoveDir.x, 0);
             }
-            Debug.Log(FacingDir);
         }
         
         CheckInputs();

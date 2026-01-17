@@ -7,7 +7,7 @@ public class RoomSOManager : Singleton<RoomSOManager>
      * move camera to be in the appropriate room
      * provide function to switch rooms
      */
-    public Room activeRoom;
+    public RoomSO activeRoom;
     private GameObject currentExistingRoom;
 
     void Start()
@@ -18,7 +18,7 @@ public class RoomSOManager : Singleton<RoomSOManager>
 
     void Update() 
     {
-        Room newRoom = null;
+        RoomSO newRoom = null;
         if (Input.GetKeyDown(KeyCode.UpArrow)) 
         {
             newRoom = activeRoom.up;

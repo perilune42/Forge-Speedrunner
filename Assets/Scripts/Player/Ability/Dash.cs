@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public class Dash : Ability
 {
     private bool canDash;
-    [SerializeField] private InputActionReference moveActionReference;
     [SerializeField] private int cooldown, dashDuration;
     private int curCooldown, curDashDuration;
     [SerializeField] private float dashVelocity;
@@ -20,17 +19,10 @@ public class Dash : Ability
         PlayerMovement.onJump += CancelDash;
     }
 
-    private bool dashing => Player.Instance.Movement.SpecialState == SpecialState.Dash;
+    private bool dashing => PlayerMovement.SpecialState == SpecialState.Dash;
 
 
-    protected override void Update()
-    {
-        base.Update();
-        if (dashing)
-        {
-            PlayerMovement.Velocity = dashVelocityVec;
-        }
-    }
+    
 
     private void FixedUpdate()
     {
@@ -42,10 +34,12 @@ public class Dash : Ability
         if (curCooldown > 0) curCooldown--;
         if (dashing)
         {
+            PlayerMovement.Velocity = dashVelocityVec;
+            PlayerMovement.GravityMultiplier = 0f;
             curDashDuration--;
             if (curDashDuration <= 0)
             {
-                Player.Instance.Movement.SpecialState = SpecialState.Normal;
+                CancelDash();
             }
         }
         if (PInput.Instance.Dash.HasPressed) UseAbility();
@@ -64,7 +58,9 @@ public class Dash : Ability
 
     public void CancelDash()
     {
-        Player.Instance.Movement.SpecialState = SpecialState.Normal;
+        if (!dashing) return;
+        PlayerMovement.GravityMultiplier = 1f;
+        PlayerMovement.SpecialState = SpecialState.Normal;
         curDashDuration = 0;
     }
      
@@ -78,7 +74,7 @@ public class Dash : Ability
         canDash = false;
         curCooldown = cooldown;
         curDashDuration = dashDuration;
-        Player.Instance.Movement.SpecialState = SpecialState.Dash;
+        PlayerMovement.SpecialState = SpecialState.Dash;
         return true;
     }
 

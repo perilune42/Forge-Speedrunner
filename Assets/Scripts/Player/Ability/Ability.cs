@@ -10,13 +10,12 @@ public abstract class Ability : MonoBehaviour
     /// Includes the name, description, and icon of the ability.
     /// More fields may be added once ability leveling is implemented.
     /// </summary>
-    public AbilityData data;
+    public AbilityData Data;
     [HideInInspector] public int Level;
-    protected PlayerMovement PlayerMovement;
+    protected PlayerMovement PlayerMovement => Player.Instance.Movement;
     
     public virtual void Start()
     {
-        PlayerMovement = Player.Instance.Movement;
     }
 
     protected virtual void Update()

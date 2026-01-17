@@ -120,7 +120,7 @@ public class PlayerMovement : DynamicEntity
         // air and ground movement
 
         
-        if (MoveDir.x != 0)
+        if (MoveDir.x != 0 && SpecialState == SpecialState.Dash)
         {
             float targetXVel = moveSpeed * MoveDir.x;
             // if current speed is below max speed, and the player's movement input helps accelerate

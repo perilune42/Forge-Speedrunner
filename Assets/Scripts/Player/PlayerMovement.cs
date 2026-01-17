@@ -32,6 +32,8 @@ public class PlayerMovement : DynamicEntity
     private float retainedSpeed = 0;
     private bool hangTime = false;
 
+    private bool isSprinting = false;
+
     public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
     public float PlayerWidth => ((BoxCollider2D)SurfaceCollider).size.x;
 
@@ -39,6 +41,19 @@ public class PlayerMovement : DynamicEntity
 
     [SerializeField] TMP_Text speedText;
 
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
+    private void Start()
+    {
+        Dash.Instance.OnActivate += StartSprint;
+        OnHitWallLeft += DoCollosionChecks;
+        OnHitWallRight += DoCollosionChecks;
+
+    }
 
     protected override void Update()
     {
@@ -77,16 +92,9 @@ public class PlayerMovement : DynamicEntity
 
         if (SpecialState != SpecialState.LedgeClimb)
         {
-            if (MoveDir == Vector2.right && CanLedgeClimb(Vector2.right))
-            {
-                StartCoroutine(LedgeClimb(Vector2.right));
-            }
-            else if ( MoveDir == Vector2.left && CanLedgeClimb(Vector2.left))
-            {
-                StartCoroutine(LedgeClimb(Vector2.left));
-            }
-
+            TryLedgeClimb();
         }
+        
 
         TickTimers();
 
@@ -96,15 +104,15 @@ public class PlayerMovement : DynamicEntity
     {
         
         float moveSpeed, moveAccel, friction;
+        moveSpeed = isSprinting ? MovementParams.SprintSpeed : MovementParams.WalkSpeed;
+
         if (State == BodyState.OnGround)
         {
-            moveSpeed = MovementParams.WalkSpeed;
             moveAccel = MovementParams.GroundAcceleration;
             friction = MovementParams.GroundFriction;
         }
         else if (State == BodyState.InAir)
         {
-            moveSpeed = MovementParams.AirSpeed;
             moveAccel = MovementParams.AirAcceleration;
             friction = MovementParams.AirFriction;
         }
@@ -219,6 +227,11 @@ public class PlayerMovement : DynamicEntity
                 EndHangTime();
             }
         }
+
+        if (PInput.Instance.Dash.StoppedPressing)
+        {
+            EndSprint();
+        }
     }
 
     private bool CanJump()
@@ -231,12 +244,14 @@ public class PlayerMovement : DynamicEntity
         return IsTouching(dir) && (State == BodyState.InAir) && GetLedgeHeight(dir) < 0.75 && GetLedgeHeight(dir) > 0;
     }
 
+   
+
     private void Jump()
     {
         Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
         jumpFrames = MaxJumpFrames;
-        GravityMultiplier = MovementParams.JumpGravityMult;
         onJump?.Invoke();
+        GravityMultiplier = MovementParams.JumpGravityMult;
     }
 
     private void EndJump(bool force = false)
@@ -296,13 +311,49 @@ public class PlayerMovement : DynamicEntity
         SpecialState = SpecialState.Normal;
     }
 
+    private void DoCollosionChecks()
+    {
+        TryLedgeClimb();
+        // if did not successfully start a ledge climb on collision, interrupt spring
+        if (SpecialState != SpecialState.LedgeClimb)
+        {
+            isSprinting = false;
+        }
+    }
+
+    private void TryLedgeClimb()
+    {
+        if (SpecialState != SpecialState.LedgeClimb)
+        {
+            if (MoveDir == Vector2.right && CanLedgeClimb(Vector2.right))
+            {
+                StartCoroutine(LedgeClimb(Vector2.right));
+            }
+            else if (MoveDir == Vector2.left && CanLedgeClimb(Vector2.left))
+            {
+                StartCoroutine(LedgeClimb(Vector2.left));
+            }
+
+        }
+    }
+
+    private void StartSprint()
+    {
+        isSprinting = true;
+    }
+
+    private void EndSprint()
+    {
+        isSprinting = false;
+    }
+
 }
 
 [Serializable]
 public struct MovementParams
 {
     public float WalkSpeed;
-    public float AirSpeed;
+    public float SprintSpeed;
     public float JumpSpeed;
     public float GroundAcceleration, AirAcceleration;
     public float GroundFriction, AirFriction;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using TMPro;
 using Unity.VisualScripting;
@@ -8,44 +9,92 @@ using UnityEngine.InputSystem.XInput;
 using UnityEngine.Timeline;
 using static UnityEngine.InputSystem.InputAction;
 
+public enum SpecialState
+{
+    Normal, Dash, LedgeClimb
+}
+
 public class PlayerMovement : DynamicEntity
 {
-    public MovementParams MovementParams;
-    public delegate void OnGround();
-    public OnGround onGround;
-    public delegate void OnJump();
-    public OnJump onJump;
 
-    private Vector2 moveDir;
+    public MovementParams MovementParams;
+    public Action onGround;
+    public Action onJump;
+
+    public Vector2 MoveDir;
 
     public int MaxJumpFrames = 20;
     private int jumpFrames = 0;
 
-    // this is awful, remove later
-    [SerializeField]
-    private InputActionReference moveAction;
+    private int coyoteFrames = 0;
+    private int maxCoyoteFrames = 5;
+
+    private float retainedSpeed = 0;
+    private bool hangTime = false;
+
+    public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
+    public float PlayerWidth => ((BoxCollider2D)SurfaceCollider).size.x;
+
+    public SpecialState SpecialState;
 
     [SerializeField] TMP_Text speedText;
 
 
     protected override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Debug.Log("a");
-        }
         base.Update();
         speedText.SetText(Velocity.ToString());
     }
 
     protected override void FixedUpdate()
     {
-        moveDir = moveAction.action.ReadValue<Vector2>();
-        moveDir = new Vector2(Mathf.Round(moveDir.x), Mathf.Round(moveDir.y));
+        if (SpecialState == SpecialState.Normal)
+        {
+            MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
+        }
+        
+        CheckInputs();
+
+        if (SpecialState != SpecialState.LedgeClimb)
+        {
+            // keep retained speed even after collision
+            retainedSpeed = Velocity.x;
+        }
+
         base.FixedUpdate();
 
-        
+        if (State == BodyState.OnGround)
+        {
+            coyoteFrames = maxCoyoteFrames;
+        }
+        else if (coyoteFrames > 0)
+        {
+            coyoteFrames--;
+        }
+        if (Velocity.y < MovementParams.MinHangVelocity) EndHangTime();
 
+        ApplyForces();
+
+        if (SpecialState != SpecialState.LedgeClimb)
+        {
+            if (MoveDir == Vector2.right && CanLedgeClimb(Vector2.right))
+            {
+                StartCoroutine(LedgeClimb(Vector2.right));
+            }
+            else if ( MoveDir == Vector2.left && CanLedgeClimb(Vector2.left))
+            {
+                StartCoroutine(LedgeClimb(Vector2.left));
+            }
+
+        }
+
+        TickTimers();
+
+    }
+
+    private void ApplyForces()
+    {
+        
         float moveSpeed, moveAccel, friction;
         if (State == BodyState.OnGround)
         {
@@ -71,16 +120,16 @@ public class PlayerMovement : DynamicEntity
         // air and ground movement
 
         
-        if (moveDir.x != 0)
+        if (MoveDir.x != 0 && SpecialState != SpecialState.Dash)
         {
-            float targetXVel = moveSpeed * moveDir.x;
+            float targetXVel = moveSpeed * MoveDir.x;
             // if current speed is below max speed, and the player's movement input helps accelerate
             // the player towards the target max speed
-            if ((targetXVel < 0 && Velocity.x > targetXVel) || (targetXVel > 0 && Velocity.x < targetXVel))
+            if ((targetXVel < 0 && Velocity.x >= targetXVel) || (targetXVel > 0 && Velocity.x <= targetXVel))
             {
 
 
-                float dV = moveAccel * moveDir.x * fdt;
+                float dV = moveAccel * MoveDir.x * fdt;
                 if (Mathf.Abs(Velocity.x + dV) < Mathf.Abs(targetXVel))
                 {
                     Velocity.x += dV;
@@ -110,9 +159,6 @@ public class PlayerMovement : DynamicEntity
                 Velocity.x = 0;
             }
         }
-
-        TickTimers();
-
     }
 
     private void TickTimers()
@@ -123,6 +169,10 @@ public class PlayerMovement : DynamicEntity
             if (jumpFrames == 0)
             {
                 EndJump();
+                if (PInput.Instance.Jump.IsPressing)
+                {
+                    StartHangTime();
+                }
             }
         }
             
@@ -136,47 +186,114 @@ public class PlayerMovement : DynamicEntity
         base.OnGrounded(groundHit);
         onGround?.Invoke();
     }
-    // MoveInput => (every real frame) bool holdingRight = true;
-    // CheckMove => (every fixed frame) move right if holdingRight
+
+    private void CheckInputs()
+    {
+        if (PInput.Instance.Jump.HasPressed )
+        {
+            if (CanJump())
+            {
+                Jump();
+                PInput.Instance.Jump.ConsumeBuffer();
+            }
+            /*
+            var dir = Vector2.right;
+            for (int i = 0; i < 2; i++)
+            {
+                if (CanLedgeClimb(dir))
+                {
+                    StartCoroutine(LedgeClimb(dir));
+                    PInput.Instance.Jump.ConsumeBuffer();
+                    break;
+                }
+                dir = Vector2.left;
+            }
+            */
+        }
+        else if (PInput.Instance.Jump.StoppedPressing)
+        {
+            // a minimum jump lasts 3 frames
+            jumpFrames = Mathf.Min(3, jumpFrames);
+            if (hangTime)
+            {
+                EndHangTime();
+            }
+        }
+    }
 
     private bool CanJump()
     {
-        return State == BodyState.OnGround;
+        return State == BodyState.OnGround || coyoteFrames > 0;
     }
 
-    public void MoveInput(CallbackContext context)
+    private bool CanLedgeClimb(Vector2 dir)
     {
-        Vector2 moveInput = context.action.ReadValue<Vector2>();
-        float xinput = Mathf.Sign(moveInput.x);
-        moveDir = new Vector2(xinput, 0);  // potentially allow for vertical movement inputs later
-    }
-
-    public void JumpInput(CallbackContext context)
-    {
-        bool jumpInput = context.action.WasPressedThisFrame();
-        if (jumpInput && CanJump())
-        {
-            Jump();
-        }
-        if (context.action.WasReleasedThisFrame())
-        {
-            jumpFrames = Mathf.Min(3, jumpFrames);
-        }
+        return IsTouching(dir) && (State == BodyState.InAir) && GetLedgeHeight(dir) < 0.75 && GetLedgeHeight(dir) > 0;
     }
 
     private void Jump()
     {
         Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
         jumpFrames = MaxJumpFrames;
-        GravityMultiplier = 0.3f;
+        GravityMultiplier = MovementParams.JumpGravityMult;
         onJump?.Invoke();
     }
 
-    private void EndJump()
+    private void EndJump(bool force = false)
     { 
-        // a minimum jump lasts 4 frames
         jumpFrames = 0;
+        if (PInput.Instance.Jump.IsPressing)
+        {
+            StartHangTime();
+        }
+        else
+        {
+            EndHangTime();
+        }
+        
+    }
+
+    private void StartHangTime()
+    {
+        GravityMultiplier = MovementParams.HangGravityMult;
+        hangTime = true;
+    }
+
+    private void EndHangTime()
+    {
         GravityMultiplier = 1;
+        hangTime = false;
+    }
+
+    private float GetLedgeHeight(Vector2 dir)
+    {
+        // start a boxcast upwards and to either the left and right of the player, pointing downwards
+        Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight);
+        Vector2 origin = (Vector2)transform.position + offset;
+        Vector2 size = new (PlayerWidth, PlayerHeight);
+        RaycastHit2D groundHit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, PlayerHeight * 4, collisionLayer);
+
+
+        // how much the ledge is above the player's foot
+        float ledgeHeight = PlayerHeight - groundHit.distance;
+        return ledgeHeight;
+    }
+
+    private IEnumerator LedgeClimb(Vector2 dir)
+    {
+        // ascend the wall at jump speed, do a small hop once the top is reached.
+        SpecialState = SpecialState.LedgeClimb;
+        EndJump(force: true);
+        GravityMultiplier = 0f;
+        Velocity = new Vector2(0, MovementParams.JumpSpeed);
+        yield return new WaitForFixedUpdate();
+        while (GetLedgeHeight(dir) > 0)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        Velocity = new(retainedSpeed, MovementParams.JumpSpeed / 2);
+        GravityMultiplier = 1f;
+        SpecialState = SpecialState.Normal;
     }
 
 }
@@ -189,4 +306,6 @@ public struct MovementParams
     public float JumpSpeed;
     public float GroundAcceleration, AirAcceleration;
     public float GroundFriction, AirFriction;
+    public float JumpGravityMult, HangGravityMult;
+    public float MinHangVelocity;
 }

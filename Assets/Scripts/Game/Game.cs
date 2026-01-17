@@ -8,52 +8,25 @@ public class Game : Singleton<Game> {
     }
     public State currState;
     public double money;
+    public TMP_Text MoneyText;
+    public GameObject Upgrade1;
+    public GameObject Upgrade2;
+    public GameObject Upgrade3;
+    public TMP_Text UpgradeText1;
+    public TMP_Text UpgradeText2;
+    public TMP_Text UpgradeText3;
+    void Start()
+    {
+        MoneyText.text = money + "";
+        UpgradeText1.text = "Cost 1";
+        UpgradeText2.text = "Cost 2";
+        UpgradeText3.text = "Cost 3";
+    }
     public Game() {
         currState = State.Paused;
         money = 10; //TODO: Change to 0 when implemented
     }
 
-    void OnGUI() //TODO: Make actual sprites that take away money
-    {
-        if (GUILayout.Button("Current State: " + currState.ToString()))
-        {
-            SwitchStates();
-        }
-        GUILayout.Label("Money: " + money);
-        if (GUILayout.Button("-1 Money"))
-        {
-            if (money - 1 < 0)
-            {
-                Debug.Log("You are broke.");
-            } else {
-                money -= 1;
-            }
-        }
-
-        if (GUILayout.Button("-2 Money")) 
-        {
-            if (money - 2 < 0)
-            {
-                Debug.Log("You are broke.");
-            } else {
-                money -= 2;
-            }
-        }
-
-        if (GUILayout.Button("-5 Money"))
-        {
-            if (money - 5 < 0)
-            {
-                Debug.Log("You are broke.");
-            } else {
-                money -= 5;
-            }
-        }
-        if (GUILayout.Button("+10 Money"))
-        {
-            money += 10;
-        }
-    }
     public void Pause()
     {
         currState = State.Paused;

@@ -47,6 +47,6 @@ MonoBehaviour:
   Data: {fileID: 11400000, guid: 279aa8fc5560780259c7c1cc56a38042, type: 2}
   Level: 0
   cooldown: 10
-  dashDuration: 20
-  dashVelocity: 15
+  dashDuration: 10
+  dashVelocity: 18
   CanDiagonalDash: 1

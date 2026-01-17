@@ -14,6 +14,13 @@ public abstract class Ability : MonoBehaviour
     [HideInInspector] public int Level;
     protected PlayerMovement PlayerMovement => Player.Instance.Movement;
     private AbilityInfo info;
+
+    public Action OnActivate;
+
+    protected virtual void Awake()
+    {
+
+    }
     
 
     public virtual void Start()
@@ -36,5 +43,9 @@ public abstract class Ability : MonoBehaviour
         return GetCooldown() >= 1f;
     }
     
-    public abstract bool UseAbility();
+    public virtual bool UseAbility()
+    {
+        OnActivate?.Invoke();
+        return false;
+    }
 }

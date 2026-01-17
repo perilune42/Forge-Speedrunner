@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class RoomManager : Singleton<RoomManager>
 {
-    [SerializeField] Room activeRoom;
+    public Room activeRoom;
 
     void Update()
     {

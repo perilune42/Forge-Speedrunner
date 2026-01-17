@@ -18,7 +18,7 @@ public abstract class Ability : MonoBehaviour
 
     public virtual void Start()
     {
-        Debug.Log("ability start");
+        if (AbilityManager.Instance.AbilityInfoParent == null) return;
         info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
             AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
         info.Ability = this;

@@ -9,7 +9,10 @@ using UnityEngine.InputSystem.XInput;
 using UnityEngine.Timeline;
 using static UnityEngine.InputSystem.InputAction;
 
-
+public enum SpecialState
+{
+    Dash, LedgeGrab
+}
 
 public class PlayerMovement : DynamicEntity
 {
@@ -53,6 +56,19 @@ public class PlayerMovement : DynamicEntity
         if (Velocity.y < MovementParams.MinHangVelocity) EndHangTime();
 
         ApplyForces();
+
+        if (!isLedgeClimbing)
+        {
+            if (CanLedgeClimb(Vector2.right))
+            {
+                StartCoroutine(LedgeClimb(Vector2.right));
+            }
+            else if (CanLedgeClimb(Vector2.left))
+            {
+                StartCoroutine(LedgeClimb(Vector2.left));
+            }
+
+        }
 
         TickTimers();
 
@@ -162,6 +178,7 @@ public class PlayerMovement : DynamicEntity
                 Jump();
                 PInput.Instance.Jump.ConsumeBuffer();
             }
+            /*
             var dir = Vector2.right;
             for (int i = 0; i < 2; i++)
             {
@@ -173,6 +190,7 @@ public class PlayerMovement : DynamicEntity
                 }
                 dir = Vector2.left;
             }
+            */
         }
         else if (PInput.Instance.Jump.StoppedPressing)
         {

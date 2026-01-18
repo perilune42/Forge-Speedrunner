@@ -7765,6 +7765,7 @@ MonoBehaviour:
     HangGravityMult: 0.6
     MinHangVelocity: 0
   MoveDir: {x: 0, y: 0}
+  FacingDir: {x: 0, y: 0}
   MaxJumpFrames: 16
   SpecialState: 0
   speedText: {fileID: 1940133657}

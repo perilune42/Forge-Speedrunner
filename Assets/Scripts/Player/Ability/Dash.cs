@@ -65,7 +65,7 @@ public class Dash : Ability
 
     public override bool CanUseAbility()
     {
-        return base.CanUseAbility() && canDash && PInput.Instance.MoveVector != Vector2.zero;
+        return base.CanUseAbility() && canDash;
     }
 
     public void CancelDash()
@@ -79,7 +79,11 @@ public class Dash : Ability
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
-        Vector2 dashVec = PInput.Instance.MoveVector;
+        Vector2 dashVec = PlayerMovement.MoveDir;
+        if (dashVec == Vector2.zero)
+        {
+            dashVec = PlayerMovement.FacingDir;
+        }
         if (!CanDiagonalDash) dashVec.y = 0;
         else if (dashVec.x == 0) return false; // no up-dash or down-dash
         dashVelocityVec = dashVec.normalized * dashVelocity;

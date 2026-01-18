@@ -22,6 +22,7 @@ public class PlayerMovement : DynamicEntity
     public Action onJump;
 
     public Vector2 MoveDir;
+    public Vector2 FacingDir = Vector2.right;
 
     public int MaxJumpFrames = 20;
     private int jumpFrames = 0;
@@ -66,6 +67,14 @@ public class PlayerMovement : DynamicEntity
         if (SpecialState == SpecialState.Normal)
         {
             MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
+        }
+        if (SpecialState == SpecialState.Normal)
+        {
+            if (MoveDir.x != 0)
+            {
+                FacingDir = new Vector2(MoveDir.x, 0);
+            }
+            Debug.Log(FacingDir);
         }
         
         CheckInputs();

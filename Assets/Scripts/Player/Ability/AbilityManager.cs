@@ -3,12 +3,7 @@ using UnityEngine;
 
 public class AbilityManager : Singleton<AbilityManager>
 {
-    /// <summary>
-    /// Due to a bug with Unity, these aren't actually prefabs for the time being.
-    /// The bug pertains to not being able to set InputActionReferences on prefabs.
-    /// This bug appeared literally a week ago, and should be fixed in the next week:
-    /// https://discussions.unity.com/t/inputactionreference-not-saved-on-prefab/1699980/16
-    /// </summary>
+   
     public GameObject[] AbilityPrefabs;
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent;
@@ -16,6 +11,7 @@ public class AbilityManager : Singleton<AbilityManager>
     public PlayerMovement playerMovement;
     private void Start()
     {
+        GivePlayerAbility(AbilityID.Dash);
         GivePlayerAbility(AbilityID.GroundSlam);
     }
 

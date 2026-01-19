@@ -7,7 +7,8 @@ public class GroundSlam : Ability
     [SerializeField] private int cooldown;
     private int curCooldown;
     [SerializeField] private float initialVelocity;
-    private float startHeight;
+    private int rampUpTime;
+    [SerializeField] private float rampUpAcceleration;
     [SerializeField] private float heightConversion;
 
     public override void Start()
@@ -22,26 +23,30 @@ public class GroundSlam : Ability
     private void FixedUpdate()
     {
         if (curCooldown > 0) curCooldown--;
-        if (PInput.Instance.GroundSlam.HasPressed && CanSlam() && GetCooldown() >= 1f) UseAbility();
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam)
+        {
+            rampUpTime++;
+            PlayerMovement.Velocity += Vector2.down * rampUpAcceleration;
+        }
+        if (PInput.Instance.GroundSlam.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
     }
 
     public override float GetCooldown()
     {
-        if (!CanSlam()) return 0.0f;
         return ((float)(cooldown - curCooldown)) / cooldown;
     }
 
     public override bool UseAbility()
     {
-        if (PlayerMovement.SpecialState == SpecialState.Dash) FindFirstObjectByType<Dash>().CancelDash();
+        if (PlayerMovement.SpecialState == SpecialState.Dash) Dash.Instance.CancelDash();
         curCooldown = cooldown;
         PlayerMovement.Velocity = Vector2.down * initialVelocity;
         PlayerMovement.SpecialState = SpecialState.GroundSlam;
-        startHeight = transform.position.y;
+        rampUpTime = 0;
         return true;
     }
     
-    private bool CanSlam()
+    public override bool CanUseAbility()
     {
         if (PlayerMovement.SpecialState == SpecialState.GroundSlam) return false;
         if (PlayerMovement.State != BodyState.InAir) return false;
@@ -50,8 +55,8 @@ public class GroundSlam : Ability
 
     private void OnGround()
     {
-        Debug.Log(PlayerMovement.Velocity);
-        PlayerMovement.Velocity = Vector2.right * ((startHeight - transform.position.y) * heightConversion);
+        Debug.Log(rampUpTime * heightConversion);
+        PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion);
         PlayerMovement.SpecialState = SpecialState.Normal;
     }
     

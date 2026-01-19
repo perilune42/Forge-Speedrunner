@@ -59,13 +59,12 @@ public class Dash : Ability
 
     public override float GetCooldown()
     {
-        if (!canDash) return 0.0f;
         return ((float)(cooldown - curCooldown)) / cooldown;
     }
 
     public override bool CanUseAbility()
     {
-        return base.CanUseAbility() && canDash;
+        return canDash;
     }
 
     public void CancelDash()

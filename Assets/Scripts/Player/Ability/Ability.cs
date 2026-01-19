@@ -38,10 +38,10 @@ public abstract class Ability : MonoBehaviour
     /// </summary>
     public abstract float GetCooldown();
 
-    public virtual bool CanUseAbility()
-    {
-        return GetCooldown() >= 1f;
-    }
+    /// <summary>
+    /// Whether this ability is available, regardless of cooldown
+    /// </summary>
+    public abstract bool CanUseAbility();
     
     public virtual bool UseAbility()
     {

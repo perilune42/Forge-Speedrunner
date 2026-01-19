@@ -15,6 +15,6 @@ public class AbilityInfo : MonoBehaviour
     private void Update()
     {
         mask.fillAmount = 1f - Ability.GetCooldown();
-        
+        icon.color = Ability.CanUseAbility() ? Color.white : Color.gray;
     }
 }

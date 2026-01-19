@@ -44,8 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df0f920493b24bdaa1acdb19bb22082c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundSlam
-  Data: {fileID: 11400000, guid: 279aa8fc5560780259c7c1cc56a38042, type: 2}
+  Data: {fileID: 11400000, guid: 64f3c74a7a46f6028b49a8753823df72, type: 2}
   Level: 0
   cooldown: 120
   initialVelocity: 12
-  heightConversion: 3
+  rampUpAcceleration: 0.25
+  heightConversion: 1

@@ -5,6 +5,17 @@ public class RoomManager : Singleton<RoomManager>
 {
     public Room activeRoom;
 
+    void Start()
+    {
+        Passage[] allPassages = GetComponentsInChildren<Passage>();
+
+        foreach(Passage pass in allPassages)
+        {
+            pass.door1.passage = pass;
+            pass.door2.passage = pass;
+        }
+    }
+
     void Update()
     {
         // switch rooms by arrow keys

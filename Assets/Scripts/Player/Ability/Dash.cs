@@ -84,6 +84,11 @@ public class Dash : Ability
         {
             dashVec = PlayerMovement.FacingDir;
         }
+        // interpret up/down inputs as diagonal, if possible
+        if (dashVec == Vector2.up || dashVec == Vector2.down) 
+        {
+            dashVec.x = PlayerMovement.FacingDir.x;
+        }
         if (!CanDiagonalDash) dashVec.y = 0;
         else if (dashVec.x == 0) return false; // no up-dash or down-dash
         dashVelocityVec = dashVec.normalized * dashVelocity;

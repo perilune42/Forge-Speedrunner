@@ -40,7 +40,6 @@ public class PlayerMovement : DynamicEntity
 
     public SpecialState SpecialState;
 
-    [SerializeField] TMP_Text speedText;
 
 
     protected override void Awake()
@@ -54,12 +53,12 @@ public class PlayerMovement : DynamicEntity
         OnHitWallLeft += DoCollosionChecks;
         OnHitWallRight += DoCollosionChecks;
 
+        FacingDir = Vector2.right;
     }
 
     protected override void Update()
     {
         base.Update();
-        speedText.SetText(Velocity.ToString());
     }
 
     protected override void FixedUpdate()
@@ -74,7 +73,6 @@ public class PlayerMovement : DynamicEntity
             {
                 FacingDir = new Vector2(MoveDir.x, 0);
             }
-            Debug.Log(FacingDir);
         }
         
         CheckInputs();
@@ -339,11 +337,11 @@ public class PlayerMovement : DynamicEntity
     {
         if (SpecialState != SpecialState.LedgeClimb)
         {
-            if (MoveDir == Vector2.right && CanLedgeClimb(Vector2.right))
+            if (MoveDir.x > 0 && CanLedgeClimb(Vector2.right))
             {
                 StartCoroutine(LedgeClimb(Vector2.right));
             }
-            else if (MoveDir == Vector2.left && CanLedgeClimb(Vector2.left))
+            else if (MoveDir.x < 0 && CanLedgeClimb(Vector2.left))
             {
                 StartCoroutine(LedgeClimb(Vector2.left));
             }

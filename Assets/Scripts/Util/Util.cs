@@ -124,4 +124,38 @@ public static class Util
     {
         return new Vector2(SignOr0(vec.x), SignOr0(vec.y));
     }
+
+    public static string SecondsToTime(float time)
+    {
+        // private String secondsToTime(float time)
+        {
+            string toReturn = "";
+            int seconds = (int)(time % 60);
+            int minutes = (int)(time / 60);
+
+            if (minutes < 10)
+            {
+                toReturn += "0";
+                toReturn += minutes;
+            }
+            else
+            {
+                toReturn += minutes;
+            }
+
+            toReturn += ":";
+
+            if (seconds < 10)
+            {
+                toReturn += "0";
+                toReturn += seconds;
+            }
+            else
+            {
+                toReturn += seconds;
+            }
+
+            return toReturn;
+        }
+    }
 }

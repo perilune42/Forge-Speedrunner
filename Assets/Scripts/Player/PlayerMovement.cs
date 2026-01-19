@@ -54,6 +54,7 @@ public class PlayerMovement : DynamicEntity
         OnHitWallLeft += DoCollosionChecks;
         OnHitWallRight += DoCollosionChecks;
 
+        FacingDir = Vector2.right;
     }
 
     protected override void Update()
@@ -339,11 +340,11 @@ public class PlayerMovement : DynamicEntity
     {
         if (SpecialState != SpecialState.LedgeClimb)
         {
-            if (MoveDir == Vector2.right && CanLedgeClimb(Vector2.right))
+            if (MoveDir.x > 0 && CanLedgeClimb(Vector2.right))
             {
                 StartCoroutine(LedgeClimb(Vector2.right));
             }
-            else if (MoveDir == Vector2.left && CanLedgeClimb(Vector2.left))
+            else if (MoveDir.x < 0 && CanLedgeClimb(Vector2.left))
             {
                 StartCoroutine(LedgeClimb(Vector2.left));
             }

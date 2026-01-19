@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Doorway : MonoBehaviour 
 {
-    public Room enclosingRoom;
-    public Passage passage;
+    [HideInInspector] public Room enclosingRoom;
+    [HideInInspector] public Passage passage;
 
     void Start()
     {

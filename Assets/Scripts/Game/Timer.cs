@@ -1,31 +1,57 @@
-using System.ComponentModel;
 using UnityEngine;
 
 public class Timer : MonoBehaviour
 {
-    // Static variables for speedrun timing
-    public static float targetSpeedrunTime;
+    // Public static variables for speedrun timing
+    public const float SPEEDRUN_TIME_SHRINKER = 0.95f;
+    public const float MAX_TIME = 600f; // Max speedrun time (seconds) in the beggining of a new game
+    public static float targetSpeedrunTime = -1f; // Variable to hold max speedrun time
     public static float previousSpeedrunTime;
     public static float speedrunTime = 0.0f;
     public static bool timeSpeedrun = false;
 
     // Pauses timescale if bool passed is true. Sets timescale to 0 so that the game is paused but UI can still be accessed and changed.
     public void pauseTime(bool pause) {
-        if (pause) { 
+        if (pause) 
+        { 
             Time.timeScale = 0.0f;
         }
-        else { 
+        else 
+        { 
             Time.timeScale = 1.0f;
         }
     }
 
     void Update() {
-        if (timeSpeedrun) { 
+        if (timeSpeedrun) 
+        { 
             speedrunTime += Time.deltaTime;
+        }
+
+        if (speedrunTime >= targetSpeedrunTime) 
+        {
+            // EndGame();
+        }
+    }
+
+    void Start() {
+        if (targetSpeedrunTime == -1f)
+        {
+            targetSpeedrunTime = MAX_TIME;
+        }
+        else
+        {
+            targetSpeedrunTime = previousSpeedrunTime * SPEEDRUN_TIME_SHRINKER;
         }
     }
 }
 
 // Notes:
-// Add a maxTimer (default 10 min) and if speedrunTime reaches that, you lose.
-// Every run, this maxTimer decreases (based on the user?)
+// Every run, this maxTimer decreases (based on the user?) (Right now it is a multipler time previous time)
+// Save this data to device?
+
+// Add a pause button and menu (simple UI)
+// Make sure it calls the pauseTime function
+
+// Add speedrunTime simple UI and link it to this script
+// Make sure paused and playing states are in sync with the Game.cs script

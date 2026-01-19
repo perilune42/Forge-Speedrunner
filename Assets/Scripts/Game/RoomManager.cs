@@ -5,6 +5,8 @@ public class RoomManager : Singleton<RoomManager>
 {
     public Room activeRoom;
 
+    public int BaseWidth = 64, BaseHeight = 36;
+
     void Start()
     {
         Passage[] allPassages = GetComponentsInChildren<Passage>();
@@ -66,7 +68,7 @@ public class RoomManager : Singleton<RoomManager>
         Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
 
         activeRoom = door2.enclosingRoom;
-        Vector3 newPosition = door2.enclosingRoom.transform.position;
+        Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
         newPosition.z = Camera.main.transform.position.z;
         Camera.main.transform.position = newPosition;
     }

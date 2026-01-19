@@ -23,10 +23,10 @@ public class Timer : MonoBehaviour
         }
     }
 
-    void Update() {
+    void FixedUpdate() {
         if (timeSpeedrun) 
         { 
-            speedrunTime += Time.deltaTime;
+            speedrunTime += Time.fixedDeltaTime;
         }
 
         if (speedrunTime >= targetSpeedrunTime) 

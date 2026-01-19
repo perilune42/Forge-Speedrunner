@@ -40,7 +40,6 @@ public class PlayerMovement : DynamicEntity
 
     public SpecialState SpecialState;
 
-    [SerializeField] TMP_Text speedText;
 
 
     protected override void Awake()
@@ -60,7 +59,6 @@ public class PlayerMovement : DynamicEntity
     protected override void Update()
     {
         base.Update();
-        speedText.SetText(Velocity.ToString());
     }
 
     protected override void FixedUpdate()

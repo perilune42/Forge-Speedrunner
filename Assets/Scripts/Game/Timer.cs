@@ -31,19 +31,27 @@ public class Timer : MonoBehaviour
 
         if (speedrunTime >= targetSpeedrunTime) 
         {
+            Debug.Log("Time exceeded!");
             // EndGame();
         }
     }
 
-    void Start() {
+    void Awake() {
+        speedrunTime = 0.0f;
         if (targetSpeedrunTime == -1f)
         {
             targetSpeedrunTime = MAX_TIME;
         }
         else
         {
-            targetSpeedrunTime = previousSpeedrunTime * SPEEDRUN_TIME_SHRINKER;
+            // targetSpeedrunTime = previousSpeedrunTime * SPEEDRUN_TIME_SHRINKER;
         }
+    }
+
+    public static void RecordTime()
+    {
+        previousSpeedrunTime = speedrunTime;
+        targetSpeedrunTime = previousSpeedrunTime * SPEEDRUN_TIME_SHRINKER;
     }
 }
 

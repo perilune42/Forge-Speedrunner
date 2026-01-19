@@ -5,6 +5,17 @@ public class RoomManager : Singleton<RoomManager>
 {
     public Room activeRoom;
 
+    void Start()
+    {
+        Passage[] allPassages = GetComponentsInChildren<Passage>();
+
+        foreach(Passage pass in allPassages)
+        {
+            pass.door1.passage = pass;
+            pass.door2.passage = pass;
+        }
+    }
+
     void Update()
     {
         // switch rooms by arrow keys
@@ -30,29 +41,22 @@ public class RoomManager : Singleton<RoomManager>
             return;
         }
 
-        Doorway start = null; Doorway end = null;
         foreach (Doorway door in doorways)
         {
-            if(door == null)
-            {
-                continue;
-            }
-            if (door.enclosingRoom == activeRoom)
+            if (door != null && door.enclosingRoom == activeRoom)
             {
                 Passage pass = door.passage;
-                start = door;
-                end = start == pass.door1? pass.door2 : pass.door1;
-                break;
+                Doorway start = door;
+                Doorway end = start == pass.door1? pass.door2 : pass.door1;
+                SwitchRoom(start, end);
+                return;
             }
 
         }
-        if (start == null) 
-        {
-            Debug.Log("you can't go this way.");
-            return;
-        }
 
-        SwitchRoom(start, end);
+        // only if no door matches
+        Debug.Log("you can't go this way.");
+        return;
     }
 
     public void SwitchRoom(Doorway door1, Doorway door2)

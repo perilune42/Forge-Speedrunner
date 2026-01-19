@@ -8,6 +8,7 @@ public class Game : Singleton<Game> {
     }
     public State currState;
     public double money;
+    public Timer timer;
     public TMP_Text moneyText;
     public GameObject up1;
     public GameObject up2;
@@ -23,8 +24,9 @@ public class Game : Singleton<Game> {
     public TMP_Text upText3;
     void Start()
     {
-        currState = State.Paused;
+        currState = State.Playing;
         money = 5;
+        timer = gameObject.GetComponent<Timer>();
         upCost1 = 1;
         upCost2 = 2;
         upCost3 = 3;
@@ -47,16 +49,28 @@ public class Game : Singleton<Game> {
     public void Pause()
     {
         currState = State.Paused;
+
+        // Pause Time using Timer script
+        timer.pauseTime(true);
     }
     public void Play() {
         currState = State.Playing;
+
+        // Unpause Time using Timer script
+        timer.pauseTime(false);
     }
 
     public void SwitchStates() {
         if (currState == State.Playing) {
             currState = State.Paused;
+
+            // PauseTime using Timer script
+            timer.pauseTime(true);
         } else {
             currState = State.Playing;
+
+            // UnpauseTime using Timer script
+            timer.pauseTime(false);
         }
     }
 

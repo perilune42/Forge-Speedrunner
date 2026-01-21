@@ -63,6 +63,12 @@ public class PlayerMovement : DynamicEntity
 
     protected override void FixedUpdate()
     {
+
+        
+
+
+        base.FixedUpdate();
+
         if (SpecialState == SpecialState.Normal)
         {
             MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
@@ -74,7 +80,7 @@ public class PlayerMovement : DynamicEntity
                 FacingDir = new Vector2(MoveDir.x, 0);
             }
         }
-        
+
         CheckInputs();
 
         if (SpecialState != SpecialState.LedgeClimb)
@@ -82,8 +88,6 @@ public class PlayerMovement : DynamicEntity
             // keep retained speed even after collision
             retainedSpeed = Velocity.x;
         }
-
-        base.FixedUpdate();
 
         if (State == BodyState.OnGround)
         {
@@ -197,13 +201,13 @@ public class PlayerMovement : DynamicEntity
 
     
 
-    protected override void OnGrounded(RaycastHit2D groundHit)
+    public override void OnGrounded(RaycastHit2D groundHit)
     {
         base.OnGrounded(groundHit);
         onGround?.Invoke();
     }
 
-    private void CheckInputs()
+    public void CheckInputs()
     {
         if (PInput.Instance.Jump.HasPressed )
         {

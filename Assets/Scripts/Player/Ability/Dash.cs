@@ -54,7 +54,11 @@ public class Dash : Ability
                 CancelDash();
             }
         }
-        if (PInput.Instance.Dash.HasPressed) UseAbility();
+        if (PInput.Instance.Dash.HasPressed)
+        {
+            UseAbility();
+            
+        }
     }
 
     public override float GetCooldown()
@@ -78,6 +82,7 @@ public class Dash : Ability
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
+        PInput.Instance.Dash.ConsumeBuffer();
         Vector2 dashVec = PlayerMovement.MoveDir;
         if (dashVec == Vector2.zero)
         {

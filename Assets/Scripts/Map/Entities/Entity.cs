@@ -8,6 +8,16 @@ public abstract class Entity : MonoBehaviour
     protected virtual void Awake()
     {
         Hitbox = GetComponent<Collider2D>();
+        if (IsSolid && (1 << gameObject.layer) != LayerMask.GetMask("Solid"))
+        {
+            Debug.LogWarning($"Solid entity set to wrong layer ({gameObject.layer})!");
+            gameObject.layer = LayerMask.NameToLayer("Solid");
+        }
+        else if (!IsSolid && (1 << gameObject.layer) != LayerMask.GetMask("Entity"))
+        {
+            Debug.LogWarning($"Non-solid entity set to wrong layer ({gameObject.layer})!");
+            gameObject.layer = LayerMask.NameToLayer("Entity");
+        }
     }
     
 

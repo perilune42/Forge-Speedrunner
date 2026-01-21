@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Principal;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.UI.Image;
@@ -51,6 +52,10 @@ public class DynamicEntity : MonoBehaviour
 
     // Layers that this object receives forces from
     [SerializeField] protected LayerMask collisionLayer;
+    // Layers that this object interacts with via collision but not necessarily forces
+    [SerializeField] protected LayerMask interactLayer;
+
+    private List<Entity> collidingEntities = new();
 
 
     public const float CONTACT_OFFSET = 0.005f; // The gap between this body and a surface after a collision
@@ -63,10 +68,11 @@ public class DynamicEntity : MonoBehaviour
         ResolveInitialCollisions();
     }
 
-    private void ResolveInitialCollisions()
+    private void ResolveInitialCollisions(bool collision = true)
     {
         Physics2D.SyncTransforms();
-        Collider2D[] initialContacts = Physics2D.OverlapBoxAll(SurfaceCollider.bounds.center, SurfaceCollider.bounds.size, 0, collisionLayer);
+        var targetLayer = collision ? collisionLayer : interactLayer;
+        Collider2D[] initialContacts = Physics2D.OverlapBoxAll(SurfaceCollider.bounds.center, SurfaceCollider.bounds.size, 0, targetLayer);
         foreach (Collider2D collider in initialContacts)
         {
             ColliderDistance2D separation = SurfaceCollider.Distance(collider);
@@ -79,11 +85,10 @@ public class DynamicEntity : MonoBehaviour
     {
         fdt = Time.deltaTime;
 
-        CheckGrounded();
         Fall();
-
         Vector2 movement = Velocity * fdt;
         ApplyMovement(movement);
+        CheckGrounded();
     }
 
 
@@ -105,17 +110,17 @@ public class DynamicEntity : MonoBehaviour
 
         bool didHitGround = groundHit && groundHit.distance <= COLLISION_CHECK_DISTANCE;
 
-        if (didHitGround) OnGrounded(groundHit);
-        else if (!didHitGround) OnAirborne();
+        if (didHitGround && Velocity.y <= 0 && State != BodyState.OnGround) OnGrounded(groundHit);
+        else if (!didHitGround && State == BodyState.OnGround) OnAirborne();
     }
 
-    protected virtual void OnGrounded(RaycastHit2D groundHit)
+    public virtual void OnGrounded(RaycastHit2D groundHit)
     {
         if (State != BodyState.OnGround) State = BodyState.OnGround;
     }
 
     // 
-    protected virtual void OnAirborne()
+    public virtual void OnAirborne()
     {
         if (State == BodyState.OnGround) State = BodyState.InAir;
     }
@@ -132,65 +137,133 @@ public class DynamicEntity : MonoBehaviour
 
         Bounds bounds = SurfaceCollider.bounds;
         Vector2 origin = (Vector2)transform.position + SurfaceCollider.offset;
-        RaycastHit2D hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
 
-        // If the free body is inside another object, separate them and recompute the raycast
+        LayerMask collideOrInteractLayer = collisionLayer.value | interactLayer.value;
+
+        // prioritize entities over solids to avoid clipping
+
+        RaycastHit2D hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
+        if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
+        {
+            ResolveInitialCollisions(false);
+            origin = (Vector2)transform.position + SurfaceCollider.offset;
+        }
+        hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
         if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
         {
             ResolveInitialCollisions();
             origin = (Vector2)transform.position + SurfaceCollider.offset;
-            hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
         }
 
-        bool hitL = false, hitR = false;
+        hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
 
+        // If the free body is inside another object, separate them and recompute the raycast
+
+
+        
+
+        bool hitL = false, hitR = false;
+        Dictionary<Entity, bool> stillTouchingEntity = new Dictionary<Entity, bool>();
+        foreach (Entity entity in collidingEntities)
+        {
+            stillTouchingEntity[entity] = false;
+        }
+
+        List<Tuple<Entity, Vector2>> toCollide = new();
         int substeps = 0; // This is to prevent infinite loops in case something goes wrong
         while (hit && !hit.collider.isTrigger)
         {
 
+
             collisionHits.Add(hit);
             Vector2 normal = hit.normal.normalized;
-            Vector2 delta = hit.centroid - origin + CONTACT_OFFSET * normal;
-            move -= delta;
 
-            transform.position += (Vector3)delta;
-            origin = (Vector2)transform.position + SurfaceCollider.offset;
-            move -= Util.Vec2Proj(move, normal);
-            Velocity -= Util.Vec2Proj(Velocity, normal);
 
-            if (!hitL && normal.x > 0)
+            bool hitSolid = true;
+            Entity hitEntity = hit.collider.GetComponent<Entity>();
+            // stall collide behavior until rest of movement is processed
+            
+            if (hitEntity != null)
             {
-                OnHitWallLeft?.Invoke();
-                hitL = true;
-            }
-            else if (!hitR && normal.x < 0)
-            {
-                OnHitWallRight?.Invoke();
-                hitR = true;
-            }
-
-            // These conditionals sidestep floating point imprecisions
-            if (Mathf.Approximately(Velocity.sqrMagnitude, 0f))
-            {
-                Velocity = Vector2.zero;
-                break;
-            }
-            if (Mathf.Approximately(move.sqrMagnitude, 0f))
-            {
-                move = Vector2.zero;
-                break;
+                if (!collidingEntities.Contains(hitEntity))
+                {
+                    collidingEntities.Add(hitEntity);
+                    toCollide.Add(new(hitEntity, hit.normal));
+                }
+                stillTouchingEntity[hitEntity] = true;
+                if (!hitEntity.IsSolid)
+                {
+                    hitSolid = false;
+                }
             }
 
+            if (hitSolid)
+            {
+                Vector2 delta = hit.centroid - origin + CONTACT_OFFSET * normal;
+                move -= delta;
 
+                transform.position += (Vector3)delta;
+                origin = (Vector2)transform.position + SurfaceCollider.offset;
+                move -= Util.Vec2Proj(move, normal);
+                Velocity -= Util.Vec2Proj(Velocity, normal);
 
-            hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+                if (!hitL && normal.x > 0)
+                {
+                    OnHitWallLeft?.Invoke();
+                    hitL = true;
+                }
+                else if (!hitR && normal.x < 0)
+                {
+                    OnHitWallRight?.Invoke();
+                    hitR = true;
+                }
+
+                // These conditionals sidestep floating point imprecisions
+                if (Mathf.Approximately(Velocity.sqrMagnitude, 0f))
+                {
+                    Velocity = Vector2.zero;
+                    break;
+                }
+                if (Mathf.Approximately(move.sqrMagnitude, 0f))
+                {
+                    move = Vector2.zero;
+                    break;
+                }
+                hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
+            }
+            else
+            {
+                hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+            }
+            
+            
 
 
 
             substeps++;
-            if (substeps > MAX_SUBSTEPS) break;
+            if (substeps > MAX_SUBSTEPS)
+            {
+                Debug.LogWarning("Collision max substeps exceeded");
+                break;
+            }
+            
 
 
+        }
+        // resolve entity collisions now
+        foreach (var colData in toCollide)
+        {
+            colData.Item1.OnCollide(this, colData.Item2);
+        }
+
+        // prune entities that we have stopped colliding with
+        for (int i = collidingEntities.Count - 1; i >= 0; i--) 
+        {
+            Entity e = collidingEntities[i];
+            if (!stillTouchingEntity[e])
+            {
+                collidingEntities.RemoveAt(i);
+            }
         }
 
         // Apply lingering movement

@@ -1,9 +1,27 @@
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+public abstract class Entity : MonoBehaviour
 {
-    public void OnActivate()
-    {
+    [HideInInspector] public Collider2D Hitbox;
 
+    public abstract bool IsSolid { get; }
+    protected virtual void Awake()
+    {
+        Hitbox = GetComponent<Collider2D>();
+        if (IsSolid && (1 << gameObject.layer) != LayerMask.GetMask("Solid"))
+        {
+            Debug.LogWarning($"Solid entity set to wrong layer ({gameObject.layer})!");
+            gameObject.layer = LayerMask.NameToLayer("Solid");
+        }
+        else if (!IsSolid && (1 << gameObject.layer) != LayerMask.GetMask("Entity"))
+        {
+            Debug.LogWarning($"Non-solid entity set to wrong layer ({gameObject.layer})!");
+            gameObject.layer = LayerMask.NameToLayer("Entity");
+        }
     }
+    
+
+    // normal = player pointing to entity surface
+    public abstract void OnCollide(DynamicEntity de, Vector2 normal);
+
 }

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework.Constraints;
+using Unity.VisualScripting;
 
 public class RoomManager : Singleton<RoomManager>
 {
@@ -68,6 +70,25 @@ public class RoomManager : Singleton<RoomManager>
 
     public void SwitchRoom(Doorway door1, Doorway door2)
     {
+        PlayerMovement pm = Player.Instance.Movement;
+        Vector2 dir = door1.GetTransitionDirection();
+        Vector2 preservedVelocity = pm.Velocity;
+        pm.Velocity = Vector2.zero;
+        Vector2 relativePos;
+        // assuming doorways are placed correctly in world space
+        // i.e. centered properly along the world grid
+        if (door1.IsHorizontal())
+        {
+            relativePos = new Vector2(0, pm.transform.position.y - door1.transform.position.y);
+        }
+        else
+        {
+            relativePos = new Vector2(pm.transform.position.x - door1.transform.position.x, 0);
+        }
+        pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
+
+
+
         // no moving player for now. but moving camera
 
         Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
@@ -80,5 +101,18 @@ public class RoomManager : Singleton<RoomManager>
 
         Camera.main.transform.position = newPosition;
         // Switch confiner to the one in the new room
+
+
+        // suppress target trigger to avoid transitioning back
+        door2.SuppressNextTransition();
+        pm.transform.position = (Vector2)door2.transform.position + relativePos;
+        const float minTransitionSpeed = 4;
+
+        // give some minimum velocity entering the room
+        if (Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
+        {
+            preservedVelocity = preservedVelocity - dir * Vector2.Dot(preservedVelocity, dir) + dir * minTransitionSpeed;
+        }
+        pm.Velocity = preservedVelocity;
     }
 }

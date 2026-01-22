@@ -3574,10 +3574,6 @@ PrefabInstance:
       propertyPath: 'doorwaysRight.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 8518985466899586344, guid: f49f393e40dab9f4baa2cad126cf8637, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 64
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 1335751305642704019, guid: f49f393e40dab9f4baa2cad126cf8637, type: 3}

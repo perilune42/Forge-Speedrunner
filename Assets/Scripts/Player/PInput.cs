@@ -10,13 +10,20 @@ public class PInput : Singleton<PInput>
     // Internal vars
     private InputAction move;
 
+    public bool EnableControls = true;
     public class InputButton
     {
-        public bool HasPressed, IsPressing, StoppedPressing;
+        private bool stoppedPressing;
         private InputAction action;
         private int bufferFrames, bufferFramesLeft;
 
         private bool queuePress, queueHold, queueRelease;
+        private bool hasPressed;
+        private bool isPressing;
+
+        public bool HasPressed { get => hasPressed && PInput.Instance.EnableControls; set => hasPressed = value; }
+        public bool IsPressing { get => isPressing && PInput.Instance.EnableControls; set => isPressing = value; }
+        public bool StoppedPressing { get => stoppedPressing && PInput.Instance.EnableControls; set => stoppedPressing = value; }
 
         public InputButton(InputAction act, int buf)
         {

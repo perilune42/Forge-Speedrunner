@@ -31,7 +31,12 @@ public class PlayerMovement : DynamicEntity
     private int jumpFrames = 0;
 
     private int coyoteFrames = 0;
+    private int wallCoyoteFrames = 0;
+    private Vector2 lastClimbDir = Vector2.right;
     private int maxCoyoteFrames = 5;
+
+    private int forceMoveFrames = 0;
+    private int maxForceMoveFrames = 10;
 
     private float retainedSpeed = 0;
     private bool hangTime = false;
@@ -68,7 +73,7 @@ public class PlayerMovement : DynamicEntity
     {
         base.FixedUpdate();
 
-        if (SpecialState == SpecialState.Normal)
+        if (SpecialState == SpecialState.Normal && forceMoveFrames == 0)
         {
             MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
         }
@@ -96,6 +101,12 @@ public class PlayerMovement : DynamicEntity
         {
             coyoteFrames--;
         }
+
+        if (SpecialState != SpecialState.WallClimb)
+        {
+            wallCoyoteFrames--;
+        }
+
         if (Velocity.y < MovementParams.MinHangVelocity) EndHangTime();
 
         ApplyForces();
@@ -198,10 +209,18 @@ public class PlayerMovement : DynamicEntity
                 }
             }
         }
+        if (forceMoveFrames > 0)
+        {
+            forceMoveFrames--;
+        }
             
     }
     
-
+    public void EndForceMove()
+    {
+        forceMoveFrames = 0;
+        MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
+    }
     
 
     public override void OnGrounded(RaycastHit2D groundHit)
@@ -214,6 +233,11 @@ public class PlayerMovement : DynamicEntity
     {
         if (PInput.Instance.Jump.HasPressed )
         {
+            if (CanWallJump())
+            {
+                WallJump(lastClimbDir);
+                PInput.Instance.Jump.ConsumeBuffer();
+            }
             if (CanJump())
             {
                 Jump();
@@ -248,19 +272,32 @@ public class PlayerMovement : DynamicEntity
             EndSprint();
         }
 
-        if (MoveDir.x != 0
-            && IsInputtingWallClimb(MoveDir) 
-            && !CanLedgeClimb(new Vector2(MoveDir.x, 0))
-            && CanWallClimb(new Vector2(MoveDir.x, 0))
-            && SpecialState != SpecialState.WallClimb)
+        var dir = Vector2.right;
+        for (int i = 0; i < 2; i++)
         {
-            StartWallClimb(new Vector2(MoveDir.x, 0));
+            if (MoveDir.x != -dir.x
+                && IsInputtingWallClimb(dir)
+                && !CanLedgeClimb(new Vector2(dir.x, 0))
+                && CanWallClimb(new Vector2(dir.x, 0))
+                && SpecialState != SpecialState.WallClimb)
+            {
+                StartWallClimb(new Vector2(dir.x, 0));
+                break;
+            }
+            dir = Vector2.left;
         }
+
+
     }
 
     private bool CanJump()
     {
         return State == BodyState.OnGround || coyoteFrames > 0;
+    }
+
+    private bool CanWallJump()
+    {
+        return SpecialState == SpecialState.WallClimb || wallCoyoteFrames > 0;
     }
 
     private bool CanLedgeClimb(Vector2 dir)
@@ -280,7 +317,7 @@ public class PlayerMovement : DynamicEntity
     private bool IsInputtingWallClimb(Vector2 dir)
     {
         var inputMove = PInput.Instance.MoveVector.NormalizePerAxis();
-        return inputMove.x == dir.x && inputMove.y >= 0;
+        return (inputMove == Vector2.up && FacingDir.x == dir.x) || (inputMove.x == dir.x && inputMove.y >= 0);
     }
    
 
@@ -288,6 +325,23 @@ public class PlayerMovement : DynamicEntity
     {
         Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
         jumpFrames = MaxJumpFrames;
+        coyoteFrames = 0;
+        onJump?.Invoke();
+        GravityMultiplier = MovementParams.JumpGravityMult;
+        
+    }
+
+    private void WallJump(Vector2 wallDir)
+    {
+        Debug.Log("wall jumping");
+        SpecialState = SpecialState.Normal;
+        float xVel = -wallDir.x * MovementParams.JumpSpeed;
+        Velocity = new Vector2(xVel, MovementParams.JumpSpeed);
+        // player not allowed to turn around for 5 frames
+        MoveDir = new Vector2(-wallDir.x, 0);
+        forceMoveFrames = maxForceMoveFrames;
+        jumpFrames = MaxJumpFrames;
+        wallCoyoteFrames = 0;
         onJump?.Invoke();
         GravityMultiplier = MovementParams.JumpGravityMult;
     }
@@ -338,13 +392,18 @@ public class PlayerMovement : DynamicEntity
         SpecialState = SpecialState.LedgeClimb;
         EndJump(force: true);
         GravityMultiplier = 0f;
-        Velocity = new Vector2(0, MovementParams.JumpSpeed);
+        Velocity = new Vector2(0, MovementParams.ClimbSpeed);
+        lastClimbDir = MoveDir;
         yield return new WaitForFixedUpdate();
         while (GetLedgeHeight(dir) > 0)
         {
             yield return new WaitForFixedUpdate();
         }
-        Velocity = new(retainedSpeed, MovementParams.JumpSpeed / 2);
+        const float minLedgeBoost = 5f;
+
+        float alignedRetainedSpeed = Util.SignOr0(retainedSpeed) == dir.x ? Mathf.Abs(retainedSpeed) : 0;
+        float boost = Mathf.Max(alignedRetainedSpeed, minLedgeBoost);
+        Velocity = new(boost * dir.x, MovementParams.JumpSpeed / 2);
         GravityMultiplier = 1f;
         SpecialState = SpecialState.Normal;
     }
@@ -353,15 +412,27 @@ public class PlayerMovement : DynamicEntity
     {
         // ascend the wall at jump speed while the input is being held.
         SpecialState = SpecialState.WallClimb;
+        MoveDir = new Vector2(dir.x, 0);
         EndJump(force: true);
         GravityMultiplier = 0f;
-        Velocity = new Vector2(0, MovementParams.JumpSpeed);
-
+        Velocity = new Vector2(0, MovementParams.ClimbSpeed);
+        lastClimbDir = MoveDir;
+        wallCoyoteFrames = maxCoyoteFrames;
     }
     private void ContinueWallClimb(Vector2 dir)
     {
         bool interrupt = false;
-        if (!IsInputtingWallClimb(dir) || !CanWallClimb(dir))
+        if (CanWallClimb(dir))
+        {
+            Velocity = new(0, MovementParams.ClimbSpeed);
+        }
+        else
+        {
+            // likely reached top of wall
+            Velocity = Vector2.zero;
+        }
+
+        if (!IsInputtingWallClimb(dir))
         {
             interrupt = true;
         }
@@ -378,7 +449,10 @@ public class PlayerMovement : DynamicEntity
         {
             GravityMultiplier = 1f;
             SpecialState = SpecialState.Normal;
+            return;
         }
+        wallCoyoteFrames = maxCoyoteFrames;
+
     }
 
     private void DoCollosionChecks()
@@ -429,6 +503,7 @@ public struct MovementParams
     public float WalkSpeed;
     public float SprintSpeed;
     public float JumpSpeed;
+    public float ClimbSpeed;
     public float GroundAcceleration, AirAcceleration;
     public float GroundFriction, AirFriction;
     public float JumpGravityMult, HangGravityMult;

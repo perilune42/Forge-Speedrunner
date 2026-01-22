@@ -34,7 +34,7 @@ public class Dash : Ability
         playerSpriteRenderer = PlayerMovement.GetComponentInChildren<SpriteRenderer>();
     }
 
-    private bool dashing => PlayerMovement.SpecialState == SpecialState.Dash;
+    private bool dashing;
 
 
     
@@ -47,16 +47,18 @@ public class Dash : Ability
         }
         if (PlayerMovement.State == BodyState.OnGround) canDash = true;
         if (curCooldown > 0) curCooldown--;
-        if (dashing)
+        if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             PlayerMovement.Velocity = dashVelocityVec;
             PlayerMovement.GravityMultiplier = 0f;
             curDashDuration--;
             if (curDashDuration <= 0)
             {
+                PlayerMovement.SpecialState = SpecialState.Normal;
                 CancelDash();
             }
         }
+        else if (dashing) CancelDash();
         if (PInput.Instance.Dash.HasPressed)
         {
             UseAbility();
@@ -76,9 +78,8 @@ public class Dash : Ability
 
     public void CancelDash()
     {
-        if (!dashing) return;
+        dashing = false;
         PlayerMovement.GravityMultiplier = 1f;
-        PlayerMovement.SpecialState = SpecialState.Normal;
         curDashDuration = 0;
         particle.Stop();
     }
@@ -103,7 +104,7 @@ public class Dash : Ability
         canDash = false;
         curCooldown = cooldown;
         curDashDuration = dashDuration;
-        
+        dashing = true;
         // particle effects
         
         PlayerMovement.SpecialState = SpecialState.Dash;
@@ -113,6 +114,7 @@ public class Dash : Ability
         particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
 
         base.UseAbility();
+        
         return true;
     }
 

@@ -14,8 +14,13 @@ public class Dash : Ability
     [SerializeField] private int cooldown, dashDuration;
     private int curCooldown, curDashDuration;
     [SerializeField] private float dashVelocity;
-    public bool CanDiagonalDash;
+    public bool CanDiagonalDash; // set to false, when you upgrade, it becomes true
     private Vector2 dashVelocityVec;
+
+    [SerializeField] private ParticleSystemRenderer particleRenderer;
+    [SerializeField] private ParticleSystem particle;
+    [SerializeField] private List<Material> particleMaterials;
+    private SpriteRenderer playerSpriteRenderer;
     //private Vector2 moveSpeedSnapshot;
 
     protected override void Awake()
@@ -29,6 +34,7 @@ public class Dash : Ability
         base.Start();
         
         PlayerMovement.onJump += CancelDash;
+        playerSpriteRenderer = PlayerMovement.GetComponentInChildren<SpriteRenderer>();
     }
 
     private bool dashing => PlayerMovement.SpecialState == SpecialState.Dash;
@@ -73,6 +79,7 @@ public class Dash : Ability
         PlayerMovement.GravityMultiplier = 1f;
         PlayerMovement.SpecialState = SpecialState.Normal;
         curDashDuration = 0;
+        particle.Stop();
     }
      
     public override bool UseAbility()
@@ -94,7 +101,14 @@ public class Dash : Ability
         canDash = false;
         curCooldown = cooldown;
         curDashDuration = dashDuration;
+        
+        // particle effects
+        
         PlayerMovement.SpecialState = SpecialState.Dash;
+        particle.Play();
+        particleMaterials[0].mainTexture = playerSpriteRenderer.sprite.texture;
+        particleRenderer.SetMaterials(particleMaterials);
+        particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
 
         base.UseAbility();
         return true;

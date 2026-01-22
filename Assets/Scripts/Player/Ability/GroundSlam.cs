@@ -16,7 +16,8 @@ public class GroundSlam : Ability
         base.Start();
         PlayerMovement.onGround += () =>
         {
-            if (PlayerMovement.SpecialState == SpecialState.GroundSlam) OnGround();
+            if (PlayerMovement.SpecialState == SpecialState.GroundSlam
+                /* or the ground slam is level 2 and player recently dashed*/) OnGround();
         };
     }
 

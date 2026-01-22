@@ -52,7 +52,7 @@ public class PlayerMovement : DynamicEntity
 
     private void Start()
     {
-        Dash.Instance.OnActivate += StartSprint;
+        AbilityManager.Instance.GetAbility<Dash>().OnActivate += StartSprint;
         OnHitWallLeft += DoCollosionChecks;
         OnHitWallRight += DoCollosionChecks;
 
@@ -385,7 +385,7 @@ public class PlayerMovement : DynamicEntity
     {
         if (SpecialState == SpecialState.Dash)
         {
-            Dash.Instance.CancelDash();
+            AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         }
         TryLedgeClimb();
         // if did not successfully start a ledge climb on collision, interrupt spring

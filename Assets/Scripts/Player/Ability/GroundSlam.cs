@@ -39,7 +39,7 @@ public class GroundSlam : Ability
 
     public override bool UseAbility()
     {
-        if (PlayerMovement.SpecialState == SpecialState.Dash) Dash.Instance.CancelDash();
+        if (PlayerMovement.SpecialState == SpecialState.Dash) AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         curCooldown = cooldown;
         PlayerMovement.Velocity = Vector2.down * initialVelocity;
         PlayerMovement.SpecialState = SpecialState.GroundSlam;

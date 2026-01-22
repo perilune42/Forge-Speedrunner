@@ -14,7 +14,7 @@ public class Bouncer : Entity
             pm.onGround?.Invoke();
             if (pm.SpecialState == SpecialState.Dash)
             {
-                Dash.Instance.CancelDash();
+                AbilityManager.Instance.GetAbility<Dash>().CancelDash();
             }
             if (pm.SpecialState == SpecialState.GroundSlam)
             {

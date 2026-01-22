@@ -7,8 +7,6 @@ using UnityEngine.InputSystem;
 public class Dash : Ability
 {
 
-    public static Dash Instance;    // temporary, will have a better way to reference
-                                    // existing abilities
 
     private bool canDash;
     [SerializeField] private int cooldown, dashDuration;
@@ -26,7 +24,6 @@ public class Dash : Ability
     protected override void Awake()
     {
         base.Awake();
-        Instance = this;
     }
 
     public override void Start()

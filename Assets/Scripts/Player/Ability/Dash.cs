@@ -87,6 +87,9 @@ public class Dash : Ability
     {
         if (!CanUseAbility()) return false;
         PInput.Instance.Dash.ConsumeBuffer();
+        // dash overrides forcemove
+        PlayerMovement.EndForceMove();
+
         Vector2 dashVec = PlayerMovement.MoveDir;
         if (dashVec == Vector2.zero)
         {

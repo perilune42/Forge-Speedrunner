@@ -105,10 +105,14 @@ MonoBehaviour:
   collisionLayer:
     serializedVersion: 2
     m_Bits: 64
+  interactLayer:
+    serializedVersion: 2
+    m_Bits: 0
   MovementParams:
     WalkSpeed: 8
     SprintSpeed: 11
     JumpSpeed: 11
+    ClimbSpeed: 6
     GroundAcceleration: 60
     AirAcceleration: 35
     GroundFriction: 20

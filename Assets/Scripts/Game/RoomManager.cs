@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class RoomManager : Singleton<RoomManager>
 {
@@ -7,15 +8,19 @@ public class RoomManager : Singleton<RoomManager>
 
     public int BaseWidth = 64, BaseHeight = 36;
 
+    public List<Room> AllRooms = new();
+
     void Start()
     {
         Passage[] allPassages = GetComponentsInChildren<Passage>();
+        AllRooms = GetComponentsInChildren<Room>().ToList();
 
         foreach(Passage pass in allPassages)
         {
             pass.door1.passage = pass;
             pass.door2.passage = pass;
         }
+
     }
 
     void Update()
@@ -70,6 +75,10 @@ public class RoomManager : Singleton<RoomManager>
         activeRoom = door2.enclosingRoom;
         Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
         newPosition.z = Camera.main.transform.position.z;
+        Room room1 = door1.enclosingRoom;
+        Room room2 = door2.enclosingRoom;
+
         Camera.main.transform.position = newPosition;
+        // Switch confiner to the one in the new room
     }
 }

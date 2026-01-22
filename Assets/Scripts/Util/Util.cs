@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -157,5 +158,21 @@ public static class Util
 
             return toReturn;
         }
+    }
+
+    public static Vector2 PDir2Vec(PDir pDir)
+    {
+        switch (pDir)
+        {
+            case PDir.Up:
+                return Vector2.up;
+            case PDir.Down:
+                return Vector2.down;
+            case PDir.Left:
+                return Vector2.left;
+            case PDir.Right:
+                return Vector2.right;
+        }
+        return Vector2.zero;
     }
 }

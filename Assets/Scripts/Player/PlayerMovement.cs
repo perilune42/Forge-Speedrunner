@@ -1,5 +1,7 @@
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using TMPro;
 using Unity.VisualScripting;
@@ -8,10 +10,11 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XInput;
 using UnityEngine.Timeline;
 using static UnityEngine.InputSystem.InputAction;
+using static UnityEngine.UI.Image;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb, GroundSlam
+    Normal, Dash, LedgeClimb, GroundSlam, WallClimb
 }
 
 public class PlayerMovement : DynamicEntity
@@ -63,6 +66,8 @@ public class PlayerMovement : DynamicEntity
 
     protected override void FixedUpdate()
     {
+        base.FixedUpdate();
+
         if (SpecialState == SpecialState.Normal)
         {
             MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
@@ -74,7 +79,7 @@ public class PlayerMovement : DynamicEntity
                 FacingDir = new Vector2(MoveDir.x, 0);
             }
         }
-        
+
         CheckInputs();
 
         if (SpecialState != SpecialState.LedgeClimb)
@@ -82,8 +87,6 @@ public class PlayerMovement : DynamicEntity
             // keep retained speed even after collision
             retainedSpeed = Velocity.x;
         }
-
-        base.FixedUpdate();
 
         if (State == BodyState.OnGround)
         {
@@ -102,6 +105,10 @@ public class PlayerMovement : DynamicEntity
             TryLedgeClimb();
         }
         
+        if (SpecialState == SpecialState.WallClimb)
+        {
+            ContinueWallClimb(MoveDir);
+        }
 
         TickTimers();
 
@@ -197,13 +204,13 @@ public class PlayerMovement : DynamicEntity
 
     
 
-    protected override void OnGrounded(RaycastHit2D groundHit)
+    public override void OnGrounded(RaycastHit2D groundHit)
     {
         base.OnGrounded(groundHit);
         onGround?.Invoke();
     }
 
-    private void CheckInputs()
+    public void CheckInputs()
     {
         if (PInput.Instance.Jump.HasPressed )
         {
@@ -240,6 +247,15 @@ public class PlayerMovement : DynamicEntity
         {
             EndSprint();
         }
+
+        if (MoveDir.x != 0
+            && IsInputtingWallClimb(MoveDir) 
+            && !CanLedgeClimb(new Vector2(MoveDir.x, 0))
+            && CanWallClimb(new Vector2(MoveDir.x, 0))
+            && SpecialState != SpecialState.WallClimb)
+        {
+            StartWallClimb(new Vector2(MoveDir.x, 0));
+        }
     }
 
     private bool CanJump()
@@ -249,9 +265,23 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanLedgeClimb(Vector2 dir)
     {
-        return IsTouching(dir) && (State == BodyState.InAir) && GetLedgeHeight(dir) < 0.75 && GetLedgeHeight(dir) > 0;
+        return IsTouching(dir) && GetLedgeHeight(dir) < 0.75 && GetLedgeHeight(dir) > 0;
     }
 
+    private bool CanWallClimb(Vector2 dir)
+    {
+        if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash && SpecialState != SpecialState.WallClimb) return false;
+        Vector2 origin = (Vector2)transform.position + new Vector2(0, 0.5f * PlayerHeight);
+        Vector2 size = new(PlayerWidth, PlayerHeight);
+        RaycastHit2D wallHit = Physics2D.BoxCast(origin, size, 0f, dir, COLLISION_CHECK_DISTANCE * 2, collisionLayer);
+        return IsTouching(dir) && wallHit.collider != null && wallHit.collider.GetComponent<ClimbableWall>() != null;
+    }
+
+    private bool IsInputtingWallClimb(Vector2 dir)
+    {
+        var inputMove = PInput.Instance.MoveVector.NormalizePerAxis();
+        return inputMove.x == dir.x && inputMove.y >= 0;
+    }
    
 
     private void Jump()
@@ -265,7 +295,7 @@ public class PlayerMovement : DynamicEntity
     private void EndJump(bool force = false)
     { 
         jumpFrames = 0;
-        if (PInput.Instance.Jump.IsPressing)
+        if (PInput.Instance.Jump.IsPressing && !force)
         {
             StartHangTime();
         }
@@ -317,6 +347,38 @@ public class PlayerMovement : DynamicEntity
         Velocity = new(retainedSpeed, MovementParams.JumpSpeed / 2);
         GravityMultiplier = 1f;
         SpecialState = SpecialState.Normal;
+    }
+
+    private void StartWallClimb(Vector2 dir)
+    {
+        // ascend the wall at jump speed while the input is being held.
+        SpecialState = SpecialState.WallClimb;
+        EndJump(force: true);
+        GravityMultiplier = 0f;
+        Velocity = new Vector2(0, MovementParams.JumpSpeed);
+
+    }
+    private void ContinueWallClimb(Vector2 dir)
+    {
+        bool interrupt = false;
+        if (!IsInputtingWallClimb(dir) || !CanWallClimb(dir))
+        {
+            interrupt = true;
+        }
+        else
+        {
+            if (CanLedgeClimb(dir))
+            {
+                interrupt = true;
+                StartCoroutine(LedgeClimb(dir));
+                return;
+            }
+        }
+        if (interrupt)
+        {
+            GravityMultiplier = 1f;
+            SpecialState = SpecialState.Normal;
+        }
     }
 
     private void DoCollosionChecks()

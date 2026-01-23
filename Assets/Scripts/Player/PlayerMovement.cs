@@ -333,7 +333,6 @@ public class PlayerMovement : DynamicEntity
 
     private void WallJump(Vector2 wallDir)
     {
-        Debug.Log("wall jumping");
         SpecialState = SpecialState.Normal;
         float xVel = -wallDir.x * MovementParams.JumpSpeed;
         Velocity = new Vector2(xVel, MovementParams.JumpSpeed);
@@ -346,7 +345,7 @@ public class PlayerMovement : DynamicEntity
         GravityMultiplier = MovementParams.JumpGravityMult;
     }
 
-    private void EndJump(bool force = false)
+    public void EndJump(bool force = false)
     { 
         jumpFrames = 0;
         if (PInput.Instance.Jump.IsPressing && !force)

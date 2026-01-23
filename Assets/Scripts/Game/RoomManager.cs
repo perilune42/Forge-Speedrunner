@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework.Constraints;
 using Unity.VisualScripting;
+using System.Collections;
 
 public class RoomManager : Singleton<RoomManager>
 {
     public Room activeRoom;
 
     public int BaseWidth = 64, BaseHeight = 36;
+
+    public int TransitionWidth = 4;
+    public int TransitionFadeFrames = 20; // per side of room
+
+    public BoxCollider2D GuideRailPrefab;
+    public BoxCollider2D FreezeTriggerPrefab;
 
     public List<Room> AllRooms = new();
 
@@ -70,10 +77,30 @@ public class RoomManager : Singleton<RoomManager>
 
     public void SwitchRoom(Doorway door1, Doorway door2)
     {
+        StartCoroutine(SwitchRoomCoroutine(door1, door2));
+    }
+
+    private IEnumerator SwitchRoomCoroutine(Doorway door1, Doorway door2)
+    {
+
         PlayerMovement pm = Player.Instance.Movement;
         Vector2 dir = door1.GetTransitionDirection();
-        Vector2 preservedVelocity = pm.Velocity;
-        pm.Velocity = Vector2.zero;
+        Vector2 preservedVelocity;
+
+        // on up transitions, give player a boost
+        if (dir == Vector2.up)
+        {
+            pm.GravityEnabled = false;
+            const float upBoost = 1.5f;
+            if (pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
+            {
+                pm.Velocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
+            }
+        }
+        preservedVelocity = pm.Velocity;
+        pm.EndJump(true);
+
+
         Vector2 relativePos;
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
@@ -98,15 +125,40 @@ public class RoomManager : Singleton<RoomManager>
         newPosition.z = Camera.main.transform.position.z;
         Room room1 = door1.enclosingRoom;
         Room room2 = door2.enclosingRoom;
+        PInput.Instance.EnableControls = false;
+        if (dir.y == 0)
+        {
+            PInput.Instance.MoveInputOverrride = dir;
+        }
+        else if (dir.y == 1)
+        {
+            // going upwards: force move in facing direction to get to a ledge
+            PInput.Instance.MoveInputOverrride = pm.FacingDir;
+        }
 
+        FadeToBlack.Instance.FadeIn();
+        for (int i = 0; i < TransitionFadeFrames; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+
+        // ** MOVE CAMERA HERE ** 
         Camera.main.transform.position = newPosition;
         // Switch confiner to the one in the new room
 
+        FadeToBlack.Instance.FadeOut();
+        for (int i = 0; i < TransitionFadeFrames; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
 
         // suppress target trigger to avoid transitioning back
         door2.SuppressNextTransition();
         pm.transform.position = (Vector2)door2.transform.position + relativePos;
-        const float minTransitionSpeed = 4;
+        pm.Locked = false;
+        pm.SpecialState = SpecialState.Normal;
+        const float minTransitionSpeed = 8;
 
         // give some minimum velocity entering the room
         if (Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
@@ -114,5 +166,18 @@ public class RoomManager : Singleton<RoomManager>
             preservedVelocity = preservedVelocity - dir * Vector2.Dot(preservedVelocity, dir) + dir * minTransitionSpeed;
         }
         pm.Velocity = preservedVelocity;
+        if (dir == Vector2.up)
+        {
+            // set one more time in case of jank
+            pm.GravityEnabled = false;
+        }
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        PInput.Instance.EnableControls = true;
+        PInput.Instance.MoveInputOverrride = Vector2.zero;
+        pm.GravityEnabled = true;
+
     }
 }

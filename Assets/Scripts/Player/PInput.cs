@@ -11,6 +11,7 @@ public class PInput : Singleton<PInput>
     private InputAction move;
 
     public bool EnableControls = true;
+    public Vector2 MoveInputOverrride = Vector2.zero;
     public class InputButton
     {
         private bool stoppedPressing;
@@ -96,7 +97,14 @@ public class PInput : Singleton<PInput>
 
     private void Update()
     {
-        MoveVector = move.ReadValue<Vector2>();
+        if (MoveInputOverrride == Vector2.zero)
+        {
+            MoveVector = move.ReadValue<Vector2>();
+        }
+        else 
+        { 
+            MoveVector = MoveInputOverrride; 
+        }
         Jump.Update();
         Dash.Update();
         GroundSlam.Update();

@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Passage
   door1: {fileID: 1635949760}
-  door2: {fileID: 299641344}
+  door2: {fileID: 340329252}
 --- !u!4 &241559577 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4864554541706690078, guid: dccce3af91cdb1947af866995adc7168, type: 3}
@@ -252,11 +252,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4532768467555064680, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 64
+      value: 73.313995
       objectReference: {fileID: 0}
     - target: {fileID: 4532768467555064680, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -72
+      value: -82.43167
       objectReference: {fileID: 0}
     - target: {fileID: 4532768467555064680, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
       propertyPath: m_LocalPosition.z
@@ -305,18 +305,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1428465405230226116, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1619139406}
-    - targetCorrespondingSourceObject: {fileID: 1428465405230226116, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1619139405}
   m_SourcePrefab: {fileID: 100100000, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
 --- !u!4 &299641343 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4532768467555064680, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
   m_PrefabInstance: {fileID: 299641342}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &299641344 stripped
+--- !u!114 &340329252 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 558485160726404832, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
+  m_CorrespondingSourceObject: {fileID: 1239235710386412723, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
   m_PrefabInstance: {fileID: 299641342}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
@@ -565,7 +562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4883348653101565758, guid: eabb9aa4e1ee55540aac7a999eab399c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -64
+      value: -74.47339
       objectReference: {fileID: 0}
     - target: {fileID: 4883348653101565758, guid: eabb9aa4e1ee55540aac7a999eab399c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -862,7 +859,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8571272119936197486, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 64
+      value: 74.030075
       objectReference: {fileID: 0}
     - target: {fileID: 8571272119936197486, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1022,52 +1019,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e3f8d4c371e24be8ddfc44c0c6b434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
---- !u!61 &1619139405
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1619139402}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 64, y: 36}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 129, y: 73}
-  m_EdgeRadius: 0
 --- !u!114 &1619139406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1080,7 +1031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineConfiner2D
-  BoundingShape2D: {fileID: 1619139405}
+  BoundingShape2D: {fileID: 0}
   Damping: 0.5
   SlowingDistance: 5
   OversizeWindow:

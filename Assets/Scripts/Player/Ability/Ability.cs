@@ -8,9 +8,11 @@ public abstract class Ability : MonoBehaviour
     /// <summary>
     /// Used for UI in shops and stuff.
     /// Includes the name, description, and icon of the ability.
-    /// More fields may be added once ability leveling is implemented.
     /// </summary>
     public AbilityData Data;
+
+    [HideInInspector] public int ID;
+    
     [HideInInspector] public int Level;
     protected PlayerMovement PlayerMovement => Player.Instance.Movement;
     private AbilityInfo info;
@@ -19,12 +21,13 @@ public abstract class Ability : MonoBehaviour
 
     protected virtual void Awake()
     {
-
+        
     }
     
 
     public virtual void Start()
     {
+        Level = AbilitySceneTransfer.AbilityDataArray[ID].Level;
         if (AbilityManager.Instance.AbilityInfoParent == null) return;
         info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
             AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();

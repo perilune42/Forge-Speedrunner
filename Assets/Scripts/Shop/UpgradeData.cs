@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class UpgradeData : ScriptableObject
 {
     public string Name;
-    public int Cost;
+    public string Description;
     public Sprite Icon;
+    public int Cost;
 }

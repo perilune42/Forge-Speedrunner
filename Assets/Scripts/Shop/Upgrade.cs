@@ -4,7 +4,8 @@ using UnityEngine.UI;
 
 public class Upgrade : MonoBehaviour
 {
-    public UpgradeData Data;
+    private int index;
+    private UpgradeData data;
     public bool IsBought;
 
     public Image UpgradeImage;
@@ -14,27 +15,29 @@ public class Upgrade : MonoBehaviour
     {
         if (IsBought)
         {
-            Debug.Log($"Already bought {Data.Name}");
+            Debug.Log($"Already bought {data.Name}");
         }
-        else if (ShopManager.Instance.Money - Data.Cost < 0)
+        else if (ShopManager.Instance.Money - data.Cost < 0)
         {
-            Debug.Log($"Missing {Data.Cost - ShopManager.Instance.Money} money");
+            Debug.Log($"Missing {data.Cost - ShopManager.Instance.Money} money");
         }
         else
         {
-            ShopManager.Instance.Money -= Data.Cost;
+            ShopManager.Instance.Money -= data.Cost;
             ShopManager.Instance.UpdateMoney();
             CostText.text = "Bought";
             IsBought = true;
 
-            // TODO - Actual gameplay effects from buying upgrade (add player ability, modify player stats, etc.)
+            AbilitySceneTransfer.AbilityDataArray[index].Level++;
         }
     }
 
-    public void Init(UpgradeData data)
+    public void Init(int abilityIndex)
     {
-        Data = data;
-        UpgradeImage.sprite = data.Icon;
-        CostText.text = data.Name;
+        index = abilityIndex;
+        var abilityData = AbilitySceneTransfer.AbilityDataArray[abilityIndex];
+        this.data = abilityData.Upgrades[abilityData.Level];
+        UpgradeImage.sprite = this.data.Icon;
+        CostText.text = this.data.Name;
     }
 }

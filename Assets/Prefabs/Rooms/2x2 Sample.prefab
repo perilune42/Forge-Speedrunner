@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 5638565531142046237}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 52, z: 0}
+  m_LocalPosition: {x: -0.5, y: 54, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -81,7 +81,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 2.0000005}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -120,7 +120,7 @@ Transform:
   m_GameObject: {fileID: 6799267703036052510}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 128, y: 52, z: 0}
+  m_LocalPosition: {x: 128.5, y: 54, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -174,7 +174,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 2.0000005}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -213,7 +213,7 @@ Transform:
   m_GameObject: {fileID: 8246643318826462551}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 96, y: 0, z: 0}
+  m_LocalPosition: {x: 96, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -306,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 8306464299797432116}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 96, y: 72, z: 0}
+  m_LocalPosition: {x: 96, y: 72.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -382,11 +382,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1248727701836582279, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 72
+      value: 72.5
       objectReference: {fileID: 0}
     - target: {fileID: 1288256834093317551, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 128
+      value: 128.5
       objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: size.x

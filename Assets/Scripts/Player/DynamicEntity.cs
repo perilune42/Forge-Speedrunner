@@ -44,6 +44,7 @@ public class DynamicEntity : MonoBehaviour
     public bool GravityEnabled = true;
     public float GravityMultiplier = 1f;
     public bool CollisionsEnabled = true;
+    public bool Locked = false;
 
     public Action OnHitWallLeft, OnHitWallRight;
 
@@ -84,6 +85,7 @@ public class DynamicEntity : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         fdt = Time.deltaTime;
+        if (Locked) return;
 
         Fall();
         Vector2 movement = Velocity * fdt;

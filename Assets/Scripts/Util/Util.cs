@@ -12,6 +12,15 @@ public static class Util
         func?.Invoke();
     }
 
+    public static IEnumerator FDelayedCall(int frames, Action func)
+    {
+        for (int i = 0; i < frames; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        func?.Invoke();
+    }
+
     // onUpdate param: t (0 to 1)
     public static IEnumerator ContinuousCall(float time, Action<float> onUpdate, Action onEnd, bool fixedUpdate = false)
     {

@@ -92,21 +92,19 @@ public class RoomManager : Singleton<RoomManager>
         Vector2 preservedVelocity;
 
         // on up transitions, give player a boost
-        if (dir == Vector2.up)
+        const float upBoost = 1.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
         {
-            const float upBoost = 1.5f;
-            if (pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
-            {
-                pm.Velocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
-            }
+            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
         }
-        preservedVelocity = pm.Velocity;
+        else preservedVelocity = pm.Velocity;
 
 
         Vector2 relativePos;
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
-        if (door1.IsHorizontal())
+        if (door2.IsHorizontal())
         {
             relativePos = new Vector2(0, pm.transform.position.y - door1.transform.position.y);
         }
@@ -130,7 +128,10 @@ public class RoomManager : Singleton<RoomManager>
         previousDoorway = door1;
         activeRoom = door2.enclosingRoom;
 
-        // start doing things to the player here
+        /**
+         * start doing things to the player here
+         */
+
         PInput.Instance.EnableControls = false;
         pm.GravityEnabled = false;
         pm.EndJump(true);
@@ -189,4 +190,3 @@ public class RoomManager : Singleton<RoomManager>
         pm.GravityEnabled = true;
     }
 }
-

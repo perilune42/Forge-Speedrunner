@@ -9,6 +9,9 @@ public class RoomManager : Singleton<RoomManager>
 {
     public Room activeRoom;
 
+	private Doorway previousDoorway;
+	private Room previousRoom;
+
     public int BaseWidth = 64, BaseHeight = 36;
 
     public int TransitionWidth = 4;
@@ -120,6 +123,8 @@ public class RoomManager : Singleton<RoomManager>
 
         Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
 
+		previousRoom = activeRoom;
+		previousDoor = door1.enclosedRoom;
         activeRoom = door2.enclosingRoom;
         Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
         newPosition.z = Camera.main.transform.position.z;
@@ -178,6 +183,5 @@ public class RoomManager : Singleton<RoomManager>
         PInput.Instance.EnableControls = true;
         PInput.Instance.MoveInputOverrride = Vector2.zero;
         pm.GravityEnabled = true;
-
     }
 }

@@ -99,19 +99,28 @@ public class RoomManager : Singleton<RoomManager>
             preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
         }
         else preservedVelocity = pm.Velocity;
-
-
+        Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
+        previousRoom = activeRoom;
+        previousDoorway = door1;
+        activeRoom = door2.enclosingRoom;
+        return warpTo(door2, preservedVelocity, dir);
+    }
+    private IEnumerator warpTo(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
+    {
+        PlayerMovement pm = Player.Instance.Movement;
         Vector2 relativePos;
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
         if (door2.IsHorizontal())
         {
-            relativePos = new Vector2(0, pm.transform.position.y - door1.transform.position.y);
+            // relativePos = new Vector2(0, pm.transform.position.y - door1.transform.position.y);
         }
         else
         {
-            relativePos = new Vector2(pm.transform.position.x - door1.transform.position.x, 0);
+            // relativePos = new Vector2(pm.transform.position.x - door1.transform.position.x, 0);
         }
+        // TODO: fix this regression, using a different method
+        relativePos = new Vector2(0.0F, 0.0F);
 
         // calculate new player position
         Vector2 newPlayerPos = (Vector2)door2.transform.position + relativePos;
@@ -119,14 +128,6 @@ public class RoomManager : Singleton<RoomManager>
         // calculate camera position
         Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
         newPosition.z = Camera.main.transform.position.z;
-
-
-        Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
-
-
-        previousRoom = activeRoom;
-        previousDoorway = door1;
-        activeRoom = door2.enclosingRoom;
 
         /**
          * start doing things to the player here

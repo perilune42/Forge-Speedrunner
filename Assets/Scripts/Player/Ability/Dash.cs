@@ -29,8 +29,11 @@ public class Dash : Ability
     public override void Start()
     {
         base.Start();
-        
-        PlayerMovement.onJump += CancelDash;
+
+        PlayerMovement.onJump += () =>
+        {
+            CancelDash();
+        };
         playerSpriteRenderer = PlayerMovement.GetComponentInChildren<SpriteRenderer>();
     }
 
@@ -78,6 +81,8 @@ public class Dash : Ability
 
     public void CancelDash()
     {
+        if (!dashing) return;
+        PlayerMovement.SpecialState = SpecialState.Normal;
         dashing = false;
         PlayerMovement.GravityMultiplier = 1f;
         curDashDuration = 0;

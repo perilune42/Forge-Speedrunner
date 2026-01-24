@@ -9,8 +9,9 @@ public class GrappleHand : DynamicEntity
         OnHitWallAny += AttachToWall;
     }
 
-    private void AttachToWall()
+    private void AttachToWall(Entity entity)
     {
+        if (entity) transform.SetParent(entity.transform, true);
         Grapple.grappleState = GrappleState.Active;
         Velocity = Vector2.zero;
         CollisionsEnabled = false;

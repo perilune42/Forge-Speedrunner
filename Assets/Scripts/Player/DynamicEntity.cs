@@ -47,7 +47,7 @@ public class DynamicEntity : MonoBehaviour
     public bool Locked = false;
 
     public Action OnHitWallLeft, OnHitWallRight;
-    public Action OnHitWallAny;
+    public Action<Entity> OnHitWallAny;
 
     [Tooltip("The maximum fall velocity")]
     public float TerminalVelocity;
@@ -210,7 +210,7 @@ public class DynamicEntity : MonoBehaviour
                 move -= Util.Vec2Proj(move, normal);
                 Velocity -= Util.Vec2Proj(Velocity, normal);
                 
-                OnHitWallAny?.Invoke();
+                OnHitWallAny?.Invoke(hitEntity);
                 
                 if (!hitL && normal.x > 0)
                 {

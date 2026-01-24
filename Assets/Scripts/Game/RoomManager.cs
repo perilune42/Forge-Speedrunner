@@ -9,8 +9,8 @@ public class RoomManager : Singleton<RoomManager>
 {
     public Room activeRoom;
 
-	private Doorway previousDoorway;
-	private Room previousRoom;
+    private Doorway previousDoorway;
+    private Room previousRoom;
 
     public int BaseWidth = 64, BaseHeight = 36;
 
@@ -85,15 +85,15 @@ public class RoomManager : Singleton<RoomManager>
 
     private IEnumerator SwitchRoomCoroutine(Doorway door1, Doorway door2)
     {
-
         PlayerMovement pm = Player.Instance.Movement;
+
+        // calculate player velocity
         Vector2 dir = door1.GetTransitionDirection();
         Vector2 preservedVelocity;
 
         // on up transitions, give player a boost
         if (dir == Vector2.up)
         {
-            pm.GravityEnabled = false;
             const float upBoost = 1.5f;
             if (pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
             {
@@ -101,7 +101,6 @@ public class RoomManager : Singleton<RoomManager>
             }
         }
         preservedVelocity = pm.Velocity;
-        pm.EndJump(true);
 
 
         Vector2 relativePos;
@@ -115,22 +114,28 @@ public class RoomManager : Singleton<RoomManager>
         {
             relativePos = new Vector2(pm.transform.position.x - door1.transform.position.x, 0);
         }
-        pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
 
+        // calculate new player position
+        Vector2 newPlayerPos = (Vector2)door2.transform.position + relativePos;
 
+        // calculate camera position
+        Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
+        newPosition.z = Camera.main.transform.position.z;
 
-        // no moving player for now. but moving camera
 
         Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
 
-		previousRoom = activeRoom;
-		previousDoor = door1.enclosedRoom;
+
+        previousRoom = activeRoom;
+        previousDoorway = door1;
         activeRoom = door2.enclosingRoom;
-        Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
-        newPosition.z = Camera.main.transform.position.z;
-        Room room1 = door1.enclosingRoom;
-        Room room2 = door2.enclosingRoom;
+
+        // start doing things to the player here
         PInput.Instance.EnableControls = false;
+        pm.GravityEnabled = false;
+        pm.EndJump(true);
+        pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
+
         if (dir.y == 0)
         {
             PInput.Instance.MoveInputOverrride = dir;
@@ -147,7 +152,6 @@ public class RoomManager : Singleton<RoomManager>
             yield return new WaitForFixedUpdate();
         }
 
-
         // ** MOVE CAMERA HERE ** 
         Camera.main.transform.position = newPosition;
         // Switch confiner to the one in the new room
@@ -160,7 +164,7 @@ public class RoomManager : Singleton<RoomManager>
 
         // suppress target trigger to avoid transitioning back
         door2.SuppressNextTransition();
-        pm.transform.position = (Vector2)door2.transform.position + relativePos;
+        pm.transform.position = newPlayerPos;
         pm.Locked = false;
         pm.SpecialState = SpecialState.Normal;
         const float minTransitionSpeed = 8;
@@ -185,3 +189,4 @@ public class RoomManager : Singleton<RoomManager>
         pm.GravityEnabled = true;
     }
 }
+

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: GroundSlam2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   Name: Ground Slam
-  Description: Slam down while midair, and gain horizontal speed on landing.
-  Icon: {fileID: 21300000, guid: 2f9e6a91970594934ad671ed1fa55ee2, type: 3}
+  Description: Can now dash while slamming!
+  Icon: {fileID: 3030323586587504164, guid: 41593ef1efdcb305aabc581593963a49, type: 3}
   Cost: 5

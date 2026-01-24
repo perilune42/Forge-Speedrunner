@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   Name: Dash
   Description: Can dash diagonally as well!
-  Icon: {fileID: 21300000, guid: 2f9e6a91970594934ad671ed1fa55ee2, type: 3}
+  Icon: {fileID: 7778987244018203173, guid: 44fe9254adc1177c0a3b624382b0ab51, type: 3}
   Cost: 5

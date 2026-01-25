@@ -10,7 +10,7 @@ public class RoomManager : Singleton<RoomManager>
     public Room activeRoom;
 
     private Doorway previousDoorway;
-    private Room previousRoom;
+    private Vector2 relativePos = new Vector2(0.0F, 0.0F);
 
     // this should not be required.
     private Vector2 originalPosition;
@@ -36,7 +36,6 @@ public class RoomManager : Singleton<RoomManager>
             pass.door2.passage = pass;
         }
         originalPosition = Player.Instance.Movement.transform.position;
-
     }
 
     void Update()
@@ -98,7 +97,7 @@ public class RoomManager : Singleton<RoomManager>
             return;
         }
 
-        // come from the reverse direction this time.
+        // come from the reverse direction this time
         Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
 
         // no velocity for respawning
@@ -111,8 +110,7 @@ public class RoomManager : Singleton<RoomManager>
             preservedVelocity.y += pm.MovementParams.JumpSpeed * upBoost;
         }
 
-        Debug.Log($"Respawning in {previousDoorway}, room {previousRoom}. doorway is in {previousDoorway.enclosingRoom}, hopefully expected!");
-        activeRoom = previousRoom;
+        Debug.Log($"Respawning in {previousDoorway}. doorway is in {previousDoorway.enclosingRoom}, hopefully expected!");
         StartCoroutine(warpTo(previousDoorway, preservedVelocity, dir));
     }
 
@@ -133,15 +131,19 @@ public class RoomManager : Singleton<RoomManager>
         }
         else preservedVelocity = pm.Velocity;
         Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
-        previousRoom = activeRoom;
-        previousDoorway = door1;
+
+        // calculate relativePos, which is unavoidable
+        relativePos = pm.transform.position - door1.transform.position;
+
+        previousDoorway = door2;
         activeRoom = door2.enclosingRoom;
+
+
         return warpTo(door2, preservedVelocity, dir);
     }
     private IEnumerator warpTo(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
         PlayerMovement pm = Player.Instance.Movement;
-        Vector2 relativePos;
 
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
@@ -155,10 +157,12 @@ public class RoomManager : Singleton<RoomManager>
         //     relativePos = new Vector2(pm.transform.position.x - door2.transform.position.x, 0);
         // }
 
-        relativePos = new(0.0F,0.0F);
-
         // calculate new player position
-        Vector2 newPlayerPos = (Vector2)door2.transform.position + relativePos;
+        Vector2 newPlayerPos = (Vector2)door2.transform.position;
+        if (door2.IsHorizontal())
+            newPlayerPos.y += relativePos.y;
+        else
+            newPlayerPos.x += relativePos.x;
 
         // calculate camera position
         Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);

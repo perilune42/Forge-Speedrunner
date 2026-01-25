@@ -144,13 +144,13 @@ public class DynamicEntity : MonoBehaviour
 
         // prioritize entities over solids to avoid clipping
 
-        RaycastHit2D hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
-        if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
-        {
-            ResolveInitialCollisions(false);
-            origin = (Vector2)transform.position + SurfaceCollider.offset;
-        }
-        hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+        //RaycastHit2D hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
+        //if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
+        //{
+        //    ResolveInitialCollisions(false);
+        //    origin = (Vector2)transform.position + SurfaceCollider.offset;
+        //}
+        RaycastHit2D hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
         if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
         {
             ResolveInitialCollisions();

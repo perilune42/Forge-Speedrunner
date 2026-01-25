@@ -8,6 +8,7 @@ public class Bouncer : Entity
 
     public override void OnCollide(DynamicEntity de, Vector2 normal)
     {
+        base.OnCollide(de, normal);
         // bool slammed = false;
         if (de is PlayerMovement pm)
         {

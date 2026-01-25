@@ -22,6 +22,6 @@ public abstract class Entity : MonoBehaviour
     
 
     // normal = player pointing to entity surface
-    public abstract void OnCollide(DynamicEntity de, Vector2 normal);
+    public virtual void OnCollide(DynamicEntity de, Vector2 normal) { }
 
 }

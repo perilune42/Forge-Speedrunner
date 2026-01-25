@@ -109,18 +109,18 @@ public class RoomManager : Singleton<RoomManager>
     {
         PlayerMovement pm = Player.Instance.Movement;
         Vector2 relativePos;
+
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
+		// NOTE: if unaligned, this would probably throw player into a very weird position.
         if (door2.IsHorizontal())
         {
-            // relativePos = new Vector2(0, pm.transform.position.y - door1.transform.position.y);
+            relativePos = new Vector2(0, pm.transform.position.y - door2.transform.position.y);
         }
         else
         {
-            // relativePos = new Vector2(pm.transform.position.x - door1.transform.position.x, 0);
+            relativePos = new Vector2(pm.transform.position.x - door2.transform.position.x, 0);
         }
-        // TODO: fix this regression, using a different method
-        relativePos = new Vector2(0.0F, 0.0F);
 
         // calculate new player position
         Vector2 newPlayerPos = (Vector2)door2.transform.position + relativePos;

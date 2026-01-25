@@ -12,6 +12,9 @@ public class RoomManager : Singleton<RoomManager>
     private Doorway previousDoorway;
     private Room previousRoom;
 
+    // this should not be required.
+    private Vector2 originalPosition;
+
     public int BaseWidth = 64, BaseHeight = 36;
 
     public int TransitionWidth = 4;
@@ -32,6 +35,7 @@ public class RoomManager : Singleton<RoomManager>
             pass.door1.passage = pass;
             pass.door2.passage = pass;
         }
+        originalPosition = Player.Instance.Movement.transform.position;
 
     }
 
@@ -39,7 +43,9 @@ public class RoomManager : Singleton<RoomManager>
     {
         // switch rooms by arrow keys
         List<Doorway> doorways = null;
-        if (Input.GetKeyDown(KeyCode.UpArrow)) 
+        if(Input.GetKeyDown(KeyCode.R))
+            Respawn();
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) 
         {
             doorways = activeRoom.doorwaysUp;
         }
@@ -82,6 +88,26 @@ public class RoomManager : Singleton<RoomManager>
     {
         StartCoroutine(SwitchRoomCoroutine(door1, door2));
     }
+    public void Respawn()
+    {
+        PlayerMovement pm = Player.Instance.Movement;
+
+        // in this case, skip most of this. just teleport back to placement position
+        if (previousDoorway == null)
+        {
+            return;
+        }
+
+        // come from the reverse direction this time.
+        Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
+
+        // no velocity for respawning
+        Vector2 preservedVelocity = 1.0F * dir;
+
+        Debug.Log($"Respawning in {previousDoorway}, room {previousRoom}. doorway is in {previousDoorway.enclosingRoom}, hopefully expected!");
+        activeRoom = previousRoom;
+        StartCoroutine(warpTo(previousDoorway, preservedVelocity, dir));
+    }
 
     private IEnumerator SwitchRoomCoroutine(Doorway door1, Doorway door2)
     {
@@ -112,7 +138,7 @@ public class RoomManager : Singleton<RoomManager>
 
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
-		// NOTE: if unaligned, this would probably throw player into a very weird position.
+        // NOTE: if unaligned, this would probably throw player into a very weird position.
         if (door2.IsHorizontal())
         {
             relativePos = new Vector2(0, pm.transform.position.y - door2.transform.position.y);

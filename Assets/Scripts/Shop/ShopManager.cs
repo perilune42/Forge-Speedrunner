@@ -16,10 +16,11 @@ public class ShopManager : Singleton<ShopManager>
     {
         UpdateMoney();
 
-        foreach (UpgradeData upgrade in Upgrades)
+        foreach (AbilityData abilityData in AbilitySceneTransfer.AbilityDataArray)
         {
+            if (abilityData.Level >= abilityData.Upgrades.Length) continue; // upgrade is already max level
             GameObject newUpgrade = Instantiate(upgradePrefab, upgradeLayoutGroup);
-            newUpgrade.GetComponent<Upgrade>().Init(upgrade);
+            newUpgrade.GetComponent<Upgrade>().Init(abilityData.ID);
         }
     }
 

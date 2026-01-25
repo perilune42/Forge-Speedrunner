@@ -64,6 +64,7 @@ public class PlayerMovement : DynamicEntity
         FacingDir = Vector2.right;
     }
 
+
     protected override void Update()
     {
         base.Update();

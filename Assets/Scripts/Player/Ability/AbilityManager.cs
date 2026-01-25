@@ -1,24 +1,34 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AbilityManager : Singleton<AbilityManager>
 {
-   
-    public GameObject[] AbilityPrefabs;
+    
+    public AbilitySceneContainer[] Abilities;
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent;
     [SerializeField] private GameObject player;
     public PlayerMovement playerMovement;
     private List<Ability> playerAbilities;
-    private void Start()
+    
+    private new void Awake()
     {
+        base.Awake();
         playerAbilities = new();
+        if (!AbilitySceneTransfer.Initialized) Init();
         
-        GivePlayerAbility(AbilityID.Dash);
         
-        // only for testing the ground slam
-        GivePlayerAbility(AbilityID.GroundSlam);
+        GivePlayerAbilities();
+    }
+    
+    private void OnGUI()
+    {
+        if (GUILayout.Button("Go to shop"))
+        {
+            SceneManager.LoadScene("Shop");
+        }
     }
 
     /*private void Update()
@@ -26,10 +36,42 @@ public class AbilityManager : Singleton<AbilityManager>
         Debug.Log(pm == null);
     }*/
 
+    private void Init()
+    {
+        AbilitySceneTransfer.AbilityDataArray = new AbilityData[Abilities.Length];
+        for (int i = 0; i < Abilities.Length; i++)
+        {
+            Abilities[i].data.ID = i;
+            if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash) 
+                Abilities[i].data.Level = 1;
+            else Abilities[i].data.Level = 0;
+            AbilitySceneTransfer.AbilityDataArray[i] = Abilities[i].data;
+        }
+        AbilitySceneTransfer.Initialized = true;
+    }
+
+    private void GivePlayerAbilities()
+    {
+        foreach (Ability ability in playerAbilities)
+        {
+            Destroy(ability.gameObject);
+        }
+
+        foreach (AbilityData abilityData in AbilitySceneTransfer.AbilityDataArray)
+        {
+            if (abilityData.Level > 0)
+            {
+                GivePlayerAbility(abilityData.ID);
+            }
+        }
+}
+    
     public void GivePlayerAbility(int index)
     {
-        Ability ability = Instantiate(AbilityPrefabs[index], player.transform).GetComponent<Ability>();
+        Ability ability = Instantiate(Abilities[index].abilityPrefab, player.transform).GetComponent<Ability>();
         playerAbilities.Add(ability);
+        ability.Data = AbilitySceneTransfer.AbilityDataArray[index];
+        ability.ID = index;
     }
 
     public T GetAbility<T>() where T : Ability
@@ -43,8 +85,15 @@ public class AbilityManager : Singleton<AbilityManager>
     }
 }
 
-public class AbilityID
+[System.Serializable]
+public struct AbilitySceneContainer
 {
-    public const int Dash = 0;
-    public const int GroundSlam = 1;
+    public GameObject abilityPrefab;
+    public AbilityData data;
+}
+
+public enum AbilityType 
+{
+    Dash,
+    GroundSlam,
 }

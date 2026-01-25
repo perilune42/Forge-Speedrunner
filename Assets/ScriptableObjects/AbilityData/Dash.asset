@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e1703e4db60ae329daecb721fc074d, type: 3}
   m_Name: Dash
   m_EditorClassIdentifier: Assembly-CSharp::AbilityData
-  Name: Dash
-  Description: Press LSHIFT+Move to dash!
-  Icon: {fileID: 21300000, guid: 2f9e6a91970594934ad671ed1fa55ee2, type: 3}
+  ID: 0
+  Level: 2
+  Upgrades:
+  - {fileID: 11400000, guid: 6dc3d0af5e5678f8caea318c211b918d, type: 2}
+  - {fileID: 11400000, guid: 7c2990c010ee31af48550a36d06eaedb, type: 2}

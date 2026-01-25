@@ -9,7 +9,7 @@ public class AbilityInfo : MonoBehaviour
     
     private void Start()
     {
-        icon.sprite = Ability.Data.Icon;
+        icon.sprite = Ability.Data.Upgrades[Ability.Level - 1].Icon;
     }
 
     private void Update()

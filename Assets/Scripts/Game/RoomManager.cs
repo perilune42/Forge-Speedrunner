@@ -104,6 +104,13 @@ public class RoomManager : Singleton<RoomManager>
         // no velocity for respawning
         Vector2 preservedVelocity = 1.0F * dir;
 
+        const float upBoost = 1.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
+        {
+            preservedVelocity.y += pm.MovementParams.JumpSpeed * upBoost;
+        }
+
         Debug.Log($"Respawning in {previousDoorway}, room {previousRoom}. doorway is in {previousDoorway.enclosingRoom}, hopefully expected!");
         activeRoom = previousRoom;
         StartCoroutine(warpTo(previousDoorway, preservedVelocity, dir));
@@ -138,15 +145,17 @@ public class RoomManager : Singleton<RoomManager>
 
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
-        // NOTE: if unaligned, this would probably throw player into a very weird position.
-        if (door2.IsHorizontal())
-        {
-            relativePos = new Vector2(0, pm.transform.position.y - door2.transform.position.y);
-        }
-        else
-        {
-            relativePos = new Vector2(pm.transform.position.x - door2.transform.position.x, 0);
-        }
+        // NOTE: the code below works every time for switchroom, but for respawning it is problematic.
+        // if (door2.IsHorizontal())
+        // {
+        //     relativePos = new Vector2(0, pm.transform.position.y - door2.transform.position.y);
+        // }
+        // else
+        // {
+        //     relativePos = new Vector2(pm.transform.position.x - door2.transform.position.x, 0);
+        // }
+
+        relativePos = new(0.0F,0.0F);
 
         // calculate new player position
         Vector2 newPlayerPos = (Vector2)door2.transform.position + relativePos;

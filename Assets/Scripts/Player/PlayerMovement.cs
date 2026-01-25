@@ -311,8 +311,19 @@ public class PlayerMovement : DynamicEntity
         if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash && SpecialState != SpecialState.WallClimb) return false;
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 0.5f * PlayerHeight);
         Vector2 size = new(PlayerWidth, PlayerHeight);
-        RaycastHit2D wallHit = Physics2D.BoxCast(origin, size, 0f, dir, COLLISION_CHECK_DISTANCE * 2, collisionLayer);
-        return IsTouching(dir) && wallHit.collider != null && wallHit.collider.GetComponent<ClimbableWall>() != null;
+        RaycastHit2D[] hits = new RaycastHit2D[8];
+        ContactFilter2D contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(collisionLayer);
+        int hitCount = Physics2D.BoxCast(origin, size, 0f, dir, contactFilter, hits, COLLISION_CHECK_DISTANCE * 2);
+        for (int i = 0; i < hitCount; i++)
+        {
+            RaycastHit2D wallHit = hits[i];
+            if (wallHit.collider.GetComponent<ClimbableWall>() != null)
+            {
+                return IsTouching(dir);
+            }
+        }
+        return false;
     }
 
     private bool IsInputtingWallClimb(Vector2 dir)
@@ -375,9 +386,9 @@ public class PlayerMovement : DynamicEntity
     private float GetLedgeHeight(Vector2 dir)
     {
         // start a boxcast upwards and to either the left and right of the player, pointing downwards
-        Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight);
+        Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight - PlayerHeight * 0.45f) ;
         Vector2 origin = (Vector2)transform.position + offset;
-        Vector2 size = new (PlayerWidth, PlayerHeight);
+        Vector2 size = new (PlayerWidth, PlayerHeight * 0.1f);
         RaycastHit2D groundHit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, PlayerHeight * 4, collisionLayer);
 
 

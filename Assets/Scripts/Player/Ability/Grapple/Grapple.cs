@@ -8,8 +8,7 @@ public class Grapple : Ability
     public float LaunchSpeed;
     [SerializeField] private GameObject GrappleHandPrefab;
     [SerializeField] private GameObject GrappleArrowPrefab;
-    [SerializeField] private int cooldown, pullCooldown;
-    private int curCooldown;
+    [SerializeField] private int pullCooldown;
     private GrappleHand grappleHand;
     private GameObject grappleArrow;
     [HideInInspector] public bool GrappleHandActive;
@@ -24,8 +23,9 @@ public class Grapple : Ability
         grappleState = GrappleState.Idle;
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
+        base.FixedUpdate();
         if (curCooldown > 0) curCooldown--;
         if (PInput.Instance.Grapple.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
 
@@ -51,14 +51,16 @@ public class Grapple : Ability
     {
         if (PlayerMovement.SpecialState == SpecialState.GroundSlam &&
             grappleState == GrappleState.Active) return false;
-        return (grappleState != GrappleState.Launch);
+        return (grappleState == GrappleState.Active) || base.CanUseAbility() && (grappleState != GrappleState.Launch);
     }
 
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
+        
         if (grappleState == GrappleState.Idle)
         {
+            base.UseAbility();  // only use charge on initial throw
             grappleHand = Instantiate(GrappleHandPrefab, PlayerMovement.transform.position, Quaternion.identity)
                 .GetComponent<GrappleHand>();
             grappleHand.Grapple = this;
@@ -72,7 +74,7 @@ public class Grapple : Ability
             if (Level == 1) LaunchPlayer(PullStrength);
             else charging = true;
         }
-
+        
         return true;
     }
 
@@ -88,7 +90,11 @@ public class Grapple : Ability
         grappleState = GrappleState.Idle;
         Destroy(grappleHand.gameObject);
         Destroy(grappleArrow);
-        curCooldown = cooldown;
+        if (!UsesCharges)
+        {
+            curCooldown = cooldown;
+        }
+        
     }
     
     public void CreateGrappleArrow()

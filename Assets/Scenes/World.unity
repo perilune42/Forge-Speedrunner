@@ -12084,6 +12084,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1229977843}
     - target: {fileID: 4779429881745596453, guid: d51f7f5f62a015eafb13003ef37a2aa8, type: 3}
+      propertyPath: giveAllAbilities
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4779429881745596453, guid: d51f7f5f62a015eafb13003ef37a2aa8, type: 3}
       propertyPath: AbilityInfoParent
       value: 
       objectReference: {fileID: 2131718882}
@@ -12091,6 +12095,10 @@ PrefabInstance:
       propertyPath: AbilityInfoPrefab
       value: 
       objectReference: {fileID: 8602407494200756791, guid: 36ebc7ac753a4c97087b1c7e23fb865d, type: 3}
+    - target: {fileID: 4779429881745596453, guid: d51f7f5f62a015eafb13003ef37a2aa8, type: 3}
+      propertyPath: allAbilitiesAreCharged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4779429881745596453, guid: d51f7f5f62a015eafb13003ef37a2aa8, type: 3}
       propertyPath: 'AbilityPrefabs.Array.data[0]'
       value: 

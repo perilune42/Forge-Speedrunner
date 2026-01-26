@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e1703e4db60ae329daecb721fc074d, type: 3}
   m_Name: Grapple
   m_EditorClassIdentifier: Assembly-CSharp::AbilityData
-  ID: 1
-  Level: 2
+  ID: 2
+  Level: 0
   Upgrades:
-  - {fileID: 11400000, guid: 7672d89faa41a2df0aeeadcd19687c84, type: 2}
-  - {fileID: 11400000, guid: bd518dc0b71dbaa83973690051299010, type: 2}
+  - {fileID: 11400000, guid: d7bc62cc42db0d3c0910d36c203191fb, type: 2}
+  - {fileID: 11400000, guid: 9134dbc839d0cf0499a7fad811ba8fd3, type: 2}

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bouncer : Entity
@@ -9,6 +10,8 @@ public class Bouncer : Entity
 
     private const int bounceCooldown = 12;
     private int currCooldown = 0;
+
+    [SerializeField] private List<AudioClip> audioClips;
 
     private void FixedUpdate()
     {
@@ -44,5 +47,7 @@ public class Bouncer : Entity
             if (bounceDirection == PDir.Up) de.OnAirborne();
         }
         currCooldown = bounceCooldown;
+
+        AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);
     }
 }

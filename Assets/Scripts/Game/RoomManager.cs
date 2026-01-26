@@ -14,8 +14,10 @@ public class RoomManager : Singleton<RoomManager>
     public int TransitionWidth = 4;
     public int TransitionFadeFrames = 20; // per side of room
 
+    // we should move these prefabs out of here...
     public BoxCollider2D GuideRailPrefab;
     public BoxCollider2D FreezeTriggerPrefab;
+    public BoxCollider2D BlockerHorzPrefab, BlockerVertPrefab;
 
     public List<Room> AllRooms = new();
 

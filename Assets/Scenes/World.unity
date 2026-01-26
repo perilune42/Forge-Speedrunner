@@ -130,6 +130,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!4 &305461717 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6802834736074001917, guid: 60837dc2737d09d48804d66ca017398c, type: 3}
+  m_PrefabInstance: {fileID: 807701005}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +414,10 @@ PrefabInstance:
       objectReference: {fileID: 919778104}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6802834736074001917, guid: 60837dc2737d09d48804d66ca017398c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1222893055}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60837dc2737d09d48804d66ca017398c, type: 3}
 --- !u!1001 &876636398
@@ -805,6 +813,68 @@ Sprite:
   m_Bones: []
   m_ScriptableObjects: []
   m_SpriteID: 
+--- !u!1001 &1222893054
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 305461717}
+    m_Modifications:
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 23.94735
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.550849
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6611483396210871885, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+      propertyPath: m_Name
+      value: Game End Trigger
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+--- !u!4 &1222893055 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2603395020145842131, guid: 35e8a6874cae17d418cd55e9cfbed1fd, type: 3}
+  m_PrefabInstance: {fileID: 1222893054}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1229977841
 PrefabInstance:
   m_ObjectHideFlags: 0

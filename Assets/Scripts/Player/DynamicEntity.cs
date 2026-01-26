@@ -149,7 +149,6 @@ public class DynamicEntity : MonoBehaviour
         hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
         if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
         {
-            Debug.Log("clipping outside of entity");
             Entity hitEntity = hit.collider.GetComponent<Entity>();
             if (hitEntity != null && hitEntity.StrictCollisions)
             {

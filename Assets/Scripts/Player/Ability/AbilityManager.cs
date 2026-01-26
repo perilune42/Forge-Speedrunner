@@ -51,8 +51,7 @@ public class AbilityManager : Singleton<AbilityManager>
         for (int i = 0; i < Abilities.Length; i++)
         {
             Abilities[i].data.ID = i;
-            if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash
-                || Abilities[i].abilityPrefab.GetComponent<Ability>() is Grapple) 
+            if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash) 
                 Abilities[i].data.Level = 1;
             else Abilities[i].data.Level = 0;
             AbilitySceneTransfer.AbilityDataArray[i] = Abilities[i].data;

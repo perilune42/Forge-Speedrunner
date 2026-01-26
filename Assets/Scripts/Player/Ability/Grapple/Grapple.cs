@@ -71,7 +71,6 @@ public class Grapple : Ability
         {
             if (Level == 1) LaunchPlayer(PullStrength);
             else charging = true;
-            Debug.Log(charging);
         }
 
         return true;

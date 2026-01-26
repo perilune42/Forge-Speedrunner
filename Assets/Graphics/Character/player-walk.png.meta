@@ -87,7 +87,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 10
+  spritePixelsToUnits: 325
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -145,6 +145,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -153,18 +166,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1536
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        y: 2976
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4299dfa4873acf94aa146ac6bcbe61bf
+      spriteID: 307fdc37719bc124084eb26659df06a6
       internalID: -1990016124
       vertices: []
       indices: 
@@ -174,19 +187,19 @@ TextureImporter:
       name: player-walk_1
       rect:
         serializedVersion: 2
-        x: 512
-        y: 1536
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 992
+        y: 2976
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c18f39b5ff5fc1e46ab9e2d56f88e448
+      spriteID: 8b2905f9aadbf574db82aad96f936a28
       internalID: -257167473
       vertices: []
       indices: 
@@ -196,19 +209,19 @@ TextureImporter:
       name: player-walk_2
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1536
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 1984
+        y: 2976
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2f84554e6baba0c40a32394a6fdb988a
+      spriteID: a931f5aa870980d48af8ddcea13c5e24
       internalID: -926650113
       vertices: []
       indices: 
@@ -218,19 +231,19 @@ TextureImporter:
       name: player-walk_3
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 1536
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 2976
+        y: 2976
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4ad967fdcc03f0a42bb2a3bdcf55d405
+      spriteID: 11eb621dcb13f474da3f191c2bd01cdb
       internalID: -1713353613
       vertices: []
       indices: 
@@ -241,18 +254,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1024
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        y: 1984
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6fec158024fab0a46b5219e08ce01753
+      spriteID: 647850777390e7c4fab247332039d994
       internalID: 1299384175
       vertices: []
       indices: 
@@ -262,19 +275,19 @@ TextureImporter:
       name: player-walk_5
       rect:
         serializedVersion: 2
-        x: 512
-        y: 1024
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 992
+        y: 1984
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dca754dcdbc025147b809b4a482b1fd7
+      spriteID: 1bbdf53eb7fa07944b2dc26267bcd40e
       internalID: 417348718
       vertices: []
       indices: 
@@ -284,19 +297,19 @@ TextureImporter:
       name: player-walk_6
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1024
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 1984
+        y: 1984
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b90253298211cb84992fcf1331ef851f
+      spriteID: 935d0e3568bec0e41bdf4103f7c3a1a2
       internalID: 1709418818
       vertices: []
       indices: 
@@ -306,19 +319,19 @@ TextureImporter:
       name: player-walk_7
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 1024
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 2976
+        y: 1984
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1652bf2296f441b4b9ab70ed1b52d19b
+      spriteID: e8bafbcf2d9e83d4faa6f400a501a463
       internalID: 2014309176
       vertices: []
       indices: 
@@ -329,18 +342,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        y: 992
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ea1adcf578d56ac44bc847dd2bb0ff24
+      spriteID: 6aaf60f860a96a243b2626a29ac16a81
       internalID: -1021340941
       vertices: []
       indices: 
@@ -350,19 +363,19 @@ TextureImporter:
       name: player-walk_9
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 992
+        y: 992
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 16383c7b1b319d0468b16e3f2d02ef13
+      spriteID: 43c71ad51415db44d834022978f8edb8
       internalID: 169873304
       vertices: []
       indices: 
@@ -372,19 +385,19 @@ TextureImporter:
       name: player-walk_10
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 1984
+        y: 992
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cc9fbdda67f9fd44cb03de3072efc5c7
+      spriteID: 780b579877b480b4fa1e0b1ce52a2a4e
       internalID: 1475599287
       vertices: []
       indices: 
@@ -394,19 +407,19 @@ TextureImporter:
       name: player-walk_11
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 2976
+        y: 992
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 35d8c90ca91ab884598d1203b5928c9d
+      spriteID: c4b19b5b5ce081646a78bf04aa970e04
       internalID: 1617304534
       vertices: []
       indices: 
@@ -418,17 +431,17 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 992
+        height: 992
+      alignment: 9
+      pivot: {x: 0.45, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 30b324d20e2c002429d40a609bd364de
+      spriteID: b7ed7f1700c4b5042b1aad876697ee0d
       internalID: 35653753
       vertices: []
       indices: 
@@ -448,9 +461,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceOnImport
-        value: True
+        value: False
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":992.0,"y":992.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":992.0,"y":992.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.44999998807907107,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":9,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       player-walk_0: -1990016124
       player-walk_1: -257167473

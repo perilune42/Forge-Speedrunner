@@ -5,9 +5,20 @@ public class Bouncer : Entity
     [SerializeField] private PDir bounceDirection;
     [SerializeField] private float bounceSpeed;
     public override bool IsSolid => false;
+    public override bool StrictCollisions => true;
+
+    private const int bounceCooldown = 12;
+    private int currCooldown = 0;
+
+    private void FixedUpdate()
+    {
+        if (currCooldown > 0) currCooldown--;
+    }
 
     public override void OnCollide(DynamicEntity de, Vector2 normal)
     {
+        base.OnCollide(de, normal);
+        if (currCooldown > 0) return;
         // bool slammed = false;
         if (de is PlayerMovement pm)
         {
@@ -32,5 +43,6 @@ public class Bouncer : Entity
             de.Velocity.y = Util.PDir2Vec(bounceDirection).y * bounceSpeed;
             if (bounceDirection == PDir.Up) de.OnAirborne();
         }
+        currCooldown = bounceCooldown;
     }
 }

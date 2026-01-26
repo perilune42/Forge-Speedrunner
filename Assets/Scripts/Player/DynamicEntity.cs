@@ -145,11 +145,17 @@ public class DynamicEntity : MonoBehaviour
 
         // prioritize entities over solids to avoid clipping
 
-        RaycastHit2D hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
+        RaycastHit2D hit;
+
+        hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
         if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
         {
-            ResolveInitialCollisions(false);
-            origin = (Vector2)transform.position + SurfaceCollider.offset;
+            Entity hitEntity = hit.collider.GetComponent<Entity>();
+            if (hitEntity != null && hitEntity.StrictCollisions)
+            {
+                ResolveInitialCollisions(false);
+                origin = (Vector2)transform.position + SurfaceCollider.offset;
+            }
         }
         hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
         if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
@@ -191,7 +197,8 @@ public class DynamicEntity : MonoBehaviour
                 if (!collidingEntities.Contains(hitEntity))
                 {
                     collidingEntities.Add(hitEntity);
-                    toCollide.Add(new(hitEntity, hit.normal));
+                    hitEntity.OnCollide(this, hit.normal);
+                    move = Velocity * fdt;  // velocity may have been altered by entity interaction
                 }
                 stillTouchingEntity[hitEntity] = true;
                 if (!hitEntity.IsSolid)
@@ -256,10 +263,10 @@ public class DynamicEntity : MonoBehaviour
 
         }
         // resolve entity collisions now
-        foreach (var colData in toCollide)
-        {
-            colData.Item1.OnCollide(this, colData.Item2);
-        }
+        //foreach (var colData in toCollide)
+        //{
+        //    colData.Item1.OnCollide(this, colData.Item2);
+        //}
 
         // prune entities that we have stopped colliding with
         for (int i = collidingEntities.Count - 1; i >= 0; i--) 

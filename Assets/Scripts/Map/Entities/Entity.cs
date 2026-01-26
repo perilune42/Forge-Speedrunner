@@ -5,6 +5,7 @@ public abstract class Entity : MonoBehaviour
     [HideInInspector] public Collider2D Hitbox;
 
     public abstract bool IsSolid { get; }
+    public virtual bool StrictCollisions => false;
     protected virtual void Awake()
     {
         Hitbox = GetComponent<Collider2D>();
@@ -22,6 +23,6 @@ public abstract class Entity : MonoBehaviour
     
 
     // normal = player pointing to entity surface
-    public abstract void OnCollide(DynamicEntity de, Vector2 normal);
+    public virtual void OnCollide(DynamicEntity de, Vector2 normal) { }
 
 }

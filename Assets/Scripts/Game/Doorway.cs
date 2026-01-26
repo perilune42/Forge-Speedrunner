@@ -11,6 +11,7 @@ public class Doorway : MonoBehaviour
     {
         enclosingRoom = GetComponentInParent<Room>();
         GenerateGuideRails();
+        GenerateBlocker();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -65,5 +66,23 @@ public class Doorway : MonoBehaviour
         freezeTrigger.transform.localPosition = Vector2.zero;
         freezeTrigger.size = Vector2.one + 3 * new Vector2(Mathf.Abs(dir.y), Mathf.Abs(dir.x));
         freezeTrigger.offset = dir * 2;
+    }
+
+    private void GenerateBlocker()
+    {
+        if (passage == null)
+        {
+            BoxCollider2D blocker;
+            if (IsHorizontal())
+            {
+                blocker = Instantiate(RoomManager.Instance.BlockerHorzPrefab);
+            }
+            else
+            {
+                blocker = Instantiate(RoomManager.Instance.BlockerVertPrefab);
+            }
+            blocker.transform.SetParent(transform, false);
+            blocker.transform.position = transform.position - (Vector3)GetTransitionDirection();
+        }
     }
 }

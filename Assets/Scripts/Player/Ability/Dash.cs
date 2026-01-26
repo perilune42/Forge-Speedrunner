@@ -6,11 +6,9 @@ using UnityEngine.InputSystem;
 
 public class Dash : Ability
 {
-
-
     private bool canDash;
-    [SerializeField] private int cooldown, dashDuration;
-    private int curCooldown, curDashDuration;
+    [SerializeField] private int dashDuration;
+    private int curDashDuration;
     [SerializeField] private float dashVelocity;
     public bool CanDiagonalDash; // set to false, when you upgrade, it becomes true
     private Vector2 dashVelocityVec;
@@ -42,14 +40,15 @@ public class Dash : Ability
 
     
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
+        base.FixedUpdate();
         if (PlayerMovement == null)
         {
             return;
         }
         if (PlayerMovement.State == BodyState.OnGround) canDash = true;
-        if (curCooldown > 0) curCooldown--;
+        
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             PlayerMovement.Velocity = dashVelocityVec;
@@ -76,7 +75,7 @@ public class Dash : Ability
 
     public override bool CanUseAbility()
     {
-        return canDash;
+        return base.CanUseAbility() && canDash;
     }
 
     public void CancelDash()

@@ -14,6 +14,14 @@ public abstract class Ability : MonoBehaviour
     [HideInInspector] public int ID;
     
     [HideInInspector] public int Level;
+
+    [HideInInspector] public int CurCharges;
+    [HideInInspector] public int MaxCharges;
+    public bool UsesCharges = false;
+
+    [SerializeField] protected int cooldown;
+    protected int curCooldown;
+
     protected PlayerMovement PlayerMovement => Player.Instance.Movement;
     private AbilityInfo info;
 
@@ -32,6 +40,12 @@ public abstract class Ability : MonoBehaviour
         info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
             AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
         info.Ability = this;
+        
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        if (curCooldown > 0) curCooldown--;
     }
 
     
@@ -39,15 +53,37 @@ public abstract class Ability : MonoBehaviour
     /// Cooldown for this ability, as a float between 0.0 and 1.0
     /// <para> If ability is available, this should return 1.0 </para>
     /// </summary>
-    public abstract float GetCooldown();
+    public virtual float GetCooldown()
+    {
+        return ((float)(cooldown - curCooldown)) / cooldown;
+    }
 
     /// <summary>
     /// Whether this ability is available, regardless of cooldown
     /// </summary>
-    public abstract bool CanUseAbility();
+    public virtual bool CanUseAbility()
+    {
+        if (UsesCharges)
+        {
+            return CurCharges > 0;
+        }
+        else
+        {
+            return curCooldown == 0;
+        }
+            
+    }
     
     public virtual bool UseAbility()
     {
+        if (UsesCharges)
+        {
+            CurCharges--;
+        }
+        else
+        {
+            curCooldown = cooldown;
+        }
         OnActivate?.Invoke();
         return false;
     }

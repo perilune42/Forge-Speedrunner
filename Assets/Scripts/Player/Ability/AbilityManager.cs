@@ -81,6 +81,13 @@ public class AbilityManager : Singleton<AbilityManager>
         playerAbilities.Add(ability);
         ability.Data = AbilitySceneTransfer.AbilityDataArray[index];
         ability.ID = index;
+        if (ability.Data.UsesCharges)
+        {
+            ability.UsesCharges = true;
+            ability.MaxCharges = ability.Data.MaxCharges;
+            ability.CurCharges = ability.MaxCharges;
+        }
+        
     }
 
     public T GetAbility<T>() where T : Ability

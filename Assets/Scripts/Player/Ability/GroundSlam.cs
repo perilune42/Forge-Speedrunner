@@ -9,7 +9,10 @@ public class GroundSlam : Ability
     [SerializeField] private float initialVelocity;
     private int rampUpTime;
     [SerializeField] private float rampUpAcceleration;
+
     [SerializeField] private float heightConversion;
+
+    public bool wasSlammingBeforeDash;
 
     public override void Start()
     {
@@ -23,12 +26,26 @@ public class GroundSlam : Ability
 
     private void FixedUpdate()
     {
+        // thanh new part
         if (curCooldown > 0) curCooldown--;
-        if (PlayerMovement.SpecialState == SpecialState.GroundSlam)
+
+        // check if we are mid dash while slamming so that we can keep adding rampUpTime when we are dashing
+        bool isMidDashWhileSlamming = false;
+        if (wasSlammingBeforeDash && PlayerMovement.SpecialState == SpecialState.Dash)
+        {
+            isMidDashWhileSlamming = true;
+        }
+
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam || isMidDashWhileSlamming)
         {
             rampUpTime++;
-            PlayerMovement.Velocity += Vector2.down * rampUpAcceleration;
+            // If we are currently dashing, then don't apply slam velocity down yet
+            if (PlayerMovement.SpecialState == SpecialState.GroundSlam)
+            {
+                PlayerMovement.Velocity += Vector2.down * rampUpAcceleration;
+            }
         }
+        // thanh new part
         if (PInput.Instance.GroundSlam.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
     }
 
@@ -46,7 +63,7 @@ public class GroundSlam : Ability
         rampUpTime = 0;
         return true;
     }
-    
+
     public override bool CanUseAbility()
     {
         if (PlayerMovement.SpecialState == SpecialState.GroundSlam) return false;
@@ -60,6 +77,6 @@ public class GroundSlam : Ability
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion);
         PlayerMovement.SpecialState = SpecialState.Normal;
     }
-    
-    
+
+
 }

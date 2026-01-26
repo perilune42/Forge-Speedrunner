@@ -40,7 +40,7 @@ public class Dash : Ability
     private bool dashing;
 
 
-    
+
 
     private void FixedUpdate()
     {
@@ -65,7 +65,7 @@ public class Dash : Ability
         if (PInput.Instance.Dash.HasPressed)
         {
             UseAbility();
-            
+
         }
     }
 
@@ -82,16 +82,53 @@ public class Dash : Ability
     public void CancelDash()
     {
         if (!dashing) return;
-        PlayerMovement.SpecialState = SpecialState.Normal;
+
+        // thanh new part
+        // when we are done with dashing, check if we were groundslamming before the dash
+        // if we were, go back to the groundslam state so we can keep slamming
+        GroundSlam slam = AbilityManager.Instance.GetAbility<GroundSlam>();
+        if (slam != null && slam.wasSlammingBeforeDash)
+        {
+            PlayerMovement.SpecialState = SpecialState.GroundSlam;
+            slam.wasSlammingBeforeDash = false;
+        }
+        else
+        {
+            // if we weren't groundslamming, this is a normal dash, so go back to normal state
+            PlayerMovement.SpecialState = SpecialState.Normal;
+        }
+        // thanh new part
+
         dashing = false;
         PlayerMovement.GravityMultiplier = 1f;
         curDashDuration = 0;
         particle.Stop();
     }
-     
+
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
+
+        // thanh new part
+        // Grabs the slam instance and check if we are currently groundslamming
+        GroundSlam slam = AbilityManager.Instance.GetAbility<GroundSlam>();
+        if (slam != null)
+        {
+            // if groundslam is level 1 and we are groundslamming, we cannot dash
+            if (PlayerMovement.SpecialState == SpecialState.GroundSlam && slam.Data.Level == 1)
+            {
+                return false;
+            }
+
+            // check if we are currently groundslamming and groundSlam is level 2
+            // if so, we set the flag of wasSlammingBeforeDash to true
+            if (PlayerMovement.SpecialState == SpecialState.GroundSlam && slam.Data.Level >= 2)
+            {
+                slam.wasSlammingBeforeDash = true;
+            }
+        }
+        // thanh new part
+
         PInput.Instance.Dash.ConsumeBuffer();
         // dash overrides forcemove
         PlayerMovement.EndForceMove();
@@ -102,7 +139,7 @@ public class Dash : Ability
             dashVec = PlayerMovement.FacingDir;
         }
         // interpret up/down inputs as diagonal, if possible
-        if (dashVec == Vector2.up || dashVec == Vector2.down) 
+        if (dashVec == Vector2.up || dashVec == Vector2.down)
         {
             dashVec.x = PlayerMovement.FacingDir.x;
         }
@@ -114,7 +151,7 @@ public class Dash : Ability
         curDashDuration = dashDuration;
         dashing = true;
         // particle effects
-        
+
         PlayerMovement.SpecialState = SpecialState.Dash;
         particle.Play();
         particleMaterials[0].mainTexture = playerSpriteRenderer.sprite.texture;
@@ -122,7 +159,7 @@ public class Dash : Ability
         particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
 
         base.UseAbility();
-        
+
         return true;
     }
 

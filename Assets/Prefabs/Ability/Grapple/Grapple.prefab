@@ -47,7 +47,7 @@ MonoBehaviour:
   Data: {fileID: 0}
   ID: 0
   Level: 0
-  PullStrength: 50
+  PullStrength: 25
   LaunchSpeed: 50
   GrappleHandPrefab: {fileID: 5129970327230217228, guid: 794a165b42fee426c8df542e3de23a4c, type: 3}
   GrappleArrowPrefab: {fileID: 8032734590852053490, guid: b78737686d50b8b2db44777a1cb38bd3, type: 3}
@@ -55,3 +55,5 @@ MonoBehaviour:
   pullCooldown: 30
   GrappleHandActive: 0
   grappleState: 0
+  chargePerTick: 0.01
+  maxCharge: 200

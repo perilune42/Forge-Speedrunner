@@ -14,7 +14,10 @@ public class Grapple : Ability
     private GameObject grappleArrow;
     [HideInInspector] public bool GrappleHandActive;
     public GrappleState grappleState;
-
+    private bool charging = false;
+    private int chargeTime = 0;
+    [SerializeField] private float chargePerTick;
+    [SerializeField] private int maxCharge;
     public override void Start()
     {
         base.Start();
@@ -25,6 +28,18 @@ public class Grapple : Ability
     {
         if (curCooldown > 0) curCooldown--;
         if (PInput.Instance.Grapple.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
+
+        if (charging)
+        {
+            chargeTime++;
+            grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
+            if (chargeTime >= maxCharge || PInput.Instance.Grapple.StoppedPressing)
+            {
+                LaunchPlayer(PullStrength * (1f + chargeTime * chargePerTick));
+                chargeTime = 0;
+            }
+        }
+        
     }
 
     public override float GetCooldown()
@@ -54,20 +69,27 @@ public class Grapple : Ability
         }
         else if (grappleState == GrappleState.Active)
         {
-            if (PlayerMovement.SpecialState == SpecialState.Dash)
-            {
-                AbilityManager.Instance.GetAbility<Dash>().CancelDash();
-            }
-            Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
-            PlayerMovement.Velocity = direction * PullStrength;
-
-            grappleState = GrappleState.Idle;
-            Destroy(grappleHand.gameObject);
-            Destroy(grappleArrow);
-            curCooldown = cooldown;
+            if (Level == 1) LaunchPlayer(PullStrength);
+            else charging = true;
+            Debug.Log(charging);
         }
 
         return true;
+    }
+
+    private void LaunchPlayer(float launchVelocity)
+    {
+        if (PlayerMovement.SpecialState == SpecialState.Dash)
+        {
+            AbilityManager.Instance.GetAbility<Dash>().CancelDash();
+        }
+        Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
+        PlayerMovement.Velocity = direction * launchVelocity;
+        charging = false;
+        grappleState = GrappleState.Idle;
+        Destroy(grappleHand.gameObject);
+        Destroy(grappleArrow);
+        curCooldown = cooldown;
     }
     
     public void CreateGrappleArrow()

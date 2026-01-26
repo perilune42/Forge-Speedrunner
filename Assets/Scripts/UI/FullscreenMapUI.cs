@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -12,8 +13,11 @@ public class FullscreenMapUI : MonoBehaviour
     private int height;
     private float maxPosXY;
     private float minResXY;
-    
+    private Passage[] allPassages;
+
+    [SerializeField] private Vector2Int passageSize = new Vector2Int(10, 2); // In pixels    
     [SerializeField] private Object roomImage;
+    [SerializeField] private Object passageImage; // size 2x2
     [SerializeField] [Range(0.1f, 1)] private float sizeMult = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -26,7 +30,9 @@ public class FullscreenMapUI : MonoBehaviour
     IEnumerator produceImages()
     {
         yield return new WaitForSeconds(0.05f);
+
         roomManager = RoomManager.Instance;
+        allPassages = roomManager.AllPassages;
         allRooms = roomManager.AllRooms;
         width = roomManager.BaseWidth;
         height = roomManager.BaseHeight;
@@ -37,16 +43,65 @@ public class FullscreenMapUI : MonoBehaviour
         
         foreach (Room room in allRooms)
         {
-            Object image = Instantiate(roomImage, transform);
+            Object roomObj = Instantiate(roomImage, transform);
             Vector2 relativePos = new Vector2(room.gridPosition.x * unitX - unitX/2, 
                 room.gridPosition.y * unitY - unitY/2);
             Vector2 relativeSize = new Vector2(room.size.x * unitX, 
                 room.size.y * unitY);
-            image.GetComponent<RectTransform>().localPosition = 
-                relativePos;
-            image.GetComponent<RectTransform>().sizeDelta = 
-                relativeSize;
+            RectTransform roomRect = roomObj.GetComponent<RectTransform>();
+            roomRect.localPosition = relativePos;
+            roomRect.sizeDelta = relativeSize;
+            roomRect.SetAsFirstSibling();
+            
+
+            foreach (Doorway door in GetDoors(room))
+            {
+                float x = door.transform.localPosition.x;
+                float y = door.transform.localPosition.y;
+                bool show = false;
+
+                // Centering the doors before instantiating them (when pivot is bottom left)
+                if (x == 0 || y ==0) // Right or Up Door
+                {
+                    show = true;
+                }
+
+                if (show) 
+                {
+                    Object passageObj = Instantiate(passageImage, transform);
+                    Vector2 relPos = new Vector2(relativePos.x + (x/width)*unitX, relativePos.y + (y/height)*unitY);
+                    RectTransform passageRect = passageObj.GetComponent<RectTransform>();
+                    passageRect.localPosition = relPos;
+                    passageRect.sizeDelta = 
+                        new Vector2(relativeSize.x/(width*room.size.x) * passageSize.x, 
+                        relativeSize.y/(height*room.size.y) * passageSize.y);
+                    if (y == 0)
+                    {
+                        passageRect.Rotate(0, 0, 90f); 
+                    }
+                }          
+            }
         }
+    }
+
+    // Finding all passages for that room
+    private List<Doorway> GetDoors(Room room)
+    {
+        List<Doorway> doors = new List<Doorway>();
+        foreach (Passage pass in allPassages)
+        {
+            Room room1 = pass.door1.enclosingRoom;
+            Room room2 = pass.door2.enclosingRoom;
+            if (room1 == room)
+            {
+                doors.Add(pass.door1);
+            } else if (room2 == room)
+            {
+                doors.Add(pass.door2);
+            }
+        }
+
+        return doors;
     }
 
     // Finding the max X and Y of the grid positions of the room

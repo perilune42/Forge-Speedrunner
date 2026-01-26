@@ -9,13 +9,14 @@ public class RoomManager : Singleton<RoomManager>
     public int BaseWidth = 64, BaseHeight = 36;
 
     public List<Room> AllRooms = new();
+    [HideInInspector] public Passage[] AllPassages;
 
     void Start()
     {
-        Passage[] allPassages = GetComponentsInChildren<Passage>();
+        AllPassages = GetComponentsInChildren<Passage>();
         AllRooms = GetComponentsInChildren<Room>().ToList();
 
-        foreach(Passage pass in allPassages)
+        foreach(Passage pass in AllPassages)
         {
             pass.door1.passage = pass;
             pass.door2.passage = pass;

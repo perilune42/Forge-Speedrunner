@@ -910,8 +910,8 @@ RectTransform:
   m_GameObject: {fileID: 955538877}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1487689248}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -932,7 +932,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23cee81e8b0ae444284b2b6c9a2e4efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FullscreenMapUI
+  passageSize: {x: 10, y: 10}
   roomImage: {fileID: 4328790571213072890, guid: 0fcb0d56a64d14e798fc2d49e891b469, type: 3}
+  passageImage: {fileID: 4328790571213072890, guid: 2236d67d692364317bf4f105d1735a7a, type: 3}
+  sizeMult: 0.9
 --- !u!114 &955538880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -946,7 +949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.53333336}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

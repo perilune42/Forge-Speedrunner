@@ -5,12 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class AbilityManager : Singleton<AbilityManager>
 {
+    [Header("=== DEBUG OPTIONS ===")]
     // USED FOR SHOP TESTING ONLY, SELF DESTRUCTS ON ABILITY ASSIGNMENT
     [SerializeField] bool shopDebugMode = false;
 
     // More debug options
     [SerializeField] bool giveAllAbilities = false;
     [SerializeField] bool allAbilitiesAreCharged = false;
+
+
 
     public AbilitySceneContainer[] Abilities;
     public GameObject AbilityInfoPrefab;

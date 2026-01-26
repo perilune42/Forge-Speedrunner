@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e268dea8b3f79df4daabd1b7428c41fa, type: 3}
   m_Name: Grapple1
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  Name: Ground Slam
+  Name: Grapple
   Description: Can now dash while slamming!
-  Icon: {fileID: 3030323586587504164, guid: 41593ef1efdcb305aabc581593963a49, type: 3}
+  Icon: {fileID: -3535184528703506323, guid: 1a03fab19e9bb9be1a2fcc821e3e9dd5, type: 3}
   Cost: 5

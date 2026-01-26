@@ -5,7 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class AbilityManager : Singleton<AbilityManager>
 {
-    
+    // USED FOR SHOP TESTING ONLY, SELF DESTRUCTS ON ABILITY ASSIGNMENT
+    [SerializeField] bool shopDebugMode = false;    
+
     public AbilitySceneContainer[] Abilities;
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent;
@@ -13,14 +15,21 @@ public class AbilityManager : Singleton<AbilityManager>
     public PlayerMovement playerMovement;
     private List<Ability> playerAbilities;
     
-    private new void Awake()
+    public override void Awake()
     {
         base.Awake();
         playerAbilities = new();
         if (!AbilitySceneTransfer.Initialized) Init();
-        
-        
-        GivePlayerAbilities();
+
+        if (shopDebugMode)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            GivePlayerAbilities();
+        }
     }
     
     private void OnGUI()

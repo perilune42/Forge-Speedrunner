@@ -5,6 +5,8 @@ public class Bouncer : Entity
     [SerializeField] private PDir bounceDirection;
     [SerializeField] private float bounceSpeed;
     public override bool IsSolid => false;
+    public override bool StrictCollisions => true;
+
     private const int bounceCooldown = 12;
     private int currCooldown = 0;
 
@@ -15,7 +17,6 @@ public class Bouncer : Entity
 
     public override void OnCollide(DynamicEntity de, Vector2 normal)
     {
-        Debug.Log("Collided");
         base.OnCollide(de, normal);
         if (currCooldown > 0) return;
         // bool slammed = false;

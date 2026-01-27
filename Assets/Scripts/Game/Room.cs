@@ -9,4 +9,20 @@ public class Room : MonoBehaviour
     public List<Doorway> doorwaysDown;
     public List<Doorway> doorwaysLeft;
     public List<Doorway> doorwaysRight;
+    [SerializeField] private Transform entitiesContainer;
+    [HideInInspector] public List<Entity> Entities;
+
+    private void Awake()
+    {
+        foreach (var entity in entitiesContainer.GetComponentsInChildren<Entity>())
+        {
+            Entities.Add(entity);
+        }
+    }
+
+    public void AddEntity(Entity newEntity)
+    {
+        newEntity.transform.SetParent(entitiesContainer, true);
+        Entities.Add(newEntity);
+    }
 }

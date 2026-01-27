@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GroundSlam : Ability
 {
-    [SerializeField] private int cooldown;
-    private int curCooldown;
     [SerializeField] private float initialVelocity;
     private int rampUpTime;
     [SerializeField] private float rampUpAcceleration;
@@ -24,10 +22,9 @@ public class GroundSlam : Ability
         };
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
-        // thanh new part
-        if (curCooldown > 0) curCooldown--;
+        base.FixedUpdate();
 
         // check if we are mid dash while slamming so that we can keep adding rampUpTime when we are dashing
         bool isMidDashWhileSlamming = false;
@@ -57,10 +54,10 @@ public class GroundSlam : Ability
     public override bool UseAbility()
     {
         if (PlayerMovement.SpecialState == SpecialState.Dash) AbilityManager.Instance.GetAbility<Dash>().CancelDash();
-        curCooldown = cooldown;
         PlayerMovement.Velocity = Vector2.down * initialVelocity;
         PlayerMovement.SpecialState = SpecialState.GroundSlam;
         rampUpTime = 0;
+        base.UseAbility();
         return true;
     }
 
@@ -68,7 +65,7 @@ public class GroundSlam : Ability
     {
         if (PlayerMovement.SpecialState == SpecialState.GroundSlam) return false;
         if (PlayerMovement.State != BodyState.InAir) return false;
-        return true;
+        return base.CanUseAbility();
     }
 
     private void OnGround()

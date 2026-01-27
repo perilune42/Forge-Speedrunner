@@ -1,16 +1,7 @@
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using TMPro;
-using Unity.VisualScripting;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XInput;
-using UnityEngine.Timeline;
-using static UnityEngine.InputSystem.InputAction;
-using static UnityEngine.UI.Image;
 
 public enum SpecialState
 {
@@ -48,7 +39,7 @@ public class PlayerMovement : DynamicEntity
 
     public SpecialState SpecialState;
 
-
+    [SerializeField] private List<AudioClip> audioClips;
 
     protected override void Awake()
     {
@@ -340,7 +331,8 @@ public class PlayerMovement : DynamicEntity
         coyoteFrames = 0;
         onJump?.Invoke();
         GravityMultiplier = MovementParams.JumpGravityMult;
-        
+
+        AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);
     }
 
     private void WallJump(Vector2 wallDir)
@@ -499,6 +491,8 @@ public class PlayerMovement : DynamicEntity
     private void StartSprint()
     {
         isSprinting = true;
+
+        AudioManager.Instance?.PlaySoundEffect(audioClips[1], transform, 0.5f);
     }
 
     private void EndSprint()

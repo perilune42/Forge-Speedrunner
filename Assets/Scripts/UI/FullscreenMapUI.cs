@@ -17,9 +17,11 @@ public class FullscreenMapUI : MonoBehaviour
     private Passage[] allPassages;
 
     [SerializeField] private Vector2Int passageSize = new Vector2Int(20, 10); // In pixels
-    [SerializeField] private Vector2Int roomSizeMinus = new Vector2Int(8, 8); // Remove some unitX and unitY to show borders 
+    [SerializeField] private Vector2Int roomSizeMinus = new Vector2Int(8, 8); // Remove some unitX and unitY to show borders
+    [SerializeField] private Vector2Int youAreHereSize = new Vector2Int(2, 2); // In pixels
     [SerializeField] private Object roomImage;
-    [SerializeField] private Object passageImage; // size 2x2
+    [SerializeField] private Object passageImage;
+    [SerializeField] private Object youAreHereImage;
     [SerializeField] [Range(0.1f, 1)] private float sizeMult = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -56,6 +58,14 @@ public class FullscreenMapUI : MonoBehaviour
             roomRect.localPosition = relativePos;
             roomRect.sizeDelta = relativeSize;
             roomRect.SetAsFirstSibling();
+
+            if (roomManager.activeRoom == room)
+            {
+                Object youAreHere = Instantiate(youAreHereImage, roomRect);
+                youAreHere.GetComponent<RectTransform>().sizeDelta = 
+                    new Vector2(relativeSize.x/(width*room.size.x) * youAreHereSize.x, 
+                    relativeSize.y/(height*room.size.y) * youAreHereSize.y);
+            }
             
 
             foreach (Doorway door in GetDoors(room))

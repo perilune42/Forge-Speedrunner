@@ -20,8 +20,9 @@ public class ParallaxLayer : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = Layer;
     }
-    private void FixedUpdate()
+    private void Update()
     {
-        transform.position = (Vector2)Camera.main.transform.position;
+        // no longer necessary - set as child of camera
+        // transform.position = (Vector2)Camera.main.transform.position;
     }
 }

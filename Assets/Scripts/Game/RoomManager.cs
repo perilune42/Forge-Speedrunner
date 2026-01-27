@@ -15,8 +15,9 @@ public class RoomManager : Singleton<RoomManager>
     public int TransitionWidth = 4;
     public int TransitionFadeFrames = 20; // per side of room
 
-    public BoxCollider2D CameraBounds;
-    public CinemachineConfiner2D CameraConfiner;
+    // moved to CameraController.cs
+    //public BoxCollider2D CameraBounds;
+    //public CinemachineConfiner2D CameraConfiner;
 
     // we should move these prefabs out of here...
     public BoxCollider2D GuideRailPrefab;
@@ -36,7 +37,7 @@ public class RoomManager : Singleton<RoomManager>
             pass.door1.passage = pass;
             pass.door2.passage = pass;
         }
-
+        CameraController.Instance.SnapToRoom(activeRoom);
     }
 
     void Update()
@@ -149,11 +150,14 @@ public class RoomManager : Singleton<RoomManager>
             yield return new WaitForFixedUpdate();
         }
 
+        // logic moved to CameraController
+        CameraController.Instance.SnapToRoom(room2);
 
-        CameraBounds.transform.position = room2.transform.position;
-        CameraBounds.size = new Vector2(room2.size.x * BaseWidth, room2.size.y * BaseHeight);
-        CameraBounds.offset = CameraBounds.size / 2;
-        CameraConfiner.InvalidateBoundingShapeCache();
+        // 3 cope frames
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
 
         FadeToBlack.Instance.FadeOut();
         for (int i = 0; i < TransitionFadeFrames; i++)

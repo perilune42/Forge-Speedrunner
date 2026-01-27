@@ -8,7 +8,11 @@ public class ParallaxLayer : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = Layer;
-        transform.position = (Vector2)Camera.main.transform.position;
+        if (Camera.main != null)
+        {
+            transform.position = (Vector2)Camera.main.transform.position;
+        }
+        
     }
 
     private void Awake()

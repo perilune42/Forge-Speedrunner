@@ -4,16 +4,15 @@ using UnityEditor;
 [ExecuteAlways]
 public class PassageEditor : MonoBehaviour
 {
-    private BoxCollider2D coll;
-    private Passage attachedPassage;
+    public Passage attachedPassage;
     private LayerMask layerMask;
     public Color RectangleColor = Color.red;
     public Vector2 RectangleSize = new(0.0F,0.0F);
+    public Vector2 fitSize = new(0.0F, 0.0F);
+    public bool foundFit = false;
 
     void Start()
     {
-        coll = GetComponent<BoxCollider2D>();
-        coll.enabled = false;
         attachedPassage = GetComponent<Passage>();
         layerMask = LayerMask.GetMask("Default");
     }
@@ -22,7 +21,15 @@ public class PassageEditor : MonoBehaviour
     {
         if(Application.isPlaying) return;
         Vector3 center = this.transform.position;
-        Vector3 size = new(RectangleSize.x, RectangleSize.y, 0);
+        Vector3 size;
+        if (!foundFit)
+        {
+            size = new(RectangleSize.x, RectangleSize.y, 0);
+        }
+        else
+        {
+            size = new(fitSize.x, fitSize.y, 0);
+        }
         Gizmos.color = RectangleColor;
         Gizmos.DrawCube(center, size);
     }
@@ -39,8 +46,8 @@ public class PassageEditor : MonoBehaviour
 
             Collider2D[] allColliders = Physics2D.OverlapAreaAll(topright, botleft, layerMask);
 
-            Debug.Log($"Number of colliders: {allColliders.Length}");
-            Debug.Log(allColliders);
+            // Debug.Log($"Number of colliders: {allColliders.Length}");
+            // Debug.Log(allColliders);
             
 
             // take first two 
@@ -48,13 +55,27 @@ public class PassageEditor : MonoBehaviour
             {
                 Doorway door1 = allColliders[0].GetComponent<Doorway>();
                 Doorway door2 = allColliders[1].GetComponent<Doorway>();
-                Debug.Log($"door1: {door1}, door2: {door2}");
-                Debug.Log($"door1 raw: {allColliders[0]}, door2 raw: {allColliders[1]}");
+                // Debug.Log($"door1: {door1}, door2: {door2}");
+                // Debug.Log($"door1 raw: {allColliders[0]}, door2 raw: {allColliders[1]}");
                 if(door1 != null && door2 != null)
                 {
                     attachedPassage.door1 = door1;
                     attachedPassage.door2 = door2;
+                    fitSize.x = Mathf.Abs(door1.transform.position.x - door2.transform.position.x);
+                    fitSize.y = Mathf.Abs(door1.transform.position.y - door2.transform.position.y);
+                    fitSize += Vector2.one * 1.5F;
+                    foundFit = true;
                 }
+                else
+                {
+                    foundFit = false;
+                }
+            }
+            else
+            {
+                attachedPassage.door1 = null;
+                attachedPassage.door2 = null;
+                foundFit = false;
             }
 
             // coll.IsTouchingLayers(0); // 0 = default layer

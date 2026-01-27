@@ -6,7 +6,8 @@ public class PassageEditor : MonoBehaviour
 {
     public Passage attachedPassage;
     private LayerMask layerMask;
-    public Color RectangleColor = Color.red;
+    public Color SuccessColor = Color.green;
+    public Color FailColor = Color.red;
     public Vector2 RectangleSize = new(0.0F,0.0F);
     public Vector2 fitSize = new(0.0F, 0.0F);
     public bool foundFit = false;
@@ -25,12 +26,13 @@ public class PassageEditor : MonoBehaviour
         if (!foundFit)
         {
             size = new(RectangleSize.x, RectangleSize.y, 0);
+            Gizmos.color = FailColor;
         }
         else
         {
             size = new(fitSize.x, fitSize.y, 0);
+            Gizmos.color = SuccessColor;
         }
-        Gizmos.color = RectangleColor;
         Gizmos.DrawCube(center, size);
     }
 

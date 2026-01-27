@@ -12244,7 +12244,7 @@ PrefabInstance:
       objectReference: {fileID: 1229977843}
     - target: {fileID: 4779429881745596453, guid: d51f7f5f62a015eafb13003ef37a2aa8, type: 3}
       propertyPath: giveAllAbilities
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4779429881745596453, guid: d51f7f5f62a015eafb13003ef37a2aa8, type: 3}
       propertyPath: AbilityInfoParent

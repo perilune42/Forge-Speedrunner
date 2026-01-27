@@ -12,6 +12,8 @@ public class GroundSlam : Ability
 
     public bool wasSlammingBeforeDash;
 
+    private Vector2 preservedVelocity;
+
     public override void Start()
     {
         base.Start();
@@ -44,6 +46,31 @@ public class GroundSlam : Ability
         }
         // thanh new part
         if (PInput.Instance.GroundSlam.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
+    }
+
+    // returns: whether dash was successfully interrupted
+    public bool DashInterrupt()
+    {
+        // if groundslam is level 1 and we are groundslamming, we cannot dash
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && Level == 1)
+        {
+            return false;
+        }
+        // check if we are currently groundslamming and groundSlam is level 2
+        // if so, we set the flag of wasSlammingBeforeDash to true
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && Level >= 2)
+        {
+            wasSlammingBeforeDash = true;
+            preservedVelocity = Player.Instance.Movement.Velocity;
+            return true;
+        }
+        return false;
+    }
+    public void ContinueSlam()
+    {
+        PlayerMovement.SpecialState = SpecialState.GroundSlam;
+        wasSlammingBeforeDash = false;
+        Player.Instance.Movement.Velocity = preservedVelocity;
     }
 
     public override float GetCooldown()

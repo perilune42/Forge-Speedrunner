@@ -88,8 +88,7 @@ public class Dash : Ability
         GroundSlam slam = AbilityManager.Instance.GetAbility<GroundSlam>();
         if (slam != null && slam.wasSlammingBeforeDash)
         {
-            PlayerMovement.SpecialState = SpecialState.GroundSlam;
-            slam.wasSlammingBeforeDash = false;
+            slam.ContinueSlam();
         }
         else
         {
@@ -111,19 +110,13 @@ public class Dash : Ability
         // thanh new part
         // Grabs the slam instance and check if we are currently groundslamming
         GroundSlam slam = AbilityManager.Instance.GetAbility<GroundSlam>();
-        if (slam != null)
+        if (slam != null && Player.Instance.Movement.SpecialState == SpecialState.GroundSlam)
         {
-            // if groundslam is level 1 and we are groundslamming, we cannot dash
-            if (PlayerMovement.SpecialState == SpecialState.GroundSlam && slam.Data.Level == 1)
+            bool interrupted = slam.DashInterrupt();
+            if (!interrupted)
             {
+                // failed to dash as slam was not interrupted
                 return false;
-            }
-
-            // check if we are currently groundslamming and groundSlam is level 2
-            // if so, we set the flag of wasSlammingBeforeDash to true
-            if (PlayerMovement.SpecialState == SpecialState.GroundSlam && slam.Data.Level >= 2)
-            {
-                slam.wasSlammingBeforeDash = true;
             }
         }
         // thanh new part

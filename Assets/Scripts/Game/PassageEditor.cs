@@ -1,6 +1,42 @@
 using UnityEngine;
 using UnityEditor;
 
+[CustomEditor(typeof(PassageEditor))]
+public class PassageEditor_Inspector : Editor
+{
+    override public void OnInspectorGUI()
+    {
+        const string PASSAGE_NAME = "Passages";
+        PassageEditor pe = (PassageEditor)target;
+        DrawDefaultInspector();
+
+        if(GUILayout.Button("Finalize Passage"))
+        {
+            // since Start hasn't been called for RoomManager yet, this is the only way to get an instance
+            RoomManager rm = Object.FindFirstObjectByType<RoomManager>();
+            if(rm == null)
+            {
+                Debug.Log($"ERROR: No RoomManager found. Please create one, and give it a child object named '{PASSAGE_NAME}'");
+                return;
+            }
+            Transform passageFolder = rm.transform.Find(PASSAGE_NAME);
+            if(passageFolder != null)
+            {
+                Debug.Log($"Found RoomManager {{{rm}}} and passage folder {{{passageFolder}}}\nTime to die...");
+                pe.transform.SetParent(passageFolder, true);
+                DestroyImmediate(pe);
+            }
+            else
+            {
+                string debugMsg = $"ERROR: Could not find passage folder! This script tries to make all passages children of a GameObject named '{PASSAGE_NAME}'. ";
+                Debug.Log(debugMsg);
+
+            }
+
+        }
+    }
+}
+
 [ExecuteAlways]
 public class PassageEditor : MonoBehaviour
 {
@@ -11,7 +47,7 @@ public class PassageEditor : MonoBehaviour
     public Color SuccessColor = Color.green;
     public Color FailColor = Color.red;
     public Vector2 RectangleSize = new(0.0F,0.0F);
-    public bool foundFit = false;
+    public bool foundFit {get; private set;} = false;
 
     void Start()
     {

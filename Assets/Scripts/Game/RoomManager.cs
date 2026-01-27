@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework.Constraints;
 using Unity.VisualScripting;
+using Unity.Cinemachine;
 using System.Collections;
 
 public class RoomManager : Singleton<RoomManager>
@@ -13,6 +14,9 @@ public class RoomManager : Singleton<RoomManager>
 
     public int TransitionWidth = 4;
     public int TransitionFadeFrames = 20; // per side of room
+
+    public BoxCollider2D CameraBounds;
+    public CinemachineConfiner2D CameraConfiner;
 
     // we should move these prefabs out of here...
     public BoxCollider2D GuideRailPrefab;
@@ -146,9 +150,10 @@ public class RoomManager : Singleton<RoomManager>
         }
 
 
-        // ** MOVE CAMERA HERE ** 
-        Camera.main.transform.position = newPosition;
-        // Switch confiner to the one in the new room
+        CameraBounds.transform.position = room2.transform.position;
+        CameraBounds.size = new Vector2(room2.size.x * BaseWidth, room2.size.y * BaseHeight);
+        CameraBounds.offset = CameraBounds.size / 2;
+        CameraConfiner.InvalidateBoundingShapeCache();
 
         FadeToBlack.Instance.FadeOut();
         for (int i = 0; i < TransitionFadeFrames; i++)

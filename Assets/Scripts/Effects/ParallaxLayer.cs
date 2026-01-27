@@ -1,0 +1,23 @@
+using UnityEngine;
+
+public class ParallaxLayer : MonoBehaviour
+{
+    private SpriteRenderer spriteRenderer;
+    public int Layer;
+    private void OnValidate()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = Layer;
+        transform.position = (Vector2)Camera.main.transform.position;
+    }
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = Layer;
+    }
+    private void FixedUpdate()
+    {
+        transform.position = (Vector2)Camera.main.transform.position;
+    }
+}

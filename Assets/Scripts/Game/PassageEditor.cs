@@ -9,6 +9,7 @@ public class PassageEditor : MonoBehaviour
     public Color SuccessColor = Color.green;
     public Color FailColor = Color.red;
     public Vector2 RectangleSize = new(0.0F,0.0F);
+    private Vector3 matchMidpoint = new(0.0F, 0.0F, 0.0F);
     public Vector2 fitSize = new(0.0F, 0.0F);
     public bool foundFit = false;
 
@@ -23,17 +24,15 @@ public class PassageEditor : MonoBehaviour
         if(Application.isPlaying) return;
         Vector3 center = this.transform.position;
         Vector3 size;
-        if (!foundFit)
+        size = new(RectangleSize.x, RectangleSize.y, 0);
+        Gizmos.color = FailColor;
+        Gizmos.DrawWireCube(center, size);
+        if(foundFit)
         {
-            size = new(RectangleSize.x, RectangleSize.y, 0);
-            Gizmos.color = FailColor;
-        }
-        else
-        {
-            size = new(fitSize.x, fitSize.y, 0);
+            Vector3 successSize = new(fitSize.x, fitSize.y, 0);
             Gizmos.color = SuccessColor;
+            Gizmos.DrawCube(matchMidpoint, successSize);
         }
-        Gizmos.DrawCube(center, size);
     }
 
     void Update()
@@ -67,6 +66,7 @@ public class PassageEditor : MonoBehaviour
                     fitSize.y = Mathf.Abs(door1.transform.position.y - door2.transform.position.y);
                     fitSize += Vector2.one * 1.5F;
                     foundFit = true;
+                    matchMidpoint = (door1.transform.position + door2.transform.position) * 0.5F;
                 }
                 else
                 {

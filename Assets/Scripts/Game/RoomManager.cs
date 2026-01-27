@@ -29,7 +29,10 @@ public class RoomManager : Singleton<RoomManager>
 
     void Start()
     {
-        AllPassages = GetComponentsInChildren<Passage>();
+        // Change index of GetChild based on the index of the Passages object's 
+        // index in the children hierarchy
+        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+
         AllRooms = GetComponentsInChildren<Room>().ToList();
 
         foreach(Passage pass in AllPassages)

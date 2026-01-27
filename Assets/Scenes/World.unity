@@ -507,6 +507,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: sample_map_1
       objectReference: {fileID: 0}
+    - target: {fileID: 4216144091126199990, guid: 60837dc2737d09d48804d66ca017398c, type: 3}
+      propertyPath: gridPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4999471202703154804, guid: 60837dc2737d09d48804d66ca017398c, type: 3}
+      propertyPath: gridPosition.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7135495947995610658, guid: 60837dc2737d09d48804d66ca017398c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -34827,12 +34835,32 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5661473188673946520, guid: 892426b6d2f62e540ba0c903c98513b1, type: 3}
+      propertyPath: passageSize.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5661473188673946520, guid: 892426b6d2f62e540ba0c903c98513b1, type: 3}
+      propertyPath: passageSize.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5661473188673946520, guid: 892426b6d2f62e540ba0c903c98513b1, type: 3}
+      propertyPath: roomSizeMinus.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5661473188673946520, guid: 892426b6d2f62e540ba0c903c98513b1, type: 3}
+      propertyPath: roomSizeMinus.y
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 7309740762570622118, guid: 892426b6d2f62e540ba0c903c98513b1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 8031313041057457600, guid: 892426b6d2f62e540ba0c903c98513b1, type: 3}
       propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8801727282255952509, guid: 892426b6d2f62e540ba0c903c98513b1, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -4,13 +4,13 @@ using UnityEditor;
 [ExecuteAlways]
 public class PassageEditor : MonoBehaviour
 {
-    public Passage attachedPassage;
+    private Vector3 matchMidpoint = new(0.0F, 0.0F, 0.0F);
+    private Vector2 fitSize = new(0.0F, 0.0F);
     private LayerMask layerMask;
+    public Passage attachedPassage;
     public Color SuccessColor = Color.green;
     public Color FailColor = Color.red;
     public Vector2 RectangleSize = new(0.0F,0.0F);
-    private Vector3 matchMidpoint = new(0.0F, 0.0F, 0.0F);
-    public Vector2 fitSize = new(0.0F, 0.0F);
     public bool foundFit = false;
 
     void Start()

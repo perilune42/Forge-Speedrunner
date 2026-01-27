@@ -19,6 +19,10 @@ public abstract class Entity : MonoBehaviour
             Debug.LogWarning($"Non-solid entity set to wrong layer ({gameObject.layer})!");
             gameObject.layer = LayerMask.NameToLayer("Entity");
         }
+        if (this is IInteractable)
+        {
+
+        }
     }
     
 

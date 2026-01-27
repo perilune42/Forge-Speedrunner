@@ -1,0 +1,64 @@
+using UnityEngine;
+using UnityEditor;
+
+[ExecuteAlways]
+public class PassageEditor : MonoBehaviour
+{
+    private BoxCollider2D coll;
+    private Passage attachedPassage;
+    private LayerMask layerMask;
+    public Color RectangleColor = Color.red;
+    public Vector2 RectangleSize = new(0.0F,0.0F);
+
+    void Start()
+    {
+        coll = GetComponent<BoxCollider2D>();
+        coll.enabled = false;
+        attachedPassage = GetComponent<Passage>();
+        layerMask = LayerMask.GetMask("Default");
+    }
+
+    void OnDrawGizmos()
+    {
+        if(Application.isPlaying) return;
+        Vector3 center = this.transform.position;
+        Vector3 size = new(RectangleSize.x, RectangleSize.y, 0);
+        Gizmos.color = RectangleColor;
+        Gizmos.DrawCube(center, size);
+    }
+
+    void Update()
+    {
+        if (transform.hasChanged && !Application.isPlaying)
+        {
+            // from one end of the coll to the other
+            Vector2 centerFactor = RectangleSize / 2.0F;
+
+            Vector2 topright = (Vector2)this.transform.position + centerFactor;
+            Vector2 botleft = (Vector2)this.transform.position - centerFactor;
+
+            Collider2D[] allColliders = Physics2D.OverlapAreaAll(topright, botleft, layerMask);
+
+            Debug.Log($"Number of colliders: {allColliders.Length}");
+            Debug.Log(allColliders);
+            
+
+            // take first two 
+            if (allColliders.Length >= 2) 
+            {
+                Doorway door1 = allColliders[0].GetComponent<Doorway>();
+                Doorway door2 = allColliders[1].GetComponent<Doorway>();
+                Debug.Log($"door1: {door1}, door2: {door2}");
+                Debug.Log($"door1 raw: {allColliders[0]}, door2 raw: {allColliders[1]}");
+                if(door1 != null && door2 != null)
+                {
+                    attachedPassage.door1 = door1;
+                    attachedPassage.door2 = door2;
+                }
+            }
+
+            // coll.IsTouchingLayers(0); // 0 = default layer
+            transform.hasChanged = false;
+        }
+    }
+}

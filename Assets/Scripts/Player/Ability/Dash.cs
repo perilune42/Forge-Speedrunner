@@ -19,6 +19,9 @@ public class Dash : Ability
     private SpriteRenderer playerSpriteRenderer;
     //private Vector2 moveSpeedSnapshot;
     const float diagDashAngle = 35;
+
+    [SerializeField] bool enableVFX = true;
+
     protected override void Awake()
     {
         base.Awake();
@@ -154,15 +157,20 @@ public class Dash : Ability
         dashing = true;
         PlayerMovement.SpecialState = SpecialState.Dash;
 
-        // particle effects
-        particle.Play();
-        Rect rect = playerSpriteRenderer.sprite.textureRect;
-        Texture2D tex = new Texture2D((int)rect.width, (int)rect.height);
-        tex.SetPixels(playerSpriteRenderer.sprite.texture.GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
-        tex.Apply();
-        particleMaterials[0].mainTexture = tex;
-        particleRenderer.SetMaterials(particleMaterials);
-        particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
+        if (enableVFX)
+        {
+            // particle effects
+            particle.Play();
+            Rect rect = playerSpriteRenderer.sprite.textureRect;
+            Texture2D tex = new Texture2D((int)rect.width, (int)rect.height);
+            tex.SetPixels(playerSpriteRenderer.sprite.texture.GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
+            tex.Apply();
+            particleMaterials[0].mainTexture = tex;
+            particleRenderer.SetMaterials(particleMaterials);
+            particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
+
+        }
+
 
         base.UseAbility();
 

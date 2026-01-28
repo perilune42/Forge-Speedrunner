@@ -1182,6 +1182,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7968761096506116297, guid: 8bd6b1bb26705964f95efb8f3b918ff2, type: 3}
   m_PrefabInstance: {fileID: 5392489964938665642}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1392933126 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8527107008294548530, guid: 8bd6b1bb26705964f95efb8f3b918ff2, type: 3}
+  m_PrefabInstance: {fileID: 5392489964938665642}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!224 &1543632599 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8308495729376241971, guid: ee01e90ddf7934c4c842b369a1d07f7d, type: 3}
@@ -1577,6 +1588,7 @@ MonoBehaviour:
   moneyText: {fileID: 130034402}
   runTimeText: {fileID: 2132777842}
   targetTimeText: {fileID: 376932072}
+  moneyGainedText: {fileID: 1392933126}
   tabs:
   - {fileID: 1357516661}
   - {fileID: 537302936}

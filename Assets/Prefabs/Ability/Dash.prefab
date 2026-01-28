@@ -4882,10 +4882,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
   Data: {fileID: 11400000, guid: 279aa8fc5560780259c7c1cc56a38042, type: 2}
+  ID: 0
   Level: 0
+  CurCharges: 0
+  MaxCharges: 0
+  UsesCharges: 0
   cooldown: 10
   dashDuration: 10
-  dashVelocity: 18
+  dashVelocity: 14
   CanDiagonalDash: 1
   particleRenderer: {fileID: 7160934415874000592}
   particle: {fileID: 1359444250946196724}

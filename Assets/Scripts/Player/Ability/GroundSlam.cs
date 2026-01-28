@@ -44,7 +44,6 @@ public class GroundSlam : Ability
                 PlayerMovement.Velocity += Vector2.down * rampUpAcceleration;
             }
         }
-        // thanh new part
         if (PInput.Instance.GroundSlam.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
     }
 

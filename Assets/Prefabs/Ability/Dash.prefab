@@ -870,7 +870,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 40
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -4803,7 +4803,7 @@ ParticleSystemRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -4882,12 +4882,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
   Data: {fileID: 11400000, guid: 279aa8fc5560780259c7c1cc56a38042, type: 2}
+  ID: 0
   Level: 0
+  CurCharges: 0
+  MaxCharges: 0
+  UsesCharges: 0
   cooldown: 10
-  dashDuration: 10
-  dashVelocity: 18
+  dashDuration: 11
+  dashVelocity: 15
   CanDiagonalDash: 1
   particleRenderer: {fileID: 7160934415874000592}
   particle: {fileID: 1359444250946196724}
   particleMaterials:
   - {fileID: 2100000, guid: 4550756f927bab8e3acec5716c8b24e0, type: 2}
+  enableVFX: 0

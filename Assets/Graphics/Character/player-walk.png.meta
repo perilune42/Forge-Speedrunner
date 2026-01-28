@@ -1,46 +1,49 @@
 fileFormatVersion: 2
-guid: 68e073267b41ff042b8a40e95320c13d
+guid: 0df07ca7315f39542a2dc96c91af5ef1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6820493216212520845
-    second: Walk animation robot_0
+      213: 559752312719048357
+    second: Walk animation robot naruto run_0
   - first:
-      213: 8126481880029220766
-    second: Walk animation robot_1
+      213: 735290389890602506
+    second: Walk animation robot naruto run_1
   - first:
-      213: -3354007191394351420
-    second: Walk animation robot_2
+      213: 4829257219451395813
+    second: Walk animation robot naruto run_2
   - first:
-      213: 4281214849401551600
-    second: Walk animation robot_3
+      213: -6885218670699183815
+    second: Walk animation robot naruto run_3
   - first:
-      213: 6618395809684941968
-    second: Walk animation robot_4
+      213: -8202661553839506411
+    second: Walk animation robot naruto run_4
   - first:
-      213: 2035369501660645731
-    second: Walk animation robot_5
+      213: 2500236317504009720
+    second: Walk animation robot naruto run_5
   - first:
-      213: -6122922736837290376
-    second: Walk animation robot_6
+      213: 8989592084666883449
+    second: Walk animation robot naruto run_6
   - first:
-      213: -2081753809150787223
-    second: Walk animation robot_7
+      213: -4883170536294410246
+    second: Walk animation robot naruto run_7
   - first:
-      213: 1890816887510712211
-    second: Walk animation robot_8
+      213: -1662971503876005123
+    second: Walk animation robot naruto run_8
   - first:
-      213: 2091825961611673283
-    second: Walk animation robot_9
+      213: 5930967053557416370
+    second: Walk animation robot naruto run_9
   - first:
-      213: 1417600669080355431
-    second: Walk animation robot_10
+      213: -3227560275165839264
+    second: Walk animation robot naruto run_10
   - first:
-      213: 4680432659480574193
-    second: Walk animation robot_11
+      213: 7480836550387516905
+    second: Walk animation robot naruto run_11
   - first:
-      213: 4844994532189749639
-    second: Walk animation robot_12
+      213: 6892758708408070216
+    second: Walk animation robot naruto run_12
+  - first:
+      213: -239595832786749495
+    second: Walk animation robot naruto run_13
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -87,7 +90,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 325
+  spritePixelsToUnits: 10
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -145,19 +148,6 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -166,19 +156,19 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 2976
-        width: 992
-        height: 992
+        y: 96
+        width: 32
+        height: 32
       alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+      pivot: {x: 0.4375, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 307fdc37719bc124084eb26659df06a6
-      internalID: -1990016124
+      spriteID: b2cf3ea55d1d9a4499bb9aa21cfb8f8c
+      internalID: -1300822034
       vertices: []
       indices: 
       edges: []
@@ -187,20 +177,20 @@ TextureImporter:
       name: player-walk_1
       rect:
         serializedVersion: 2
-        x: 992
-        y: 2976
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 32
+        y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8b2905f9aadbf574db82aad96f936a28
-      internalID: -257167473
+      spriteID: 9feafdb1696fd7c4da203f59256e7aa3
+      internalID: -483112800
       vertices: []
       indices: 
       edges: []
@@ -209,20 +199,20 @@ TextureImporter:
       name: player-walk_2
       rect:
         serializedVersion: 2
-        x: 1984
-        y: 2976
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 64
+        y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a931f5aa870980d48af8ddcea13c5e24
-      internalID: -926650113
+      spriteID: 7b10b964b482d58498688eb36862d920
+      internalID: -30020749
       vertices: []
       indices: 
       edges: []
@@ -231,20 +221,20 @@ TextureImporter:
       name: player-walk_3
       rect:
         serializedVersion: 2
-        x: 2976
-        y: 2976
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 96
+        y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 11eb621dcb13f474da3f191c2bd01cdb
-      internalID: -1713353613
+      spriteID: 1d5574d39669f7b44aac79840b6ee3ab
+      internalID: -835660304
       vertices: []
       indices: 
       edges: []
@@ -254,19 +244,19 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1984
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 647850777390e7c4fab247332039d994
-      internalID: 1299384175
+      spriteID: 923e3d48a838d6e4fa62327cd1a567b7
+      internalID: 618468497
       vertices: []
       indices: 
       edges: []
@@ -275,20 +265,20 @@ TextureImporter:
       name: player-walk_5
       rect:
         serializedVersion: 2
-        x: 992
-        y: 1984
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 32
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1bbdf53eb7fa07944b2dc26267bcd40e
-      internalID: 417348718
+      spriteID: 2ec64bf388561e74992fcfe39cefb51f
+      internalID: -1033616898
       vertices: []
       indices: 
       edges: []
@@ -297,20 +287,20 @@ TextureImporter:
       name: player-walk_6
       rect:
         serializedVersion: 2
-        x: 1984
-        y: 1984
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 64
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 935d0e3568bec0e41bdf4103f7c3a1a2
-      internalID: 1709418818
+      spriteID: 6b4d3c5e5be4ca5498c3f002ef8e8718
+      internalID: 1617428656
       vertices: []
       indices: 
       edges: []
@@ -319,20 +309,20 @@ TextureImporter:
       name: player-walk_7
       rect:
         serializedVersion: 2
-        x: 2976
-        y: 1984
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 96
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e8bafbcf2d9e83d4faa6f400a501a463
-      internalID: 2014309176
+      spriteID: 63b8faae0af9bc145913c3ee5a46fe7b
+      internalID: -657080366
       vertices: []
       indices: 
       edges: []
@@ -342,19 +332,19 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 992
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6aaf60f860a96a243b2626a29ac16a81
-      internalID: -1021340941
+      spriteID: 19ea10178f3469e4b86790d000fb22c8
+      internalID: -764499486
       vertices: []
       indices: 
       edges: []
@@ -363,20 +353,20 @@ TextureImporter:
       name: player-walk_9
       rect:
         serializedVersion: 2
-        x: 992
-        y: 992
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 32
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 43c71ad51415db44d834022978f8edb8
-      internalID: 169873304
+      spriteID: 888bd632038807d46bfe90b19c6924af
+      internalID: 603235647
       vertices: []
       indices: 
       edges: []
@@ -385,20 +375,20 @@ TextureImporter:
       name: player-walk_10
       rect:
         serializedVersion: 2
-        x: 1984
-        y: 992
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 64
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 780b579877b480b4fa1e0b1ce52a2a4e
-      internalID: 1475599287
+      spriteID: 9d249b663280efd4cb91774c021ea22d
+      internalID: 509091466
       vertices: []
       indices: 
       edges: []
@@ -407,20 +397,20 @@ TextureImporter:
       name: player-walk_11
       rect:
         serializedVersion: 2
-        x: 2976
-        y: 992
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        x: 96
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c4b19b5b5ce081646a78bf04aa970e04
-      internalID: 1617304534
+      spriteID: a8529bcf781a84b4d886ce5aa231a420
+      internalID: 1922392950
       vertices: []
       indices: 
       edges: []
@@ -431,18 +421,40 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 992
-        height: 992
-      alignment: 9
-      pivot: {x: 0.45, y: 0.5}
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b7ed7f1700c4b5042b1aad876697ee0d
-      internalID: 35653753
+      spriteID: 9dc5a40161fd8ee4b9060ff7b3c2f82e
+      internalID: 1541424455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player-walk_13
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff3e29123c2bfe942a664ef404583df8
+      internalID: -1508517782
       vertices: []
       indices: 
       edges: []
@@ -461,23 +473,24 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceOnImport
-        value: False
+        value: True
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":992.0,"y":992.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.44999998807907107,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":9,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      player-walk_0: -1990016124
-      player-walk_1: -257167473
-      player-walk_10: 1475599287
-      player-walk_11: 1617304534
-      player-walk_12: 35653753
-      player-walk_2: -926650113
-      player-walk_3: -1713353613
-      player-walk_4: 1299384175
-      player-walk_5: 417348718
-      player-walk_6: 1709418818
-      player-walk_7: 2014309176
-      player-walk_8: -1021340941
-      player-walk_9: 169873304
+      player-walk_0: -1300822034
+      player-walk_1: -483112800
+      player-walk_10: 509091466
+      player-walk_11: 1922392950
+      player-walk_12: 1541424455
+      player-walk_13: -1508517782
+      player-walk_2: -30020749
+      player-walk_3: -835660304
+      player-walk_4: 618468497
+      player-walk_5: -1033616898
+      player-walk_6: 1617428656
+      player-walk_7: -657080366
+      player-walk_8: -764499486
+      player-walk_9: 603235647
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

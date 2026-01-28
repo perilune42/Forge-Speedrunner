@@ -10,6 +10,12 @@ public class RoomManager : Singleton<RoomManager>
 {
     public Room activeRoom;
 
+    private Doorway previousDoorway;
+    private Vector2 relativePos = new Vector2(0.0F, 0.0F);
+
+    // this should not be required.
+    private Vector2 originalPosition;
+
     public int BaseWidth = 64, BaseHeight = 36;
 
     public int TransitionWidth = 4;
@@ -29,7 +35,10 @@ public class RoomManager : Singleton<RoomManager>
 
     void Start()
     {
-        AllPassages = GetComponentsInChildren<Passage>();
+        // Change index of GetChild based on the index of the Passages object's 
+        // index in the children hierarchy
+        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+
         AllRooms = GetComponentsInChildren<Room>().ToList();
 
         foreach(Passage pass in AllPassages)
@@ -44,7 +53,9 @@ public class RoomManager : Singleton<RoomManager>
     {
         // switch rooms by arrow keys
         List<Doorway> doorways = null;
-        if (Input.GetKeyDown(KeyCode.UpArrow)) 
+        if(Input.GetKeyDown(KeyCode.R))
+            Respawn();
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) 
         {
             doorways = activeRoom.doorwaysUp;
         }
@@ -87,53 +98,96 @@ public class RoomManager : Singleton<RoomManager>
     {
         StartCoroutine(SwitchRoomCoroutine(door1, door2));
     }
+    public void Respawn()
+    {
+        PlayerMovement pm = Player.Instance.Movement;
+
+        // in this case, skip most of this. just teleport back to placement position
+        if (previousDoorway == null)
+        {
+            return;
+        }
+
+        // come from the reverse direction this time
+        Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
+
+        // no velocity for respawning
+        Vector2 preservedVelocity = 1.0F * dir;
+
+        const float upBoost = 1.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
+        {
+            preservedVelocity.y += pm.MovementParams.JumpSpeed * upBoost;
+        }
+
+        Debug.Log($"Respawning in {previousDoorway}. doorway is in {previousDoorway.enclosingRoom}, hopefully expected!");
+        StartCoroutine(warpTo(previousDoorway, preservedVelocity, dir));
+    }
 
     private IEnumerator SwitchRoomCoroutine(Doorway door1, Doorway door2)
     {
-
         PlayerMovement pm = Player.Instance.Movement;
+
+        // calculate player velocity
         Vector2 dir = door1.GetTransitionDirection();
         Vector2 preservedVelocity;
 
         // on up transitions, give player a boost
-        if (dir == Vector2.up)
+        const float upBoost = 1.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
         {
-            pm.GravityEnabled = false;
-            const float upBoost = 1.5f;
-            if (pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
-            {
-                pm.Velocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
-            }
+            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
         }
-        preservedVelocity = pm.Velocity;
-        pm.EndJump(true);
-
-
-        Vector2 relativePos;
-        // assuming doorways are placed correctly in world space
-        // i.e. centered properly along the world grid
-        if (door1.IsHorizontal())
-        {
-            relativePos = new Vector2(0, pm.transform.position.y - door1.transform.position.y);
-        }
-        else
-        {
-            relativePos = new Vector2(pm.transform.position.x - door1.transform.position.x, 0);
-        }
-        pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
-
-
-
-        // no moving player for now. but moving camera
-
+        else preservedVelocity = pm.Velocity;
         Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
 
+        // calculate relativePos, which is unavoidable
+        relativePos = pm.transform.position - door1.transform.position;
+
+        previousDoorway = door2;
         activeRoom = door2.enclosingRoom;
+
+
+        return warpTo(door2, preservedVelocity, dir);
+    }
+    private IEnumerator warpTo(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
+    {
+        PlayerMovement pm = Player.Instance.Movement;
+
+        // assuming doorways are placed correctly in world space
+        // i.e. centered properly along the world grid
+        // NOTE: the code below works every time for switchroom, but for respawning it is problematic.
+        // if (door2.IsHorizontal())
+        // {
+        //     relativePos = new Vector2(0, pm.transform.position.y - door2.transform.position.y);
+        // }
+        // else
+        // {
+        //     relativePos = new Vector2(pm.transform.position.x - door2.transform.position.x, 0);
+        // }
+
+        // calculate new player position
+        Vector2 newPlayerPos = (Vector2)door2.transform.position;
+        if (door2.IsHorizontal())
+            newPlayerPos.y += relativePos.y;
+        else
+            newPlayerPos.x += relativePos.x;
+
+        // calculate camera position
         Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
         newPosition.z = Camera.main.transform.position.z;
-        Room room1 = door1.enclosingRoom;
-        Room room2 = door2.enclosingRoom;
+
+        /**
+         * start doing things to the player here
+         */
+
         PInput.Instance.EnableControls = false;
+        pm.GravityEnabled = false;
+        pm.EndJump(true);
+        pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
+
         if (dir.y == 0)
         {
             PInput.Instance.MoveInputOverrride = dir;
@@ -151,7 +205,7 @@ public class RoomManager : Singleton<RoomManager>
         }
 
         // logic moved to CameraController
-        CameraController.Instance.SnapToRoom(room2);
+        CameraController.Instance.SnapToRoom(door2.enclosingRoom);
 
         // 3 cope frames
         for (int i = 0; i < 3; i++)
@@ -167,7 +221,7 @@ public class RoomManager : Singleton<RoomManager>
 
         // suppress target trigger to avoid transitioning back
         door2.SuppressNextTransition();
-        pm.transform.position = (Vector2)door2.transform.position + relativePos;
+        pm.transform.position = newPlayerPos;
         pm.Locked = false;
         pm.SpecialState = SpecialState.Normal;
         const float minTransitionSpeed = 8;
@@ -190,6 +244,5 @@ public class RoomManager : Singleton<RoomManager>
         PInput.Instance.EnableControls = true;
         PInput.Instance.MoveInputOverrride = Vector2.zero;
         pm.GravityEnabled = true;
-
     }
 }

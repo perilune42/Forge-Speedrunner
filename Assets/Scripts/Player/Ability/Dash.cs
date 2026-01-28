@@ -18,6 +18,9 @@ public class Dash : Ability
     [SerializeField] private List<Material> particleMaterials;
     private SpriteRenderer playerSpriteRenderer;
     //private Vector2 moveSpeedSnapshot;
+    const float diagDashAngle = 35;
+
+    [SerializeField] bool enableVFX = true;
 
     protected override void Awake()
     {
@@ -136,19 +139,38 @@ public class Dash : Ability
             dashVec.x = PlayerMovement.FacingDir.x;
         }
         if (!CanDiagonalDash) dashVec.y = 0;
-        else if (dashVec.x == 0) return false; // no up-dash or down-dash
-        dashVelocityVec = dashVec.normalized * dashVelocity;
+        else if (dashVec.x == 0) return false; 
+
+        if (dashVec.x != 0 && dashVec.y != 0) // is diagonal dash 
+        {
+            dashVelocityVec = new Vector2(Util.SignOr0(dashVec.x) * Mathf.Cos(Mathf.Deg2Rad * diagDashAngle),
+                                          Util.SignOr0(dashVec.y) * Mathf.Sin(Mathf.Deg2Rad * diagDashAngle)) 
+                                         * dashVelocity;
+        }
+        else
+        {
+            dashVelocityVec = dashVec.normalized * dashVelocity;
+        }
         canDash = false;
         curCooldown = cooldown;
         curDashDuration = dashDuration;
         dashing = true;
-        // particle effects
-
         PlayerMovement.SpecialState = SpecialState.Dash;
-        particle.Play();
-        particleMaterials[0].mainTexture = playerSpriteRenderer.sprite.texture;
-        particleRenderer.SetMaterials(particleMaterials);
-        particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
+
+        if (enableVFX)
+        {
+            // particle effects
+            particle.Play();
+            Rect rect = playerSpriteRenderer.sprite.textureRect;
+            Texture2D tex = new Texture2D((int)rect.width, (int)rect.height);
+            tex.SetPixels(playerSpriteRenderer.sprite.texture.GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
+            tex.Apply();
+            particleMaterials[0].mainTexture = tex;
+            particleRenderer.SetMaterials(particleMaterials);
+            particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
+
+        }
+
 
         base.UseAbility();
 

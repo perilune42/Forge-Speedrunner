@@ -63,6 +63,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   Grapple: {fileID: 0}
+  lifetime: 30
 --- !u!61 &-3952376419283584309
 BoxCollider2D:
   m_ObjectHideFlags: 0

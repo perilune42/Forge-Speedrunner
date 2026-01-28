@@ -65,11 +65,11 @@ public class PlayerMovement : DynamicEntity
     {
         base.FixedUpdate();
 
-        if (SpecialState == SpecialState.Normal && forceMoveFrames == 0)
+        if ((SpecialState == SpecialState.Normal && forceMoveFrames == 0) || SpecialState == SpecialState.GroundSlam )
         {
             MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
         }
-        if (SpecialState == SpecialState.Normal)
+        if (SpecialState == SpecialState.Normal || SpecialState == SpecialState.GroundSlam)
         {
             if (MoveDir.x != 0)
             {

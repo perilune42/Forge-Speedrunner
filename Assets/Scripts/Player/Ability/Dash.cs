@@ -142,11 +142,15 @@ public class Dash : Ability
         curCooldown = cooldown;
         curDashDuration = dashDuration;
         dashing = true;
-        // particle effects
-
         PlayerMovement.SpecialState = SpecialState.Dash;
+
+        // particle effects
         particle.Play();
-        particleMaterials[0].mainTexture = playerSpriteRenderer.sprite.texture;
+        Rect rect = playerSpriteRenderer.sprite.textureRect;
+        Texture2D tex = new Texture2D((int)rect.width, (int)rect.height);
+        tex.SetPixels(playerSpriteRenderer.sprite.texture.GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
+        tex.Apply();
+        particleMaterials[0].mainTexture = tex;
         particleRenderer.SetMaterials(particleMaterials);
         particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
 

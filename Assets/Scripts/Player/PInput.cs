@@ -5,7 +5,7 @@ public class PInput : Singleton<PInput>
 {
     // Use in other classes
     public Vector2 MoveVector;
-    public InputButton Jump, Dash, GroundSlam, Grapple;
+    public InputButton Jump, Dash, GroundSlam, Grapple, Map;
 
     // Internal vars
     private InputAction move;
@@ -94,6 +94,7 @@ public class PInput : Singleton<PInput>
         Dash = new InputButton(InputSystem.actions.FindAction("Dash"), 8);
         GroundSlam = new InputButton(InputSystem.actions.FindAction("GroundSlam"), 8);
         Grapple = new InputButton(InputSystem.actions.FindAction("Grapple"), 8);
+        Map = new InputButton(InputSystem.actions.FindAction("Map"), 1);
     }
 
     private void Update()

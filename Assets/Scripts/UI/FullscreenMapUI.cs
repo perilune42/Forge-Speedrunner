@@ -33,6 +33,14 @@ public class FullscreenMapUI : MonoBehaviour
         StartCoroutine(produceImages());
     }
 
+    private void FixedUpdate()
+    {
+        if (PInput.Instance.Map.HasPressed)
+        {
+            // pull up the map
+        }
+    }
+
     IEnumerator produceImages()
     {
         yield return new WaitForSeconds(0.05f);

@@ -2124,6 +2124,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 800515097}
     m_Modifications:
+    - target: {fileID: 3025123090309241430, guid: 8bd6b1bb26705964f95efb8f3b918ff2, type: 3}
+      propertyPath: m_text
+      value: MONEY GAINED HERE
+      objectReference: {fileID: 0}
+    - target: {fileID: 3025123090309241430, guid: 8bd6b1bb26705964f95efb8f3b918ff2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7272527011366450206, guid: 8bd6b1bb26705964f95efb8f3b918ff2, type: 3}
       propertyPath: m_Name
       value: Review Tab

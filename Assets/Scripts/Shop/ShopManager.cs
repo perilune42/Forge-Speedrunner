@@ -21,6 +21,9 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private GameObject upgradePrefab;
     [SerializeField] private Transform upgradeLayoutGroup;
     [SerializeField] private TMP_Text moneyText;
+    [SerializeField] private TMP_Text runTimeText;
+    [SerializeField] private TMP_Text targetTimeText;
+    [SerializeField] private TMP_Text moneyGainedText;
 
     [SerializeField] private GameObject[] tabs;
 
@@ -30,6 +33,7 @@ public class ShopManager : Singleton<ShopManager>
     {
         base.Awake();
         UpdateMoney();
+        UpdateTimeTaken();
 
         foreach (AbilityData abilityData in AbilitySceneTransfer.AbilityDataArray)
         {
@@ -79,7 +83,15 @@ public class ShopManager : Singleton<ShopManager>
 
     public void UpdateMoney()
     {
+        int moneyGained = (int)(Timer.targetSpeedrunTime - Timer.speedrunTime);
+        moneyGainedText.text = moneyGained + "";
+        Money += moneyGained;
         moneyText.text = Money.ToString();
+    }
+
+    public void UpdateTimeTaken() {
+        runTimeText.text = Util.SecondsToTime(Timer.speedrunTime);
+        targetTimeText.text = Util.SecondsToTime(Timer.targetSpeedrunTime);
     }
 
     public void ReturnToWorld()

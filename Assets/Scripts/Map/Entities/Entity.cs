@@ -8,6 +8,11 @@ public abstract class Entity : MonoBehaviour
     public virtual bool StrictCollisions => false;
     protected virtual void Awake()
     {
+        if (this is IInteractable interactable) 
+        {
+            interactable.GenerateInteractionTrigger();
+        }
+
         Hitbox = GetComponent<Collider2D>();
         if (IsSolid && (1 << gameObject.layer) != LayerMask.GetMask("Solid"))
         {
@@ -19,11 +24,8 @@ public abstract class Entity : MonoBehaviour
             Debug.LogWarning($"Non-solid entity set to wrong layer ({gameObject.layer})!");
             gameObject.layer = LayerMask.NameToLayer("Entity");
         }
-        if (this is IInteractable)
-        {
-
-        }
     }
+
     
 
     // normal = player pointing to entity surface

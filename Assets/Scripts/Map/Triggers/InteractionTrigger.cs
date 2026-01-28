@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InteractionTrigger : MonoBehaviour
+public class InteractionTrigger : Trigger
 {
     bool playerInside;
     IInteractable interactable;
@@ -10,13 +10,20 @@ public class InteractionTrigger : MonoBehaviour
         this.interactable = i;
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    public override void OnPlayerEnter()
     {
-        if (collision.GetComponent<PlayerMovement>() != null)
-        {
-            playerInside = true;
-        }
+        base.OnPlayerEnter();
+        interactable.OnEnterInteractRange();
+        playerInside = true;
     }
+
+    public override void OnPlayerExit()
+    {
+        base.OnPlayerExit();
+        interactable.OnExitInteractRange();
+        playerInside = false;
+    }
+
 
     private void FixedUpdate()
     {

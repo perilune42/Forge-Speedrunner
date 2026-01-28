@@ -113,6 +113,7 @@ public class PInput : Singleton<PInput>
         GroundSlam.Update();
         Grapple.Update();
         Map.Update();
+        Interact.Update();
     }
 
     private void FixedUpdate()
@@ -122,5 +123,6 @@ public class PInput : Singleton<PInput>
         GroundSlam.FixedUpdate();
         Grapple.FixedUpdate();
         Map.FixedUpdate();
+        Interact.FixedUpdate();
     }
 }

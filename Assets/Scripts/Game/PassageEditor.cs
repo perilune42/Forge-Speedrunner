@@ -22,9 +22,9 @@ public class PassageEditor_Inspector : Editor
             Transform passageFolder = rm.transform.Find(PASSAGE_NAME);
             if(passageFolder != null)
             {
-                Debug.Log($"Found RoomManager {{{rm}}} and passage folder {{{passageFolder}}}\nTime to die...");
+                EditorUtility.SetDirty(pe.attachedPassage); // changes don't persist without this
+                Debug.Log($"Found RoomManager {{{rm}}} and passage folder {{{passageFolder}}}\nDeploying!");
                 pe.transform.SetParent(passageFolder, true);
-                DestroyImmediate(pe);
             }
             else
             {
@@ -47,7 +47,7 @@ public class PassageEditor : MonoBehaviour
     public Color SuccessColor = Color.green;
     public Color FailColor = Color.red;
     public Vector2 RectangleSize = new(0.0F,0.0F);
-    public bool foundFit {get; private set;} = false;
+    public bool foundFit = false;
 
     void Start()
     {

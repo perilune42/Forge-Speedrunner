@@ -154,7 +154,7 @@ public class RoomManager : Singleton<RoomManager>
         }
 
         // logic moved to CameraController
-        CameraController.Instance.SnapToRoom(room2);
+        CameraController.Instance.SnapToRoom(door2.enclosingRoom);
 
         // 3 cope frames
         for (int i = 0; i < 3; i++)

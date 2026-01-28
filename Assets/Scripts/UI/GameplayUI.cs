@@ -12,4 +12,21 @@ public class GameplayUI : MonoBehaviour
         targetTimeText.text = Util.SecondsToTime(Timer.targetSpeedrunTime);
         speedText.text = Player.Instance.Movement.Velocity.ToString();
     }
+
+    // Pause and Play methods for Pause Button UI element
+    public void Pause()
+    {
+        if (Game.Instance != null)
+        {
+            Game.Instance.Pause();
+        }
+    }
+
+    public void Play()
+    {
+        if (Game.Instance != null)
+        {
+            Game.Instance.Play();
+        }
+    }
 }

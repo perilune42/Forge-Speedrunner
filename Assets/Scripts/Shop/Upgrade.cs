@@ -10,6 +10,9 @@ public class Upgrade : MonoBehaviour
 
     public Image UpgradeImage;
     public TMP_Text CostText;
+    public TMP_Text ChargeText;
+
+    private bool usesCharges;
 
     public void BuyUpgrade()
     {
@@ -29,15 +32,19 @@ public class Upgrade : MonoBehaviour
             IsBought = true;
 
             AbilitySceneTransfer.AbilityDataArray[index].Level++;
+            AbilitySceneTransfer.AbilityDataArray[index].UsesCharges = usesCharges;
         }
     }
 
-    public void Init(int abilityIndex)
+    public void Init(int abilityIndex, bool usesCharges = false)
     {
         index = abilityIndex;
         var abilityData = AbilitySceneTransfer.AbilityDataArray[abilityIndex];
         this.data = abilityData.Upgrades[abilityData.Level];
         UpgradeImage.sprite = this.data.Icon;
         CostText.text = this.data.Name;
+        this.usesCharges = usesCharges;
+        ChargeText.text = usesCharges ? $"Charges: {abilityData.MaxCharges}" : "";
+
     }
 }

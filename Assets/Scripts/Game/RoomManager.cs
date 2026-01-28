@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework.Constraints;
 using Unity.VisualScripting;
+using Unity.Cinemachine;
 using System.Collections;
 
 public class RoomManager : Singleton<RoomManager>
@@ -20,22 +21,34 @@ public class RoomManager : Singleton<RoomManager>
     public int TransitionWidth = 4;
     public int TransitionFadeFrames = 20; // per side of room
 
+    // moved to CameraController.cs
+    //public BoxCollider2D CameraBounds;
+    //public CinemachineConfiner2D CameraConfiner;
+
+    // we should move these prefabs out of here...
     public BoxCollider2D GuideRailPrefab;
     public BoxCollider2D FreezeTriggerPrefab;
+    public BoxCollider2D BlockerHorzPrefab, BlockerVertPrefab;
 
     public List<Room> AllRooms = new();
+    [HideInInspector] public Passage[] AllPassages;
 
     void Start()
     {
-        Passage[] allPassages = GetComponentsInChildren<Passage>();
+        // Change index of GetChild based on the index of the Passages object's 
+        // index in the children hierarchy
+        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+
         AllRooms = GetComponentsInChildren<Room>().ToList();
 
-        foreach(Passage pass in allPassages)
+        foreach(Passage pass in AllPassages)
         {
             pass.door1.passage = pass;
             pass.door2.passage = pass;
         }
-        originalPosition = Player.Instance.Movement.transform.position;
+        Debug.Log($"activeRoom: {activeRoom}");
+        Debug.Log($"camera controller: {CameraController.Instance}");
+        CameraController.Instance.SnapToRoom(activeRoom);
     }
 
     void Update()
@@ -193,9 +206,14 @@ public class RoomManager : Singleton<RoomManager>
             yield return new WaitForFixedUpdate();
         }
 
-        // ** MOVE CAMERA HERE ** 
-        Camera.main.transform.position = newPosition;
-        // Switch confiner to the one in the new room
+        // logic moved to CameraController
+        CameraController.Instance.SnapToRoom(door2.enclosingRoom);
+
+        // 3 cope frames
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
 
         FadeToBlack.Instance.FadeOut();
         for (int i = 0; i < TransitionFadeFrames; i++)

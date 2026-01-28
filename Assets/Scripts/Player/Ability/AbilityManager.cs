@@ -5,7 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class AbilityManager : Singleton<AbilityManager>
 {
-    
+    [Header("=== DEBUG OPTIONS ===")]
+    // USED FOR SHOP TESTING ONLY, SELF DESTRUCTS ON ABILITY ASSIGNMENT
+    [SerializeField] bool shopDebugMode = false;
+
+    // More debug options
+    [SerializeField] bool giveAllAbilities = false;
+    [SerializeField] bool allAbilitiesAreCharged = false;
+
+
+
     public AbilitySceneContainer[] Abilities;
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent;
@@ -13,14 +22,21 @@ public class AbilityManager : Singleton<AbilityManager>
     public PlayerMovement playerMovement;
     private List<Ability> playerAbilities;
     
-    private new void Awake()
+    public override void Awake()
     {
         base.Awake();
         playerAbilities = new();
         if (!AbilitySceneTransfer.Initialized) Init();
-        
-        
-        GivePlayerAbilities();
+
+        if (shopDebugMode)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            GivePlayerAbilities();
+        }
     }
     
     private void OnGUI()
@@ -42,9 +58,17 @@ public class AbilityManager : Singleton<AbilityManager>
         for (int i = 0; i < Abilities.Length; i++)
         {
             Abilities[i].data.ID = i;
-            if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash) 
-                Abilities[i].data.Level = 1;
-            else Abilities[i].data.Level = 0;
+            if (giveAllAbilities)
+            {
+                Abilities[i].data.Level = 2;
+            }
+            else
+            {
+                if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash)
+                    Abilities[i].data.Level = 1;
+                else Abilities[i].data.Level = 0;
+            }
+
             AbilitySceneTransfer.AbilityDataArray[i] = Abilities[i].data;
         }
         AbilitySceneTransfer.Initialized = true;
@@ -72,6 +96,13 @@ public class AbilityManager : Singleton<AbilityManager>
         playerAbilities.Add(ability);
         ability.Data = AbilitySceneTransfer.AbilityDataArray[index];
         ability.ID = index;
+        if (ability.ID != 0 && (allAbilitiesAreCharged || ability.Data.UsesCharges))
+        {
+            ability.UsesCharges = true;
+            ability.MaxCharges = ability.Data.MaxCharges;
+            ability.CurCharges = ability.MaxCharges;
+        }
+        
     }
 
     public T GetAbility<T>() where T : Ability

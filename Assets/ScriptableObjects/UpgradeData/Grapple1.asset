@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e268dea8b3f79df4daabd1b7428c41fa, type: 3}
+  m_Name: Grapple1
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
+  Name: Grapple
+  Description: Can now dash while slamming!
+  Icon: {fileID: -3535184528703506323, guid: 1a03fab19e9bb9be1a2fcc821e3e9dd5, type: 3}
+  Cost: 5

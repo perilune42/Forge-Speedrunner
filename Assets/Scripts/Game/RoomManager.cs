@@ -41,6 +41,8 @@ public class RoomManager : Singleton<RoomManager>
 
         AllRooms = GetComponentsInChildren<Room>().ToList();
 
+        originalPosition = Player.Instance.Movement.transform.position;
+
         foreach(Passage pass in AllPassages)
         {
             pass.door1.passage = pass;
@@ -198,26 +200,7 @@ public class RoomManager : Singleton<RoomManager>
             PInput.Instance.MoveInputOverrride = pm.FacingDir;
         }
 
-        FadeToBlack.Instance.FadeIn();
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        // logic moved to CameraController
-        CameraController.Instance.SnapToRoom(door2.enclosingRoom);
-
-        // 3 cope frames
-        for (int i = 0; i < 3; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        FadeToBlack.Instance.FadeOut();
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
+        yield return roomTransition(door2.enclosingRoom);
 
         // suppress target trigger to avoid transitioning back
         door2.SuppressNextTransition();
@@ -244,5 +227,31 @@ public class RoomManager : Singleton<RoomManager>
         PInput.Instance.EnableControls = true;
         PInput.Instance.MoveInputOverrride = Vector2.zero;
         pm.GravityEnabled = true;
+    }
+
+    private IEnumerator roomTransition(Room room)
+    {
+        Debug.Log("start room transition");
+        FadeToBlack.Instance.FadeIn();
+        for (int i = 0; i < TransitionFadeFrames; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        // logic moved to CameraController
+        CameraController.Instance.SnapToRoom(room);
+
+        // 3 cope frames
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        FadeToBlack.Instance.FadeOut();
+        for (int i = 0; i < TransitionFadeFrames; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        Debug.Log("end room transition");
     }
 }

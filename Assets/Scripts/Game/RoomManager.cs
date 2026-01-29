@@ -177,10 +177,6 @@ public class RoomManager : Singleton<RoomManager>
         else
             newPlayerPos.x += relativePos.x;
 
-        // calculate camera position
-        Vector3 newPosition = door2.enclosingRoom.transform.position + new Vector3(BaseWidth / 2, BaseHeight / 2);
-        newPosition.z = Camera.main.transform.position.z;
-
         /**
          * start doing things to the player here
          */

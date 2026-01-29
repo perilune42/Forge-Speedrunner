@@ -25,7 +25,8 @@ public class Doorway : MonoBehaviour
     {
         if (collision.GetComponent<PlayerMovement>() != null)
         {
-            suppressTransition = false;
+            Debug.Log("you'd normally un-suppress transitions here.");
+            // suppressTransition = false;
         }
     }
 
@@ -49,7 +50,11 @@ public class Doorway : MonoBehaviour
     {
         suppressTransition = true;
         // in case the trigger exit wasn't detected
-        StartCoroutine(Util.FDelayedCall(30, () => suppressTransition = false));
+        // StartCoroutine(Util.FDelayedCall(30, () => suppressTransition = false));
+    }
+    public void EnableTransition()
+    {
+        suppressTransition = false;
     }
 
     private void GenerateGuideRails()

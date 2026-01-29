@@ -107,6 +107,9 @@ public class RoomManager : Singleton<RoomManager>
         // in this case, skip most of this. just teleport back to placement position
         if (previousDoorway == null)
         {
+            Debug.Log("hey");
+            StartCoroutine(roomTransition(activeRoom));
+            StartCoroutine(warpTo(originalPosition, new Vector2(0F,0F), new Vector2(1F, 0F)));
             return;
         }
 
@@ -156,7 +159,6 @@ public class RoomManager : Singleton<RoomManager>
     }
     private IEnumerator warpTo(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
-        PlayerMovement pm = Player.Instance.Movement;
 
         // assuming doorways are placed correctly in world space
         // i.e. centered properly along the world grid
@@ -180,6 +182,16 @@ public class RoomManager : Singleton<RoomManager>
         /**
          * start doing things to the player here
          */
+        door2.SuppressNextTransition();
+        // do these sequentially. looks clearer
+        yield return roomTransition(door2.enclosingRoom);
+        yield return warpTo(newPlayerPos, preservedVelocity, dir);
+        door2.EnableTransition();
+    }
+    private IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    {
+        PlayerMovement pm = Player.Instance.Movement;
+
 
         PInput.Instance.EnableControls = false;
         pm.GravityEnabled = false;
@@ -196,14 +208,11 @@ public class RoomManager : Singleton<RoomManager>
             PInput.Instance.MoveInputOverrride = pm.FacingDir;
         }
 
-        yield return roomTransition(door2.enclosingRoom);
-
         // suppress target trigger to avoid transitioning back
-        door2.SuppressNextTransition();
-        pm.transform.position = newPlayerPos;
+        pm.transform.position = position;
         pm.Locked = false;
         pm.SpecialState = SpecialState.Normal;
-        const float minTransitionSpeed = 8;
+        const float minTransitionSpeed = 0;
 
         // give some minimum velocity entering the room
         if (Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)

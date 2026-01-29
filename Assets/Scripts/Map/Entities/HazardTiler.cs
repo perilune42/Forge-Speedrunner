@@ -7,6 +7,7 @@ public class HazardTiler : MonoBehaviour
     private Hazard hazard;
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxColl;
+    private bool valueChanged = false;
     public Vector2 DimensionsXY = new(1,1);
 
     public void Start()
@@ -25,6 +26,15 @@ public class HazardTiler : MonoBehaviour
 
     private void OnValidate()
     {
+        valueChanged = true;
+    }
+
+    public void Update()
+    {
+        // guards to prevent running at wrong time
+        if(Application.isPlaying || !transform.hasChanged) return;
+        if(!valueChanged) return;
+
         // new size calculation
         Rect dim = spriteRenderer.sprite.rect;
         float unitConversion = spriteRenderer.sprite.pixelsPerUnit;
@@ -36,11 +46,8 @@ public class HazardTiler : MonoBehaviour
         Undo.RecordObject(spriteRenderer, "OnValidate resize in editor");
         spriteRenderer.size = newSize;
         EditorUtility.SetDirty(spriteRenderer);
-    }
 
-    public void Update()
-    {
-        // in this situation, not good to run
-        if(Application.isPlaying || !transform.hasChanged) return;
+        // update done
+        valueChanged = false;
     }
 }

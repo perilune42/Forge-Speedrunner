@@ -24,7 +24,7 @@ public class Gate : ActivatableEntity
 
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         if (isMoving)
         {

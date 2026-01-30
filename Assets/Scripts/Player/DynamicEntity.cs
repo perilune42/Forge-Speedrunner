@@ -14,7 +14,8 @@ public enum BodyState
 {
     OnGround, 
     InAir, // Experiences gravity and terminal drag
-    Locked  // Cannot move and does not experience any force
+    Override    // Can still move by velocity but does not experience any force
+
 }
 
 public enum PDir
@@ -97,13 +98,14 @@ public class DynamicEntity : MonoBehaviour
 
     protected virtual void Fall()
     {
+        if (State == BodyState.Override) return;
         if (State != BodyState.InAir || !GravityEnabled) return;
         Velocity.y = Mathf.Max(Velocity.y - Gravity * GravityMultiplier * fdt, -TerminalVelocity); // Cap the velocity
     }
 
     protected virtual void CheckGrounded()
     {
-        if (!CollisionsEnabled) return;
+        if (!CollisionsEnabled || State == BodyState.Override) return;
 
         Bounds bounds = SurfaceCollider.bounds;
         Vector2 origin = (Vector2)transform.position + SurfaceCollider.offset + SurfaceCollider.bounds.extents.y * 3 / 4 * Vector2.down;
@@ -134,7 +136,8 @@ public class DynamicEntity : MonoBehaviour
     /// <param name="move">The movement vector</param>
     public virtual void ApplyMovement(Vector2 move)
     {
-        if (!CollisionsEnabled) return;
+        bool doesCollide = CollisionsEnabled && (State != BodyState.Override);
+
         collisionHits.Clear();
         if (Mathf.Approximately(move.magnitude, 0f)) return; // This avoids weird imprecision errors
 
@@ -143,33 +146,33 @@ public class DynamicEntity : MonoBehaviour
 
         LayerMask collideOrInteractLayer = collisionLayer.value | interactLayer.value;
 
-        // prioritize entities over solids to avoid clipping
+        { 
+            // prioritize entities over solids to avoid clipping
 
-        RaycastHit2D hit;
+            RaycastHit2D hit;
 
-        hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
-        if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
-        {
-            Entity hitEntity = hit.collider.GetComponent<Entity>();
-            if (hitEntity != null && hitEntity.StrictCollisions)
+            hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
+            if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
             {
-                ResolveInitialCollisions(false);
-                origin = (Vector2)transform.position + SurfaceCollider.offset;
+                Entity hitEntity = hit.collider.GetComponent<Entity>();
+                if (hitEntity != null && hitEntity.StrictCollisions)
+                {
+                    ResolveInitialCollisions(false);
+                    origin = (Vector2)transform.position + SurfaceCollider.offset;
+                }
             }
+            if (doesCollide)
+            {
+                hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+                if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
+                {
+                    ResolveInitialCollisions();
+                    origin = (Vector2)transform.position + SurfaceCollider.offset;
+                }
+            }
+
         }
-        hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
-        if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
-        {
-            ResolveInitialCollisions();
-            origin = (Vector2)transform.position + SurfaceCollider.offset;
-        }
-
-        hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
-
-        // If the free body is inside another object, separate them and recompute the raycast
-
-
-        
+        // hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
 
         bool hitL = false, hitR = false;
         Dictionary<Entity, bool> stillTouchingEntity = new Dictionary<Entity, bool>();
@@ -180,87 +183,112 @@ public class DynamicEntity : MonoBehaviour
 
         List<Tuple<Entity, Vector2>> toCollide = new();
         int substeps = 0; // This is to prevent infinite loops in case something goes wrong
-        while (hit && !hit.collider.isTrigger)
+
+        RaycastHit2D[] hits;
+        hits = Physics2D.BoxCastAll(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
+
+
+        while (hits.Length > 0)
         {
-
-
-            collisionHits.Add(hit);
-            Vector2 normal = hit.normal.normalized;
-
-
-            bool hitSolid = true;
-            Entity hitEntity = hit.collider.GetComponent<Entity>();
-            // stall collide behavior until rest of movement is processed
-            
-            if (hitEntity != null)
+            bool moved = false;
+            foreach (var hit in hits)
             {
-                if (!collidingEntities.Contains(hitEntity))
+                if (!hit) break;
+
+                collisionHits.Add(hit);
+                Vector2 normal = hit.normal.normalized;
+
+
+                bool hitSolid = true;
+                Entity hitEntity = hit.collider.GetComponent<Entity>();
+                // stall collide behavior until rest of movement is processed
+
+                if (hitEntity != null)
                 {
-                    collidingEntities.Add(hitEntity);
-                    hitEntity.OnCollide(this, hit.normal);
-                    move = Velocity * fdt;  // velocity may have been altered by entity interaction
+                    if (!collidingEntities.Contains(hitEntity))
+                    {
+                        collidingEntities.Add(hitEntity);
+                        var prevMove = move;
+                        hitEntity.OnCollide(this, hit.normal);
+                        move = Velocity * fdt;  // velocity may have been altered by entity interaction\
+                        if (!Mathf.Approximately((prevMove - move).sqrMagnitude, 0))
+                        {
+                            moved = true;
+                        }
+                    }
+                    stillTouchingEntity[hitEntity] = true;
+                    if (!hitEntity.IsSolid)
+                    {
+                        hitSolid = false;
+                    }
                 }
-                stillTouchingEntity[hitEntity] = true;
-                if (!hitEntity.IsSolid)
+                else if (((1 << hit.collider.gameObject.layer) & collisionLayer.value) == 0)
                 {
                     hitSolid = false;
                 }
-            }
 
-            if (hitSolid)
-            {
-                Vector2 delta = hit.centroid - origin + CONTACT_OFFSET * normal;
-                move -= delta;
-
-                transform.position += (Vector3)delta;
-                origin = (Vector2)transform.position + SurfaceCollider.offset;
-                move -= Util.Vec2Proj(move, normal);
-                Velocity -= Util.Vec2Proj(Velocity, normal);
-                
-                OnHitWallAny?.Invoke(hitEntity);
-                
-                if (!hitL && normal.x > 0)
+                if (hitSolid && doesCollide)
                 {
-                    OnHitWallLeft?.Invoke();
-                    hitL = true;
+                    Vector2 delta = hit.centroid - origin + CONTACT_OFFSET * normal;
+                    move -= delta;
+                    if (!Mathf.Approximately(delta.sqrMagnitude, 0))
+                    {
+                        moved = true;
+                    }
+
+                    transform.position += (Vector3)delta;
+                    origin = (Vector2)transform.position + SurfaceCollider.offset;
+                    move -= Util.Vec2Proj(move, normal);
+                    Velocity -= Util.Vec2Proj(Velocity, normal);
+
+                    OnHitWallAny?.Invoke(hitEntity);
+
+                    if (!hitL && normal.x > 0)
+                    {
+                        OnHitWallLeft?.Invoke();
+                        hitL = true;
+                    }
+                    else if (!hitR && normal.x < 0)
+                    {
+                        OnHitWallRight?.Invoke();
+                        hitR = true;
+                    }
+
+                    // These conditionals sidestep floating point imprecisions
+                    if (Mathf.Approximately(Velocity.sqrMagnitude, 0f))
+                    {
+                        Velocity = Vector2.zero;
+                        break;
+                    }
+                    if (Mathf.Approximately(move.sqrMagnitude, 0f))
+                    {
+                        move = Vector2.zero;
+                        break;
+                    }
                 }
-                else if (!hitR && normal.x < 0)
-                {
-                    OnHitWallRight?.Invoke();
-                    hitR = true;
-                }
 
-                // These conditionals sidestep floating point imprecisions
-                if (Mathf.Approximately(Velocity.sqrMagnitude, 0f))
+
+                substeps++;
+                if (substeps > MAX_SUBSTEPS)
                 {
-                    Velocity = Vector2.zero;
+                    Debug.LogWarning("Collision max substeps exceeded");
                     break;
                 }
-                if (Mathf.Approximately(move.sqrMagnitude, 0f))
-                {
-                    move = Vector2.zero;
-                    break;
-                }
-                hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
             }
-            else
+
+            if (!moved)
             {
-                hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+                // scanned everything here and didn't move, so probably not touching anything
+                break;
             }
-            
-            
 
-
-
+            hits = Physics2D.BoxCastAll(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
             substeps++;
             if (substeps > MAX_SUBSTEPS)
             {
                 Debug.LogWarning("Collision max substeps exceeded");
                 break;
             }
-            
-
-
         }
         // resolve entity collisions now
         //foreach (var colData in toCollide)

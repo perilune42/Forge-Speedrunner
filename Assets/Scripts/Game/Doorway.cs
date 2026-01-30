@@ -78,14 +78,15 @@ public class Doorway : MonoBehaviour
         if (passage == null)
         {
             BoxCollider2D blocker;
-            if (IsHorizontal())
-            {
-                blocker = Instantiate(RoomManager.Instance.BlockerHorzPrefab);
-            }
-            else
-            {
-                blocker = Instantiate(RoomManager.Instance.BlockerVertPrefab);
-            }
+            blocker = Instantiate(RoomManager.Instance.BlockerVertPrefab);
+            // if (IsHorizontal())
+            // {
+            //     blocker = Instantiate(RoomManager.Instance.BlockerHorzPrefab);
+            // }
+            // else
+            // {
+            //     blocker = Instantiate(RoomManager.Instance.BlockerVertPrefab);
+            // }
             blocker.transform.SetParent(transform, false);
             blocker.transform.position = transform.position - (Vector3)GetTransitionDirection();
         }

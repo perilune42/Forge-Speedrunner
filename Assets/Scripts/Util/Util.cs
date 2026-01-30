@@ -238,4 +238,10 @@ public static class Util
         if (t > 1f) return 1; // past B
         return 0;              // on segment
     }
+
+    public static float RepeatSigned(float value, float length)
+    {
+        float range = 2f * length;
+        return Mathf.Repeat(value + length, range) - length;
+    }
 }

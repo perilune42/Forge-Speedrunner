@@ -55,5 +55,5 @@ MonoBehaviour:
   rampUpAcceleration: 0.25
   terminalVelocitySlam: 100
   heightConversion: 1
-  minimumSpeedGain: 6
+  minimumSpeedGain: 9
   wasSlammingBeforeDash: 0

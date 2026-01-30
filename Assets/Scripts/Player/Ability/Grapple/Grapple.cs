@@ -10,7 +10,7 @@ public class Grapple : Ability
     [SerializeField] private GameObject GrappleArrowPrefab;
     [SerializeField] private int pullCooldown;
     private GrappleHand grappleHand;
-    private GameObject grappleArrow;
+    //private GameObject grappleArrow;
     [HideInInspector] public bool GrappleHandActive;
     public GrappleState grappleState;
     private bool charging = false;
@@ -32,7 +32,8 @@ public class Grapple : Ability
         if (charging)
         {
             chargeTime++;
-            grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
+            //grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
+            grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick);
             if (chargeTime >= maxCharge || PInput.Instance.Grapple.StoppedPressing)
             {
                 LaunchPlayer(PullStrength * (1f + chargeTime * chargePerTick));
@@ -89,7 +90,7 @@ public class Grapple : Ability
         charging = false;
         grappleState = GrappleState.Idle;
         Destroy(grappleHand.gameObject);
-        Destroy(grappleArrow);
+        //Destroy(grappleArrow);
         if (!UsesCharges)
         {
             curCooldown = cooldown;
@@ -97,12 +98,12 @@ public class Grapple : Ability
         
     }
     
-    public void CreateGrappleArrow()
+    /*public void CreateGrappleArrow()
     {
         grappleArrow = Instantiate(GrappleArrowPrefab, PlayerMovement.transform);
         grappleArrow.transform.position = PlayerMovement.GetComponent<BoxCollider2D>().bounds.center;
         grappleArrow.GetComponent<GrappleArrow>().grappleHand = grappleHand.gameObject;
-    }
+    }*/
 }
 
 public enum GrappleState

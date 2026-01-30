@@ -500,6 +500,10 @@ public class PlayerMovement : DynamicEntity
         isSprinting = false;
     }
 
+    public Vector3 GetCenterPos()
+    {
+        return SurfaceCollider.bounds.center;
+    }
 }
 
 [Serializable]

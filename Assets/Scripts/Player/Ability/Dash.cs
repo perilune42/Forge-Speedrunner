@@ -108,9 +108,10 @@ public class Dash : Ability
         // thanh new part
         // Grabs the slam instance and check if we are currently groundslamming
         GroundSlam slam = AbilityManager.Instance.GetAbility<GroundSlam>();
+        bool interrupted = false;
         if (slam != null && Player.Instance.Movement.SpecialState == SpecialState.GroundSlam)
         {
-            bool interrupted = slam.DashInterrupt();
+            interrupted = slam.DashInterrupt();
             if (!interrupted)
             {
                 // failed to dash as slam was not interrupted
@@ -152,7 +153,7 @@ public class Dash : Ability
         dashing = true;
         PlayerMovement.SpecialState = SpecialState.Dash;
 
-        if (enableVFX)
+        if (enableVFX && !interrupted)
         {
             // particle effects
             stopParticleAction += PlayerVFXTrail.PlayParticle(Color.black);

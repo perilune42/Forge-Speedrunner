@@ -27,7 +27,6 @@ public class Ricochet : Ability
             if (curDuration <= 0) 
             { 
                 active = false;
-                stopParticleAction?.Invoke();
             }
         }
         else if (PInput.Instance.Ricochet.HasPressed) UseAbility();
@@ -67,7 +66,6 @@ public class Ricochet : Ability
         if (!CanUseAbility()) return false;
         active = true;
         curDuration = duration;
-        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.red);
         base.UseAbility();
         return true;
     }

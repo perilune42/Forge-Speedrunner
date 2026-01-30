@@ -271,6 +271,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1248727701836582279, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288256834093317551, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288256834093317551, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288256834093317551, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7071068
+      objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: 'doorwaysUp.Array.data[0]'
       value: 
@@ -279,9 +295,37 @@ PrefabInstance:
       propertyPath: 'doorwaysDown.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3098173042215258578, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3098173042215258578, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 3098173042215258578, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 3324024287134016117, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_Size.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3324024287134016117, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6612986043427267266, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Name
       value: room_1x1_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294181228924559011, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_Size.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294181228924559011, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_Size.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7682939128824420925, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Tiles.Array.size
@@ -27415,21 +27459,81 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3085160965763011002, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       insertIndex: -1
       addedObject: {fileID: 758145376779838943}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 867112084053446087, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4460027863294886897}
+    - targetCorrespondingSourceObject: {fileID: 661209740345184511, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9054359423058950286}
+    - targetCorrespondingSourceObject: {fileID: 4773326242365543220, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4888018577278792080}
   m_SourcePrefab: {fileID: 100100000, guid: dccce3af91cdb1947af866995adc7168, type: 3}
 --- !u!114 &2819115726972588379 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6423892439122584757, guid: dccce3af91cdb1947af866995adc7168, type: 3}
   m_PrefabInstance: {fileID: 9095515268764087790}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8228458233445447721}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cfc3ebd0dfff742f8ab9b448c9e25364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
+--- !u!1 &4325566837794055898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4773326242365543220, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+  m_PrefabInstance: {fileID: 9095515268764087790}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4888018577278792080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4325566837794055898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae589161b8bcd402b99138eee74d050f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorwayEditor
 --- !u!4 &6118548558274077780 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3085160965763011002, guid: dccce3af91cdb1947af866995adc7168, type: 3}
   m_PrefabInstance: {fileID: 9095515268764087790}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8228458233445447721 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 867112084053446087, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+  m_PrefabInstance: {fileID: 9095515268764087790}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4460027863294886897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8228458233445447721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae589161b8bcd402b99138eee74d050f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorwayEditor
+--- !u!1 &8580716505767781649 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 661209740345184511, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+  m_PrefabInstance: {fileID: 9095515268764087790}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &9054359423058950286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8580716505767781649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae589161b8bcd402b99138eee74d050f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorwayEditor

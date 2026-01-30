@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b00f8fda907044140b736ddc5f8a4cd1
+guid: c59b4faa2ee75474d94098ccc5adcae4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4513935915738980171
-    second: Grapple2_0
+      213: -5353812092960651861
+    second: DashIcon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Grapple2_0
+      name: DashIcon_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 225
-        height: 225
+        width: 30
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b4fdf7cacc8b4ae30800000000000000
-      internalID: 4513935915738980171
+      spriteID: ba5c3e4644073b5b0800000000000000
+      internalID: -5353812092960651861
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Grapple2_0: 4513935915738980171
+      DashIcon_0: -5353812092960651861
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

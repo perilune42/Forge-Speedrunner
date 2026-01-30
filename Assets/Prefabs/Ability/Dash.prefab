@@ -4895,4 +4895,4 @@ MonoBehaviour:
   particle: {fileID: 1359444250946196724}
   particleMaterials:
   - {fileID: 2100000, guid: 4550756f927bab8e3acec5716c8b24e0, type: 2}
-  enableVFX: 0
+  enableVFX: 1

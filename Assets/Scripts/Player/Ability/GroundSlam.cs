@@ -7,7 +7,8 @@ public class GroundSlam : Ability
     [SerializeField] private float initialVelocity;
     private int rampUpTime;
     [SerializeField] private float rampUpAcceleration;
-
+    [SerializeField] private float terminalVelocitySlam;
+    private float terminalVelocityDefault;
     [SerializeField] private float heightConversion;
 
     public bool wasSlammingBeforeDash;
@@ -82,6 +83,8 @@ public class GroundSlam : Ability
         if (PlayerMovement.SpecialState == SpecialState.Dash) AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         PlayerMovement.Velocity = Vector2.down * initialVelocity;
         PlayerMovement.SpecialState = SpecialState.GroundSlam;
+        terminalVelocityDefault = PlayerMovement.TerminalVelocity;
+        PlayerMovement.TerminalVelocity = terminalVelocitySlam;
         rampUpTime = 0;
         base.UseAbility();
         return true;
@@ -99,6 +102,7 @@ public class GroundSlam : Ability
         Debug.Log(rampUpTime * heightConversion);
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion);
         PlayerMovement.SpecialState = SpecialState.Normal;
+        PlayerMovement.TerminalVelocity = terminalVelocityDefault;
     }
 
 

@@ -49,7 +49,7 @@ public class DynamicEntity : MonoBehaviour
     public bool Locked = false;
 
     public Action OnHitWallLeft, OnHitWallRight;
-    public Action<Entity> OnHitWallAny;
+    public Action<Entity, Vector2> OnHitWallAny;
 
     [Tooltip("The maximum fall velocity")]
     public float TerminalVelocity;
@@ -116,8 +116,8 @@ public class DynamicEntity : MonoBehaviour
         RaycastHit2D groundHit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, Mathf.Infinity, collisionLayer);
 
         bool didHitGround = groundHit && groundHit.distance <= COLLISION_CHECK_DISTANCE;
-
-        if (didHitGround && Velocity.y <= 0 && State != BodyState.OnGround) OnGrounded(groundHit);
+        Debug.Log($"Hit ground, y velocity is {Velocity.y}");
+        if (didHitGround && (Velocity.y <= 1e-2 || Mathf.Approximately(Velocity.y, 0)) && State != BodyState.OnGround) OnGrounded(groundHit);
         else if (!didHitGround && State == BodyState.OnGround) OnAirborne();
 
         if (Velocity.y < 0 || State == BodyState.OnGround) canHitCeiling = true;
@@ -127,7 +127,7 @@ public class DynamicEntity : MonoBehaviour
             RaycastHit2D groundHitTop = Physics2D.BoxCast(originTop, size, 0f, Vector2.up, Mathf.Infinity, collisionLayer);
             bool didHitGroundTop = groundHitTop && groundHitTop.distance <= COLLISION_CHECK_DISTANCE;
           
-            if (didHitGroundTop && Velocity.y >= 0 && State != BodyState.OnGround) OnGroundedTop(groundHitTop);
+            if (didHitGroundTop && (Velocity.y >= -1e-2 ) && State != BodyState.OnGround) OnGroundedTop(groundHitTop);
         }
         
     }
@@ -263,7 +263,7 @@ public class DynamicEntity : MonoBehaviour
                     move -= Util.Vec2Proj(move, normal);
                     Velocity -= Util.Vec2Proj(Velocity, normal);
 
-                    OnHitWallAny?.Invoke(hitEntity);
+                    OnHitWallAny?.Invoke(hitEntity, -normal);
 
                     if (!hitL && normal.x > 0)
                     {

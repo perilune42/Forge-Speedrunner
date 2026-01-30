@@ -109,7 +109,7 @@ MonoBehaviour:
     m_Bits: 64
   interactLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   MovementParams:
     WalkSpeed: 8
     SprintSpeed: 11
@@ -126,7 +126,9 @@ MonoBehaviour:
   FacingDir: {x: 0, y: 0}
   MaxJumpFrames: 16
   SpecialState: 0
-  audioClips: []
+  audioClips:
+  - {fileID: 8300000, guid: 687972cb5f36f7643a21bcad2d1f6d61, type: 3}
+  - {fileID: 8300000, guid: c9c44d333a55425409dab20af40943db, type: 3}
   PreCollisionVelocity: {x: 0, y: 0}
 --- !u!114 &8967055831812217446
 MonoBehaviour:
@@ -359,6 +361,10 @@ PrefabInstance:
     - target: {fileID: 5158477073550250674, guid: 035782bd4fb6ef87795e7bac4751915b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6789338560488055817, guid: 035782bd4fb6ef87795e7bac4751915b, type: 3}
+      propertyPath: SizeModule.separateAxes
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

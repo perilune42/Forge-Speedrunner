@@ -12,7 +12,6 @@ public class Dash : Ability
     [SerializeField] private float dashVelocity;
     public bool CanDiagonalDash; // set to false, when you upgrade, it becomes true
     private Vector2 dashVelocityVec;
-
    
     //private Vector2 moveSpeedSnapshot;
     const float diagDashAngle = 35;
@@ -99,7 +98,7 @@ public class Dash : Ability
         dashing = false;
         PlayerMovement.GravityMultiplier = 1f;
         curDashDuration = 0;
-        PlayerVFXTrail.StopParticle();
+        stopParticleAction?.Invoke();
     }
 
     public override bool UseAbility()
@@ -156,9 +155,8 @@ public class Dash : Ability
         if (enableVFX)
         {
             // particle effects
-            PlayerVFXTrail.UpdateColor(Color.green);
-            PlayerVFXTrail.PlayParticle();
-            
+            stopParticleAction += PlayerVFXTrail.PlayParticle(Color.black);
+
         }
 
 

@@ -87,6 +87,7 @@ public class GroundSlam : Ability
         PlayerMovement.TerminalVelocity = terminalVelocitySlam;
         rampUpTime = 0;
         base.UseAbility();
+        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.blue);
         return true;
     }
 
@@ -103,6 +104,7 @@ public class GroundSlam : Ability
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion);
         PlayerMovement.SpecialState = SpecialState.Normal;
         PlayerMovement.TerminalVelocity = terminalVelocityDefault;
+        stopParticleAction?.Invoke();
     }
 
 

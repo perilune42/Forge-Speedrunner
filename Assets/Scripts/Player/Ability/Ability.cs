@@ -27,7 +27,7 @@ public abstract class Ability : MonoBehaviour
     private AbilityInfo info;
 
     public Action OnActivate;
-
+    protected Action stopParticleAction;
     protected virtual void Awake()
     {
         

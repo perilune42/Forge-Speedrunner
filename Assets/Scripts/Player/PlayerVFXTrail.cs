@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerVFXTrail : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem particle;
+    [SerializeField] private GameObject particlePrefab;
+    private ParticleSystem particle;
+    private ParticleSystemRenderer particleRenderer;
+
     [SerializeField] private SpriteRenderer playerSpriteRenderer;
     [SerializeField] private List<Material> particleMaterials;
-    [SerializeField] private ParticleSystemRenderer particleRenderer;
     [SerializeField] private PlayerMovement playerMovement;
     private Texture2D whitePlayerTexture; // player texture but with only white pixels
 
@@ -26,15 +29,29 @@ public class PlayerVFXTrail : MonoBehaviour
         whitePlayerTexture.Apply();
     }
 
-    public void PlayParticle()
+    public Action PlayParticle(Color color)
     {
+        var particleObj = Instantiate(particlePrefab, transform);
+        particle = particleObj.GetComponent<ParticleSystem>();
+        particleRenderer = particleObj.GetComponent<ParticleSystemRenderer>();
         particle.Play();
         UpdateSprite();
+        UpdateColor(color);
+        return () => StopParticle(particleObj);
     }
 
-    public void StopParticle()
+    private IEnumerator DestroyParticle(float fadeDuration, GameObject particleObj)
     {
-        particle.Stop();
+        yield return new WaitForSeconds(fadeDuration);
+        Destroy(particleObj);
+    }
+
+    public void StopParticle(GameObject particleObj)
+    {
+        if (particleObj == null) return;
+        particleObj.GetComponent<ParticleSystem>().Stop();
+        StartCoroutine(DestroyParticle(1f, particleObj));
+        particleObj = null;
     }
 
     public void UpdateSprite()
@@ -43,13 +60,15 @@ public class PlayerVFXTrail : MonoBehaviour
         Texture2D tex = new Texture2D((int)rect.width, (int)rect.height);
         tex.SetPixels(whitePlayerTexture.GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
         tex.Apply();
+        particleMaterials[0] = new Material(source: particleMaterials[0]);
         particleMaterials[0].mainTexture = tex;
         particleRenderer.SetMaterials(particleMaterials);
         particleRenderer.flip = Vector3.right * (playerMovement.FacingDir.x < 0 ? 1 : 0);
     }
 
-    public void UpdateColor(Color color)
+    private void UpdateColor(Color color)
     {
+        
         var main = particle.main;
         main.startColor = color;
 

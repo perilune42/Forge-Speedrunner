@@ -23,6 +23,7 @@ public abstract class Ability : MonoBehaviour
     protected int curCooldown;
 
     protected PlayerMovement PlayerMovement => Player.Instance.Movement;
+    protected PlayerVFXTrail PlayerVFXTrail => Player.Instance.VFXTrail;
     private AbilityInfo info;
 
     public Action OnActivate;

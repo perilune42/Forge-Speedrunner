@@ -14,7 +14,8 @@ public enum BodyState
 {
     OnGround, 
     InAir, // Experiences gravity and terminal drag
-    Locked  // Cannot move and does not experience any force
+    Override    // Can still move by velocity but does not experience any force
+
 }
 
 public enum PDir
@@ -97,13 +98,14 @@ public class DynamicEntity : MonoBehaviour
 
     protected virtual void Fall()
     {
+        if (State == BodyState.Override) return;
         if (State != BodyState.InAir || !GravityEnabled) return;
         Velocity.y = Mathf.Max(Velocity.y - Gravity * GravityMultiplier * fdt, -TerminalVelocity); // Cap the velocity
     }
 
     protected virtual void CheckGrounded()
     {
-        if (!CollisionsEnabled) return;
+        if (!CollisionsEnabled || State == BodyState.Override) return;
 
         Bounds bounds = SurfaceCollider.bounds;
         Vector2 origin = (Vector2)transform.position + SurfaceCollider.offset + SurfaceCollider.bounds.extents.y * 3 / 4 * Vector2.down;
@@ -134,7 +136,8 @@ public class DynamicEntity : MonoBehaviour
     /// <param name="move">The movement vector</param>
     public virtual void ApplyMovement(Vector2 move)
     {
-        if (!CollisionsEnabled) return;
+        bool doesCollide = CollisionsEnabled && (State != BodyState.Override);
+
         collisionHits.Clear();
         if (Mathf.Approximately(move.magnitude, 0f)) return; // This avoids weird imprecision errors
 
@@ -158,11 +161,14 @@ public class DynamicEntity : MonoBehaviour
                     origin = (Vector2)transform.position + SurfaceCollider.offset;
                 }
             }
-            hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
-            if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
+            if (doesCollide)
             {
-                ResolveInitialCollisions();
-                origin = (Vector2)transform.position + SurfaceCollider.offset;
+                hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+                if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
+                {
+                    ResolveInitialCollisions();
+                    origin = (Vector2)transform.position + SurfaceCollider.offset;
+                }
             }
 
         }
@@ -221,7 +227,7 @@ public class DynamicEntity : MonoBehaviour
                     hitSolid = false;
                 }
 
-                if (hitSolid)
+                if (hitSolid && doesCollide)
                 {
                     Vector2 delta = hit.centroid - origin + CONTACT_OFFSET * normal;
                     move -= delta;

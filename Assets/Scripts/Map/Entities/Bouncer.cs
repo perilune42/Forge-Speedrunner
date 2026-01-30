@@ -13,7 +13,7 @@ public class Bouncer : Entity
 
     [SerializeField] private List<AudioClip> audioClips;
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         if (currCooldown > 0) currCooldown--;
     }

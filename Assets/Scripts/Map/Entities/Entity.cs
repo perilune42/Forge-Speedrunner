@@ -26,6 +26,10 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
+    protected virtual void FixedUpdate()
+    {
+
+    }
     
 
     // normal = player pointing to entity surface

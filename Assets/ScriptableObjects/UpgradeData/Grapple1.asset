@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Grapple1
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   Name: Grapple
-  Description: Can now dash while slamming!
-  Icon: {fileID: -3535184528703506323, guid: 1a03fab19e9bb9be1a2fcc821e3e9dd5, type: 3}
+  Description: Throw a claw that latches onto walls. Use again to launch yourself
+    towards the claw.
+  Icon: {fileID: -1064023487662444757, guid: 15ee6fa21e5a1f5458c15e5d7fffa128, type: 3}
   Cost: 5

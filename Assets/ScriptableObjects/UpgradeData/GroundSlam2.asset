@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e268dea8b3f79df4daabd1b7428c41fa, type: 3}
   m_Name: GroundSlam2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  Name: Ground Slam
+  Name: Ground Slam Upgrade
   Description: Can now dash while slamming!
-  Icon: {fileID: 3030323586587504164, guid: 41593ef1efdcb305aabc581593963a49, type: 3}
+  Icon: {fileID: 7240257419634649616, guid: ce20aa1666105544d97c9c94a479cf21, type: 3}
   Cost: 5

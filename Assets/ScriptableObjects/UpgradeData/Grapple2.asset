@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e268dea8b3f79df4daabd1b7428c41fa, type: 3}
   m_Name: Grapple2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  Name: Grapple
-  Description: Can now dash while slamming!
-  Icon: {fileID: 4513935915738980171, guid: b00f8fda907044140b736ddc5f8a4cd1, type: 3}
+  Name: Grapple Upgrade
+  Description: Hold down the launch key to charge up. The more you charge, the farther
+    you'll be launched!
+  Icon: {fileID: -1064023487662444757, guid: 15ee6fa21e5a1f5458c15e5d7fffa128, type: 3}
   Cost: 5

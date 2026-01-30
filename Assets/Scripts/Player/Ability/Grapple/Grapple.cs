@@ -17,6 +17,8 @@ public class Grapple : Ability
     private int chargeTime = 0;
     [SerializeField] private float chargePerTick;
     [SerializeField] private int maxCharge;
+
+    [HideInInspector] public Vector2 AttachedDirection;
     public override void Start()
     {
         base.Start();
@@ -61,11 +63,25 @@ public class Grapple : Ability
         
         if (grappleState == GrappleState.Idle)
         {
-            base.UseAbility();  // only use charge on initial throw
+            OnActivate?.Invoke(); // only use charge on attach
             grappleHand = Instantiate(GrappleHandPrefab, PlayerMovement.transform.position, Quaternion.identity)
                 .GetComponent<GrappleHand>();
             grappleHand.Grapple = this;
-            grappleHand.Velocity += Vector2.up * LaunchSpeed;
+            Vector2 throwDir;
+            if (PInput.Instance.MoveVector.x != 0)
+            {
+                throwDir = new Vector2(PInput.Instance.MoveVector.x, 0);
+            }
+            else if (PInput.Instance.MoveVector.y != 0)
+            {
+                throwDir = new Vector2(0, PInput.Instance.MoveVector.y);
+            }
+            else
+            {
+                throwDir = PlayerMovement.FacingDir;
+            }
+
+            grappleHand.Velocity += throwDir * LaunchSpeed;
 
             grappleState = GrappleState.Launch;
             curCooldown = pullCooldown;
@@ -86,7 +102,26 @@ public class Grapple : Ability
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         }
         Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
-        PlayerMovement.Velocity = direction * launchVelocity;
+        Vector2 finalVel;
+        // for quick (non-charged) launches:
+        // mainly give velocity in desired axis
+        if (chargeTime > 20)
+        {
+            if (AttachedDirection.x != 0)
+            {
+                finalVel = new Vector2(direction.x * launchVelocity, direction.y * launchVelocity * 0.5f);
+            }
+            else
+            {
+                finalVel = new Vector2(direction.x * launchVelocity * 0.5f, direction.y * launchVelocity);
+            }
+        }
+        else
+        {
+            finalVel = direction * launchVelocity;
+        }
+
+        PlayerMovement.Velocity = finalVel;
         charging = false;
         grappleState = GrappleState.Idle;
         Destroy(grappleHand.gameObject);
@@ -96,6 +131,17 @@ public class Grapple : Ability
             curCooldown = cooldown;
         }
         
+    }
+
+    public void Attach(Vector2 direction)
+    {
+        grappleState = GrappleState.Active;
+        if (UsesCharges)
+        {
+            // only use charge on attach
+            CurCharges--;
+        }
+        AttachedDirection = direction;
     }
     
     /*public void CreateGrappleArrow()

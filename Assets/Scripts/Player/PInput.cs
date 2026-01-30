@@ -5,7 +5,7 @@ public class PInput : Singleton<PInput>
 {
     // Use in other classes
     public Vector2 MoveVector;
-    public InputButton Jump, Dash, GroundSlam, Grapple, Ricochet, Map;
+    public InputButton Jump, Dash, GroundSlam, Grapple, Interact,Ricochet, Map;
 
     // Internal vars
     private InputAction move;
@@ -94,6 +94,7 @@ public class PInput : Singleton<PInput>
         Dash = new InputButton(InputSystem.actions.FindAction("Dash"), 8);
         GroundSlam = new InputButton(InputSystem.actions.FindAction("GroundSlam"), 8);
         Grapple = new InputButton(InputSystem.actions.FindAction("Grapple"), 8);
+        Interact = new InputButton(InputSystem.actions.FindAction("Interact"), 8);
         Ricochet = new InputButton(InputSystem.actions.FindAction("Ricochet"), 8);
         Map = new InputButton(InputSystem.actions.FindAction("Map"), 1);
     }
@@ -114,6 +115,7 @@ public class PInput : Singleton<PInput>
         Grapple.Update();
         Ricochet.Update();
         Map.Update();
+        Interact.Update();
     }
 
     private void FixedUpdate()
@@ -124,5 +126,6 @@ public class PInput : Singleton<PInput>
         Grapple.FixedUpdate();
         Ricochet.FixedUpdate();
         Map.FixedUpdate();
+        Interact.FixedUpdate();
     }
 }

@@ -46,15 +46,15 @@ public class GrappleHand : DynamicEntity
     }
 
 
-    private void AttachToWall(Entity entity)
+    private void AttachToWall(Entity entity, Vector2 direction)
     {
         if (entity) transform.SetParent(entity.transform, true);
         lineRenderer.enabled = true;
         attached = true;
-        Grapple.grappleState = GrappleState.Active;
         Velocity = Vector2.zero;
         CollisionsEnabled = false;
         Locked = true;
+        Grapple.Attach(direction);
         //Grapple.CreateGrappleArrow();
     }
 }

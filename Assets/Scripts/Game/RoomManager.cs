@@ -29,6 +29,7 @@ public class RoomManager : Singleton<RoomManager>
     public BoxCollider2D GuideRailPrefab;
     public BoxCollider2D FreezeTriggerPrefab;
     public BoxCollider2D BlockerHorzPrefab, BlockerVertPrefab;
+    public InteractionTrigger InteractionTriggerPrefab;
 
     public List<Room> AllRooms = new();
     [HideInInspector] public Passage[] AllPassages;

@@ -184,4 +184,64 @@ public static class Util
         }
         return Vector2.zero;
     }
+
+    public static void StretchCapsuleBetween(
+        CapsuleCollider2D capsule,
+        Vector2 p0,
+        Vector2 p1,
+        float radius)
+    {
+        capsule.direction = CapsuleDirection2D.Vertical;
+
+        Vector2 delta = p1 - p0;
+        float distance = delta.magnitude;
+
+        // Position
+        capsule.transform.position = (p0 + p1) * 0.5f;
+
+        // Rotation (capsule points "up" by default)
+        float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg - 90f;
+        capsule.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+        // Size
+        capsule.size = new Vector2(
+            radius * 2f,
+            distance + radius * 2f
+        );
+    }
+
+    public static Vector2 ProjectPointOntoSegment(
+        Vector2 p,
+        Vector2 a,
+        Vector2 b)
+    {
+        Vector2 ab = b - a;
+        float t = Vector2.Dot(p - a, ab) / Vector2.Dot(ab, ab);
+        t = Mathf.Clamp01(t);
+        return a + t * ab;
+    }
+
+    public static int ProjectionRegion(
+    Vector2 p,
+    Vector2 a,
+    Vector2 b)
+    {
+        Vector2 ab = b - a;
+        float abLenSq = Vector2.Dot(ab, ab);
+
+        if (abLenSq < Mathf.Epsilon)
+            return 0; // degenerate
+
+        float t = Vector2.Dot(p - a, ab) / abLenSq;
+
+        if (t < 0f) return -1; // before A
+        if (t > 1f) return 1; // past B
+        return 0;              // on segment
+    }
+
+    public static float RepeatSigned(float value, float length)
+    {
+        float range = 2f * length;
+        return Mathf.Repeat(value + length, range) - length;
+    }
 }

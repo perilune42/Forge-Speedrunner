@@ -64,7 +64,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   Grapple: {fileID: 0}
-  lifetime: 30
+  lifetime: 8
   lineRenderer: {fileID: -8626148767616273302}
 --- !u!61 &-3952376419283584309
 BoxCollider2D:

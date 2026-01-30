@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb, GroundSlam, WallClimb
+    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline
 }
 
 public class PlayerMovement : DynamicEntity
@@ -144,9 +144,7 @@ public class PlayerMovement : DynamicEntity
         }
         else
         {
-            moveSpeed = 0;
-            moveAccel = 0;
-            friction = 0;
+            return;
         }
 
         bool ignoreFriction = false;
@@ -339,7 +337,7 @@ public class PlayerMovement : DynamicEntity
     }
    
 
-    private void Jump()
+    public void Jump()
     {
         Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
         jumpFrames = MaxJumpFrames;

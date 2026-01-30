@@ -13,6 +13,7 @@ public class PlayerMovement : DynamicEntity
 
     public MovementParams MovementParams;
     public Action onGround;
+    public Action onGroundTop;
     public Action onJump;
 
     public Vector2 MoveDir;
@@ -40,6 +41,8 @@ public class PlayerMovement : DynamicEntity
     public SpecialState SpecialState;
 
     [SerializeField] private List<AudioClip> audioClips;
+
+    [HideInInspector] public Vector2 PreCollisionVelocity;
 
     protected override void Awake()
     {
@@ -115,6 +118,12 @@ public class PlayerMovement : DynamicEntity
 
         TickTimers();
 
+    }
+
+    public override void ApplyMovement(Vector2 move)
+    {
+        PreCollisionVelocity = Velocity;
+        base.ApplyMovement(move);
     }
 
     private void ApplyForces()
@@ -211,12 +220,18 @@ public class PlayerMovement : DynamicEntity
         forceMoveFrames = 0;
         MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
     }
-    
+
 
     public override void OnGrounded(RaycastHit2D groundHit)
     {
         base.OnGrounded(groundHit);
         onGround?.Invoke();
+    }
+
+    public override void OnGroundedTop(RaycastHit2D groundHit)
+    {
+        base.OnGroundedTop(groundHit);
+        onGroundTop?.Invoke();
     }
 
     public void CheckInputs()

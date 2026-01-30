@@ -10,10 +10,12 @@ public class GroundSlam : Ability
     [SerializeField] private float terminalVelocitySlam;
     private float terminalVelocityDefault;
     [SerializeField] private float heightConversion;
+    [SerializeField] private float minimumSpeedGain;
 
     public bool wasSlammingBeforeDash;
 
     private Vector2 preservedVelocity;
+
 
     public override void Start()
     {
@@ -100,7 +102,7 @@ public class GroundSlam : Ability
     private void OnGround()
     {
         Debug.Log(rampUpTime * heightConversion);
-        PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion);
+        PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion + minimumSpeedGain);
         PlayerMovement.SpecialState = SpecialState.Normal;
         PlayerMovement.TerminalVelocity = terminalVelocityDefault;
     }

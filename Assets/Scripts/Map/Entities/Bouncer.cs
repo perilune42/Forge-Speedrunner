@@ -8,12 +8,12 @@ public class Bouncer : Entity
     public override bool IsSolid => false;
     public override bool StrictCollisions => true;
 
-    private const int bounceCooldown = 12;
+    private const int bounceCooldown = 6;
     private int currCooldown = 0;
 
     [SerializeField] private List<AudioClip> audioClips;
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         if (currCooldown > 0) currCooldown--;
     }

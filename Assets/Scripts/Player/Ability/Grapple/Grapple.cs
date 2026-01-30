@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -105,7 +106,7 @@ public class Grapple : Ability
         Vector2 finalVel;
         // for quick (non-charged) launches:
         // mainly give velocity in desired axis
-        if (chargeTime > 20)
+        if (chargeTime < 20)
         {
             if (AttachedDirection.x != 0)
             {
@@ -130,6 +131,12 @@ public class Grapple : Ability
         {
             curCooldown = cooldown;
         }
+        // gain a temporary bonus to ledge climbing
+        // this is jank as hell, come back to this later
+        /*
+        PlayerMovement.LedgeClimbBonus = 0.5f;
+        StartCoroutine(Util.FDelayedCall(60, () => PlayerMovement.LedgeClimbBonus = 0));
+        */
         
     }
 

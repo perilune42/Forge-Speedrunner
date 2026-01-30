@@ -97,6 +97,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Ricochet",
+                    "type": "Button",
+                    "id": "499434b2-7446-4bc6-abf6-82be012edfed",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "GroundSlam",
                     "type": "Button",
                     "id": "31d77b67-35e1-49a9-8544-643495cefce7",
@@ -421,6 +430,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Grapple",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "267f15eb-b19c-4239-9287-dd16098de968",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Ricochet",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

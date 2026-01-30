@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Security.Principal;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.UI.Image;
@@ -64,6 +65,7 @@ public class DynamicEntity : MonoBehaviour
     protected const float COLLISION_CHECK_DISTANCE = 0.1f; // how far away you have to be from a ceiling or the ground to be considered "colliding" with it
     private const float MAX_SUBSTEPS = 5; // The maximum number of movement substeps ApplyMovement can take;
 
+    private bool canHitCeiling;
     protected virtual void Awake()
     {
         Unlock();
@@ -115,13 +117,33 @@ public class DynamicEntity : MonoBehaviour
 
         if (didHitGround && Velocity.y <= 0 && State != BodyState.OnGround) OnGrounded(groundHit);
         else if (!didHitGround && State == BodyState.OnGround) OnAirborne();
+
+        if (Velocity.y < 0 || State == BodyState.OnGround) canHitCeiling = true;
+        if (canHitCeiling)
+        {
+            Vector2 originTop = (Vector2)transform.position + SurfaceCollider.offset + SurfaceCollider.bounds.extents.y * 3 / 4 * Vector2.up;
+            RaycastHit2D groundHitTop = Physics2D.BoxCast(originTop, size, 0f, Vector2.up, Mathf.Infinity, collisionLayer);
+            bool didHitGroundTop = groundHitTop && groundHitTop.distance <= COLLISION_CHECK_DISTANCE;
+          
+            if (didHitGroundTop && Velocity.y >= 0 && State != BodyState.OnGround) OnGroundedTop(groundHitTop);
+        }
+        
     }
+
+    
 
     public virtual void OnGrounded(RaycastHit2D groundHit)
     {
         if (State != BodyState.OnGround) State = BodyState.OnGround;
     }
 
+    /// <summary>
+    /// For when this entity (usually the player) bonks its head on top of a collider
+    /// </summary>
+    public virtual void OnGroundedTop(RaycastHit2D groundHit)
+    {
+        canHitCeiling = false;
+    }
     // 
     public virtual void OnAirborne()
     {

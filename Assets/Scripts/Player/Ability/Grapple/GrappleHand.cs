@@ -13,7 +13,7 @@ public class GrappleHand : DynamicEntity
     {
         base.Awake();
         OnHitWallAny += AttachToWall;
-        GravityMultiplier = 0f;
+        GravityEnabled = false;
         lineRenderer.enabled = false;
         width = lineRenderer.startWidth;
         alpha = lineRenderer.startColor.a;

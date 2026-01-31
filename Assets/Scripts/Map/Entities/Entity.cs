@@ -34,5 +34,9 @@ public abstract class Entity : MonoBehaviour
 
     // normal = player pointing to entity surface
     public virtual void OnCollide(DynamicEntity de, Vector2 normal) { }
+    public virtual void OnValidate()
+    {
+        Debug.Log($"OnValidate called on {this}");
+    }
 
 }

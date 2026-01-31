@@ -44,6 +44,10 @@ public class PlayerMovement : DynamicEntity
 
     [HideInInspector] public Vector2 PreCollisionVelocity;
 
+    private const float ledgeClimbHeight = 0.75f;
+    [HideInInspector] public float LedgeClimbBonus = 0;
+
+
     protected override void Awake()
     {
         base.Awake();
@@ -307,7 +311,7 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanLedgeClimb(Vector2 dir)
     {
-        return IsTouching(dir) && GetLedgeHeight(dir) < 0.75 && GetLedgeHeight(dir) > 0;
+        return IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
     }
 
     private bool CanWallClimb(Vector2 dir)

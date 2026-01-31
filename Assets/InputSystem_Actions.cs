@@ -183,6 +183,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Ricochet"",
+                    ""type"": ""Button"",
+                    ""id"": ""499434b2-7446-4bc6-abf6-82be012edfed"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""GroundSlam"",
                     ""type"": ""Button"",
                     ""id"": ""31d77b67-35e1-49a9-8544-643495cefce7"",
@@ -502,11 +511,22 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a47d910a-a17b-4c00-9626-7af4c620412e"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Grapple"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""267f15eb-b19c-4239-9287-dd16098de968"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Ricochet"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1236,6 +1256,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
+        m_Player_Ricochet = m_Player.FindAction("Ricochet", throwIfNotFound: true);
         m_Player_GroundSlam = m_Player.FindAction("GroundSlam", throwIfNotFound: true);
         m_Player_Map = m_Player.FindAction("Map", throwIfNotFound: true);
         // UI
@@ -1341,6 +1362,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Grapple;
+    private readonly InputAction m_Player_Ricochet;
     private readonly InputAction m_Player_GroundSlam;
     private readonly InputAction m_Player_Map;
     /// <summary>
@@ -1394,6 +1416,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Grapple".
         /// </summary>
         public InputAction @Grapple => m_Wrapper.m_Player_Grapple;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Ricochet".
+        /// </summary>
+        public InputAction @Ricochet => m_Wrapper.m_Player_Ricochet;
         /// <summary>
         /// Provides access to the underlying input action "Player/GroundSlam".
         /// </summary>
@@ -1458,6 +1484,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Grapple.started += instance.OnGrapple;
             @Grapple.performed += instance.OnGrapple;
             @Grapple.canceled += instance.OnGrapple;
+            @Ricochet.started += instance.OnRicochet;
+            @Ricochet.performed += instance.OnRicochet;
+            @Ricochet.canceled += instance.OnRicochet;
             @GroundSlam.started += instance.OnGroundSlam;
             @GroundSlam.performed += instance.OnGroundSlam;
             @GroundSlam.canceled += instance.OnGroundSlam;
@@ -1505,6 +1534,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Grapple.started -= instance.OnGrapple;
             @Grapple.performed -= instance.OnGrapple;
             @Grapple.canceled -= instance.OnGrapple;
+            @Ricochet.started -= instance.OnRicochet;
+            @Ricochet.performed -= instance.OnRicochet;
+            @Ricochet.canceled -= instance.OnRicochet;
             @GroundSlam.started -= instance.OnGroundSlam;
             @GroundSlam.performed -= instance.OnGroundSlam;
             @GroundSlam.canceled -= instance.OnGroundSlam;
@@ -1881,6 +1913,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnGrapple(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Ricochet" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRicochet(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "GroundSlam" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

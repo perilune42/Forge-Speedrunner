@@ -66,11 +66,13 @@ public class Doorway : MonoBehaviour
             rail.transform.localPosition = Vector2.zero;
             rail.size = Vector2.one + 2 * new Vector2(Mathf.Abs(dir.x), Mathf.Abs(dir.y));
             rail.offset = dir + 2.5f * Vector2.Perpendicular(dir) * (i == 0 ? 1 : -1);
+            rail.transform.rotation = Quaternion.identity;
         }
         BoxCollider2D freezeTrigger = Instantiate(RoomManager.Instance.FreezeTriggerPrefab, transform);
         freezeTrigger.transform.localPosition = Vector2.zero;
         freezeTrigger.size = Vector2.one + 3 * new Vector2(Mathf.Abs(dir.y), Mathf.Abs(dir.x));
         freezeTrigger.offset = dir * 2;
+        freezeTrigger.transform.rotation = Quaternion.identity;
     }
 
     private void GenerateBlocker()

@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,13 +11,15 @@ public class Grapple : Ability
     [SerializeField] private GameObject GrappleArrowPrefab;
     [SerializeField] private int pullCooldown;
     private GrappleHand grappleHand;
-    private GameObject grappleArrow;
+    //private GameObject grappleArrow;
     [HideInInspector] public bool GrappleHandActive;
     public GrappleState grappleState;
     private bool charging = false;
     private int chargeTime = 0;
     [SerializeField] private float chargePerTick;
     [SerializeField] private int maxCharge;
+
+    [HideInInspector] public Vector2 AttachedDirection;
     public override void Start()
     {
         base.Start();
@@ -32,7 +35,8 @@ public class Grapple : Ability
         if (charging)
         {
             chargeTime++;
-            grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
+            //grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
+            grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick);
             if (chargeTime >= maxCharge || PInput.Instance.Grapple.StoppedPressing)
             {
                 LaunchPlayer(PullStrength * (1f + chargeTime * chargePerTick));
@@ -60,11 +64,25 @@ public class Grapple : Ability
         
         if (grappleState == GrappleState.Idle)
         {
-            base.UseAbility();  // only use charge on initial throw
+            OnActivate?.Invoke(); // only use charge on attach
             grappleHand = Instantiate(GrappleHandPrefab, PlayerMovement.transform.position, Quaternion.identity)
                 .GetComponent<GrappleHand>();
             grappleHand.Grapple = this;
-            grappleHand.Velocity += Vector2.up * LaunchSpeed;
+            Vector2 throwDir;
+            if (PInput.Instance.MoveVector.x != 0)
+            {
+                throwDir = new Vector2(PInput.Instance.MoveVector.x, 0);
+            }
+            else if (PInput.Instance.MoveVector.y != 0)
+            {
+                throwDir = new Vector2(0, PInput.Instance.MoveVector.y);
+            }
+            else
+            {
+                throwDir = PlayerMovement.FacingDir;
+            }
+
+            grappleHand.Velocity += throwDir * LaunchSpeed;
 
             grappleState = GrappleState.Launch;
             curCooldown = pullCooldown;
@@ -85,24 +103,60 @@ public class Grapple : Ability
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         }
         Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
-        PlayerMovement.Velocity = direction * launchVelocity;
+        Vector2 finalVel;
+        // for quick (non-charged) launches:
+        // mainly give velocity in desired axis
+        if (chargeTime < 20)
+        {
+            if (AttachedDirection.x != 0)
+            {
+                finalVel = new Vector2(direction.x * launchVelocity, direction.y * launchVelocity * 0.5f);
+            }
+            else
+            {
+                finalVel = new Vector2(direction.x * launchVelocity * 0.5f, direction.y * launchVelocity);
+            }
+        }
+        else
+        {
+            finalVel = direction * launchVelocity;
+        }
+
+        PlayerMovement.Velocity = finalVel;
         charging = false;
         grappleState = GrappleState.Idle;
         Destroy(grappleHand.gameObject);
-        Destroy(grappleArrow);
+        //Destroy(grappleArrow);
         if (!UsesCharges)
         {
             curCooldown = cooldown;
         }
+        // gain a temporary bonus to ledge climbing
+        // this is jank as hell, come back to this later
+        /*
+        PlayerMovement.LedgeClimbBonus = 0.5f;
+        StartCoroutine(Util.FDelayedCall(60, () => PlayerMovement.LedgeClimbBonus = 0));
+        */
         
     }
+
+    public void Attach(Vector2 direction)
+    {
+        grappleState = GrappleState.Active;
+        if (UsesCharges)
+        {
+            // only use charge on attach
+            CurCharges--;
+        }
+        AttachedDirection = direction;
+    }
     
-    public void CreateGrappleArrow()
+    /*public void CreateGrappleArrow()
     {
         grappleArrow = Instantiate(GrappleArrowPrefab, PlayerMovement.transform);
         grappleArrow.transform.position = PlayerMovement.GetComponent<BoxCollider2D>().bounds.center;
         grappleArrow.GetComponent<GrappleArrow>().grappleHand = grappleHand.gameObject;
-    }
+    }*/
 }
 
 public enum GrappleState

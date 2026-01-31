@@ -45,8 +45,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundSlam
   Data: {fileID: 11400000, guid: 64f3c74a7a46f6028b49a8753823df72, type: 2}
+  ID: 0
   Level: 0
+  CurCharges: 0
+  MaxCharges: 0
+  UsesCharges: 0
   cooldown: 120
   initialVelocity: 12
   rampUpAcceleration: 0.25
+  terminalVelocitySlam: 100
   heightConversion: 1
+  minimumSpeedGain: 9
+  wasSlammingBeforeDash: 0

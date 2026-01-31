@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb, GroundSlam, WallClimb
+    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline
 }
 
 public class PlayerMovement : DynamicEntity
@@ -13,6 +13,7 @@ public class PlayerMovement : DynamicEntity
 
     public MovementParams MovementParams;
     public Action onGround;
+    public Action onGroundTop;
     public Action onJump;
 
     public Vector2 MoveDir;
@@ -40,6 +41,12 @@ public class PlayerMovement : DynamicEntity
     public SpecialState SpecialState;
 
     [SerializeField] private List<AudioClip> audioClips;
+
+    [HideInInspector] public Vector2 PreCollisionVelocity;
+
+    private const float ledgeClimbHeight = 0.75f;
+    [HideInInspector] public float LedgeClimbBonus = 0;
+
 
     protected override void Awake()
     {
@@ -117,6 +124,12 @@ public class PlayerMovement : DynamicEntity
 
     }
 
+    public override void ApplyMovement(Vector2 move)
+    {
+        PreCollisionVelocity = Velocity;
+        base.ApplyMovement(move);
+    }
+
     private void ApplyForces()
     {
         
@@ -135,9 +148,7 @@ public class PlayerMovement : DynamicEntity
         }
         else
         {
-            moveSpeed = 0;
-            moveAccel = 0;
-            friction = 0;
+            return;
         }
 
         bool ignoreFriction = false;
@@ -213,12 +224,18 @@ public class PlayerMovement : DynamicEntity
         forceMoveFrames = 0;
         MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
     }
-    
+
 
     public override void OnGrounded(RaycastHit2D groundHit)
     {
         base.OnGrounded(groundHit);
         onGround?.Invoke();
+    }
+
+    public override void OnGroundedTop(RaycastHit2D groundHit)
+    {
+        base.OnGroundedTop(groundHit);
+        onGroundTop?.Invoke();
     }
 
     public void CheckInputs()
@@ -294,7 +311,7 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanLedgeClimb(Vector2 dir)
     {
-        return IsTouching(dir) && GetLedgeHeight(dir) < 0.75 && GetLedgeHeight(dir) > 0;
+        return IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
     }
 
     private bool CanWallClimb(Vector2 dir)
@@ -324,7 +341,7 @@ public class PlayerMovement : DynamicEntity
     }
    
 
-    private void Jump()
+    public void Jump()
     {
         Velocity = new Vector2(Velocity.x, MovementParams.JumpSpeed);
         jumpFrames = MaxJumpFrames;
@@ -500,6 +517,10 @@ public class PlayerMovement : DynamicEntity
         isSprinting = false;
     }
 
+    public Vector3 GetCenterPos()
+    {
+        return SurfaceCollider.bounds.center;
+    }
 }
 
 [Serializable]

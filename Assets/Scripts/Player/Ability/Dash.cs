@@ -13,10 +13,7 @@ public class Dash : Ability
     public bool CanDiagonalDash; // set to false, when you upgrade, it becomes true
     private Vector2 dashVelocityVec;
 
-    [SerializeField] private ParticleSystemRenderer particleRenderer;
-    [SerializeField] private ParticleSystem particle;
-    [SerializeField] private List<Material> particleMaterials;
-    private SpriteRenderer playerSpriteRenderer;
+   
     //private Vector2 moveSpeedSnapshot;
     const float diagDashAngle = 35;
 
@@ -35,7 +32,6 @@ public class Dash : Ability
         {
             CancelDash();
         };
-        playerSpriteRenderer = PlayerMovement.GetComponentInChildren<SpriteRenderer>();
     }
 
     private bool dashing;
@@ -103,7 +99,7 @@ public class Dash : Ability
         dashing = false;
         PlayerMovement.GravityMultiplier = 1f;
         curDashDuration = 0;
-        particle.Stop();
+        PlayerVFXTrail.StopParticle();
     }
 
     public override bool UseAbility()
@@ -160,15 +156,9 @@ public class Dash : Ability
         if (enableVFX)
         {
             // particle effects
-            particle.Play();
-            Rect rect = playerSpriteRenderer.sprite.textureRect;
-            Texture2D tex = new Texture2D((int)rect.width, (int)rect.height);
-            tex.SetPixels(playerSpriteRenderer.sprite.texture.GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
-            tex.Apply();
-            particleMaterials[0].mainTexture = tex;
-            particleRenderer.SetMaterials(particleMaterials);
-            particleRenderer.flip = Vector3.right * (PlayerMovement.FacingDir.x < 0 ? 1 : 0);
-
+            PlayerVFXTrail.UpdateColor(Color.green);
+            PlayerVFXTrail.PlayParticle();
+            
         }
 
 

@@ -15,5 +15,5 @@ MonoBehaviour:
   Name: Grapple Upgrade
   Description: Hold down the launch key to charge up. The more you charge, the farther
     you'll be launched!
-  Icon: {fileID: -1064023487662444757, guid: 15ee6fa21e5a1f5458c15e5d7fffa128, type: 3}
+  Icon: {fileID: 21300000, guid: 15ee6fa21e5a1f5458c15e5d7fffa128, type: 3}
   Cost: 5

@@ -38,11 +38,17 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background Lit
+    uniqueID: 1735850549
+    locked: 0
   - name: Background
     uniqueID: 441483579
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Foreground
+    uniqueID: 2288610945
     locked: 0
   - name: UI
     uniqueID: 1131095215

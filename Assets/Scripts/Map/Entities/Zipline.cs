@@ -25,6 +25,10 @@ public class Zipline : Entity, IInteractable
 
         vecToNode = (node.transform.position - transform.position).normalized;
         positionOffset = new Vector2(0, -Player.Instance.Movement.PlayerHeight - 0.2f);
+        pm.OnSpecialStateChange += (SpecialState state) =>
+        {
+            if (state != SpecialState.Normal && state != SpecialState.Zipline) CancelZipline();
+        };
     }
 
     protected override void FixedUpdate()
@@ -114,6 +118,11 @@ public class Zipline : Entity, IInteractable
         pm.State = BodyState.InAir;
         pm.SpecialState = SpecialState.Normal;
         pm.Jump();
+    }
+
+    private void CancelZipline()
+    {
+        playerIsRiding = false;
     }
 
 

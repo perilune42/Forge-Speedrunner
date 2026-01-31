@@ -48,7 +48,7 @@ public class Zipline : Entity, IInteractable
         lineRenderer.SetPosition(1, node.position);
     }
 
-    private void OnValidate()
+    public override void OnValidate()
     {
         SetLinePositions();
     }

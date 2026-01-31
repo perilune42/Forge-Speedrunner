@@ -24,7 +24,10 @@ public class Ricochet : Ability
         if (active)
         {
             curDuration--;
-            if (curDuration <= 0) active = false;
+            if (curDuration <= 0) 
+            { 
+                active = false;
+            }
         }
         else if (PInput.Instance.Ricochet.HasPressed) UseAbility();
     }

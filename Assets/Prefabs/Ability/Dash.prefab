@@ -50,7 +50,7 @@ MonoBehaviour:
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  cooldown: 10
+  cooldown: 40
   dashDuration: 11
   dashVelocity: 15
   CanDiagonalDash: 1

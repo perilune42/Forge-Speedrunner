@@ -24,6 +24,12 @@ public class Grapple : Ability
     {
         base.Start();
         grappleState = GrappleState.Idle;
+        PlayerMovement.OnHitWallAny += (entity, direction) =>
+        {
+            if (AbilityManager.Instance.GetAbility<Ricochet>() 
+            ? !AbilityManager.Instance.GetAbility<Ricochet>().active : true) 
+                stopParticleAction?.Invoke();
+        };
     }
 
     protected override void FixedUpdate()
@@ -123,6 +129,7 @@ public class Grapple : Ability
         }
 
         PlayerMovement.Velocity = finalVel;
+        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.turquoise);
         charging = false;
         grappleState = GrappleState.Idle;
         Destroy(grappleHand.gameObject);

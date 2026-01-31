@@ -38,7 +38,13 @@ public class PlayerMovement : DynamicEntity
     public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
     public float PlayerWidth => ((BoxCollider2D)SurfaceCollider).size.x;
 
-    public SpecialState SpecialState;
+    public SpecialState SpecialState { get => specialState; 
+        set {
+            OnSpecialStateChange?.Invoke(value);
+            specialState = value;
+        } }
+
+    private SpecialState specialState;
 
     [SerializeField] private List<AudioClip> audioClips;
 
@@ -47,6 +53,7 @@ public class PlayerMovement : DynamicEntity
     private const float ledgeClimbHeight = 0.75f;
     [HideInInspector] public float LedgeClimbBonus = 0;
 
+    public Action<SpecialState> OnSpecialStateChange;   // called before change
 
     protected override void Awake()
     {

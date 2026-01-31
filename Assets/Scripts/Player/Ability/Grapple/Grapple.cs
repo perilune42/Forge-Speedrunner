@@ -7,10 +7,12 @@ public class Grapple : Ability
 {
     public float PullStrength;
     public float LaunchSpeed;
-    [SerializeField] private GameObject GrappleHandPrefab;
+    [SerializeField] private GrappleHand GrappleHandPrefab;
     [SerializeField] private GameObject GrappleArrowPrefab;
+    [SerializeField] private GrappleIndicator GrappleIndicatorPrefab;
     [SerializeField] private int pullCooldown;
     private GrappleHand grappleHand;
+    private GrappleIndicator grappleIndicator;
     //private GameObject grappleArrow;
     [HideInInspector] public bool GrappleHandActive;
     public GrappleState grappleState;
@@ -18,8 +20,13 @@ public class Grapple : Ability
     private int chargeTime = 0;
     [SerializeField] private float chargePerTick;
     [SerializeField] private int maxCharge;
+    [SerializeField] private int lifetime;
 
     [HideInInspector] public Vector2 AttachedDirection;
+
+    [SerializeField] private float verticalBoost = 7f;
+
+    private float throwOffset => Player.Instance.Movement.PlayerHeight / 2;
     public override void Start()
     {
         base.Start();
@@ -30,6 +37,8 @@ public class Grapple : Ability
             ? !AbilityManager.Instance.GetAbility<Ricochet>().active : true) 
                 stopParticleAction?.Invoke();
         };
+        grappleIndicator = Instantiate(GrappleIndicatorPrefab, transform);
+        grappleIndicator.gameObject.SetActive(false);
     }
 
     protected override void FixedUpdate()
@@ -49,7 +58,38 @@ public class Grapple : Ability
                 chargeTime = 0;
             }
         }
+
+        UpdateIndicator();
         
+    }
+
+    private float GetExpectedRange()
+    {
+        return lifetime * Time.fixedDeltaTime * LaunchSpeed;
+    }
+
+    private void UpdateIndicator()
+    {
+        if (CanUseAbility() && grappleState == GrappleState.Idle)
+        {
+            Vector2 launchdir = GetThrowDir();
+            var hit = Physics2D.Raycast((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
+                                        launchdir, GetExpectedRange(), LayerMask.GetMask("Solid"));
+            if (hit)
+            {
+                grappleIndicator.gameObject.SetActive(true);
+                grappleIndicator.transform.position = hit.point;
+            }
+            else
+            {
+                grappleIndicator.gameObject.SetActive(false);
+            }
+
+        }
+        else
+        {
+            grappleIndicator.gameObject.SetActive(false);
+        }
     }
 
     public override float GetCooldown()
@@ -64,6 +104,24 @@ public class Grapple : Ability
         return (grappleState == GrappleState.Active) || base.CanUseAbility() && (grappleState != GrappleState.Launch);
     }
 
+
+    private Vector2 GetThrowDir()
+    {
+        Vector2 throwDir;
+        if (PInput.Instance.MoveVector.x != 0)
+        {
+            throwDir = new Vector2(PInput.Instance.MoveVector.x, 0);
+        }
+        else if (PInput.Instance.MoveVector.y != 0)
+        {
+            throwDir = new Vector2(0, PInput.Instance.MoveVector.y);
+        }
+        else
+        {
+            throwDir = PlayerMovement.FacingDir;
+        }
+        return throwDir;
+    }
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
@@ -71,22 +129,11 @@ public class Grapple : Ability
         if (grappleState == GrappleState.Idle)
         {
             OnActivate?.Invoke(); // only use charge on attach
-            grappleHand = Instantiate(GrappleHandPrefab, PlayerMovement.transform.position, Quaternion.identity)
+            grappleHand = Instantiate(GrappleHandPrefab, (Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset, Quaternion.identity)
                 .GetComponent<GrappleHand>();
             grappleHand.Grapple = this;
-            Vector2 throwDir;
-            if (PInput.Instance.MoveVector.x != 0)
-            {
-                throwDir = new Vector2(PInput.Instance.MoveVector.x, 0);
-            }
-            else if (PInput.Instance.MoveVector.y != 0)
-            {
-                throwDir = new Vector2(0, PInput.Instance.MoveVector.y);
-            }
-            else
-            {
-                throwDir = PlayerMovement.FacingDir;
-            }
+            grappleHand.SetLifetime(lifetime);
+            Vector2 throwDir = GetThrowDir();
 
             grappleHand.Velocity += throwDir * LaunchSpeed;
 
@@ -126,6 +173,11 @@ public class Grapple : Ability
         else
         {
             finalVel = direction * launchVelocity;
+        }
+        if (AttachedDirection.y == 0)
+        {
+            // give small vertical boost on horizontal grapples
+            finalVel += Vector2.up * verticalBoost;
         }
 
         PlayerMovement.Velocity = finalVel;

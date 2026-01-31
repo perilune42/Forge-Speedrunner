@@ -3,7 +3,7 @@ using UnityEngine;
 public class GrappleHand : DynamicEntity
 {
     [HideInInspector] public Grapple Grapple;
-    [SerializeField] private int lifetime;
+    private int lifetime;
     private bool attached = false;
     [SerializeField] private LineRenderer lineRenderer;
     private float width;
@@ -35,6 +35,11 @@ public class GrappleHand : DynamicEntity
             Grapple.grappleState = GrappleState.Idle;
             Destroy(gameObject);
         }
+    }
+
+    public void SetLifetime(int lifetime)
+    {
+        this.lifetime = lifetime;
     }
 
     public void ApplyChargeVFX(float charge)

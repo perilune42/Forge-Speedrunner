@@ -64,7 +64,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   Grapple: {fileID: 0}
-  lifetime: 8
   lineRenderer: {fileID: -8626148767616273302}
 --- !u!61 &-3952376419283584309
 BoxCollider2D:
@@ -110,7 +109,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
 --- !u!212 &4766239049310229237
 SpriteRenderer:

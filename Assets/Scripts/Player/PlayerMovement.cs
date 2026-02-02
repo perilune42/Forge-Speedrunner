@@ -67,7 +67,7 @@ public class PlayerMovement : DynamicEntity
             {
                 GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
             }
-        }
+        };
     }
 
     private void Start()

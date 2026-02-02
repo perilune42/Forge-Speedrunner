@@ -24,6 +24,8 @@ public enum PDir
     Left, Right, Up, Down
 }
 
+
+
 // Any entity that can move. By default gravity and collisions are enabled. 
 // Collision code courtesy of Ethan C for Mariposa
 public class DynamicEntity : MonoBehaviour
@@ -44,7 +46,7 @@ public class DynamicEntity : MonoBehaviour
 
 
     public bool GravityEnabled = true;
-    public float GravityMultiplier = 1f;
+    public Stat GravityMultiplier = new Stat(1f);
     public bool CollisionsEnabled = true;
     public bool Locked = false;
 
@@ -102,7 +104,7 @@ public class DynamicEntity : MonoBehaviour
     {
         if (State == BodyState.Override) return;
         if (State != BodyState.InAir || !GravityEnabled) return;
-        Velocity.y = Mathf.Max(Velocity.y - Gravity * GravityMultiplier * fdt, -TerminalVelocity); // Cap the velocity
+        Velocity.y = Mathf.Max(Velocity.y - Gravity * GravityMultiplier.Get() * fdt, -TerminalVelocity); // Cap the velocity
     }
 
     protected virtual void CheckGrounded()

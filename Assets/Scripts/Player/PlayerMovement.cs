@@ -23,9 +23,11 @@ public class PlayerMovement : DynamicEntity
     private int jumpFrames = 0;
 
     private int coyoteFrames = 0;
+    [SerializeField]
     private int wallCoyoteFrames = 0;
     private Vector2 lastClimbDir = Vector2.right;
-    private int maxCoyoteFrames = 5;
+    private int maxCoyoteFrames = 6;
+    private int maxWallCoyoteFrames = 8;
 
     private int forceMoveFrames = 0;
     private int maxForceMoveFrames = 10;
@@ -44,7 +46,7 @@ public class PlayerMovement : DynamicEntity
             specialState = value;
         } }
 
-    private SpecialState specialState;
+    [SerializeField] private SpecialState specialState;
 
     [SerializeField] private List<AudioClip> audioClips;
 
@@ -99,6 +101,11 @@ public class PlayerMovement : DynamicEntity
             retainedSpeed = Velocity.x;
         }
 
+        if (SpecialState == SpecialState.LedgeClimb)
+        {
+            ContinueLedgeClimb(lastClimbDir);
+        }
+
         if (State == BodyState.OnGround)
         {
             coyoteFrames = maxCoyoteFrames;
@@ -108,7 +115,7 @@ public class PlayerMovement : DynamicEntity
             coyoteFrames--;
         }
 
-        if (SpecialState != SpecialState.WallClimb)
+        if (SpecialState != SpecialState.WallClimb && wallCoyoteFrames > 0)
         {
             wallCoyoteFrames--;
         }
@@ -291,10 +298,12 @@ public class PlayerMovement : DynamicEntity
         var dir = Vector2.right;
         for (int i = 0; i < 2; i++)
         {
+            bool canWallClimb = CanWallClimb(new Vector2(dir.x, 0));
+            if (canWallClimb) wallCoyoteFrames = maxWallCoyoteFrames;
             if (MoveDir.x != -dir.x
                 && IsInputtingWallClimb(dir)
                 && !CanLedgeClimb(new Vector2(dir.x, 0))
-                && CanWallClimb(new Vector2(dir.x, 0))
+                && canWallClimb
                 && SpecialState != SpecialState.WallClimb)
             {
                 StartWallClimb(new Vector2(dir.x, 0));
@@ -354,7 +363,7 @@ public class PlayerMovement : DynamicEntity
         jumpFrames = MaxJumpFrames;
         coyoteFrames = 0;
         onJump?.Invoke();
-        GravityMultiplier = MovementParams.JumpGravityMult;
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = MovementParams.JumpGravityMult;
 
         AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);
     }
@@ -362,6 +371,7 @@ public class PlayerMovement : DynamicEntity
     private void WallJump(Vector2 wallDir)
     {
         SpecialState = SpecialState.Normal;
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
         float xVel = -wallDir.x * MovementParams.JumpSpeed;
         Velocity = new Vector2(xVel, MovementParams.JumpSpeed);
         // player not allowed to turn around for 5 frames
@@ -370,7 +380,7 @@ public class PlayerMovement : DynamicEntity
         jumpFrames = MaxJumpFrames;
         wallCoyoteFrames = 0;
         onJump?.Invoke();
-        GravityMultiplier = MovementParams.JumpGravityMult;
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = MovementParams.JumpGravityMult;
     }
 
     public void EndJump(bool force = false)
@@ -389,13 +399,13 @@ public class PlayerMovement : DynamicEntity
 
     private void StartHangTime()
     {
-        GravityMultiplier = MovementParams.HangGravityMult;
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = MovementParams.HangGravityMult;
         hangTime = true;
     }
 
     private void EndHangTime()
     {
-        GravityMultiplier = 1;
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = 1;
         hangTime = false;
     }
 
@@ -413,25 +423,31 @@ public class PlayerMovement : DynamicEntity
         return ledgeHeight;
     }
 
-    private IEnumerator LedgeClimb(Vector2 dir)
+
+    private void StartLedgeClimb(Vector2 dir)
     {
         // ascend the wall at jump speed, do a small hop once the top is reached.
         SpecialState = SpecialState.LedgeClimb;
         EndJump(force: true);
-        GravityMultiplier = 0f;
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
         Velocity = new Vector2(0, MovementParams.ClimbSpeed);
         lastClimbDir = MoveDir;
-        yield return new WaitForFixedUpdate();
-        while (GetLedgeHeight(dir) > 0)
+    }
+
+    private void ContinueLedgeClimb(Vector2 dir)
+    {
+        if (!CanLedgeClimb(dir))
         {
-            yield return new WaitForFixedUpdate();
+            GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
+            SpecialState = SpecialState.Normal;
         }
+        if (GetLedgeHeight(dir) > 0) return;
         const float minLedgeBoost = 5f;
 
         float alignedRetainedSpeed = Util.SignOr0(retainedSpeed) == dir.x ? Mathf.Abs(retainedSpeed) : 0;
         float boost = Mathf.Max(alignedRetainedSpeed, minLedgeBoost);
         Velocity = new(boost * dir.x, MovementParams.JumpSpeed / 2);
-        GravityMultiplier = 1f;
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
         SpecialState = SpecialState.Normal;
     }
 
@@ -441,7 +457,7 @@ public class PlayerMovement : DynamicEntity
         SpecialState = SpecialState.WallClimb;
         MoveDir = new Vector2(dir.x, 0);
         EndJump(force: true);
-        GravityMultiplier = 0f;
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
         Velocity = new Vector2(0, MovementParams.ClimbSpeed);
         lastClimbDir = MoveDir;
         wallCoyoteFrames = maxCoyoteFrames;
@@ -468,17 +484,18 @@ public class PlayerMovement : DynamicEntity
             if (CanLedgeClimb(dir))
             {
                 interrupt = true;
-                StartCoroutine(LedgeClimb(dir));
+                wallCoyoteFrames = 0;
+                StartLedgeClimb(dir);
                 return;
             }
         }
         if (interrupt)
         {
-            GravityMultiplier = 1f;
+            GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
             SpecialState = SpecialState.Normal;
             return;
         }
-        wallCoyoteFrames = maxCoyoteFrames;
+        wallCoyoteFrames = maxWallCoyoteFrames;
 
     }
 
@@ -502,11 +519,11 @@ public class PlayerMovement : DynamicEntity
         {
             if (MoveDir.x > 0 && CanLedgeClimb(Vector2.right))
             {
-                StartCoroutine(LedgeClimb(Vector2.right));
+                StartLedgeClimb(Vector2.right);
             }
             else if (MoveDir.x < 0 && CanLedgeClimb(Vector2.left))
             {
-                StartCoroutine(LedgeClimb(Vector2.left));
+                StartLedgeClimb(Vector2.left);
             }
 
         }

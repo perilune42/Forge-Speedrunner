@@ -50,7 +50,7 @@ public class Dash : Ability
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             PlayerMovement.Velocity = dashVelocityVec;
-            PlayerMovement.GravityMultiplier = 0f;
+            PlayerMovement.GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = 0f;
             curDashDuration--;
             if (curDashDuration <= 0)
             {
@@ -96,7 +96,7 @@ public class Dash : Ability
         // thanh new part
 
         dashing = false;
-        PlayerMovement.GravityMultiplier = 1f;
+        PlayerMovement.GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = 1f;
         curDashDuration = 0;
         stopParticleAction?.Invoke();
     }

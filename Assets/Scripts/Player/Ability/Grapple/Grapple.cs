@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Grapple : Ability
 {
-    public float PullStrength;
     public float LaunchSpeed;
+    public float HandLaunchSpeed;
     [SerializeField] private GrappleHand GrappleHandPrefab;
     [SerializeField] private GameObject GrappleArrowPrefab;
     [SerializeField] private GrappleIndicator GrappleIndicatorPrefab;
@@ -25,6 +25,8 @@ public class Grapple : Ability
     [HideInInspector] public Vector2 AttachedDirection;
 
     [SerializeField] private float verticalBoost = 7f;
+    [SerializeField] private float pullSpeed = 20f;
+    [SerializeField] private float minLaunchDistance = 3;   // force launch when getting within 3 tiles
 
     private float throwOffset => Player.Instance.Movement.PlayerHeight / 2;
     public override void Start()
@@ -37,8 +39,14 @@ public class Grapple : Ability
             ? !AbilityManager.Instance.GetAbility<Ricochet>().active : true) 
                 stopParticleAction?.Invoke();
         };
+        PlayerMovement.OnSpecialStateChange += (newState) =>
+        {
+            if (grappleState == GrappleState.Pulling && newState != SpecialState.Normal) RemoveGrapple();
+        };
+
         grappleIndicator = Instantiate(GrappleIndicatorPrefab, transform);
         grappleIndicator.gameObject.SetActive(false);
+
     }
 
     protected override void FixedUpdate()
@@ -47,17 +55,37 @@ public class Grapple : Ability
         if (curCooldown > 0) curCooldown--;
         if (PInput.Instance.Grapple.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
 
+        if (grappleState == GrappleState.Pulling)
+        {
+            Vector2 vecToHand = grappleHand.transform.position - PlayerMovement.transform.position;
+            float dist = vecToHand.magnitude;
+            Vector2 direction = vecToHand.normalized;
+            PlayerMovement.Velocity = direction * pullSpeed;
+            if (PInput.Instance.Jump.HasPressed)
+            {
+                LaunchPlayer(LaunchSpeed, true);
+            }
+            else if (dist <= minLaunchDistance)
+            {
+                LaunchPlayer(LaunchSpeed, false);
+            }
+        }
+
         if (charging)
         {
             chargeTime++;
             //grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
             grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick);
+            /*
             if (chargeTime >= maxCharge || PInput.Instance.Grapple.StoppedPressing)
             {
-                LaunchPlayer(PullStrength * (1f + chargeTime * chargePerTick));
+                LaunchPlayer(LaunchSpeed * (1f + chargeTime * chargePerTick));
                 chargeTime = 0;
             }
+            */
         }
+
+
 
         UpdateIndicator();
         
@@ -65,7 +93,7 @@ public class Grapple : Ability
 
     private float GetExpectedRange()
     {
-        return lifetime * Time.fixedDeltaTime * LaunchSpeed;
+        return lifetime * Time.fixedDeltaTime * HandLaunchSpeed;
     }
 
     private void UpdateIndicator()
@@ -125,7 +153,9 @@ public class Grapple : Ability
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
-        
+
+        PInput.Instance.Grapple.ConsumeBuffer();
+
         if (grappleState == GrappleState.Idle)
         {
             OnActivate?.Invoke(); // only use charge on attach
@@ -135,22 +165,34 @@ public class Grapple : Ability
             grappleHand.SetLifetime(lifetime);
             Vector2 throwDir = GetThrowDir();
 
-            grappleHand.Velocity += throwDir * LaunchSpeed;
+            grappleHand.Velocity += throwDir * HandLaunchSpeed;
 
             grappleState = GrappleState.Launch;
             curCooldown = pullCooldown;
         }
         else if (grappleState == GrappleState.Active)
         {
-            if (Level == 1) LaunchPlayer(PullStrength);
-            else charging = true;
+            StartPulling();
         }
-        
         return true;
     }
 
-    private void LaunchPlayer(float launchVelocity)
+    private void StartPulling()
     {
+        Debug.Log($"{Time.frameCount} pull");
+        if (PlayerMovement.SpecialState == SpecialState.Dash)
+        {
+            AbilityManager.Instance.GetAbility<Dash>().CancelDash();
+        }
+        grappleState = GrappleState.Pulling;
+        PlayerMovement.GravityMultiplier.Multipliers[StatSource.GrappleGravityMult] = 0f;
+        Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
+        PlayerMovement.Velocity = direction * pullSpeed;
+    }
+
+    private void LaunchPlayer(float launchVelocity, bool jumpBoost)
+    {
+        Debug.Log($"{Time.frameCount} nyoom");
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();
@@ -159,6 +201,7 @@ public class Grapple : Ability
         Vector2 finalVel;
         // for quick (non-charged) launches:
         // mainly give velocity in desired axis
+        /*
         if (chargeTime < 20)
         {
             if (AttachedDirection.x != 0)
@@ -179,17 +222,16 @@ public class Grapple : Ability
             // give small vertical boost on horizontal grapples
             finalVel += Vector2.up * verticalBoost;
         }
-
         PlayerMovement.Velocity = finalVel;
-        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.turquoise);
-        charging = false;
-        grappleState = GrappleState.Idle;
-        Destroy(grappleHand.gameObject);
-        //Destroy(grappleArrow);
-        if (!UsesCharges)
+        */
+        if (jumpBoost)
         {
-            curCooldown = cooldown;
+            PlayerMovement.Jump();
         }
+        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.turquoise);
+        RemoveGrapple();
+        //Destroy(grappleArrow);
+
         // gain a temporary bonus to ledge climbing
         // this is jank as hell, come back to this later
         /*
@@ -197,6 +239,18 @@ public class Grapple : Ability
         StartCoroutine(Util.FDelayedCall(60, () => PlayerMovement.LedgeClimbBonus = 0));
         */
         
+    }
+
+    private void RemoveGrapple()
+    {
+        charging = false;
+        grappleState = GrappleState.Idle;
+        Destroy(grappleHand.gameObject);
+        if (!UsesCharges)
+        {
+            curCooldown = cooldown;
+        }
+        PlayerMovement.GravityMultiplier.Multipliers[StatSource.GrappleGravityMult] = 1f;
     }
 
     public void Attach(Vector2 direction)
@@ -223,4 +277,5 @@ public enum GrappleState
     Idle,
     Launch,
     Active,
+    Pulling
 }

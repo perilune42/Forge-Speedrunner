@@ -65,7 +65,7 @@ public class PlayerMovement : DynamicEntity
         {
             if (newState != SpecialState.WallClimb && newState != SpecialState.LedgeClimb)
             {
-                GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
+                GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
             }
         };
     }

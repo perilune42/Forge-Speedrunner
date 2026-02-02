@@ -146,7 +146,7 @@ public class PlayerMovement : DynamicEntity
         if (State == BodyState.OnGround)
         {
             moveAccel = MovementParams.GroundAcceleration;
-            friction = MovementParams.GroundFriction;
+            friction = Util.SignOr0(Velocity.x) == Util.SignOr0(MoveDir.x) ? MovementParams.MovingFriciton : MovementParams.GroundFriction;
         }
         else if (State == BodyState.InAir)
         {
@@ -539,6 +539,7 @@ public struct MovementParams
     public float ClimbSpeed;
     public float GroundAcceleration, AirAcceleration;
     public float GroundFriction, AirFriction;
+    public float MovingFriciton;    // friction when you are moving along a direction
     public float JumpGravityMult, HangGravityMult;
     public float MinHangVelocity;
 }

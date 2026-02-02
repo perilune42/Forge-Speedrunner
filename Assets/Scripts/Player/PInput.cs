@@ -12,6 +12,9 @@ public class PInput : Singleton<PInput>
 
     public bool EnableControls = true;
     public Vector2 MoveInputOverrride = Vector2.zero;
+
+    const float DEADZONE = 0.2f;
+
     public class InputButton
     {
         private bool stoppedPressing;
@@ -103,7 +106,8 @@ public class PInput : Singleton<PInput>
     {
         if (MoveInputOverrride == Vector2.zero)
         {
-            MoveVector = move.ReadValue<Vector2>();
+            Vector2 rawMove = move.ReadValue<Vector2>();
+            MoveVector = GetDirection(rawMove, 0.2f, 22.5f);
         }
         else 
         { 
@@ -127,5 +131,48 @@ public class PInput : Singleton<PInput>
         Ricochet.FixedUpdate();
         Map.FixedUpdate();
         Interact.FixedUpdate();
+    }
+
+    // AI slop yippee
+    private static Vector2 GetDirection(
+      Vector2 v,
+      float deadzone = 0.2f,
+      float diagonalHalfAngle = 22.5f
+  )
+    {
+        if (v.magnitude < deadzone)
+            return Vector2Int.zero;
+
+        float angle = Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg;
+        if (angle < 0f) angle += 360f;
+
+        // Cardinal angles
+        const float RIGHT = 0f;
+        const float UP = 90f;
+        const float LEFT = 180f;
+        const float DOWN = 270f;
+
+        // Diagonal center angles
+        const float UR = 45f;
+        const float UL = 135f;
+        const float DL = 225f;
+        const float DR = 315f;
+
+        if (IsWithin(angle, UR, diagonalHalfAngle)) return new Vector2(1, 1);
+        if (IsWithin(angle, UL, diagonalHalfAngle)) return new Vector2(-1, 1);
+        if (IsWithin(angle, DL, diagonalHalfAngle)) return new Vector2(-1, -1);
+        if (IsWithin(angle, DR, diagonalHalfAngle)) return new Vector2(1, -1);
+
+        // Otherwise cardinal
+        if (IsWithin(angle, RIGHT, 45f - diagonalHalfAngle)) return Vector2.right;
+        if (IsWithin(angle, UP, 45f - diagonalHalfAngle)) return Vector2.up;
+        if (IsWithin(angle, LEFT, 45f - diagonalHalfAngle)) return Vector2.left;
+        return Vector2.down;
+    }
+
+    private static bool IsWithin(float angle, float target, float halfRange)
+    {
+        float delta = Mathf.Abs(Mathf.DeltaAngle(angle, target));
+        return delta <= halfRange;
     }
 }

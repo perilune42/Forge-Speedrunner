@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public enum SpecialState
 {
@@ -60,6 +61,13 @@ public class PlayerMovement : DynamicEntity
     protected override void Awake()
     {
         base.Awake();
+        OnSpecialStateChange += (newState) =>
+        {
+            if (newState != SpecialState.WallClimb && newState != SpecialState.LedgeClimb)
+            {
+                GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
+            }
+        }
     }
 
     private void Start()

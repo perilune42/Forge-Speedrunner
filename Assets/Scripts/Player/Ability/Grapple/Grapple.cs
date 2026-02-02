@@ -29,6 +29,8 @@ public class Grapple : Ability
     [SerializeField] private float minLaunchDistance = 3;   // force launch when getting within 3 tiles
 
     private float throwOffset => Player.Instance.Movement.PlayerHeight / 2;
+
+    private PInput.InputButton AbilityButton;
     public override void Start()
     {
         base.Start();
@@ -47,13 +49,14 @@ public class Grapple : Ability
         grappleIndicator = Instantiate(GrappleIndicatorPrefab, transform);
         grappleIndicator.gameObject.SetActive(false);
 
+        AbilityButton = PInput.Instance.Grapple;
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
         if (curCooldown > 0) curCooldown--;
-        if (PInput.Instance.Grapple.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
+        if (AbilityButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
 
         if (grappleState == GrappleState.Pulling)
         {
@@ -77,7 +80,7 @@ public class Grapple : Ability
             //grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
             grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick);
             /*
-            if (chargeTime >= maxCharge || PInput.Instance.Grapple.StoppedPressing)
+            if (chargeTime >= maxCharge || AbilityButton.StoppedPressing)
             {
                 LaunchPlayer(LaunchSpeed * (1f + chargeTime * chargePerTick));
                 chargeTime = 0;
@@ -154,7 +157,7 @@ public class Grapple : Ability
     {
         if (!CanUseAbility()) return false;
 
-        PInput.Instance.Grapple.ConsumeBuffer();
+        AbilityButton.ConsumeBuffer();
 
         if (grappleState == GrappleState.Idle)
         {

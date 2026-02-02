@@ -16,6 +16,7 @@ public class GroundSlam : Ability
 
     private Vector2 preservedVelocity;
 
+    private PInput.InputButton AbilityButton;
 
     public override void Start()
     {
@@ -25,6 +26,7 @@ public class GroundSlam : Ability
             if (PlayerMovement.SpecialState == SpecialState.GroundSlam
                 /* or the ground slam is level 2 and player recently dashed*/) OnGround();
         };
+        AbilityButton = PInput.Instance.GroundSlam;
     }
 
     protected override void FixedUpdate()
@@ -47,7 +49,7 @@ public class GroundSlam : Ability
                 PlayerMovement.Velocity += Vector2.down * rampUpAcceleration;
             }
         }
-        if (PInput.Instance.GroundSlam.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
+        if (AbilityButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
     }
 
     // returns: whether dash was successfully interrupted

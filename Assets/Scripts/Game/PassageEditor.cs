@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(PassageEditor))]
 public class PassageEditor_Inspector : Editor
 {
@@ -36,6 +37,7 @@ public class PassageEditor_Inspector : Editor
         }
     }
 }
+#endif
 
 [ExecuteAlways]
 public class PassageEditor : MonoBehaviour

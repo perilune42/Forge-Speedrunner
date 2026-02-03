@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [ExecuteAlways]
 public class HazardTiler : MonoBehaviour
 {
@@ -51,3 +52,4 @@ public class HazardTiler : MonoBehaviour
         valueChanged = false;
     }
 }
+#endif

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(EntityButtons))]
 public class EntityInspector : Editor
 {
@@ -15,6 +16,7 @@ public class EntityInspector : Editor
         }
     }
 }
+#endif
 
 //NOTE: THIS IS JUST SUPPOSED TO HOLD EntityInspector
 public class EntityButtons : MonoBehaviour

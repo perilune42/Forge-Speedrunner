@@ -36,7 +36,7 @@ public abstract class Entity : MonoBehaviour
     public virtual void OnCollide(DynamicEntity de, Vector2 normal) { }
     public virtual void OnValidate()
     {
-        Debug.Log($"OnValidate called on {this}");
+        // Debug.Log($"OnValidate called on {this}");
     }
 
 }

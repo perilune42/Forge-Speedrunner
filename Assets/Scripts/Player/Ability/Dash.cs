@@ -52,7 +52,7 @@ public class Dash : Ability
         {
             return;
         }
-        
+        if (PlayerMovement.State == BodyState.OnGround) canDash = true;
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             PlayerMovement.Velocity = dashVelocityVec;

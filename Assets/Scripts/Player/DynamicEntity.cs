@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Security.Principal;
 using Unity.Cinemachine;
@@ -115,22 +116,31 @@ public class DynamicEntity : MonoBehaviour
         Vector2 origin = (Vector2)transform.position + SurfaceCollider.offset + SurfaceCollider.bounds.extents.y * 3 / 4 * Vector2.down;
         Vector2 size = new(bounds.size.x * 0.99f, bounds.size.y / 4);
         Physics2D.SyncTransforms();
-        RaycastHit2D groundHit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, Mathf.Infinity, collisionLayer);
+        RaycastHit2D[] hits = CustomBoxCastAll(origin, size, 0f, Vector2.down, 10f, collisionLayer);
 
-        bool didHitGround = groundHit && groundHit.distance <= COLLISION_CHECK_DISTANCE;
-        if (didHitGround && (Velocity.y <= 1e-2 || Mathf.Approximately(Velocity.y, 0)) && State != BodyState.OnGround) OnGrounded(groundHit);
-        else if (!didHitGround && State == BodyState.OnGround) OnAirborne();
+        bool didHitGround = false;
+        foreach (var groundHit in hits)
+        {
+            didHitGround |= groundHit && groundHit.distance <= COLLISION_CHECK_DISTANCE;
+            if (didHitGround && (Velocity.y <= 1e-2 || Mathf.Approximately(Velocity.y, 0)) && State != BodyState.OnGround)
+            {
+                OnGrounded(groundHit);
+                didHitGround = true;
+                break;
+            }
+        }
+        if (!didHitGround && State == BodyState.OnGround) OnAirborne();
 
         if (Velocity.y < 0 || State == BodyState.OnGround) canHitCeiling = true;
         if (canHitCeiling)
         {
             Vector2 originTop = (Vector2)transform.position + SurfaceCollider.offset + SurfaceCollider.bounds.extents.y * 3 / 4 * Vector2.up;
-            RaycastHit2D groundHitTop = Physics2D.BoxCast(originTop, size, 0f, Vector2.up, Mathf.Infinity, collisionLayer);
+            RaycastHit2D groundHitTop = CustomBoxCast(originTop, size, 0f, Vector2.up, 10f, collisionLayer);
             bool didHitGroundTop = groundHitTop && groundHitTop.distance <= COLLISION_CHECK_DISTANCE;
-          
-            if (didHitGroundTop && (Velocity.y >= -1e-2 ) && State != BodyState.OnGround) OnGroundedTop(groundHitTop);
+
+            if (didHitGroundTop && (Velocity.y >= -1e-2) && State != BodyState.OnGround) OnGroundedTop(groundHitTop);
         }
-        
+
     }
 
     
@@ -174,7 +184,7 @@ public class DynamicEntity : MonoBehaviour
 
             RaycastHit2D hit;
 
-            hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
+            hit = CustomBoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, interactLayer);
             if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
             {
                 Entity hitEntity = hit.collider.GetComponent<Entity>();
@@ -186,12 +196,13 @@ public class DynamicEntity : MonoBehaviour
             }
             if (doesCollide)
             {
-                hit = Physics2D.BoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+                hit = CustomBoxCast(origin, bounds.size, 0f, move.normalized, move.magnitude, collisionLayer);
+
                 if (hit && !hit.collider.isTrigger && Mathf.Approximately(hit.distance, 0f))
                 {
                     ResolveInitialCollisions();
                     origin = (Vector2)transform.position + SurfaceCollider.offset;
-                }
+                } 
             }
 
         }
@@ -208,7 +219,7 @@ public class DynamicEntity : MonoBehaviour
         int substeps = 0; // This is to prevent infinite loops in case something goes wrong
 
         RaycastHit2D[] hits;
-        hits = Physics2D.BoxCastAll(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
+        hits = CustomBoxCastAll(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
 
 
         while (hits.Length > 0)
@@ -224,6 +235,7 @@ public class DynamicEntity : MonoBehaviour
 
                 bool hitSolid = true;
                 Entity hitEntity = hit.collider.GetComponent<Entity>();
+                // SemisolidEntity hitSemisolid = hit.collider.GetComponent<SemisolidEntity>();
 
                 if (hitEntity != null)
                 {
@@ -307,7 +319,7 @@ public class DynamicEntity : MonoBehaviour
                 break;
             }
 
-            hits = Physics2D.BoxCastAll(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
+            hits = CustomBoxCastAll(origin, bounds.size, 0f, move.normalized, move.magnitude, collideOrInteractLayer);
             substeps++;
             if (substeps > MAX_SUBSTEPS)
             {
@@ -334,23 +346,19 @@ public class DynamicEntity : MonoBehaviour
         // Apply lingering movement
         transform.position += (Vector3)move;
 
-
-
     }
 
     public float GetSurfaceDistance(Vector2 dir, float maxDist = 10f)
     {
-        var hit = Physics2D.BoxCast((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size, 0f, dir, maxDist, collisionLayer);
+        var hit = CustomBoxCast((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size, 0f, dir, maxDist, collisionLayer);
         return hit.distance;
     }
 
     public bool IsTouching(Vector2 dir)
     {
-        var hit = Physics2D.BoxCast((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size, 0f, dir, 1f, collisionLayer);
+        var hit = CustomBoxCast((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size, 0f, dir, 1f, collisionLayer);
         return hit.distance <= COLLISION_CHECK_DISTANCE;
     }
-
-    // Drop entities in the air at the start of a scene or after an interaction
     public virtual void Unlock()
     {
         State = BodyState.InAir;
@@ -359,5 +367,43 @@ public class DynamicEntity : MonoBehaviour
     public void Stop()
     {
         Velocity = Vector3.zero;
+    }
+
+    private bool CollideWithSemisolid(SemisolidEntity ss)
+    {
+        return transform.position.y >= ss.GetBounds().max.y;
+    }
+
+    // includes semisolid logic
+    public RaycastHit2D[] CustomBoxCastAll(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
+    {
+        RaycastHit2D[] hits = Physics2D.BoxCastAll(origin, size, 0f, direction, distance, layerMask);
+        List<RaycastHit2D> finalHits = new();
+        foreach (var hit in hits) 
+        {
+            if (hit)
+            {
+                SemisolidEntity hitSemisolid = hit.collider.GetComponent<SemisolidEntity>();
+                if (hitSemisolid == null || (hitSemisolid != null && CollideWithSemisolid(hitSemisolid)))
+                {
+                    finalHits.Add(hit);
+                }
+            }
+        }
+        return finalHits.ToArray();
+    }
+
+    public RaycastHit2D CustomBoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
+    {
+        var hit = Physics2D.BoxCast(origin, size, 0f, direction, distance, layerMask);
+        if (hit)
+        {
+            SemisolidEntity hitSemisolid = hit.collider.GetComponent<SemisolidEntity>();
+            if (hitSemisolid == null || (hitSemisolid != null && CollideWithSemisolid(hitSemisolid)))
+            {
+                return hit;
+            }
+        }
+        return new RaycastHit2D();
     }
 }

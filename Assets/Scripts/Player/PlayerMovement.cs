@@ -423,7 +423,7 @@ public class PlayerMovement : DynamicEntity
         Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight - PlayerHeight * 0.45f) ;
         Vector2 origin = (Vector2)transform.position + offset;
         Vector2 size = new (PlayerWidth, PlayerHeight * 0.1f);
-        RaycastHit2D groundHit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, PlayerHeight * 4, collisionLayer);
+        RaycastHit2D groundHit = CustomBoxCast(origin, size, 0f, Vector2.down, PlayerHeight * 4, collisionLayer);
 
 
         // how much the ledge is above the player's foot

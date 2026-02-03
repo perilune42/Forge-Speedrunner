@@ -104,7 +104,8 @@ public class Grapple : Ability
         if (CanUseAbility() && grappleState == GrappleState.Idle)
         {
             Vector2 launchdir = GetThrowDir();
-            var hit = Physics2D.Raycast((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
+            var hit = PlayerMovement.CustomBoxCast((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset, 
+                                        new Vector2(0.1f,0.1f), 0f,
                                         launchdir, GetExpectedRange(), LayerMask.GetMask("Solid"));
             if (hit)
             {

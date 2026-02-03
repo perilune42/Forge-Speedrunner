@@ -46,9 +46,14 @@ public abstract class Ability : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (curCooldown > 0) curCooldown--;
+        if (curCooldown > 0) 
+        {
+            curCooldown--;
+            if (curCooldown == 0) onRecharged?.Invoke();
+        }
     }
 
+    protected Action onRecharged;
     
     /// <summary>
     /// Cooldown for this ability, as a float between 0.0 and 1.0

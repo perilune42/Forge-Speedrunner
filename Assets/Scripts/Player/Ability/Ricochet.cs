@@ -16,7 +16,7 @@ public class Ricochet : Ability
         PlayerMovement.onGroundTop += OnGroundTop;
         PlayerMovement.OnHitWallLeft += OnHitWallLeft;
         PlayerMovement.OnHitWallRight += OnHitWallRight;
-        AbilityButton = PInput.Instance.GroundSlam;
+        AbilityButton = PInput.Instance.Ricochet;
     }
 
     protected override void FixedUpdate()

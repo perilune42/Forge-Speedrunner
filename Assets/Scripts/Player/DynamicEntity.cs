@@ -224,16 +224,16 @@ public class DynamicEntity : MonoBehaviour
 
                 bool hitSolid = true;
                 Entity hitEntity = hit.collider.GetComponent<Entity>();
-                // stall collide behavior until rest of movement is processed
 
                 if (hitEntity != null)
                 {
                     if (!collidingEntities.Contains(hitEntity))
                     {
+                        
                         collidingEntities.Add(hitEntity);
                         var prevMove = move;
                         hitEntity.OnCollide(this, hit.normal);
-                        move = Velocity * fdt;  // velocity may have been altered by entity interaction\
+                        move = Velocity * fdt;  // velocity may have been altered by entity interaction
                         if (!Mathf.Approximately((prevMove - move).sqrMagnitude, 0))
                         {
                             moved = true;
@@ -289,6 +289,8 @@ public class DynamicEntity : MonoBehaviour
                         break;
                     }
                 }
+
+                if (moved) break;
 
 
                 substeps++;

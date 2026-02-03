@@ -182,7 +182,6 @@ public class Grapple : Ability
 
     private void StartPulling()
     {
-        Debug.Log($"{Time.frameCount} pull");
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();
@@ -195,7 +194,6 @@ public class Grapple : Ability
 
     private void LaunchPlayer(float launchVelocity, bool jumpBoost)
     {
-        Debug.Log($"{Time.frameCount} nyoom");
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();

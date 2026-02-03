@@ -31,12 +31,19 @@ public class Dash : Ability
         {
             CancelDash();
         };
+        PlayerMovement.onGround += () =>
+        {
+            RefillDash();
+        };
     }
 
     private bool dashing;
 
 
-
+    public void RefillDash()
+    {
+        canDash = true;
+    }
 
     protected override void FixedUpdate()
     {
@@ -45,7 +52,6 @@ public class Dash : Ability
         {
             return;
         }
-        if (PlayerMovement.State == BodyState.OnGround) canDash = true;
         
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {

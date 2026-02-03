@@ -53,7 +53,7 @@ public class PlayerMovement : DynamicEntity
 
     [HideInInspector] public Vector2 PreCollisionVelocity;
 
-    private const float ledgeClimbHeight = 0.75f;
+    private const float ledgeClimbHeight = 1f;
     [HideInInspector] public float LedgeClimbBonus = 0;
 
     public Action<SpecialState> OnSpecialStateChange;   // called before change
@@ -440,6 +440,10 @@ public class PlayerMovement : DynamicEntity
         GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
         Velocity = new Vector2(0, MovementParams.ClimbSpeed);
         lastClimbDir = MoveDir;
+        if (State == BodyState.OnGround)
+        {
+            OnAirborne();
+        }
     }
 
     private void ContinueLedgeClimb(Vector2 dir)
@@ -449,7 +453,11 @@ public class PlayerMovement : DynamicEntity
             GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
             SpecialState = SpecialState.Normal;
         }
-        if (GetLedgeHeight(dir) > 0) return;
+        if (GetLedgeHeight(dir) > 0)
+        {
+            Velocity = new Vector2(0, MovementParams.ClimbSpeed);
+            return;
+        }
         const float minLedgeBoost = 5f;
 
         float alignedRetainedSpeed = Util.SignOr0(retainedSpeed) == dir.x ? Mathf.Abs(retainedSpeed) : 0;

@@ -5,7 +5,7 @@ public class PInput : Singleton<PInput>
 {
     // Use in other classes
     public Vector2 MoveVector;
-    public InputButton Jump, Dash, GroundSlam, Grapple, Interact,Ricochet, Map;
+    public InputButton Jump, Dash, GroundSlam, Grapple, Interact,Ricochet, Map, Parry;
 
     // Internal vars
     private InputAction move;
@@ -100,6 +100,7 @@ public class PInput : Singleton<PInput>
         Interact = new InputButton(InputSystem.actions.FindAction("Interact"), 8);
         Ricochet = new InputButton(InputSystem.actions.FindAction("Ricochet"), 8);
         Map = new InputButton(InputSystem.actions.FindAction("Map"), 1);
+        Parry = new InputButton(InputSystem.actions.FindAction("Parry"), 8);
     }
 
     private void Update()
@@ -120,6 +121,7 @@ public class PInput : Singleton<PInput>
         Ricochet.Update();
         Map.Update();
         Interact.Update();
+        Parry.Update();
     }
 
     private void FixedUpdate()
@@ -131,6 +133,7 @@ public class PInput : Singleton<PInput>
         Ricochet.FixedUpdate();
         Map.FixedUpdate();
         Interact.FixedUpdate();
+        Parry.FixedUpdate();
     }
 
     // AI slop yippee

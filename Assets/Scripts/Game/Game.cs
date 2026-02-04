@@ -2,45 +2,17 @@ using TMPro;
 using UnityEngine;
 
 public class Game : Singleton<Game> {
-    public enum State {
-        Paused,
-        Playing
-    }
-    public State currState;
-    public Timer timer;
-    void Start()
+    // timer stuff all moved to Timer class
+
+    public void GoToShop()
     {
-        currState = State.Playing;
-        timer = gameObject.GetComponent<Timer>();
+        ShopManager.Instance.LoadShop();
+        // deactivate all the stuff in the world
     }
 
-
-
-    public void Pause()
+    public void ReturnToPlay(bool practiceMode)
     {
-        currState = State.Paused;
-
-        // Pause Time using Timer script
-        timer.pauseTime(true);
-    }
-    public void Play() {
-        currState = State.Playing;
-
-        // Unpause Time using Timer script
-        timer.pauseTime(false);
-    }
-
-    public void SwitchStates() {
-        if (currState == State.Playing) {
-            currState = State.Paused;
-
-            // PauseTime using Timer script
-            timer.pauseTime(true);
-        } else {
-            currState = State.Playing;
-
-            // UnpauseTime using Timer script
-            timer.pauseTime(false);
-        }
+        ShopManager.Instance.CloseShop();
+        // reset rooms and player
     }
 }

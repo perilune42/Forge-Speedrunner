@@ -18,7 +18,7 @@ public class GameplayUI : MonoBehaviour
     {
         if (Game.Instance != null)
         {
-            Game.Instance.Pause();
+            Timer.Instance.Pause(true);
         }
     }
 
@@ -26,7 +26,7 @@ public class GameplayUI : MonoBehaviour
     {
         if (Game.Instance != null)
         {
-            Game.Instance.Play();
+            Timer.Instance.Pause(false);
         }
     }
 }

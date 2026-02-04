@@ -23,15 +23,30 @@ public class ShopManager : Singleton<ShopManager>
 
     [SerializeField] private GameObject[] tabs;
 
+    [SerializeField] private Canvas screen;
+
     private const float chargeChance = 0.5f;
 
     public override void Awake()
     {
         base.Awake();
+
+    }
+
+    void Start()
+    {
+        
+    }
+
+    // pulls up the shop screen with the most updated information
+    public void LoadShop()
+    {
+        screen.gameObject.SetActive(true);
+        SwitchTab((int)ShopTab.Review);
         UpdateMoney();
         UpdateTimeTaken();
 
-        foreach (AbilityData abilityData in AbilitySceneTransfer.AbilityDataArray)
+        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
         {
             if (abilityData.Level >= abilityData.Upgrades.Length) continue; // upgrade is already max level
 
@@ -55,9 +70,9 @@ public class ShopManager : Singleton<ShopManager>
         }
     }
 
-    void Start()
+    public void CloseShop()
     {
-        SwitchTab((int)ShopTab.Review);
+
     }
 
     private void OnGUI()
@@ -77,11 +92,16 @@ public class ShopManager : Singleton<ShopManager>
         }
     }
 
-    public void UpdateMoney()
+    private void GainReward()
     {
         int moneyGained = (int)(Timer.targetSpeedrunTime - Timer.speedrunTime);
         moneyGainedText.text = moneyGained + "";
         Money += moneyGained;
+        UpdateMoney();
+    }
+
+    public void UpdateMoney()
+    {
         moneyText.text = Money.ToString();
     }
 

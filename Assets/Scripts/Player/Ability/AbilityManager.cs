@@ -14,8 +14,8 @@ public class AbilityManager : Singleton<AbilityManager>
     [SerializeField] bool allAbilitiesAreCharged = false;
 
 
-
-    public AbilitySceneContainer[] Abilities;
+    // migrated to GameRegistry, as they are constant definitions
+    // public AbilitySceneContainer[] Abilities;
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent;
     [SerializeField] private GameObject player;
@@ -26,7 +26,6 @@ public class AbilityManager : Singleton<AbilityManager>
     {
         base.Awake();
         playerAbilities = new();
-        if (!AbilitySceneTransfer.Initialized) Init();
 
         if (shopDebugMode)
         {
@@ -47,32 +46,6 @@ public class AbilityManager : Singleton<AbilityManager>
         }
     }
 
-    /*private void Update()
-    {
-        Debug.Log(pm == null);
-    }*/
-
-    private void Init()
-    {
-        AbilitySceneTransfer.AbilityDataArray = new AbilityData[Abilities.Length];
-        for (int i = 0; i < Abilities.Length; i++)
-        {
-            Abilities[i].data.ID = i;
-            if (giveAllAbilities)
-            {
-                Abilities[i].data.Level = 2;
-            }
-            else
-            {
-                if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash)
-                    Abilities[i].data.Level = 1;
-                else Abilities[i].data.Level = 0;
-            }
-
-            AbilitySceneTransfer.AbilityDataArray[i] = Abilities[i].data;
-        }
-        AbilitySceneTransfer.Initialized = true;
-    }
 
     private void GivePlayerAbilities()
     {
@@ -81,9 +54,9 @@ public class AbilityManager : Singleton<AbilityManager>
             Destroy(ability.gameObject);
         }
 
-        foreach (AbilityData abilityData in AbilitySceneTransfer.AbilityDataArray)
+        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
         {
-            if (abilityData.Level > 0)
+            if (abilityData.Level > 0 || giveAllAbilities)
             {
                 GivePlayerAbility(abilityData.ID);
             }
@@ -92,10 +65,18 @@ public class AbilityManager : Singleton<AbilityManager>
     
     public void GivePlayerAbility(int index)
     {
-        Ability ability = Instantiate(Abilities[index].abilityPrefab, player.transform).GetComponent<Ability>();
+        Ability ability = Instantiate(GameRegistry.Instance.Abilities[index].abilityPrefab, player.transform).GetComponent<Ability>();
         playerAbilities.Add(ability);
-        ability.Data = AbilitySceneTransfer.AbilityDataArray[index];
+        ability.Data = ProgressionData.Instance.AbilityDataArray[index];
         ability.ID = index;
+        if (giveAllAbilities)
+        {
+            ability.Level = 2;
+        }
+        else
+        {
+            ability.Level = ProgressionData.Instance.AbilityDataArray[index].Level;
+        }
         if (ability.ID != 0 && (allAbilitiesAreCharged || ability.Data.UsesCharges))
         {
             ability.UsesCharges = true;

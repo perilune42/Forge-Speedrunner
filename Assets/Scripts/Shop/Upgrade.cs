@@ -31,15 +31,15 @@ public class Upgrade : MonoBehaviour
             CostText.text = "Bought";
             IsBought = true;
 
-            AbilitySceneTransfer.AbilityDataArray[index].Level++;
-            AbilitySceneTransfer.AbilityDataArray[index].UsesCharges = usesCharges;
+            ProgressionData.Instance.AbilityDataArray[index].Level++;
+            ProgressionData.Instance.AbilityDataArray[index].UsesCharges = usesCharges;
         }
     }
 
     public void Init(int abilityIndex, bool usesCharges = false)
     {
         index = abilityIndex;
-        var abilityData = AbilitySceneTransfer.AbilityDataArray[abilityIndex];
+        var abilityData = ProgressionData.Instance.AbilityDataArray[abilityIndex];
         this.data = abilityData.Upgrades[abilityData.Level];
         UpgradeImage.sprite = this.data.Icon;
         CostText.text = this.data.Name;

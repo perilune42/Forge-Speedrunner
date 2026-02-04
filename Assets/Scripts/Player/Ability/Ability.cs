@@ -36,7 +36,6 @@ public abstract class Ability : MonoBehaviour
 
     public virtual void Start()
     {
-        Level = AbilitySceneTransfer.AbilityDataArray[ID].Level;
         if (AbilityManager.Instance.AbilityInfoParent == null) return;
         info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
             AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();

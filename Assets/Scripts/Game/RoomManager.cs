@@ -77,50 +77,7 @@ public class RoomManager : Singleton<RoomManager>
 
     void Update()
     {
-        // switch rooms by arrow keys
-        // List<Doorway> doorways = null;
-        if(Input.GetKeyDown(KeyCode.R))
-            Respawn();
-        if(Input.GetKeyDown(KeyCode.Z))
-        {
-            Reset();
-        }
-        // else if (Input.GetKeyDown(KeyCode.UpArrow)) 
-        // {
-        //     doorways = activeRoom.doorwaysUp;
-        // }
-        // else if (Input.GetKeyDown(KeyCode.DownArrow)) 
-        // {
-        //     doorways = activeRoom.doorwaysDown;
-        // }
-        // else if (Input.GetKeyDown(KeyCode.LeftArrow)) 
-        // {
-        //     doorways = activeRoom.doorwaysLeft;
-        // }
-        // else if (Input.GetKeyDown(KeyCode.RightArrow)) 
-        // {
-        //     doorways = activeRoom.doorwaysRight;
-        // }
-        // if (doorways == null)
-        // {
-        //     return;
-        // }
-
-        // foreach (Doorway door in doorways)
-        // {
-        //     if (door != null && door.enclosingRoom == activeRoom)
-        //     {
-        //         Passage pass = door.passage;
-        //         Doorway start = door;
-        //         Doorway end = start == pass.door1? pass.door2 : pass.door1;
-        //         SwitchRoom(start, end);
-        //         return;
-        //     }
-
-        // }
-
-        // only if no door matches
-        // Debug.Log("you can't go this way.");
+        // debug inputs moved to Game
         return;
     }
 

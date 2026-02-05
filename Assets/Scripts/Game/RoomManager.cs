@@ -56,12 +56,12 @@ public class RoomManager : Singleton<RoomManager>
         CameraController.Instance.SnapToRoom(activeRoom);
     }
 
-    public void Reset()
+    public void ResetAllEntities()
     {
         // reset entities
         foreach(ActivatableEntity e in ActivatableEntities)
         {
-            e.Reset();
+            e.ResetEntity();
         }
 
         // reset player

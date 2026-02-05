@@ -26,7 +26,7 @@ public class Gate : ActivatableEntity
 
     }
     // the reverse of OnActivate
-    public override void Reset()
+    public override void ResetEntity()
     {
         isActivated = false; 
         isMoving = false;

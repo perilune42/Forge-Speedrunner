@@ -20,7 +20,7 @@ public class Game : Singleton<Game> {
         ShopManager.Instance.CloseShop();
         // reset rooms and player
         RoomManager.Instance.gameObject.SetActive(true);
-        RoomManager.Instance.Reset();
+        RoomManager.Instance.ResetAllEntities();
         Player.Instance.gameObject.SetActive(true);
 
         // start the count at 0

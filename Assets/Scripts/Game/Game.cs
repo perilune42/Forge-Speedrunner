@@ -11,6 +11,8 @@ public class Game : Singleton<Game> {
         RoomManager.Instance.gameObject.SetActive(false);
         Player.Instance.gameObject.SetActive(false);
 
+        // stop the count
+        Timer.Instance.Pause(true);
     }
 
     public void ReturnToPlay(bool practiceMode)
@@ -23,6 +25,7 @@ public class Game : Singleton<Game> {
 
         // start the count at 0
         Timer.speedrunTime = 0F;
+        Timer.Instance.Pause(false);
     }
 
     void Update()

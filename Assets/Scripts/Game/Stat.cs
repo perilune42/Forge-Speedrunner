@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum StatSource
 {
-    JumpGravityMult, ClimbGravityMult, GrappleGravityMult
+    JumpGravityMult, ClimbGravityMult, GrappleGravityMult, ForceFieldGravityMult
 }
 
 [Serializable]

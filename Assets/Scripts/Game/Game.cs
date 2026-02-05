@@ -14,5 +14,6 @@ public class Game : Singleton<Game> {
     {
         ShopManager.Instance.CloseShop();
         // reset rooms and player
+        RoomManager.Instance.Reset();
     }
 }

@@ -32,6 +32,7 @@ public class RoomManager : Singleton<RoomManager>
     public InteractionTrigger InteractionTriggerPrefab;
 
     public List<Room> AllRooms = new();
+    [HideInInspector] public ActivatableEntity[] ActivatableEntities;
     [HideInInspector] public Passage[] AllPassages;
 
     void Start()
@@ -41,6 +42,8 @@ public class RoomManager : Singleton<RoomManager>
         AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
 
         AllRooms = GetComponentsInChildren<Room>().ToList();
+
+        ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
 
         originalPosition = Player.Instance.Movement.transform.position;
 
@@ -52,48 +55,60 @@ public class RoomManager : Singleton<RoomManager>
         CameraController.Instance.SnapToRoom(activeRoom);
     }
 
+    public void Reset()
+    {
+        foreach(ActivatableEntity e in ActivatableEntities)
+        {
+            e.Reset();
+        }
+    }
+
     void Update()
     {
         // switch rooms by arrow keys
-        List<Doorway> doorways = null;
+        // List<Doorway> doorways = null;
         if(Input.GetKeyDown(KeyCode.R))
             Respawn();
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) 
+        if(Input.GetKeyDown(KeyCode.Z))
         {
-            doorways = activeRoom.doorwaysUp;
+            Reset();
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow)) 
-        {
-            doorways = activeRoom.doorwaysDown;
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) 
-        {
-            doorways = activeRoom.doorwaysLeft;
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow)) 
-        {
-            doorways = activeRoom.doorwaysRight;
-        }
-        if (doorways == null)
-        {
-            return;
-        }
+        // else if (Input.GetKeyDown(KeyCode.UpArrow)) 
+        // {
+        //     doorways = activeRoom.doorwaysUp;
+        // }
+        // else if (Input.GetKeyDown(KeyCode.DownArrow)) 
+        // {
+        //     doorways = activeRoom.doorwaysDown;
+        // }
+        // else if (Input.GetKeyDown(KeyCode.LeftArrow)) 
+        // {
+        //     doorways = activeRoom.doorwaysLeft;
+        // }
+        // else if (Input.GetKeyDown(KeyCode.RightArrow)) 
+        // {
+        //     doorways = activeRoom.doorwaysRight;
+        // }
+        // if (doorways == null)
+        // {
+        //     return;
+        // }
 
-        foreach (Doorway door in doorways)
-        {
-            if (door != null && door.enclosingRoom == activeRoom)
-            {
-                Passage pass = door.passage;
-                Doorway start = door;
-                Doorway end = start == pass.door1? pass.door2 : pass.door1;
-                SwitchRoom(start, end);
-                return;
-            }
+        // foreach (Doorway door in doorways)
+        // {
+        //     if (door != null && door.enclosingRoom == activeRoom)
+        //     {
+        //         Passage pass = door.passage;
+        //         Doorway start = door;
+        //         Doorway end = start == pass.door1? pass.door2 : pass.door1;
+        //         SwitchRoom(start, end);
+        //         return;
+        //     }
 
-        }
+        // }
 
         // only if no door matches
-        Debug.Log("you can't go this way.");
+        // Debug.Log("you can't go this way.");
         return;
     }
 

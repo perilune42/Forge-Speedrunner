@@ -7,6 +7,7 @@ public class Gate : ActivatableEntity
     private bool isActivated;
     private bool isMoving;
 
+    private Vector2 startPos;
     private Vector2 endPos;
     public override bool IsSolid => true;
 
@@ -14,6 +15,7 @@ public class Gate : ActivatableEntity
     {
         base.Awake();
         endPos = EndPoint.position; // child will move in world space with parent
+        startPos = this.transform.position;
 
     }
     public override void OnActivate()
@@ -22,6 +24,13 @@ public class Gate : ActivatableEntity
         isActivated = true;
         isMoving = true;
 
+    }
+    // the reverse of OnActivate
+    public override void Reset()
+    {
+        isActivated = false; 
+        isMoving = false;
+        this.transform.position = startPos;
     }
 
     protected override void FixedUpdate()

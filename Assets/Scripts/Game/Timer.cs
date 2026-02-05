@@ -48,6 +48,7 @@ public class Timer : Singleton<Timer>
     }
 
     public override void Awake() {
+        base.Awake();
         speedrunTime = 0.0f;
         if (targetSpeedrunTime == -1f)
         {

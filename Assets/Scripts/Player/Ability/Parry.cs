@@ -15,6 +15,10 @@ public class Parry : Ability
 
     [SerializeField]SpriteRenderer circle;
 
+    Vector2 surfaceDir;
+    [SerializeField] float baseReflectSpeed = 6;
+    [SerializeField] float speedMultiplier = 1f;
+
     public override void Start()
     {
         base.Start();
@@ -44,6 +48,7 @@ public class Parry : Ability
             if (parryPrimedRemaining == 0)
             {
                 stopParticleAction?.Invoke();
+                pm.CanClimb = true;
             }
         }
         if (hitstopRemaining > 0)
@@ -65,13 +70,19 @@ public class Parry : Ability
     public override bool UseAbility()
     {
         base.UseAbility();
-        
-        parryPrimedRemaining = parryPrimedFrames;
-        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.white);
+        PrimeParry();
+
         return true;
     }
 
-    private void StartParry(Vector2 surfaceDir)
+    private void PrimeParry()
+    {
+        parryPrimedRemaining = parryPrimedFrames;
+        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.white);
+        pm.CanClimb = false;
+    }
+
+    private void StartParry(Vector2 hitSurfaceDir)
     {
         Debug.Log("bonk");
         storedSpeed = pm.PreCollisionVelocity.magnitude;
@@ -82,7 +93,7 @@ public class Parry : Ability
         circle.transform.localScale = Vector3.one * 5;
         circle.transform.DOScale(0f, hitstopFrames * Time.fixedDeltaTime).SetEase(Ease.InCubic);
         pm.SpecialState = SpecialState.Normal;
-
+        surfaceDir = hitSurfaceDir;
 
     }
 
@@ -90,9 +101,10 @@ public class Parry : Ability
     {
         Vector2 inputDir = PInput.Instance.MoveVector.normalized;
         pm.Locked = false;
-        pm.Velocity = inputDir * (storedSpeed * 1.5f + 5f);
+        pm.Velocity = inputDir * (storedSpeed * speedMultiplier) + -surfaceDir * baseReflectSpeed;
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
         circle.enabled = false;
+        pm.CanClimb = true;
     }
 
     public override bool CanUseAbility()

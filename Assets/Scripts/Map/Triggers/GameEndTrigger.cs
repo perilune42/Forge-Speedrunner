@@ -7,7 +7,8 @@ public class GameEndTrigger : Trigger
     {
         base.OnPlayerEnter();
         Timer.RecordTime();
-        SceneManager.LoadScene("Shop");
+        // SceneManager.LoadScene("Shop");
+        Game.Instance.GoToShop();
     }
 
 }

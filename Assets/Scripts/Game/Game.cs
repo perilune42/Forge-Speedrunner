@@ -9,6 +9,7 @@ public class Game : Singleton<Game> {
         ShopManager.Instance.LoadShop();
         // deactivate all the stuff in the world
         RoomManager.Instance.gameObject.SetActive(false);
+        Player.Instance.gameObject.SetActive(false);
     }
 
     public void ReturnToPlay(bool practiceMode)
@@ -17,6 +18,7 @@ public class Game : Singleton<Game> {
         // reset rooms and player
         RoomManager.Instance.gameObject.SetActive(true);
         RoomManager.Instance.Reset();
+        Player.Instance.gameObject.SetActive(true);
     }
 
     void Update()
@@ -24,7 +26,9 @@ public class Game : Singleton<Game> {
         RoomManager rm = RoomManager.Instance;
         if(Input.GetKeyDown(KeyCode.R))
             rm.Respawn();
-        if(Input.GetKeyDown(KeyCode.Z))
-            rm.Reset();
+        else if(Input.GetKeyDown(KeyCode.Z))
+            ReturnToPlay(false);
+        else if(Input.GetKeyDown(KeyCode.X))
+            GoToShop();
     }
 }

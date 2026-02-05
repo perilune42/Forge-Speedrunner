@@ -72,7 +72,7 @@ public class ShopManager : Singleton<ShopManager>
 
     public void CloseShop()
     {
-
+        screen.gameObject.SetActive(false);
     }
 
     private void OnGUI()
@@ -112,6 +112,7 @@ public class ShopManager : Singleton<ShopManager>
 
     public void ReturnToWorld()
     {
-        SceneManager.LoadScene("World");
+        // SceneManager.LoadScene("World");
+        Game.Instance.ReturnToPlay(false);
     }
 }

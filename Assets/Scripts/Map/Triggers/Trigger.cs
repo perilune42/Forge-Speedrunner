@@ -38,4 +38,26 @@ public abstract class Trigger : MonoBehaviour
     {
 
     }
+
+    [ContextMenu("Zero BoxCollider Offset")]
+    public void ZeroColliderOffset()
+    {
+        Collider2D col = GetComponent<Collider2D>();
+        Transform t = col.transform;
+
+        // World position of collider center BEFORE
+        Vector3 worldCenterBefore = t.TransformPoint(col.offset);
+
+        // Zero the offset
+        col.offset = Vector2.zero;
+
+        // World position of collider center AFTER
+        Vector3 worldCenterAfter = t.TransformPoint(col.offset);
+
+        // Move transform so collider stays in the same place
+        Vector3 delta = worldCenterBefore - worldCenterAfter;
+        t.position += delta;
+    }
+
+
 }

@@ -10,6 +10,7 @@ public class Game : Singleton<Game> {
         // deactivate all the stuff in the world
         RoomManager.Instance.gameObject.SetActive(false);
         Player.Instance.gameObject.SetActive(false);
+
     }
 
     public void ReturnToPlay(bool practiceMode)
@@ -19,6 +20,9 @@ public class Game : Singleton<Game> {
         RoomManager.Instance.gameObject.SetActive(true);
         RoomManager.Instance.Reset();
         Player.Instance.gameObject.SetActive(true);
+
+        // start the count at 0
+        Timer.speedrunTime = 0F;
     }
 
     void Update()

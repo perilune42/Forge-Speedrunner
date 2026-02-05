@@ -41,6 +41,8 @@ public class PlayerMovement : DynamicEntity
     public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
     public float PlayerWidth => ((BoxCollider2D)SurfaceCollider).size.x;
 
+    public bool CanClimb = true;
+
     public SpecialState SpecialState { get => specialState; 
         set {
             OnSpecialStateChange?.Invoke(value);
@@ -335,12 +337,13 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanLedgeClimb(Vector2 dir)
     {
-        return IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
+        return CanClimb && IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
     }
 
     private bool CanWallClimb(Vector2 dir)
     {
         if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash && SpecialState != SpecialState.WallClimb) return false;
+        if (!CanClimb) return false;
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 0.5f * PlayerHeight);
         Vector2 size = new(PlayerWidth, PlayerHeight);
         RaycastHit2D[] hits = new RaycastHit2D[8];

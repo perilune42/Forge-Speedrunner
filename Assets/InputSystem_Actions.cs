@@ -201,7 +201,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Ability4"",
+                    ""name"": ""Parry"",
                     ""type"": ""Button"",
                     ""id"": ""6fbce20d-64fb-453d-ad00-0c2f72ea34f4"",
                     ""expectedControlType"": """",
@@ -711,7 +711,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Ability4"",
+                    ""action"": ""Parry"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -722,7 +722,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Ability4"",
+                    ""action"": ""Parry"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1322,7 +1322,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
         m_Player_Ricochet = m_Player.FindAction("Ricochet", throwIfNotFound: true);
         m_Player_GroundSlam = m_Player.FindAction("GroundSlam", throwIfNotFound: true);
-        m_Player_Ability4 = m_Player.FindAction("Ability4", throwIfNotFound: true);
+        m_Player_Parry = m_Player.FindAction("Parry", throwIfNotFound: true);
         m_Player_Map = m_Player.FindAction("Map", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
@@ -1429,7 +1429,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Grapple;
     private readonly InputAction m_Player_Ricochet;
     private readonly InputAction m_Player_GroundSlam;
-    private readonly InputAction m_Player_Ability4;
+    private readonly InputAction m_Player_Parry;
     private readonly InputAction m_Player_Map;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
@@ -1491,9 +1491,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @GroundSlam => m_Wrapper.m_Player_GroundSlam;
         /// <summary>
-        /// Provides access to the underlying input action "Player/Ability4".
+        /// Provides access to the underlying input action "Player/Parry".
         /// </summary>
-        public InputAction @Ability4 => m_Wrapper.m_Player_Ability4;
+        public InputAction @Parry => m_Wrapper.m_Player_Parry;
         /// <summary>
         /// Provides access to the underlying input action "Player/Map".
         /// </summary>
@@ -1560,9 +1560,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @GroundSlam.started += instance.OnGroundSlam;
             @GroundSlam.performed += instance.OnGroundSlam;
             @GroundSlam.canceled += instance.OnGroundSlam;
-            @Ability4.started += instance.OnAbility4;
-            @Ability4.performed += instance.OnAbility4;
-            @Ability4.canceled += instance.OnAbility4;
+            @Parry.started += instance.OnParry;
+            @Parry.performed += instance.OnParry;
+            @Parry.canceled += instance.OnParry;
             @Map.started += instance.OnMap;
             @Map.performed += instance.OnMap;
             @Map.canceled += instance.OnMap;
@@ -1613,9 +1613,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @GroundSlam.started -= instance.OnGroundSlam;
             @GroundSlam.performed -= instance.OnGroundSlam;
             @GroundSlam.canceled -= instance.OnGroundSlam;
-            @Ability4.started -= instance.OnAbility4;
-            @Ability4.performed -= instance.OnAbility4;
-            @Ability4.canceled -= instance.OnAbility4;
+            @Parry.started -= instance.OnParry;
+            @Parry.performed -= instance.OnParry;
+            @Parry.canceled -= instance.OnParry;
             @Map.started -= instance.OnMap;
             @Map.performed -= instance.OnMap;
             @Map.canceled -= instance.OnMap;
@@ -2004,12 +2004,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnGroundSlam(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Ability4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Parry" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAbility4(InputAction.CallbackContext context);
+        void OnParry(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Map" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

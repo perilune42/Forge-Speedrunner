@@ -28,6 +28,7 @@ public class Ricochet : Ability
             if (curDuration <= 0) 
             { 
                 active = false;
+                PlayerMovement.CanClimb = true;
             }
         }
         else if (AbilityButton.HasPressed) UseAbility();
@@ -68,6 +69,7 @@ public class Ricochet : Ability
         active = true;
         curDuration = duration;
         base.UseAbility();
+        PlayerMovement.CanClimb = false;
         return true;
     }
 }

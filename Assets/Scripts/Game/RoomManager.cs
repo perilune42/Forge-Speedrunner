@@ -13,8 +13,8 @@ public class RoomManager : Singleton<RoomManager>
     private Doorway previousDoorway;
     private Vector2 relativePos = new Vector2(0.0F, 0.0F);
 
-    // this should not be required.
     private Vector2 originalPosition;
+    private Room originalRoom;
 
     public int BaseWidth = 64, BaseHeight = 36;
 
@@ -46,6 +46,7 @@ public class RoomManager : Singleton<RoomManager>
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
 
         originalPosition = Player.Instance.Movement.transform.position;
+        originalRoom = activeRoom;
 
         foreach(Passage pass in AllPassages)
         {
@@ -57,10 +58,21 @@ public class RoomManager : Singleton<RoomManager>
 
     public void Reset()
     {
+        // reset entities
         foreach(ActivatableEntity e in ActivatableEntities)
         {
             e.Reset();
         }
+
+        // reset player
+        PlayerMovement pm = Player.Instance.Movement;
+        pm.transform.position = originalPosition;
+        pm.Velocity = new(0.0F, 0.0F);
+
+        // reset camera and room data
+        previousDoorway = null;
+        relativePos = new(0.0F, 0.0F);
+        CameraController.Instance.SnapToRoom(activeRoom);
     }
 
     void Update()

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "AbilityData", menuName = "Scriptable Objects/AbilityData")]
 public class AbilityData : ScriptableObject
@@ -9,4 +10,5 @@ public class AbilityData : ScriptableObject
     public UpgradeData[] Upgrades;
     public int MaxCharges = 5;
     [HideInInspector] public bool UsesCharges = false;
+    [HideInInspector] public string BindingDisplayString;
 }

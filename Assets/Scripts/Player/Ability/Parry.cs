@@ -8,7 +8,6 @@ public class Parry : Ability
 
     [SerializeField] int hitstopFrames, parryPrimedFrames;
     private int hitstopRemaining, parryPrimedRemaining;
-    private PInput.InputButton AbilityButton;
     private float storedSpeed;
 
     PlayerMovement pm => Player.Instance.Movement;
@@ -23,7 +22,6 @@ public class Parry : Ability
     {
         base.Start();
 
-        AbilityButton = PInput.Instance.Parry;
         pm.OnHitWallAny += (e, dir) =>
         {
             if (parryPrimedRemaining > 0)
@@ -37,7 +35,7 @@ public class Parry : Ability
     {
         base.FixedUpdate();
 
-        if (AbilityButton.HasPressed)
+        if (inputButton.HasPressed)
         {
             if (CanUseAbility()) UseAbility();
         }

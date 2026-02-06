@@ -30,7 +30,6 @@ public class Grapple : Ability
 
     private float throwOffset => Player.Instance.Movement.PlayerHeight / 2;
 
-    private PInput.InputButton AbilityButton;
     public override void Start()
     {
         base.Start();
@@ -49,14 +48,13 @@ public class Grapple : Ability
         grappleIndicator = Instantiate(GrappleIndicatorPrefab, transform);
         grappleIndicator.gameObject.SetActive(false);
 
-        AbilityButton = PInput.Instance.Grapple;
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
         if (curCooldown > 0) curCooldown--;
-        if (AbilityButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
+        if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
 
         if (grappleState == GrappleState.Pulling)
         {
@@ -158,7 +156,7 @@ public class Grapple : Ability
     {
         if (!CanUseAbility()) return false;
 
-        AbilityButton.ConsumeBuffer();
+        inputButton.ConsumeBuffer();
 
         if (grappleState == GrappleState.Idle)
         {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,7 +6,7 @@ public class PInput : Singleton<PInput>
 {
     // Use in other classes
     public Vector2 MoveVector;
-    public InputButton Jump, Dash, GroundSlam, Grapple, Interact,Ricochet, Map, Parry;
+    public InputButton Jump, Dash, Interact, Map;
 
     // Internal vars
     private InputAction move;
@@ -14,6 +15,9 @@ public class PInput : Singleton<PInput>
     public Vector2 MoveInputOverrride = Vector2.zero;
 
     const float DEADZONE = 0.2f;
+
+    public List<InputButton> AbilityButtons;
+
 
     public class InputButton
     {
@@ -88,19 +92,23 @@ public class PInput : Singleton<PInput>
             // a valid input was accepted, clear the input buffer
             bufferFramesLeft = 0;
         }
+
+        public string GetBindingDisplayString()
+        {
+            Debug.Log(action.GetBindingDisplayString());
+            return action.GetBindingDisplayString();
+        }
     }
 
     private void Start()
     {
+        AbilityButtons = new();
+
         move = InputSystem.actions.FindAction("Move");
         Jump = new InputButton(InputSystem.actions.FindAction("Jump"), 8);
         Dash = new InputButton(InputSystem.actions.FindAction("Dash"), 8);
-        GroundSlam = new InputButton(InputSystem.actions.FindAction("GroundSlam"), 8);
-        Grapple = new InputButton(InputSystem.actions.FindAction("Grapple"), 8);
         Interact = new InputButton(InputSystem.actions.FindAction("Interact"), 8);
-        Ricochet = new InputButton(InputSystem.actions.FindAction("Ricochet"), 8);
         Map = new InputButton(InputSystem.actions.FindAction("Map"), 1);
-        Parry = new InputButton(InputSystem.actions.FindAction("Parry"), 8);
     }
 
     private void Update()
@@ -116,24 +124,26 @@ public class PInput : Singleton<PInput>
         }
         Jump.Update();
         Dash.Update();
-        GroundSlam.Update();
-        Grapple.Update();
-        Ricochet.Update();
         Map.Update();
         Interact.Update();
-        Parry.Update();
+        foreach (InputButton button in AbilityButtons) button.Update();
     }
 
     private void FixedUpdate()
     {
         Jump.FixedUpdate();
         Dash.FixedUpdate();
-        GroundSlam.FixedUpdate();
-        Grapple.FixedUpdate();
-        Ricochet.FixedUpdate();
         Map.FixedUpdate();
         Interact.FixedUpdate();
-        Parry.FixedUpdate();
+        foreach (InputButton button in AbilityButtons) button.FixedUpdate();
+    }
+
+    public InputButton AddAbilityInputButton()
+    {
+        Debug.Log("Ability" + (AbilityButtons.Count + 1));
+        InputButton button = new InputButton(InputSystem.actions.FindAction("Ability" + (AbilityButtons.Count + 1)), 8);
+        AbilityButtons.Add(button);
+        return button;
     }
 
     // AI slop yippee

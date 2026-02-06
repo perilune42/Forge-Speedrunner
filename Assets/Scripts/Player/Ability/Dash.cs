@@ -65,7 +65,7 @@ public class Dash : Ability
             }
         }
         else if (dashing) CancelDash();
-        if (PInput.Instance.Dash.HasPressed)
+        if (inputButton.HasPressed)
         {
             UseAbility();
 

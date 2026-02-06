@@ -8,7 +8,6 @@ public class Ricochet : Ability
     [SerializeField] private int duration;
     [SerializeField] private float velocityMultiplierOnBounce;
     private int curDuration;
-    private PInput.InputButton AbilityButton;
     public override void Start()
     {
         base.Start();
@@ -16,7 +15,6 @@ public class Ricochet : Ability
         PlayerMovement.onGroundTop += OnGroundTop;
         PlayerMovement.OnHitWallLeft += OnHitWallLeft;
         PlayerMovement.OnHitWallRight += OnHitWallRight;
-        AbilityButton = PInput.Instance.Ricochet;
     }
 
     protected override void FixedUpdate()
@@ -31,7 +29,7 @@ public class Ricochet : Ability
                 PlayerMovement.CanClimb = true;
             }
         }
-        else if (AbilityButton.HasPressed) UseAbility();
+        else if (inputButton.HasPressed) UseAbility();
     }
 
     public override bool CanUseAbility()

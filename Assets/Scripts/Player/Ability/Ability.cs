@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,6 +29,9 @@ public abstract class Ability : MonoBehaviour
 
     public Action OnActivate;
     protected Action stopParticleAction;
+
+    protected PInput.InputButton inputButton;
+
     protected virtual void Awake()
     {
         
@@ -40,7 +44,14 @@ public abstract class Ability : MonoBehaviour
         info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
             AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
         info.Ability = this;
-        
+        if (this is Dash)
+        {
+            SetInputButton(PInput.Instance.Dash);
+        }
+        else
+        {
+            SetInputButton(PInput.Instance.AddAbilityInputButton());
+        }
     }
 
     protected virtual void FixedUpdate()
@@ -91,5 +102,11 @@ public abstract class Ability : MonoBehaviour
         }
         OnActivate?.Invoke();
         return false;
+    }
+
+    public void SetInputButton(PInput.InputButton button)
+    {
+        inputButton = button;
+        Data.BindingDisplayString = inputButton.GetBindingDisplayString();
     }
 }

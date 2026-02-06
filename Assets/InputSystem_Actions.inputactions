@@ -88,7 +88,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Grapple",
+                    "name": "Ability1",
                     "type": "Button",
                     "id": "31dc575a-f122-43d6-ba23-db929136d2f4",
                     "expectedControlType": "",
@@ -97,7 +97,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Ricochet",
+                    "name": "Ability2",
                     "type": "Button",
                     "id": "499434b2-7446-4bc6-abf6-82be012edfed",
                     "expectedControlType": "",
@@ -106,7 +106,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "GroundSlam",
+                    "name": "Ability3",
                     "type": "Button",
                     "id": "31d77b67-35e1-49a9-8544-643495cefce7",
                     "expectedControlType": "",
@@ -115,7 +115,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Parry",
+                    "name": "Ability4",
                     "type": "Button",
                     "id": "6fbce20d-64fb-453d-ad00-0c2f72ea34f4",
                     "expectedControlType": "",
@@ -393,7 +393,7 @@
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard&Mouse",
+                    "groups": "",
                     "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -426,7 +426,7 @@
                     "path": "<Keyboard>/k",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -437,8 +437,8 @@
                     "path": "<Keyboard>/j",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Grapple",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Ability1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -448,8 +448,8 @@
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Grapple",
+                    "groups": ";Gamepad",
+                    "action": "Ability1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -459,8 +459,8 @@
                     "path": "<Keyboard>/u",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Ricochet",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Ability2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -470,8 +470,8 @@
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Ricochet",
+                    "groups": ";Gamepad",
+                    "action": "Ability2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -580,8 +580,8 @@
                     "path": "<Keyboard>/l",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "GroundSlam",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Ability3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -591,8 +591,8 @@
                     "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "GroundSlam",
+                    "groups": ";Gamepad",
+                    "action": "Ability3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -624,8 +624,8 @@
                     "path": "<Keyboard>/o",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Parry",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Ability4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -635,8 +635,8 @@
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Parry",
+                    "groups": ";Gamepad",
+                    "action": "Ability4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

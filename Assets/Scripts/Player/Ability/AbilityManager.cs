@@ -105,8 +105,4 @@ public struct AbilitySceneContainer
     public AbilityData data;
 }
 
-public enum AbilityType 
-{
-    Dash,
-    GroundSlam,
-}
+

@@ -45,7 +45,7 @@ public abstract class Ability : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (curCooldown > 0) 
+        if (CanRecharge() && curCooldown > 0) 
         {
             curCooldown--;
             if (curCooldown == 0) onRecharged?.Invoke();
@@ -53,6 +53,9 @@ public abstract class Ability : MonoBehaviour
     }
 
     protected Action onRecharged;
+
+    // set to false to halt cooldown ticking
+    protected virtual bool CanRecharge() => true;
     
     /// <summary>
     /// Cooldown for this ability, as a float between 0.0 and 1.0

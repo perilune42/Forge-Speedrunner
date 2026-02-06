@@ -20,5 +20,9 @@ public class RoomSpawner : MonoBehaviour
         //    2. check if there's anything in all directions
         //    3. if already a created room, or nothing there, ignore
         //    4. otherwise push 
+        while(coords.Count > 0)
+        {
+
+        }
     }
 }

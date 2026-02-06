@@ -4,18 +4,6 @@ using System.Collections.Generic;
 public class DrunkenWalk : IPathGenerator
 {
 
-    private Random randState;
-
-    public DrunkenWalk()
-    {
-        randState = new Random();
-    }
-
-    public DrunkenWalk(Random random)
-    {
-        randState = random;
-    }
-
     public Path CreatePath(int pathLength)
     {
         HashSet<Vector2Int> existsSet = new();
@@ -37,22 +25,22 @@ public class DrunkenWalk : IPathGenerator
             }
         }
         path.end = current;
-        path.rooms = existsSet;
+        path.coords = existsSet;
         return path;
     }
 
     private Vector2Int randomDirection()
     {
-        int dir = randState.Range(0, 4);
+        int dir = Random.Range(0, 4);
+        Debug.Assert(dir < 4 && dir >= 0);
         if(dir == 0)
             return new(0,1);
         if(dir == 1)
             return new(1, 0);
         if(dir == 2)
             return new(0, -1);
-        if(dir == 3)
-            return new(-1, 0);
-        Debug.Log($"ERR: dir is {dir}. It should only be 0,1,2,3!");
+        // if(dir == 3)
+        return new(-1, 0);
     }
 
 }

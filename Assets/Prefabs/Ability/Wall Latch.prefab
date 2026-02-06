@@ -52,5 +52,5 @@ MonoBehaviour:
   UsesCharges: 0
   cooldown: 60
   inwardBoost: 6
-  outwardBoost: 9
-  verticalSpeed: 13
+  outwardBoost: 12
+  verticalSpeed: 14

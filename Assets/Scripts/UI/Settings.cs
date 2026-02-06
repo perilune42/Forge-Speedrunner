@@ -34,6 +34,7 @@ public class Settings : MonoBehaviour
             for (int i = 0; i < action.bindings.Count; i++)
             {
                 if (!IsValidPath(action.bindings[i].path)) continue;
+                if (action.actionMap.name != "Player") continue;
                 KeybindButton kb = Instantiate(keybindButton, keybindButtonParent.transform).GetComponent<KeybindButton>();
                 kb.inputAction = action;
                 kb.index = i;

@@ -12,7 +12,7 @@ public class RoomSpawner : MonoBehaviour
     public void RealizePath(Path path)
     {
         // 1. start at 0,0
-        Dictionary<Vector2Int, Room> createdRooms;
+        Dictionary<Vector2Int, Room> createdRooms = new();
         Stack<Vector2Int> coords = new();
         coords.Push(new Vector2Int(0,0));
         // 2. while there are rooms left to spawn:

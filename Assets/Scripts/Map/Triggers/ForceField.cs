@@ -7,6 +7,7 @@ public class ForceField : Trigger
 
     [SerializeField] Vector2 force;
     [SerializeField] float maxSpeed;
+    [SerializeField] float gravityMultiplier = 1f;
 
     protected override void Awake()
     {
@@ -36,12 +37,14 @@ public class ForceField : Trigger
     {
         base.OnPlayerEnter();
         playerInside = true;
+        Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = gravityMultiplier;
     }
 
     public override void OnPlayerExit()
     {
         base.OnPlayerExit();
         playerInside = false;
+        Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = 1;
     }
 
     [ContextMenu("Set Visual")]

@@ -270,7 +270,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.4
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -3954,15 +3954,16 @@ ParticleSystem:
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 2
-    inside: 1
+    inside: 0
     outside: 0
     enter: 0
-    exit: 0
+    exit: 1
     colliderQueryMode: 0
     radiusScale: 1
-    primitives: []
+    primitives:
+    - {fileID: 5707079554533790372}
   SubModule:
     serializedVersion: 2
     enabled: 0

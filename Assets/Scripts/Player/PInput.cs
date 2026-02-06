@@ -95,8 +95,14 @@ public class PInput : Singleton<PInput>
 
         public string GetBindingDisplayString()
         {
-            Debug.Log(action.GetBindingDisplayString());
-            return action.GetBindingDisplayString();
+            string s = action.GetBindingDisplayString();
+            
+            return Util.FixControlString(s, action);
+        }
+
+        public InputAction GetAction()
+        {
+            return action;
         }
     }
 
@@ -188,4 +194,6 @@ public class PInput : Singleton<PInput>
         float delta = Mathf.Abs(Mathf.DeltaAngle(angle, target));
         return delta <= halfRange;
     }
+
+    
 }

@@ -96,6 +96,11 @@ public class AbilityManager : Singleton<AbilityManager>
 
         return null;
     }
+
+    public List<Ability> GetAllAbilities()
+    {
+        return playerAbilities;
+    }
 }
 
 [System.Serializable]

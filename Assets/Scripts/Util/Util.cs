@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public static class Util
 {
@@ -243,5 +244,21 @@ public static class Util
     {
         float range = 2f * length;
         return Mathf.Repeat(value + length, range) - length;
+    }
+
+    /// <summary>
+    /// Some characters, such as Enter and Space, show up as empty when returned by GetBindingDisplayString()
+    /// since these are "control characters"
+    /// </summary>
+    public static string FixControlString(string s, InputAction action, int index = 0)
+    {
+        if ((int)s.ToCharArray()[0] <= 32)
+        {
+            string fallbackText = action.bindings[index].path;
+            fallbackText = fallbackText.Substring(fallbackText.LastIndexOf('/') + 1);
+            fallbackText = char.ToUpperInvariant(fallbackText[0]) + fallbackText.Substring(1);
+            return fallbackText;
+        }
+        return s;
     }
 }

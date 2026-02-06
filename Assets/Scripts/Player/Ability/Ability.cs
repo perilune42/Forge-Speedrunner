@@ -109,4 +109,13 @@ public abstract class Ability : MonoBehaviour
         inputButton = button;
         Data.BindingDisplayString = inputButton.GetBindingDisplayString();
     }
+
+    public void UpdateBindingText(InputAction action)
+    {
+        if (inputButton.GetAction().Equals(action))
+        {
+            Debug.Log("Updated binding display string for ability");
+            Data.BindingDisplayString = inputButton.GetBindingDisplayString();
+        }
+    }
 }

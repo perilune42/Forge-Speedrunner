@@ -9,6 +9,41 @@ public class RoomSpawner : MonoBehaviour
 
     }
 
+    private static (List<Doorway>, List<Doorway>) chooseDoorways(Room room1, Room room2, Direction dir)
+    {
+        switch(dir)
+        {
+            case Direction.LEFT:
+                return (room1.doorwaysLeft, room2.doorwaysRight);
+            case Direction.RIGHT:
+                return (room1.doorwaysRight, room2.doorwaysLeft);
+            case Direction.UP:
+                return (room1.doorwaysUp, room2.doorwaysDown);
+            case Direction.DOWN:
+                return (room1.doorwaysDown, room2.doorwaysUp);
+        }
+    }
+    public Passage ConnectRooms(Room room1, Room room2, Direction dir)
+    {
+        // 1. get doorway lists
+        List<Doorway> doorwaysRoom1;
+        List<Doorway> doorwaysRoom2;
+        (doorwaysRoom1, doorwaysRoom2) = chooseDoorways(room1, room2, dir);
+
+        // 2. find the only matching doorways
+        foreach(Doorway doorFrom1 in doorwaysRoom1)
+            foreach(Doorway doorFrom2 in doorwaysRoom2)
+        {
+            float xDiff = doorFrom1.x - doorFrom2.x;
+            float yDiff = doorFrom1.y - doorFrom2.y;
+            // if(-0.1F < xDiff && xDiff < 0.1F)
+            //     return 
+        }
+
+        // DEFAULT: return null if failed
+        return null;
+    }
+
     public void RealizePath(Path path)
     {
         // 1. start at 0,0

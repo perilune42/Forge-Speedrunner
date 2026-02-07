@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline
+    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch
 }
 
 public class PlayerMovement : DynamicEntity
@@ -91,11 +91,11 @@ public class PlayerMovement : DynamicEntity
     {
         base.FixedUpdate();
 
-        if ((SpecialState == SpecialState.Normal && forceMoveFrames == 0) || SpecialState == SpecialState.GroundSlam )
+        if (CanChangeMoveDir())
         {
             MoveDir = PInput.Instance.MoveVector.NormalizePerAxis();
         }
-        if (SpecialState == SpecialState.Normal || SpecialState == SpecialState.GroundSlam)
+        if (CanChangeFacingDir())
         {
             if (MoveDir.x != 0)
             {
@@ -146,6 +146,20 @@ public class PlayerMovement : DynamicEntity
 
         TickTimers();
 
+    }
+
+    private bool CanChangeMoveDir()
+    {
+        return (SpecialState == SpecialState.Normal && forceMoveFrames == 0)
+            || SpecialState == SpecialState.GroundSlam
+            || SpecialState == SpecialState.WallLatch;
+    }
+
+    private bool CanChangeFacingDir()
+    {
+        return SpecialState == SpecialState.Normal 
+            || SpecialState == SpecialState.GroundSlam
+            || SpecialState == SpecialState.WallLatch;
     }
 
     public override void ApplyMovement(Vector2 move)
@@ -327,7 +341,8 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanJump()
     {
-        return State == BodyState.OnGround || coyoteFrames > 0;
+        return (State == BodyState.OnGround || coyoteFrames > 0)
+            && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash);
     }
 
     private bool CanWallJump()
@@ -337,6 +352,8 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanLedgeClimb(Vector2 dir)
     {
+        if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash 
+            && SpecialState != SpecialState.WallClimb && SpecialState != SpecialState.LedgeClimb) return false;
         return CanClimb && IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
     }
 

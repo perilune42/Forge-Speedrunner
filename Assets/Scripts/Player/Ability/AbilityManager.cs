@@ -54,12 +54,22 @@ public class AbilityManager : Singleton<AbilityManager>
         {
             Destroy(ability.gameObject);
         }
-
+        int count = 0;
         foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
         {
+
             if (abilityData.Level > 0 || giveAllAbilities)
             {
-                GivePlayerAbility(abilityData.ID);
+                if (count >= 4)
+                {
+                    Debug.LogWarning($"Ability {abilityData.name} not given");
+                }
+                else
+                {
+                    GivePlayerAbility(abilityData.ID);
+                    if (abilityData.ID != 0) count++;
+                }
+
             }
         }
 }
@@ -84,7 +94,7 @@ public class AbilityManager : Singleton<AbilityManager>
             ability.MaxCharges = ability.Data.MaxCharges;
             ability.CurCharges = ability.MaxCharges;
         }
-        
+
     }
 
     public T GetAbility<T>() where T : Ability

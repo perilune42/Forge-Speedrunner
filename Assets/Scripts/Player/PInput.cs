@@ -146,7 +146,7 @@ public class PInput : Singleton<PInput>
 
     public InputButton AddAbilityInputButton()
     {
-        Debug.Log("Ability" + (AbilityButtons.Count + 1));
+        // Debug.Log("Ability" + (AbilityButtons.Count + 1));
         InputButton button = new InputButton(InputSystem.actions.FindAction("Ability" + (AbilityButtons.Count + 1)), 8);
         AbilityButtons.Add(button);
         return button;

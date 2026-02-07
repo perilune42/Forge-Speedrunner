@@ -6,7 +6,6 @@ using UnityEngine;
 public class WallLatch : Ability
 {
 
-    private PInput.InputButton AbilityButton;
     PlayerMovement pm => Player.Instance.Movement;
 
     Vector2 latchedDirection = Vector2.zero;
@@ -23,7 +22,6 @@ public class WallLatch : Ability
     {
         base.Start();
 
-        AbilityButton = PInput.Instance.Parry;
 
         pm.OnSpecialStateChange += (newState) =>
         {
@@ -34,7 +32,7 @@ public class WallLatch : Ability
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        if (AbilityButton.HasPressed && CanUseAbility())
+        if (inputButton.HasPressed && CanUseAbility())
         {
             UseAbility();
         }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class Trigger : MonoBehaviour
 {
-    private Collider2D col;
+    protected Collider2D col;
 
     protected virtual void Awake()
     {

@@ -19,13 +19,13 @@ public class Room : MonoBehaviour
         doorwaysDown = keepValid(doorwaysDown);
         doorwaysLeft = keepValid(doorwaysLeft);
         doorwaysRight = keepValid(doorwaysRight);
-        for(int i = doorwaysUp.Count; i < size.y; i++)
+        for(int i = doorwaysUp.Count; i < size.x; i++)
             doorwaysUp.Add(null);
-        for(int i = doorwaysDown.Count; i < size.y; i++)
+        for(int i = doorwaysDown.Count; i < size.x; i++)
             doorwaysDown.Add(null);
-        for(int i = doorwaysLeft.Count; i < size.x; i++)
+        for(int i = doorwaysLeft.Count; i < size.y; i++)
             doorwaysLeft.Add(null);
-        for(int i = doorwaysRight.Count; i < size.x; i++)
+        for(int i = doorwaysRight.Count; i < size.y; i++)
             doorwaysRight.Add(null);
     }
 

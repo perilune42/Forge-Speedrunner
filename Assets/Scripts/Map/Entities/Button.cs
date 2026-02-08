@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Button : Entity 
+public class Button : ActivatableEntity 
 {
     public override bool IsSolid => false;
     public List<ActivatableEntity> LinkedEntities = new();
@@ -20,6 +20,26 @@ public class Button : Entity
         }
     }
 
+    public override void OnValidate()
+    {
+        base.OnValidate();
+        SetLinkedColors();
+    }
+
+    private void SetLinkedColors()
+    {
+        if (colorIndicator != null)
+        {
+            foreach (var entity in LinkedEntities)
+            {
+                if (entity != null)
+                {
+                    entity.SetColor(colorIndicator.color);
+                }
+            }
+        }
+    }
+
     public override void OnCollide(DynamicEntity de, Vector2 normal)
     {
         base.OnCollide(de, normal);
@@ -28,5 +48,15 @@ public class Button : Entity
             entity.OnActivate();
         }
         sr.sprite = pressedSprite;
+    }
+
+    public override void OnActivate()
+    {
+        return;
+    }
+
+    public override void ResetEntity()
+    {
+        sr.sprite = unpressedSprite;
     }
 }

@@ -261,7 +261,7 @@ Tilemap:
     m_Data: {r: NaN, g: NaN, b: NaN, a: NaN}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.5424528, g: 1, b: 0.5889571, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -32, y: -18, z: 0}
   m_Size: {x: 96, y: 54, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
@@ -618,6 +618,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3085160965763011002}
+  - component: {fileID: 3393658762081135883}
   m_Layer: 0
   m_Name: Entities
   m_TagString: Untagged
@@ -640,6 +641,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8571272119936197486}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3393658762081135883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4342062888390174550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b756c588ec99a86f8951b88f2316f63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityButtons
 --- !u!1 &4773326242365543220
 GameObject:
   m_ObjectHideFlags: 0

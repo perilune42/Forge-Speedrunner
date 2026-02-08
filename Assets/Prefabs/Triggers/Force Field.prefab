@@ -188,8 +188,8 @@ MonoBehaviour:
   force: {x: 0, y: 90}
   maxSpeed: 18
   gravityMultiplier: 0.5
-  centering: 50
-  stabilization: 25
+  centering: 0
+  stabilization: 0
 --- !u!198 &2589818413988315005
 ParticleSystem:
   m_ObjectHideFlags: 0

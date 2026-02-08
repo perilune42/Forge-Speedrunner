@@ -234,6 +234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   Movement: {fileID: 4240225090842580133}
   VFXTrail: {fileID: 1275065312203968865}
+  Sprite: {fileID: 8508415282646126948}
 --- !u!50 &8802784991924013848
 Rigidbody2D:
   serializedVersion: 5

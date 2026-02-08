@@ -10,7 +10,7 @@ public abstract class Ability : MonoBehaviour
     /// Used for UI in shops and stuff.
     /// Includes the name, description, and icon of the ability.
     /// </summary>
-    public AbilityData Data;
+    [HideInInspector] public AbilityData Data;
 
     [HideInInspector] public int ID;
     

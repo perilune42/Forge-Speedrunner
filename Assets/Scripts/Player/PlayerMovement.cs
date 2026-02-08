@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch
+    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch, Rocket
 }
 
 public class PlayerMovement : DynamicEntity
@@ -152,14 +152,16 @@ public class PlayerMovement : DynamicEntity
     {
         return (SpecialState == SpecialState.Normal && forceMoveFrames == 0)
             || SpecialState == SpecialState.GroundSlam
-            || SpecialState == SpecialState.WallLatch;
+            || SpecialState == SpecialState.WallLatch
+            || SpecialState == SpecialState.Rocket;
     }
 
     private bool CanChangeFacingDir()
     {
         return SpecialState == SpecialState.Normal 
             || SpecialState == SpecialState.GroundSlam
-            || SpecialState == SpecialState.WallLatch;
+            || SpecialState == SpecialState.WallLatch
+            || SpecialState == SpecialState.Rocket;
     }
 
     public override void ApplyMovement(Vector2 move)

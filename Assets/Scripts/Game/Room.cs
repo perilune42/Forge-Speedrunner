@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Room : MonoBehaviour
 {
@@ -11,6 +12,27 @@ public class Room : MonoBehaviour
     public List<Doorway> doorwaysRight;
     [SerializeField] private Transform entitiesContainer;
     [HideInInspector] public List<Entity> Entities;
+
+    private void OnValidate()
+    {
+        doorwaysUp = keepValid(doorwaysUp);
+        doorwaysDown = keepValid(doorwaysDown);
+        doorwaysLeft = keepValid(doorwaysLeft);
+        doorwaysRight = keepValid(doorwaysRight);
+        for(int i = doorwaysUp.Count; i < size.y; i++)
+            doorwaysUp.Add(null);
+        for(int i = doorwaysDown.Count; i < size.y; i++)
+            doorwaysDown.Add(null);
+        for(int i = doorwaysLeft.Count; i < size.x; i++)
+            doorwaysLeft.Add(null);
+        for(int i = doorwaysRight.Count; i < size.x; i++)
+            doorwaysRight.Add(null);
+    }
+
+    private List<Doorway> keepValid(List<Doorway> ld)
+    {
+        return ld.Where(i => i != null).ToList();
+    }
 
     private void Awake()
     {

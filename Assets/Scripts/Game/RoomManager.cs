@@ -35,15 +35,41 @@ public class RoomManager : Singleton<RoomManager>
     [HideInInspector] public ActivatableEntity[] ActivatableEntities;
     [HideInInspector] public Passage[] AllPassages;
 
+    private Room findActiveRoom(List<Room> allRooms)
+    {
+        Vector3 playerPos = Player.Instance.Movement.transform.position;
+        // 1. calculations to find room enclosing player
+        Room targetRoom = null;
+        foreach(Room room in allRooms)
+        {
+            Vector3 botleft = room.transform.position;
+            Vector2Int sizeWorld = room.size * new Vector2Int(66, 38);
+            Vector3 topright = botleft;
+            topright.x += sizeWorld.x;
+            topright.y += sizeWorld.y;
+            bool betweenX = botleft.x <= playerPos.x && playerPos.x <= topright.x;
+            bool betweenY = botleft.y <= playerPos.y && playerPos.y <= topright.y;
+            if(betweenX && betweenY)
+            {
+                targetRoom = room;
+                break;
+            }
+        }
+        // 2. return targetRoom
+        return targetRoom;
+    }
+
     void Start()
     {
         // Change index of GetChild based on the index of the Passages object's 
         // index in the children hierarchy
         AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
 
-        AllRooms = GetComponentsInChildren<Room>().ToList();
+        // AllRooms = GetComponentsInChildren<Room>().ToList();
 
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
+
+        activeRoom = findActiveRoom(AllRooms);
 
         originalPosition = Player.Instance.Movement.transform.position;
         originalRoom = activeRoom;

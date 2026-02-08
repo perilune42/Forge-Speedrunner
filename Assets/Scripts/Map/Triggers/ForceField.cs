@@ -8,7 +8,12 @@ public class ForceField : Trigger
     [SerializeField] Vector2 force;
     [SerializeField] float maxSpeed;
     [SerializeField] float gravityMultiplier = 1f;
+    [SerializeField] float centering = 0;
+    [SerializeField] float stabilization = 0;
 
+    const float minCenteringDist = 0.25f;
+
+    // if true, removes excess velocity that isn't in the direction of the boost
     protected override void Awake()
     {
         base.Awake();
@@ -18,17 +23,52 @@ public class ForceField : Trigger
     {
         if (playerInside)
         {
+            float fdt = Time.fixedDeltaTime;
+
             Vector2 vel = Player.Instance.Movement.Velocity;
             Vector2 fh = force.normalized;
+            Vector2 pvProj = Util.Vec2Proj(vel, fh);
+            Vector2 pvPerp = vel - pvProj;
+
+            pvPerp -= pvPerp.normalized * (Mathf.Max(stabilization, pvPerp.magnitude)) * fdt;
+            Player.Instance.Movement.Velocity = pvProj + pvPerp;
+            vel = Player.Instance.Movement.Velocity;
+
+            bool isVertical = force.y != 0;
+            float midpoint;
+            if (!isVertical)
+            {
+                midpoint = col.bounds.center.y;
+                float d = midpoint - Player.Instance.Movement.transform.position.y;
+                if (Mathf.Abs(d) > minCenteringDist) {
+                    vel += Util.SignOr0(d) * centering * Vector2.up * fdt;
+                    Debug.Log($"Applying centering force: {Util.SignOr0(d) * centering * Vector2.up * fdt}");
+                }
+                
+            }
+            else
+            {
+                midpoint = col.bounds.center.x;
+                float d = midpoint - Player.Instance.Movement.transform.position.x;
+                if (Mathf.Abs(d) > minCenteringDist)
+                {
+                    vel += Util.SignOr0(d) * centering * Vector2.right * fdt;
+                }
+            }
+
+            Player.Instance.Movement.Velocity = vel;
+            pvProj = Util.Vec2Proj(vel, fh);
+            pvPerp = vel - pvProj;
+
             if (Vector2.Dot(vel, fh) > maxSpeed) return;
-            vel += force * Time.fixedDeltaTime;
+            vel += force * fdt;
+
             if (Vector2.Dot(vel, fh) > maxSpeed) {
                 vel = Player.Instance.Movement.Velocity;
-                Vector2 pvProj = Util.Vec2Proj(vel, fh);
-                Vector2 pvPerp = vel - pvProj;
                 vel = fh * maxSpeed + pvPerp;
-
             }
+
+
             Player.Instance.Movement.Velocity = vel;
         }
     }

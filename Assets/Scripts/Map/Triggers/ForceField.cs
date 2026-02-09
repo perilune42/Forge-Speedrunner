@@ -3,7 +3,6 @@ using UnityEngine.SceneManagement;
 
 public class ForceField : Trigger 
 {
-    private bool playerInside = false;
 
     [SerializeField] Vector2 force;
     [SerializeField] float maxSpeed;
@@ -12,6 +11,8 @@ public class ForceField : Trigger
     [SerializeField] float stabilization = 0;
 
     const float minCenteringDist = 0.25f;
+
+    
 
     // if true, removes excess velocity that isn't in the direction of the boost
     protected override void Awake()
@@ -42,7 +43,6 @@ public class ForceField : Trigger
                 float d = midpoint - Player.Instance.Movement.transform.position.y;
                 if (Mathf.Abs(d) > minCenteringDist) {
                     vel += Util.SignOr0(d) * centering * Vector2.up * fdt;
-                    Debug.Log($"Applying centering force: {Util.SignOr0(d) * centering * Vector2.up * fdt}");
                 }
                 
             }
@@ -76,14 +76,12 @@ public class ForceField : Trigger
     public override void OnPlayerEnter()
     {
         base.OnPlayerEnter();
-        playerInside = true;
         Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = gravityMultiplier;
     }
 
     public override void OnPlayerExit()
     {
         base.OnPlayerExit();
-        playerInside = false;
         Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = 1;
     }
 

@@ -49,7 +49,16 @@ public class DrunkenWalk : IPathGenerator
             // TODO
 
             // add appropriate cells
-            Cell newC = new Cell(newRoom, newOffset);
+            Cell newCell = new Cell(newRoom, newOffset);
+            path.Add(newC);
+
+            // add appropriate occupied slots
+            Vector2Int newTopRight = newOffset + newRoom.size;
+            for(int i = newOffset.x; i < newTopRight.x; i++)
+                for(int j = newOffset.y; j < newTopRight.y; j++)
+            {
+                occupied.Add(new Vector2(i, j));
+            }
 
             // take from room one doorway list at a time
             // NOTE: the previous check will always remove invalid options here.

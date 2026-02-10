@@ -37,13 +37,13 @@ public class DrunkenWalk : IPathGenerator
             doors.RemoveAt(doors.Count-1);
 
             // check if valid. throw away if not
-            Vector2Int newOffset = calcOffset(offset, dir);
+            Vector2Int newOffset = DirMethods.calcOffset(offset, dir);
             if(occupied.Contains(newOffset)) continue;
 
             // find room
-            Direction roomEntranceDir = opposite(dir);
+            Direction roomEntranceDir = DirMethods.opposite(dir);
             Room newRoom = findRoomWith(roomEntranceDir, roomPrefabs);
-            List<Doorway> relevantDoorways = matchingDir(roomEntranceDir, newRoom);
+            List<Doorway> relevantDoorways = DirMethods.matchingDir(roomEntranceDir, newRoom);
 
             // if room cannot be placed at this offset, pick a new room
             // TODO
@@ -57,29 +57,6 @@ public class DrunkenWalk : IPathGenerator
             extractList(doors, dirs, newRoom.doorwaysRight, RIGHT);
             extractList(doors, dirs, newRoom.doorwaysUp, UP);
             extractList(doors, dirs, newRoom.doorwaysDown, DOWN);
-        }
-        private Direction opposite(in Direction dir)
-        {
-            if(dir == LEFT)
-                return RIGHT;
-            if(dir == RIGHT)
-                return LEFT;
-            if(dir == UP)
-                return DOWN;
-            // if(dir == DOWN)
-            return UP;
-        }
-        private List<Doorway> matchingDir(in Direction dir, in Room r)
-        {
-            if(dir == LEFT)
-                return r.doorwaysLeft;
-            if(dir == RIGHT)
-                return r.doorwaysRight;
-            if(dir == UP)
-                return r.doorwaysUp;
-            // if(dir == DOWN)
-            return r.doorwaysDown;
-
         }
         private void extractList(out List<Doorway> doors, out List<Direction> dirs, in List<Doorway> roomDoors, in Direction dir)
         {
@@ -97,26 +74,13 @@ public class DrunkenWalk : IPathGenerator
             {
                 int ind = Random.Range(0, numRooms);
                 Room current = roomPrefabs[ind];
-                bool hasDoorsThisWay = matchingDir(current, entranceDir).Any(x => x != null);
+                List<Doorway> currentDoors = DirMethods.matchingDir(current, entranceDir);
+                bool hasDoorsThisWay = currentDoors.Any(x => x != null);
                 if(hasDoorsThisWay)
                     return current;
-
             }
             Debug.Log("Incredibly rare, could not find a door. TODO: find a sane solution.");
             return null;
-        }
-        private Vector2Int calcOffset(Vector2Int startOffset, Direction dir)
-        {
-            Vector2Int endOffset = startOffset;
-            if(dir == LEFT)
-                endOffset.x--;
-            if(dir == RIGHT)
-                endOffset.x++;
-            if(dir == UP)
-                endOffset.y++;
-            if(dir == DOWN)
-                endOffset.y--;
-            return endOffset;
         }
     }
 }
@@ -127,4 +91,44 @@ private enum Direction
     DOWN,
     LEFT,
     RIGHT
+}
+
+private static DirMethods 
+{
+    private static Vector2Int calcOffset(Vector2Int startOffset, Direction dir)
+    {
+        Vector2Int endOffset = startOffset;
+        if(dir == LEFT)
+            endOffset.x--;
+        if(dir == RIGHT)
+            endOffset.x++;
+        if(dir == UP)
+            endOffset.y++;
+        if(dir == DOWN)
+            endOffset.y--;
+        return endOffset;
+    }
+    private static List<Doorway> matchingDir(in Direction dir, in Room r)
+    {
+        if(dir == LEFT)
+            return r.doorwaysLeft;
+        if(dir == RIGHT)
+            return r.doorwaysRight;
+        if(dir == UP)
+            return r.doorwaysUp;
+        // if(dir == DOWN)
+        return r.doorwaysDown;
+
+    }
+    private static Direction opposite(in Direction dir)
+    {
+        if(dir == LEFT)
+            return RIGHT;
+        if(dir == RIGHT)
+            return LEFT;
+        if(dir == UP)
+            return DOWN;
+        // if(dir == DOWN)
+        return UP;
+    }
 }

@@ -154,6 +154,7 @@ private struct GenState
         dirs = new();
         offsets = new();
     }
+    // NOTE: startingOffset should be the bottom left corner!
     public GenState extractFrom(List<Doorway> roomDoors, Direction facingDir, Vector2Int startingOffset)
     {
         for(int i = 0; i < roomDoors.Count; i++)
@@ -164,7 +165,7 @@ private struct GenState
             Vector2Int newOffset = startingOffset;
             if(facingDir == LEFT || facingDir == RIGHT)
                 newOffset.y += i;
-            else // up or down
+            else // UP or DOWN
                 newOffset.x += i;
 
             doors.Add(door);
@@ -174,7 +175,7 @@ private struct GenState
     }
     public GenState extractAll(Room r, Vector2Int startingOffset)
     {
-        // calculate starting states here (might move)
+        // calculate starting states here (extractFrom cannot know)
         Vector2Int startUp = startingOffset;
         Vector2Int startRight = startingOffset;
         startRight.x += r.size.x;

@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameRegistry : Singleton<GameRegistry>
 {
     public AbilitySceneContainer[] Abilities;
+    public Room[] RoomPrefabs;
 
 
     public override void Awake()

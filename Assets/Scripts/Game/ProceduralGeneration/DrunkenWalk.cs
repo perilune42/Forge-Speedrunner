@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using Direction;
+using System.Linq;
+using static Direction;
 
 public class DrunkenWalk : IPathGenerator
 {
@@ -13,6 +14,7 @@ public class DrunkenWalk : IPathGenerator
         List<Doorway> doors = new();
         List<Direction> dirs = new();
         List<Vector2Int> offsets = new();
+        GenState state = new GenState();
 
         HashSet<Vector2Int> occupied = new();
         List<Cell> path = new();
@@ -23,18 +25,7 @@ public class DrunkenWalk : IPathGenerator
             Vector2Int offset;
 
             // take random
-            int ind = Random.Range(0, doors.Count);
-            door = doors[ind];
-            dir = dirs[ind];
-            offset = offsets[ind]
-
-            // remove selected element (swap-remove array style)
-            dirs[ind] = dirs[dirs.Count-1];
-            doors[ind] = doors[doors.Count-1];
-            offsets[ind] = offsets[offsets.Count-1]
-            offsets.RemoveAt(offsets.Count-1);
-            dirs.RemoveAt(dirs.Count-1);
-            doors.RemoveAt(doors.Count-1);
+            (door, dir, offset) = state.PopRandom();
 
             // check if valid. throw away if not
             Vector2Int newOffset = DirMethods.calcOffset(offset, dir);
@@ -50,51 +41,41 @@ public class DrunkenWalk : IPathGenerator
 
             // add appropriate cells
             Cell newCell = new Cell(newRoom, newOffset);
-            path.Add(newC);
+            path.Add(newCell);
 
             // add appropriate occupied slots
             Vector2Int newTopRight = newOffset + newRoom.size;
             for(int i = newOffset.x; i < newTopRight.x; i++)
                 for(int j = newOffset.y; j < newTopRight.y; j++)
             {
-                occupied.Add(new Vector2(i, j));
+                occupied.Add(new Vector2Int(i, j));
             }
 
             // take from room one doorway list at a time
             // NOTE: the previous check will always remove invalid options here.
-            extractList(doors, dirs, newRoom.doorwaysLeft, LEFT);
-            extractList(doors, dirs, newRoom.doorwaysRight, RIGHT);
-            extractList(doors, dirs, newRoom.doorwaysUp, UP);
-            extractList(doors, dirs, newRoom.doorwaysDown, DOWN);
+            state = state.extractAll(newRoom, newOffset);
         }
-        private void extractList(out List<Doorway> doors, out List<Direction> dirs, in List<Doorway> roomDoors, in Direction dir)
+        return path;
+    }
+    private Room findRoomWith(Direction entranceDir, in Room[] roomPrefabs)
+    {
+        // this kind of sucks...
+        int numRooms = roomPrefabs.Length;
+        for(int i = 0; i < 100; i++) // prevent infinite iteration
         {
-            foreach(Doorway door in roomDoors)
-            {
-                doors.Add(door);
-                dirs.Add(dir);
-            }
+            int ind = Random.Range(0, numRooms);
+            Room current = roomPrefabs[ind];
+            List<Doorway> currentDoors = DirMethods.matchingDir(in entranceDir, in current);
+            bool hasDoorsThisWay = currentDoors.Any(x => x != null);
+            if(hasDoorsThisWay)
+                return current;
         }
-        private Room findRoomWith(Direction entranceDir, in Room[] roomPrefabs)
-        {
-            // this kind of sucks...
-            int numRooms = roomPrefabs.Count;
-            for(int i = 0; i < 100; i++) // prevent infinite iteration
-            {
-                int ind = Random.Range(0, numRooms);
-                Room current = roomPrefabs[ind];
-                List<Doorway> currentDoors = DirMethods.matchingDir(current, entranceDir);
-                bool hasDoorsThisWay = currentDoors.Any(x => x != null);
-                if(hasDoorsThisWay)
-                    return current;
-            }
-            Debug.Log("Incredibly rare, could not find a door. TODO: find a sane solution.");
-            return null;
-        }
+        Debug.Log("Incredibly rare, could not find a door. TODO: find a sane solution.");
+        return null;
     }
 }
 
-private enum Direction
+internal enum Direction
 {
     UP,
     DOWN,
@@ -102,9 +83,9 @@ private enum Direction
     RIGHT
 }
 
-private static DirMethods 
+internal static class DirMethods
 {
-    private static Vector2Int calcOffset(Vector2Int startOffset, Direction dir)
+    internal static Vector2Int calcOffset(Vector2Int startOffset, Direction dir)
     {
         Vector2Int endOffset = startOffset;
         if(dir == LEFT)
@@ -117,7 +98,7 @@ private static DirMethods
             endOffset.y--;
         return endOffset;
     }
-    private static List<Doorway> matchingDir(in Direction dir, in Room r)
+    internal static List<Doorway> matchingDir(in Direction dir, in Room r)
     {
         if(dir == LEFT)
             return r.doorwaysLeft;
@@ -129,7 +110,7 @@ private static DirMethods
         return r.doorwaysDown;
 
     }
-    private static Direction opposite(in Direction dir)
+    internal static Direction opposite(in Direction dir)
     {
         if(dir == LEFT)
             return RIGHT;
@@ -142,17 +123,35 @@ private static DirMethods
     }
 }
 
-private struct GenState
+internal class GenState
 {
-    List<Doorway> doors;
-    List<Direction> dirs;
-    List<Vector2Int> offsets;
+    public List<Doorway> doors;
+    public List<Direction> dirs;
+    public List<Vector2Int> offsets;
 
     public GenState()
     {
         doors = new();
         dirs = new();
         offsets = new();
+    }
+    public (Doorway, Direction, Vector2Int) PopRandom()
+    {
+        // desired values
+        int ind = Random.Range(0, doors.Count);
+        Doorway door = doors[ind];
+        Direction dir = dirs[ind];
+        Vector2Int offset = offsets[ind];
+
+        // remove selected element (swap-remove array style)
+        dirs[ind] = dirs[dirs.Count-1];
+        doors[ind] = doors[doors.Count-1];
+        offsets[ind] = offsets[offsets.Count-1];
+        offsets.RemoveAt(offsets.Count-1);
+        dirs.RemoveAt(dirs.Count-1);
+        doors.RemoveAt(doors.Count-1);
+
+        return (door, dir, offset);
     }
     // NOTE: startingOffset should be the bottom left corner!
     public GenState extractFrom(List<Doorway> roomDoors, Direction facingDir, Vector2Int startingOffset)
@@ -169,7 +168,8 @@ private struct GenState
                 newOffset.x += i;
 
             doors.Add(door);
-            dirs.Add(dir);
+            dirs.Add(facingDir);
+            offsets.Add(startingOffset);
         }
         return this;
     }

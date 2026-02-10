@@ -11,25 +11,22 @@ public class DrunkenWalk : IPathGenerator
         Room[] roomPrefabs = GameRegistry.Instance.RoomPrefabs;
         int count = pathLength;
 
-        List<Doorway> doors = new();
-        List<Direction> dirs = new();
-        List<Vector2Int> offsets = new();
         GenState state = new GenState();
 
-        HashSet<Vector2Int> occupied = new();
-        List<Cell> path = new();
-        while(pathLength > 0 && doors.Count > 0)
+        Dictionary<Vector2Int, Cell> grid = new();
+        List<Cell> uniqueCells = new();
+
+        while(pathLength > 0 && state.NotEmpty())
         {
-            Doorway door;
-            Direction dir;
-            Vector2Int offset;
+            Doorway door; Direction dir; Vector2Int offset;
 
             // take random
             (door, dir, offset) = state.PopRandom();
 
-            // check if valid. throw away if not
+            // check if offset is clear. throw away if not
+            // TODO: this code does not do what it's supposed to. find the bottom left instead.
             Vector2Int newOffset = DirMethods.calcOffset(offset, dir);
-            if(occupied.Contains(newOffset)) continue;
+            if(grid.ContainsKey(newOffset)) continue;
 
             // find room
             Direction roomEntranceDir = DirMethods.opposite(dir);
@@ -39,20 +36,21 @@ public class DrunkenWalk : IPathGenerator
             // if room cannot be placed at this offset, pick a new room
             // TODO
 
-            // add appropriate cells
-            Cell newCell = new Cell(newRoom, newOffset);
-            path.Add(newCell);
-
             // add appropriate occupied slots
-            Vector2Int newTopRight = newOffset + newRoom.size;
+            Vector2Int newBotLeft = newOffset;
+            Vector2Int newTopRight = newBotLeft + newRoom.size;
             for(int i = newOffset.x; i < newTopRight.x; i++)
                 for(int j = newOffset.y; j < newTopRight.y; j++)
             {
                 occupied.Add(new Vector2Int(i, j));
             }
 
+            // add appropriate cells
+            Cell newCell = new Cell(newRoom, newOffset);
+            path.Add(newCell);
+
             // take from room one doorway list at a time
-            // NOTE: the previous check will always remove invalid options here.
+            // NOTE: a previous check will always ignore invalid options.
             state = state.extractAll(newRoom, newOffset);
         }
         return path;
@@ -125,15 +123,20 @@ internal static class DirMethods
 
 internal class GenState
 {
-    public List<Doorway> doors;
-    public List<Direction> dirs;
-    public List<Vector2Int> offsets;
+    // these lists are always the same size. struct of arrays
+    List<Doorway> doors;
+    List<Direction> dirs;
+    List<Vector2Int> offsets;
 
     public GenState()
     {
         doors = new();
         dirs = new();
         offsets = new();
+    }
+    public bool NotEmpty()
+    {
+        return doors.Count > 0;
     }
     public (Doorway, Direction, Vector2Int) PopRandom()
     {

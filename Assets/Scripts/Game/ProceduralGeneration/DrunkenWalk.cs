@@ -37,6 +37,7 @@ public class DrunkenWalk : IPathGenerator
             // TODO
 
             // add appropriate occupied slots
+            // TODO: this code is not correct. find the bottom left correctly.
             Vector2Int newBotLeft = newOffset;
             Vector2Int newTopRight = newBotLeft + newRoom.size;
             for(int i = newOffset.x; i < newTopRight.x; i++)
@@ -46,6 +47,7 @@ public class DrunkenWalk : IPathGenerator
             }
 
             // add appropriate cells
+            // TODO: add cells in the right places to the Dictionary
             Cell newCell = new Cell(newRoom, newOffset);
             path.Add(newCell);
 
@@ -55,6 +57,12 @@ public class DrunkenWalk : IPathGenerator
         }
         return path;
     }
+
+    private Passage findConnectingDoors(in Direction enteringFrom, in Doorway door, in Room room)
+    {
+
+    }
+
     private Room findRoomWith(Direction entranceDir, in Room[] roomPrefabs)
     {
         // this kind of sucks...

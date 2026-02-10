@@ -141,3 +141,50 @@ private static DirMethods
         return UP;
     }
 }
+
+private struct GenState
+{
+    List<Doorway> doors;
+    List<Direction> dirs;
+    List<Vector2Int> offsets;
+
+    public GenState()
+    {
+        doors = new();
+        dirs = new();
+        offsets = new();
+    }
+    public GenState extractFrom(List<Doorway> roomDoors, Direction facingDir, Vector2Int startingOffset)
+    {
+        for(int i = 0; i < roomDoors.Count; i++)
+        {
+            Doorway door = roomDoors[i];
+            if(door == null) continue;
+
+            Vector2Int newOffset = startingOffset;
+            if(facingDir == LEFT || facingDir == RIGHT)
+                newOffset.y += i;
+            else // up or down
+                newOffset.x += i;
+
+            doors.Add(door);
+            dirs.Add(dir);
+        }
+        return this;
+    }
+    public GenState extractAll(Room r, Vector2Int startingOffset)
+    {
+        // calculate starting states here (might move)
+        Vector2Int startUp = startingOffset;
+        Vector2Int startRight = startingOffset;
+        startRight.x += r.size.x;
+        startUp.y += r.size.y;
+
+        // extract from all directions
+        this.extractFrom(r.doorwaysLeft, LEFT, startingOffset)
+            .extractFrom(r.doorwaysDown, DOWN, startingOffset)
+            .extractFrom(r.doorwaysUp, UP, startUp)
+            .extractFrom(r.doorwaysRight, RIGHT, startRight);
+        return this;
+    }
+}

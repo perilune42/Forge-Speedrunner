@@ -16,7 +16,7 @@ public class DrunkenWalk : IPathGenerator
 
         HashSet<Vector2Int> occupied = new();
         List<Cell> path = new();
-        while(pathLength > 0 && doorStack.Count > 0)
+        while(pathLength > 0 && doors.Count > 0)
         {
             Doorway door;
             Direction dir;
@@ -36,19 +36,23 @@ public class DrunkenWalk : IPathGenerator
             dirs.RemoveAt(dirs.Count-1);
             doors.RemoveAt(doors.Count-1);
 
-            // calculate new offset
-
+            // check if valid. throw away if not
+            Vector2Int newOffset = calcOffset(offset, dir);
+            if(occupied.Contains(newOffset)) continue;
 
             // find room
-            Room newRoom = findRoomWith(opposite(dir), roomPrefabs);
+            Direction roomEntranceDir = opposite(dir);
+            Room newRoom = findRoomWith(roomEntranceDir, roomPrefabs);
+            List<Doorway> relevantDoorways = matchingDir(roomEntranceDir, newRoom);
 
             // if room cannot be placed at this offset, pick a new room
             // TODO
 
             // add appropriate cells
-            Cell newc = new Cell(newRoom, offset);
+            Cell newC = new Cell(newRoom, newOffset);
 
             // take from room one doorway list at a time
+            // NOTE: the previous check will always remove invalid options here.
             extractList(doors, dirs, newRoom.doorwaysLeft, LEFT);
             extractList(doors, dirs, newRoom.doorwaysRight, RIGHT);
             extractList(doors, dirs, newRoom.doorwaysUp, UP);
@@ -93,7 +97,7 @@ public class DrunkenWalk : IPathGenerator
             {
                 int ind = Random.Range(0, numRooms);
                 Room current = roomPrefabs[ind];
-                bool hasDoorsThisWay = current.Any(x => x != null);
+                bool hasDoorsThisWay = matchingDir(current, entranceDir).Any(x => x != null);
                 if(hasDoorsThisWay)
                     return current;
 
@@ -101,7 +105,19 @@ public class DrunkenWalk : IPathGenerator
             Debug.Log("Incredibly rare, could not find a door. TODO: find a sane solution.");
             return null;
         }
-
+        private Vector2Int calcOffset(Vector2Int startOffset, Direction dir)
+        {
+            Vector2Int endOffset = startOffset;
+            if(dir == LEFT)
+                endOffset.x--;
+            if(dir == RIGHT)
+                endOffset.x++;
+            if(dir == UP)
+                endOffset.y++;
+            if(dir == DOWN)
+                endOffset.y--;
+            return endOffset;
+        }
     }
 }
 

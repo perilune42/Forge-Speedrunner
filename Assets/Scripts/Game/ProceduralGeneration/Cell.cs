@@ -1,8 +1,8 @@
 using UnityEngine;
 public struct Cell
 {
-    Room room;
-    Vector2Int offset; // from start
+    public Room room{get; private set;}
+    public Vector2Int offset {get; private set;} // from start
     bool up   ;
     bool down ;
     bool left ;

@@ -8,8 +8,11 @@ public class DrunkenWalk : IPathGenerator
 {
     public List<Cell> Generate(int pathLength)
     {
-        Room[] roomPrefabs = GameRegistry.Instance.RoomPrefabs;
-        Room startRoom = GameRegistry.Instance.StartRoom;
+        GameObject[] rawRoomPrefabs = GameRegistry.Instance.RoomPrefabs;
+        Room[] roomPrefabs = rawRoomPrefabs
+            .Select(go => go.GetComponent<Room>())
+            .ToArray();
+        Room startRoom = GameRegistry.Instance.StartRoom.GetComponent<Room>();
         int count = pathLength;
 
         GenState state = new GenState();

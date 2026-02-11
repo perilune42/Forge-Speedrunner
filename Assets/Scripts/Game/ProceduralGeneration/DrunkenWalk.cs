@@ -9,12 +9,25 @@ public class DrunkenWalk : IPathGenerator
     public List<Cell> Generate(int pathLength)
     {
         Room[] roomPrefabs = GameRegistry.Instance.RoomPrefabs;
+        Room startRoom = GameRegistry.Instance.StartRoom;
         int count = pathLength;
 
         GenState state = new GenState();
 
         Dictionary<Vector2Int, Cell> grid = new();
         List<Cell> uniqueCells = new();
+
+        // initialize data structures for start room
+        {
+            Cell startCell = new Cell(startRoom, new Vector2Int(0,0));
+            uniqueCells.Add(startCell);
+            for(int i = 0; i < startRoom.size.x; i++)
+                for(int j = 0; j < startRoom.size.y; j++)
+            {
+                grid.Add(new Vector2Int(i,j), startCell);
+            }
+            state.extractAll(startRoom, new Vector2Int(0,0));
+        }
 
         while(pathLength > 0 && state.NotEmpty())
         {

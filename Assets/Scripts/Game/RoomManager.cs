@@ -35,6 +35,8 @@ public class RoomManager : Singleton<RoomManager>
     [HideInInspector] public ActivatableEntity[] ActivatableEntities;
     [HideInInspector] public Passage[] AllPassages;
 
+    public Vector2 RespawnPosition;
+
     private Room findActiveRoom(List<Room> allRooms)
     {
         Vector3 playerPos = Player.Instance.Movement.transform.position;
@@ -72,6 +74,7 @@ public class RoomManager : Singleton<RoomManager>
         activeRoom = findActiveRoom(AllRooms);
 
         originalPosition = Player.Instance.Movement.transform.position;
+        RespawnPosition = originalPosition;
         originalRoom = activeRoom;
 
         foreach(Passage pass in AllPassages)
@@ -111,18 +114,24 @@ public class RoomManager : Singleton<RoomManager>
     {
         StartCoroutine(SwitchRoomCoroutine(door1, door2));
     }
+    
+    // respawn location set by safe zones
+    // todo: add fallback in case player hasn't touched one in this room
     public void Respawn()
+    {
+        StartCoroutine(roomTransition(activeRoom));
+        StartCoroutine(warpTo(RespawnPosition, Vector2.zero, Vector2.zero, 30));
+    }
+
+    public void ReEnterRoom()
     {
         PlayerMovement pm = Player.Instance.Movement;
 
-        // in this case, skip most of this. just teleport back to placement position
         if (previousDoorway == null)
         {
-            Debug.Log("hey");
-            StartCoroutine(roomTransition(activeRoom));
-            StartCoroutine(warpTo(originalPosition, new Vector2(0F,0F), new Vector2(1F, 0F)));
             return;
         }
+
 
         // come from the reverse direction this time
         Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
@@ -199,7 +208,7 @@ public class RoomManager : Singleton<RoomManager>
         yield return warpTo(newPlayerPos, preservedVelocity, dir);
         door2.EnableTransition();
     }
-    private IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    public IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
     {
         PlayerMovement pm = Player.Instance.Movement;
 
@@ -226,17 +235,24 @@ public class RoomManager : Singleton<RoomManager>
         const float minTransitionSpeed = 0;
 
         // give some minimum velocity entering the room
-        if (Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
+        if (dir != Vector2.zero && Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
         {
             preservedVelocity = preservedVelocity - dir * Vector2.Dot(preservedVelocity, dir) + dir * minTransitionSpeed;
         }
-        pm.Velocity = preservedVelocity;
+        if (dir != Vector2.zero)
+        {
+            pm.Velocity = preservedVelocity;
+        }
+        else
+        {
+            pm.Velocity = Vector2.zero;
+        }
         if (dir == Vector2.up)
         {
             // set one more time in case of jank
             pm.GravityEnabled = false;
         }
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < lockDuration; i++)
         {
             yield return new WaitForFixedUpdate();
         }

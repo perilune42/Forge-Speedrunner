@@ -43,6 +43,8 @@ public class PlayerMovement : DynamicEntity
 
     public bool CanClimb = true;
 
+    public bool CanJumpOverride;
+
     public SpecialState SpecialState { get => specialState; 
         set {
             OnSpecialStateChange?.Invoke(value);
@@ -343,8 +345,10 @@ public class PlayerMovement : DynamicEntity
 
     private bool CanJump()
     {
-        return (State == BodyState.OnGround || coyoteFrames > 0)
-            && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash);
+        return CanJumpOverride || (
+            (State == BodyState.OnGround || coyoteFrames > 0)
+            && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash)
+            );
     }
 
     private bool CanWallJump()

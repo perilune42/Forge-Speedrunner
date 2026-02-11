@@ -4,6 +4,7 @@ public abstract class Trigger : MonoBehaviour
 {
     protected Collider2D col;
     protected bool playerInside;
+
     protected virtual void Awake()
     {
         col = GetComponent<Collider2D>();

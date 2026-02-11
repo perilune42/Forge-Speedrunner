@@ -74,6 +74,7 @@ public class RoomManager : Singleton<RoomManager>
         activeRoom = findActiveRoom(AllRooms);
 
         originalPosition = Player.Instance.Movement.transform.position;
+        RespawnPosition = originalPosition;
         originalRoom = activeRoom;
 
         foreach(Passage pass in AllPassages)
@@ -119,7 +120,7 @@ public class RoomManager : Singleton<RoomManager>
     public void Respawn()
     {
         StartCoroutine(roomTransition(activeRoom));
-        StartCoroutine(warpTo(RespawnPosition, Vector2.zero, Vector2.zero));
+        StartCoroutine(warpTo(RespawnPosition, Vector2.zero, Vector2.zero, 30));
     }
 
     public void ReEnterRoom()
@@ -207,7 +208,7 @@ public class RoomManager : Singleton<RoomManager>
         yield return warpTo(newPlayerPos, preservedVelocity, dir);
         door2.EnableTransition();
     }
-    public IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    public IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
     {
         PlayerMovement pm = Player.Instance.Movement;
 
@@ -251,7 +252,7 @@ public class RoomManager : Singleton<RoomManager>
             // set one more time in case of jank
             pm.GravityEnabled = false;
         }
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < lockDuration; i++)
         {
             yield return new WaitForFixedUpdate();
         }

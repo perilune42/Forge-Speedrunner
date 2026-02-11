@@ -33,37 +33,24 @@ public class DrunkenWalk : IPathGenerator
             Room newRoom = findRoomWith(roomEntranceDir, roomPrefabs);
             List<Doorway> relevantDoorways = DirMethods.matchingDir(roomEntranceDir, newRoom);
 
-            // we have
-            // 1. doors in intended direction
-            // 2. intended direction
-            // 3. offset that we will enter into
-            // 4. size of room
-            // can calculate the distance from the bottom left with 1,2,4
-
             // furthest left possible bottom left point
             // NOTE: in the future, checkOffset will be updated to slot the rooms properly
             Vector2Int checkOffset = entryOffset;
-            if(dir == LEFT)
-                checkOffset.y -= i;
-            if(dir == DOWN)
-                checkOffset.x -= i;
             if(dir == RIGHT)
             {
-                checkOffset.y -= i;
-                checkOffset.x -= room.size.x;
+                checkOffset.x -= newRoom.size.x;
             }
             if(dir == UP)
             {
-                checkOffset.x -= i;
-                checkOffset.y -= room.size.y;
+                checkOffset.y -= newRoom.size.y;
             }
 
             bool valid = true;
             for(int i = checkOffset.x;
-                    shouldContinue && i < checkOffset.x + newRoom.size.x;
+                    valid && i < checkOffset.x + newRoom.size.x;
                     i++)
             for(int j = checkOffset.y;
-                    shouldContinue && j < checkOffset.y + newRoom.size.y;
+                    valid && j < checkOffset.y + newRoom.size.y;
                     j++)
             {
                 if(grid.ContainsKey(new Vector2Int(i,j)))
@@ -81,26 +68,21 @@ public class DrunkenWalk : IPathGenerator
             Vector2Int newTopRight = newBotLeft + newRoom.size;
 
             // add appropriate cells
-            Cell newCell = new Cell(newRoom, newOffset);
+            Cell newCell = new Cell(newRoom, newBotLeft);
             uniqueCells.Add(newCell);
             // NOTE: this does not properly set `up,down,left,right`.
             // might be useful to fix later
-            for(int i = newOffset.x; i < newTopRight.x; i++)
-                for(int j = newOffset.y; j < newTopRight.y; j++)
+            for(int i = newBotLeft.x; i < newTopRight.x; i++)
+                for(int j = newBotLeft.y; j < newTopRight.y; j++)
             {
                 grid.Add(new Vector2Int(i, j), newCell);
             }
 
             // take from room one doorway list at a time
             // NOTE: a previous check will always ignore invalid options.
-            state = state.extractAll(newRoom, newOffset);
+            state = state.extractAll(newRoom, newBotLeft);
         }
-        return path;
-    }
-
-    private Passage findConnectingDoors(in Direction enteringFrom, in Doorway door, in Room room)
-    {
-
+        return uniqueCells;
     }
 
     private Room findRoomWith(Direction entranceDir, in Room[] roomPrefabs)

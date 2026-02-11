@@ -36,6 +36,46 @@ public class RoomManager : Singleton<RoomManager>
     [HideInInspector] public Passage[] AllPassages;
 
     public Vector2 RespawnPosition;
+    public Room StartingRoom;
+    public Transform StartingSpawn;
+
+    [SerializeField] bool overrideStartingRoom;
+
+    void Start()
+    {
+        // Change index of GetChild based on the index of the Passages object's 
+        // index in the children hierarchy
+        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+
+        // AllRooms = GetComponentsInChildren<Room>().ToList();
+
+        ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
+
+        if (overrideStartingRoom)
+        {
+            activeRoom = findActiveRoom(AllRooms);
+            originalPosition = Player.Instance.Movement.transform.position;
+            RespawnPosition = originalPosition;
+            originalRoom = activeRoom;
+        }
+        else
+        {
+            activeRoom = StartingRoom;
+            originalPosition = StartingSpawn.position;
+            RespawnPosition = StartingSpawn.position;
+            Player.Instance.Movement.transform.position = StartingSpawn.position;
+            originalRoom = StartingRoom;
+        }
+
+
+        foreach (Passage pass in AllPassages)
+        {
+            pass.door1.passage = pass;
+            pass.door2.passage = pass;
+        }
+        CameraController.Instance.SnapToRoom(activeRoom);
+    }
+
 
     private Room findActiveRoom(List<Room> allRooms)
     {
@@ -61,29 +101,6 @@ public class RoomManager : Singleton<RoomManager>
         return targetRoom;
     }
 
-    void Start()
-    {
-        // Change index of GetChild based on the index of the Passages object's 
-        // index in the children hierarchy
-        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
-
-        // AllRooms = GetComponentsInChildren<Room>().ToList();
-
-        ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
-
-        activeRoom = findActiveRoom(AllRooms);
-
-        originalPosition = Player.Instance.Movement.transform.position;
-        RespawnPosition = originalPosition;
-        originalRoom = activeRoom;
-
-        foreach(Passage pass in AllPassages)
-        {
-            pass.door1.passage = pass;
-            pass.door2.passage = pass;
-        }
-        CameraController.Instance.SnapToRoom(activeRoom);
-    }
 
     public void ResetAllEntities()
     {

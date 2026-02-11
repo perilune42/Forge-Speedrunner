@@ -62,6 +62,9 @@ MonoBehaviour:
   ActivatableEntities: []
   AllPassages: []
   RespawnPosition: {x: 0, y: 0}
+  StartingRoom: {fileID: 0}
+  StartingSpawn: {fileID: 0}
+  overrideStartingRoom: 0
 --- !u!1 &4324217052998167736
 GameObject:
   m_ObjectHideFlags: 0

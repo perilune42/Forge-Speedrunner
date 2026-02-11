@@ -47,15 +47,6 @@ MonoBehaviour:
   shopDebugMode: 0
   giveAllAbilities: 0
   allAbilitiesAreCharged: 0
-  Abilities:
-  - abilityPrefab: {fileID: 7250695344782781715, guid: 3474ec7f848d8368fbdce42c533392a9, type: 3}
-    data: {fileID: 11400000, guid: 279aa8fc5560780259c7c1cc56a38042, type: 2}
-  - abilityPrefab: {fileID: 7250695344782781715, guid: 1e65f5c5074a6ba049ca47c78d1a0d59, type: 3}
-    data: {fileID: 11400000, guid: 64f3c74a7a46f6028b49a8753823df72, type: 2}
-  - abilityPrefab: {fileID: 8376930135738498450, guid: 8e03c2448dde3703db44f57839d2a102, type: 3}
-    data: {fileID: 11400000, guid: d74a61f1e3f2da3fda0fa0a4a4f297f6, type: 2}
-  - abilityPrefab: {fileID: 2747026833276211316, guid: fb45661b09af59c40bc824733ea54419, type: 3}
-    data: {fileID: 11400000, guid: b972ebfe19f0316449af7a022dc48cf6, type: 2}
   AbilityInfoPrefab: {fileID: 8602407494200756791, guid: 36ebc7ac753a4c97087b1c7e23fb865d, type: 3}
   AbilityInfoParent: {fileID: 0}
   player: {fileID: 0}

@@ -25,31 +25,71 @@ public class DrunkenWalk : IPathGenerator
 
             // check if offset is clear. throw away if not
             // TODO: this code does not do what it's supposed to. find the bottom left instead.
-            Vector2Int newOffset = DirMethods.calcOffset(offset, dir);
-            if(grid.ContainsKey(newOffset)) continue;
+            Vector2Int entryOffset = DirMethods.calcOffset(offset, dir);
+            if(grid.ContainsKey(entryOffset)) continue;
 
             // find room
             Direction roomEntranceDir = DirMethods.opposite(dir);
             Room newRoom = findRoomWith(roomEntranceDir, roomPrefabs);
             List<Doorway> relevantDoorways = DirMethods.matchingDir(roomEntranceDir, newRoom);
 
+            // we have
+            // 1. doors in intended direction
+            // 2. intended direction
+            // 3. offset that we will enter into
+            // 4. size of room
+            // can calculate the distance from the bottom left with 1,2,4
+
+            // furthest left possible bottom left point
+            // NOTE: in the future, checkOffset will be updated to slot the rooms properly
+            Vector2Int checkOffset = entryOffset;
+            if(dir == LEFT)
+                checkOffset.y -= i;
+            if(dir == DOWN)
+                checkOffset.x -= i;
+            if(dir == RIGHT)
+            {
+                checkOffset.y -= i;
+                checkOffset.x -= room.size.x;
+            }
+            if(dir == UP)
+            {
+                checkOffset.x -= i;
+                checkOffset.y -= room.size.y;
+            }
+
+            bool valid = true;
+            for(int i = checkOffset.x;
+                    shouldContinue && i < checkOffset.x + newRoom.size.x;
+                    i++)
+            for(int j = checkOffset.y;
+                    shouldContinue && j < checkOffset.y + newRoom.size.y;
+                    j++)
+            {
+                if(grid.ContainsKey(new Vector2Int(i,j)))
+                    valid = false;
+            }
+
+
             // if room cannot be placed at this offset, pick a new room
             // TODO
+            if(!valid) continue; // just ignore if impossible for now
 
             // add appropriate occupied slots
             // TODO: this code is not correct. find the bottom left correctly.
-            Vector2Int newBotLeft = newOffset;
+            Vector2Int newBotLeft = checkOffset;
             Vector2Int newTopRight = newBotLeft + newRoom.size;
+
+            // add appropriate cells
+            Cell newCell = new Cell(newRoom, newOffset);
+            uniqueCells.Add(newCell);
+            // NOTE: this does not properly set `up,down,left,right`.
+            // might be useful to fix later
             for(int i = newOffset.x; i < newTopRight.x; i++)
                 for(int j = newOffset.y; j < newTopRight.y; j++)
             {
-                occupied.Add(new Vector2Int(i, j));
+                grid.Add(new Vector2Int(i, j), newCell);
             }
-
-            // add appropriate cells
-            // TODO: add cells in the right places to the Dictionary
-            Cell newCell = new Cell(newRoom, newOffset);
-            path.Add(newCell);
 
             // take from room one doorway list at a time
             // NOTE: a previous check will always ignore invalid options.

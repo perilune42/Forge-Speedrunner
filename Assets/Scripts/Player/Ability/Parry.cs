@@ -83,7 +83,8 @@ public class Parry : Ability
 
     private void StartParry(Vector2 hitSurfaceDir)
     {
-        if (AbilityManager.Instance.TryGetAbility<GroundSlam>(out GroundSlam gs))
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam &&
+            AbilityManager.Instance.TryGetAbility<GroundSlam>(out GroundSlam gs))
         {
             gs.OnGround();
         }

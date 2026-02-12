@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Parry1
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   Name: Ricochet
-  Description: Makes you bounce off walls for a few seconds
-  Icon: {fileID: 6341714471231913716, guid: e39b35a6b74e44c1b937042f0e53025b, type: 3}
+  Description: The next time you hit a wall, you can redirect your velocity.
+  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
   Cost: 6

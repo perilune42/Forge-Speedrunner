@@ -21,6 +21,7 @@ public class DrunkenWalk : IPathGenerator
         List<Cell> uniqueCells = new();
 
         // initialize data structures for start room
+        Debug.Log("entering init");
         {
             Cell startCell = new Cell(startRoom, new Vector2Int(0,0));
             uniqueCells.Add(startCell);
@@ -31,9 +32,12 @@ public class DrunkenWalk : IPathGenerator
             }
             state.extractAll(startRoom, new Vector2Int(0,0));
         }
+        Debug.Log("exiting init");
 
-        while(pathLength > 0 && state.NotEmpty())
+        int iteration_count = 0;
+        while(pathLength-- > 0 && state.NotEmpty() && iteration_count++ < 100)
         {
+            Debug.Log($"loop start. iteration {iteration_count}");
             Doorway door; Direction dir; Vector2Int offset;
 
             // take random
@@ -41,8 +45,13 @@ public class DrunkenWalk : IPathGenerator
 
             // check if offset is clear. throw away if not
             // TODO: this code does not do what it's supposed to. find the bottom left instead.
+            Debug.Log("before choice to skip");
             Vector2Int entryOffset = DirMethods.calcOffset(offset, dir);
-            if(grid.ContainsKey(entryOffset)) continue;
+            if(grid.ContainsKey(entryOffset)) {
+                Debug.Log("choice to skip");
+                continue;
+            }
+            Debug.Log("choice not to skip");
 
             // find room
             Direction roomEntranceDir = DirMethods.opposite(dir);
@@ -60,6 +69,7 @@ public class DrunkenWalk : IPathGenerator
             {
                 checkOffset.y -= newRoom.size.y;
             }
+            Debug.Log($"checkOffset = {checkOffset}");
 
             bool valid = true;
             for(int i = checkOffset.x;
@@ -72,6 +82,7 @@ public class DrunkenWalk : IPathGenerator
                 if(grid.ContainsKey(new Vector2Int(i,j)))
                     valid = false;
             }
+            Debug.Log($"valid: {valid}");
 
 
             // if room cannot be placed at this offset, pick a new room
@@ -93,11 +104,14 @@ public class DrunkenWalk : IPathGenerator
             {
                 grid.Add(new Vector2Int(i, j), newCell);
             }
+            Debug.Log("added all");
 
             // take from room one doorway list at a time
             // NOTE: a previous check will always ignore invalid options.
             state = state.extractAll(newRoom, newBotLeft);
+            Debug.Log("extracted all from newRoom.");
         }
+        Debug.Log("end");
         return uniqueCells;
     }
 

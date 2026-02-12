@@ -63,7 +63,7 @@ public abstract class Ability : MonoBehaviour
         }
     }
 
-    protected Action onRecharged;
+    public Action onRecharged;
 
     // set to false to halt cooldown ticking
     protected virtual bool CanRecharge() => true;

@@ -34,10 +34,9 @@ public class DrunkenWalk : IPathGenerator
         }
         Debug.Log("exiting init");
 
-        int iteration_count = 0;
-        while(pathLength-- > 0 && state.NotEmpty() && iteration_count++ < 100)
+        while(pathLength-- > 0 && state.NotEmpty())
         {
-            Debug.Log($"loop start. iteration {iteration_count}");
+            // Debug.Log($"loop start. iteration {iteration_count}");
             Doorway door; Direction dir; Vector2Int offset;
 
             // take random
@@ -87,7 +86,11 @@ public class DrunkenWalk : IPathGenerator
 
             // if room cannot be placed at this offset, pick a new room
             // TODO
-            if(!valid) continue; // just ignore if impossible for now
+            if(!valid)
+            {
+                // check every possible offset
+                continue; // just ignore if impossible for now
+            }
 
             // add appropriate occupied slots
             // TODO: this code is not correct. find the bottom left correctly.
@@ -215,6 +218,12 @@ internal class GenState
         doors.RemoveAt(doors.Count-1);
 
         return (door, dir, offset);
+    }
+    public void PutBack(Doorway door, Direction dir, Vector2Int offset)
+    {
+        doors.Add(door);
+        dirs.Add(dir);
+        offsets.Add(offset);
     }
     // NOTE: startingOffset should be the bottom left corner!
     public GenState extractFrom(List<Doorway> roomDoors, Direction facingDir, Vector2Int startingOffset)

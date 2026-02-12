@@ -52,6 +52,8 @@ MonoBehaviour:
   UsesCharges: 0
   cooldown: 120
   initialVelocity: 12
+  timeBeforeAcceleration: 10
+  rampUpVelocity: 0.25
   rampUpAcceleration: 0.25
   terminalVelocitySlam: 100
   heightConversion: 1

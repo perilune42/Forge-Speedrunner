@@ -6,7 +6,15 @@ using UnityEngine;
 public class GameRegistry : Singleton<GameRegistry>
 {
     public AbilitySceneContainer[] Abilities;
-    public Room[] RoomPrefabs;
+
+    // NOTE: make sure RoomPrefabs does not include StartRoom!
+    public GameObject[] RoomPrefabs;
+    public GameObject StartRoom;
+
+    private void OnValidate()
+    {
+        Awake();
+    }
 
 
     public override void Awake()

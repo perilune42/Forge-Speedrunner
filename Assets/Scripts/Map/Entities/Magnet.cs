@@ -31,8 +31,10 @@ public class Magnet : Entity
         bigBeamColl.size = new Vector2(bigBeamColl.size.x, bigBeamColl.size.y + 1f);
         Hitbox = coll;
 
+    
         InitializeParticles(particle, particleSpeed);
         InitializeParticles(particleActive, particleSpeedActive);
+        particle.gameObject.SetActive(true);
         particleActive.gameObject.SetActive(false);
     }
 

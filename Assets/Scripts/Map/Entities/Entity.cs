@@ -39,7 +39,7 @@ public abstract class Entity : MonoBehaviour
     public virtual void OnCollide(DynamicEntity de, Vector2 normal) { }
 
     // entity hitbox can also be used a trigger in a pinch
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player") && collision.GetComponent<PlayerMovement>() != null)
         {
@@ -47,7 +47,7 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    protected virtual void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player") && collision.GetComponent<PlayerMovement>() != null)
         {

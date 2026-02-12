@@ -10,7 +10,7 @@ public class Drone : Entity
     public int RechargeDuration = 60;
     private int rechargeTimer;
 
-    [SerializeField] SpriteRenderer sr;
+    [SerializeField] SpriteRenderer sr, indicatorSr;
     private bool active => rechargeTimer == 0;
 
 
@@ -27,6 +27,22 @@ public class Drone : Entity
         }
     }
 
+    protected override void OnTriggerEnter2D(Collider2D collision)
+    {
+        base.OnTriggerEnter2D(collision);
+        GrappleHand gh = collision.GetComponent<GrappleHand>();
+        if (gh != null)
+        {
+            CaptureGrapple(gh);
+        }
+    }
+
+    public void CaptureGrapple(GrappleHand gh)
+    {
+        gh.transform.position = transform.position;
+        gh.AttachToWall(this, gh.Grapple.LastThrowDirection);
+    }
+
     public override void OnPlayerEnter()
     {
         base.OnPlayerEnter();
@@ -36,6 +52,7 @@ public class Drone : Entity
             
         }
         pm.onJump += TryConsume;
+        indicatorSr.enabled = true;
     }
 
     public override void OnPlayerExit()
@@ -43,19 +60,23 @@ public class Drone : Entity
         base.OnPlayerExit();
         pm.CanJumpOverride = false;
         pm.onJump -= TryConsume;
+        indicatorSr.enabled = false;
     }
 
 
     private void TryConsume()
     {
         if (!active) return;
+
+        var grapple = AbilityManager.Instance.GetAbility<Grapple>();
+        if (grapple != null && grapple.grappleState == GrappleState.Pulling) return;
+
         rechargeTimer = RechargeDuration;
         pm.CanJumpOverride = false;
         sr.color = Color.white * 0.8f;
     }
     private void Recharge()
     {
-        Debug.Log("Recharged");
         sr.color = Color.white;
     }
 }

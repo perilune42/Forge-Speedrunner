@@ -99,6 +99,7 @@ public class ForceField : Trigger, IStatSource
     [ContextMenu("Set Visual")]
     public void SetVisual()
     {
+        ZeroColliderOffset();
         BoxCollider2D col = GetComponent<BoxCollider2D>();
         SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
         if (sr != null && col != null)

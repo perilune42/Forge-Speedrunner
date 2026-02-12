@@ -61,10 +61,6 @@ MonoBehaviour:
   AllRooms: []
   ActivatableEntities: []
   AllPassages: []
-  RespawnPosition: {x: 0, y: 0}
-  StartingRoom: {fileID: 0}
-  StartingSpawn: {fileID: 0}
-  overrideStartingRoom: 0
 --- !u!1 &4324217052998167736
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,8 +105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a73a09ab2cb15e77d8c5fafaa66c1004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Passage
-  door1: {fileID: 0}
-  door2: {fileID: 0}
+  door1: {fileID: 939366714627335773}
+  door2: {fileID: 7889961864196260182}
 --- !u!1 &5390484680254741332
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,8 +184,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a73a09ab2cb15e77d8c5fafaa66c1004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Passage
-  door1: {fileID: 0}
-  door2: {fileID: 0}
+  door1: {fileID: 8109888730468328792}
+  door2: {fileID: 1341429093649279380}
 --- !u!1001 &2031240415492468431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -247,6 +243,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f85852808a71772438e73c6dc7fd8483, type: 3}
+--- !u!114 &939366714627335773 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1241066506690250898, guid: f85852808a71772438e73c6dc7fd8483, type: 3}
+  m_PrefabInstance: {fileID: 2031240415492468431}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc3ebd0dfff742f8ab9b448c9e25364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Doorway
+--- !u!114 &1341429093649279380 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1057744213561476955, guid: f85852808a71772438e73c6dc7fd8483, type: 3}
+  m_PrefabInstance: {fileID: 2031240415492468431}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc3ebd0dfff742f8ab9b448c9e25364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Doorway
 --- !u!4 &1511782324391049295 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 633464275478943360, guid: f85852808a71772438e73c6dc7fd8483, type: 3}
@@ -3166,6 +3184,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2614337369533464420, guid: 5a1e210001c0e7544855b0c745b7bf94, type: 3}
   m_PrefabInstance: {fileID: 5564270070687515694}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8109888730468328792 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4446283130263363958, guid: 5a1e210001c0e7544855b0c745b7bf94, type: 3}
+  m_PrefabInstance: {fileID: 5564270070687515694}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc3ebd0dfff742f8ab9b448c9e25364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Doorway
 --- !u!1001 &6196459131766180837
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3228,3 +3257,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4532768467555064680, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
   m_PrefabInstance: {fileID: 6196459131766180837}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7889961864196260182 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4071527030744287923, guid: b22e7528bddf59b4eafd4a528cb8b831, type: 3}
+  m_PrefabInstance: {fileID: 6196459131766180837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc3ebd0dfff742f8ab9b448c9e25364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Doorway

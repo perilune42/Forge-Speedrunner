@@ -1,8 +1,8 @@
+using UnityEngine;
+using UnityEditor;
+
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
-using static Unity.Collections.AllocatorManager;
 
 [ExecuteAlways]
 public class DoorwayEditor : MonoBehaviour
@@ -123,17 +123,8 @@ public class DoorwayEditor : MonoBehaviour
             if (oldList != null) oldList[oldIdx] = null;
             doorList[doorIdx] = doorway;
 
-            if (edge == Edge.UP) pos += (Vector3)Vector2.up * 0.5f;
-            else if (edge == Edge.DOWN) pos += (Vector3)Vector2.down * 0.5f;
-            else if (edge == Edge.LEFT) pos += (Vector3)Vector2.left * 0.5f;
-            else if (edge == Edge.RIGHT) pos += (Vector3)Vector2.right * 0.5f;
-
-
             transform.position = pos;
             transform.rotation = rot;
-
-
-
         
             oldTransform = (pos, rot);
 

@@ -52,7 +52,6 @@ public class Bouncer : Entity
                 // less vertical boost when slammed
                 de.Velocity.y = Util.PDir2Vec(bounceDirection).y * bounceSpeed * 0.33f;
             }
-            AbilityManager.Instance.GetAbility<Dash>().Recharge();
         }
 
         currCooldown = bounceCooldown;

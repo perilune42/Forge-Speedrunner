@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Dash : Ability, IStatSource
+public class Dash : Ability
 {
     private bool canDash;
     [SerializeField] private int dashDuration;
@@ -56,7 +56,7 @@ public class Dash : Ability, IStatSource
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             PlayerMovement.Velocity = dashVelocityVec;
-            PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
+            PlayerMovement.GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = 0f;
             curDashDuration--;
             if (curDashDuration <= 0)
             {
@@ -102,7 +102,7 @@ public class Dash : Ability, IStatSource
         // thanh new part
 
         dashing = false;
-        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
+        PlayerMovement.GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = 1f;
         curDashDuration = 0;
         stopParticleAction?.Invoke();
     }

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class InteractionTrigger : Trigger
 {
+    bool playerInside;
     IInteractable interactable;
 
     public void SetInteractable(IInteractable i)
@@ -13,13 +14,14 @@ public class InteractionTrigger : Trigger
     {
         base.OnPlayerEnter();
         interactable.OnEnterInteractRange();
-        
+        playerInside = true;
     }
 
     public override void OnPlayerExit()
     {
         base.OnPlayerExit();
         interactable.OnExitInteractRange();
+        playerInside = false;
     }
 
 

@@ -202,7 +202,7 @@ MonoBehaviour:
     JumpSpeed: 11
     ClimbSpeed: 6
     GroundAcceleration: 80
-    AirAcceleration: 55
+    AirAcceleration: 35
     GroundFriction: 50
     AirFriction: 5
     MovingFriciton: 20
@@ -214,15 +214,12 @@ MonoBehaviour:
   MaxJumpFrames: 16
   wallCoyoteFrames: 0
   CanClimb: 1
-  CanJumpOverride: 0
   specialState: 0
   audioClips:
   - {fileID: 8300000, guid: 687972cb5f36f7643a21bcad2d1f6d61, type: 3}
   - {fileID: 8300000, guid: c9c44d333a55425409dab20af40943db, type: 3}
   PreCollisionVelocity: {x: 0, y: 0}
   LedgeClimbBonus: 0
-  RelativeVelocity:
-    BaseValue: {x: 0, y: 0}
 --- !u!114 &8967055831812217446
 MonoBehaviour:
   m_ObjectHideFlags: 0

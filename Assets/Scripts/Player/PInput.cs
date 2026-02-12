@@ -121,15 +121,8 @@ public class PInput : Singleton<PInput>
     {
         if (MoveInputOverrride == Vector2.zero)
         {
-            if (!EnableControls)
-            {
-                MoveVector = Vector2.zero;
-            }
-            else
-            {
-                Vector2 rawMove = move.ReadValue<Vector2>();
-                MoveVector = GetDirection(rawMove, 0.2f, 22.5f);
-            }
+            Vector2 rawMove = move.ReadValue<Vector2>();
+            MoveVector = GetDirection(rawMove, 0.2f, 22.5f);
         }
         else 
         { 

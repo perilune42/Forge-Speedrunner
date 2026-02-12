@@ -35,72 +35,26 @@ public class RoomManager : Singleton<RoomManager>
     [HideInInspector] public ActivatableEntity[] ActivatableEntities;
     [HideInInspector] public Passage[] AllPassages;
 
-    public Vector2 RespawnPosition;
-    public Room StartingRoom;
-    public Transform StartingSpawn;
-
-    [SerializeField] bool overrideStartingRoom;
-
     void Start()
     {
         // Change index of GetChild based on the index of the Passages object's 
         // index in the children hierarchy
         AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
 
-        // AllRooms = GetComponentsInChildren<Room>().ToList();
+        AllRooms = GetComponentsInChildren<Room>().ToList();
 
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
 
-        if (overrideStartingRoom)
-        {
-            activeRoom = findActiveRoom(AllRooms);
-            originalPosition = Player.Instance.Movement.transform.position;
-            RespawnPosition = originalPosition;
-            originalRoom = activeRoom;
-        }
-        else
-        {
-            activeRoom = StartingRoom;
-            originalPosition = StartingSpawn.position;
-            RespawnPosition = StartingSpawn.position;
-            Player.Instance.Movement.transform.position = StartingSpawn.position;
-            originalRoom = StartingRoom;
-        }
+        originalPosition = Player.Instance.Movement.transform.position;
+        originalRoom = activeRoom;
 
-
-        foreach (Passage pass in AllPassages)
+        foreach(Passage pass in AllPassages)
         {
             pass.door1.passage = pass;
             pass.door2.passage = pass;
         }
         CameraController.Instance.SnapToRoom(activeRoom);
     }
-
-
-    private Room findActiveRoom(List<Room> allRooms)
-    {
-        Vector3 playerPos = Player.Instance.Movement.transform.position;
-        // 1. calculations to find room enclosing player
-        Room targetRoom = null;
-        foreach(Room room in allRooms)
-        {
-            Vector3 botleft = room.transform.position;
-            Vector2Int sizeWorld = room.size * new Vector2Int(66, 38);
-            Vector3 topright = botleft;
-            topright.x += sizeWorld.x;
-            topright.y += sizeWorld.y;
-            bool betweenX = botleft.x <= playerPos.x && playerPos.x <= topright.x;
-            bool betweenY = botleft.y <= playerPos.y && playerPos.y <= topright.y;
-            if(betweenX && betweenY)
-            {
-                targetRoom = room;
-                break;
-            }
-        }
-        // 2. return targetRoom
-        return targetRoom;
-    }
-
 
     public void ResetAllEntities()
     {
@@ -131,24 +85,18 @@ public class RoomManager : Singleton<RoomManager>
     {
         StartCoroutine(SwitchRoomCoroutine(door1, door2));
     }
-    
-    // respawn location set by safe zones
-    // todo: add fallback in case player hasn't touched one in this room
     public void Respawn()
-    {
-        StartCoroutine(roomTransition(activeRoom));
-        StartCoroutine(warpTo(RespawnPosition, Vector2.zero, Vector2.zero, 30));
-    }
-
-    public void ReEnterRoom()
     {
         PlayerMovement pm = Player.Instance.Movement;
 
+        // in this case, skip most of this. just teleport back to placement position
         if (previousDoorway == null)
         {
+            Debug.Log("hey");
+            StartCoroutine(roomTransition(activeRoom));
+            StartCoroutine(warpTo(originalPosition, new Vector2(0F,0F), new Vector2(1F, 0F)));
             return;
         }
-
 
         // come from the reverse direction this time
         Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
@@ -225,7 +173,7 @@ public class RoomManager : Singleton<RoomManager>
         yield return warpTo(newPlayerPos, preservedVelocity, dir);
         door2.EnableTransition();
     }
-    public IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
+    private IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
         PlayerMovement pm = Player.Instance.Movement;
 
@@ -252,24 +200,17 @@ public class RoomManager : Singleton<RoomManager>
         const float minTransitionSpeed = 0;
 
         // give some minimum velocity entering the room
-        if (dir != Vector2.zero && Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
+        if (Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
         {
             preservedVelocity = preservedVelocity - dir * Vector2.Dot(preservedVelocity, dir) + dir * minTransitionSpeed;
         }
-        if (dir != Vector2.zero)
-        {
-            pm.Velocity = preservedVelocity;
-        }
-        else
-        {
-            pm.Velocity = Vector2.zero;
-        }
+        pm.Velocity = preservedVelocity;
         if (dir == Vector2.up)
         {
             // set one more time in case of jank
             pm.GravityEnabled = false;
         }
-        for (int i = 0; i < lockDuration; i++)
+        for (int i = 0; i < 10; i++)
         {
             yield return new WaitForFixedUpdate();
         }

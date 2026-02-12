@@ -2,8 +2,7 @@ using UnityEngine;
 
 public abstract class Trigger : MonoBehaviour
 {
-    protected Collider2D col;
-    protected bool playerInside;
+    private Collider2D col;
 
     protected virtual void Awake()
     {
@@ -32,12 +31,12 @@ public abstract class Trigger : MonoBehaviour
 
     public virtual void OnPlayerEnter()
     {
-        playerInside = true;
+
     }
 
     public virtual void OnPlayerExit()
     {
-        playerInside = false;
+
     }
 
     [ContextMenu("Zero BoxCollider Offset")]

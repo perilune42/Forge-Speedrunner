@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grapple : Ability, IStatSource
+public class Grapple : Ability
 {
     public float LaunchSpeed;
     public float HandLaunchSpeed;
@@ -22,7 +22,6 @@ public class Grapple : Ability, IStatSource
     [SerializeField] private int maxCharge;
     [SerializeField] private int lifetime;
 
-    public Vector2 LastThrowDirection;
     [HideInInspector] public Vector2 AttachedDirection;
 
     [SerializeField] private float verticalBoost = 7f;
@@ -103,18 +102,6 @@ public class Grapple : Ability, IStatSource
         if (CanUseAbility() && grappleState == GrappleState.Idle)
         {
             Vector2 launchdir = GetThrowDir();
-            foreach (var entityHit in PlayerMovement.CustomBoxCastAll((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
-                            new Vector2(0.1f, 0.1f), 0f,
-                            launchdir, GetExpectedRange(), LayerMask.GetMask("Entity")))
-            {
-                if (entityHit.collider.GetComponent<Drone>() != null)
-                {
-                    grappleIndicator.gameObject.SetActive(true);
-                    grappleIndicator.transform.position = entityHit.collider.transform.position;
-                    return;
-                }
-            }
-
             var hit = PlayerMovement.CustomBoxCast((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset, 
                                         new Vector2(0.1f,0.1f), 0f,
                                         launchdir, GetExpectedRange(), LayerMask.GetMask("Solid"));
@@ -179,7 +166,6 @@ public class Grapple : Ability, IStatSource
             grappleHand.Grapple = this;
             grappleHand.SetLifetime(lifetime);
             Vector2 throwDir = GetThrowDir();
-            LastThrowDirection = throwDir;
 
             grappleHand.Velocity += throwDir * HandLaunchSpeed;
 
@@ -200,7 +186,7 @@ public class Grapple : Ability, IStatSource
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         }
         grappleState = GrappleState.Pulling;
-        PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
+        PlayerMovement.GravityMultiplier.Multipliers[StatSource.GrappleGravityMult] = 0f;
         Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
         PlayerMovement.Velocity = direction * pullSpeed;
     }
@@ -264,7 +250,7 @@ public class Grapple : Ability, IStatSource
         {
             curCooldown = cooldown;
         }
-        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
+        PlayerMovement.GravityMultiplier.Multipliers[StatSource.GrappleGravityMult] = 1f;
     }
 
     public void Attach(Vector2 direction)

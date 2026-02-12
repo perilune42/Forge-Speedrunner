@@ -32,7 +32,7 @@ public class Game : Singleton<Game> {
     {
         RoomManager rm = RoomManager.Instance;
         if(Input.GetKeyDown(KeyCode.R))
-            rm.ReEnterRoom();
+            rm.Respawn();
         else if(Input.GetKeyDown(KeyCode.Z))
             ReturnToPlay(false);
         else if(Input.GetKeyDown(KeyCode.X))

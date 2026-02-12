@@ -9,7 +9,7 @@ public enum SpecialState
     Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch, Rocket
 }
 
-public class PlayerMovement : DynamicEntity, IStatSource
+public class PlayerMovement : DynamicEntity
 {
 
     public MovementParams MovementParams;
@@ -43,9 +43,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     public bool CanClimb = true;
 
-    public bool CanJumpOverride;
-    
-
     public SpecialState SpecialState { get => specialState; 
         set {
             OnSpecialStateChange?.Invoke(value);
@@ -63,16 +60,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     public Action<SpecialState> OnSpecialStateChange;   // called before change
 
-    private class JumpGravityMult : IStatSource { }
-    JumpGravityMult jumpGravityMult = new();
-
-    private class ClimbGravityMult : IStatSource { }
-    ClimbGravityMult climbGravityMult = new();
-
-    public VecStat RelativeVelocity = new VecStat(Vector2.zero);
-    // apparent velocity of the surface this entity is resting on
-    // for the purposes of friction
-
     protected override void Awake()
     {
         base.Awake();
@@ -80,7 +67,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         {
             if (newState != SpecialState.WallClimb && newState != SpecialState.LedgeClimb)
             {
-                GravityMultiplier.Multipliers[climbGravityMult] = 1f;
+                GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
             }
         };
     }
@@ -98,7 +85,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
     protected override void Update()
     {
         base.Update();
-
     }
 
     protected override void FixedUpdate()
@@ -186,14 +172,14 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     private void ApplyForces()
     {
-        Vector2 apparentVel = Velocity - RelativeVelocity.Get();
+        
         float moveSpeed, moveAccel, friction;
         moveSpeed = isSprinting ? MovementParams.SprintSpeed : MovementParams.WalkSpeed;
 
         if (State == BodyState.OnGround)
         {
             moveAccel = MovementParams.GroundAcceleration;
-            friction = Util.SignOr0(apparentVel.x) == Util.SignOr0(MoveDir.x) ? MovementParams.MovingFriciton : MovementParams.GroundFriction;
+            friction = Util.SignOr0(Velocity.x) == Util.SignOr0(MoveDir.x) ? MovementParams.MovingFriciton : MovementParams.GroundFriction;
         }
         else if (State == BodyState.InAir)
         {
@@ -215,43 +201,41 @@ public class PlayerMovement : DynamicEntity, IStatSource
             float targetXVel = moveSpeed * MoveDir.x;
             // if current speed is below max speed, and the player's movement input helps accelerate
             // the player towards the target max speed
-            if ((targetXVel < 0 && apparentVel.x >= targetXVel) || (targetXVel > 0 && apparentVel.x <= targetXVel))
+            if ((targetXVel < 0 && Velocity.x >= targetXVel) || (targetXVel > 0 && Velocity.x <= targetXVel))
             {
 
 
                 float dV = moveAccel * MoveDir.x * fdt;
-                if ((targetXVel > 0 && apparentVel.x + dV < targetXVel)
-                    || (targetXVel < 0 && apparentVel.x + dV > targetXVel))
+                if ((targetXVel > 0 && Velocity.x + dV < targetXVel)
+                    || (targetXVel < 0 && Velocity.x + dV > targetXVel))
                 {
-                    apparentVel.x += dV;
+                    Velocity.x += dV;
                 }
                 else
                 {
-                    apparentVel.x = targetXVel;
+                    Velocity.x = targetXVel;
                 }
 
                 // do not apply friction if player is attempting to move in the same direction of acceleration
-                ignoreFriction = Mathf.Sign(targetXVel) == Mathf.Sign(apparentVel.x);
+                ignoreFriction = Mathf.Sign(targetXVel) == Mathf.Sign(Velocity.x);
             }
             // otherwise walking in the same direction as movement does nothing
         }
-
+        
         // friction
 
-        if (!Mathf.Approximately(apparentVel.x, 0) && !ignoreFriction)
+        if (!Mathf.Approximately(Velocity.x, 0) && !ignoreFriction)
         {
-            float dV = -Util.SignOr0(apparentVel.x) * friction * fdt;
-            if ((apparentVel.x > 0 && apparentVel.x > Mathf.Abs(dV)) || (apparentVel.x < 0 && Mathf.Abs(apparentVel.x) > dV))
+            float dV = -Util.SignOr0(Velocity.x) * friction * fdt;
+            if ((Velocity.x > 0 && Velocity.x > Mathf.Abs(dV)) || (Velocity.x < 0 && Mathf.Abs(Velocity.x) > dV))
             {
-                apparentVel.x += dV;
+                Velocity.x += dV;
             }
             else
             {
-                apparentVel.x = 0;
+                Velocity.x = 0;
             }
         }
-
-        Velocity = apparentVel + RelativeVelocity.Get();
     }
 
     private void TickTimers()
@@ -359,10 +343,8 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     private bool CanJump()
     {
-        return CanJumpOverride || (
-            (State == BodyState.OnGround || coyoteFrames > 0)
-            && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash)
-            );
+        return (State == BodyState.OnGround || coyoteFrames > 0)
+            && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash);
     }
 
     private bool CanWallJump()
@@ -411,7 +393,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         jumpFrames = MaxJumpFrames;
         coyoteFrames = 0;
         onJump?.Invoke();
-        GravityMultiplier.Multipliers[jumpGravityMult] = MovementParams.JumpGravityMult;
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = MovementParams.JumpGravityMult;
 
         AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);
     }
@@ -419,7 +401,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     private void WallJump(Vector2 wallDir)
     {
         SpecialState = SpecialState.Normal;
-        GravityMultiplier.Multipliers.Remove(climbGravityMult);
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
         float xVel = -wallDir.x * MovementParams.JumpSpeed;
         Velocity = new Vector2(xVel, MovementParams.JumpSpeed);
         // player not allowed to turn around for 5 frames
@@ -428,7 +410,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         jumpFrames = MaxJumpFrames;
         wallCoyoteFrames = 0;
         onJump?.Invoke();
-        GravityMultiplier.Multipliers[jumpGravityMult] = MovementParams.JumpGravityMult;
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = MovementParams.JumpGravityMult;
     }
 
     public void EndJump(bool force = false)
@@ -447,13 +429,13 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     private void StartHangTime()
     {
-        GravityMultiplier.Multipliers[jumpGravityMult] = MovementParams.HangGravityMult;
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = MovementParams.HangGravityMult;
         hangTime = true;
     }
 
     private void EndHangTime()
     {
-        GravityMultiplier.Multipliers.Remove(jumpGravityMult);
+        GravityMultiplier.Multipliers[StatSource.JumpGravityMult] = 1;
         hangTime = false;
     }
 
@@ -477,7 +459,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         // ascend the wall at jump speed, do a small hop once the top is reached.
         SpecialState = SpecialState.LedgeClimb;
         EndJump(force: true);
-        GravityMultiplier.Multipliers[climbGravityMult] = 0f;
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
         Velocity = new Vector2(0, MovementParams.ClimbSpeed);
         lastClimbDir = MoveDir;
         if (State == BodyState.OnGround)
@@ -490,7 +472,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     {
         if (!CanLedgeClimb(dir))
         {
-            GravityMultiplier.Multipliers.Remove(climbGravityMult);
+            GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
             SpecialState = SpecialState.Normal;
         }
         if (GetLedgeHeight(dir) > 0)
@@ -503,7 +485,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         float alignedRetainedSpeed = Util.SignOr0(retainedSpeed) == dir.x ? Mathf.Abs(retainedSpeed) : 0;
         float boost = Mathf.Max(alignedRetainedSpeed, minLedgeBoost);
         Velocity = new(boost * dir.x, MovementParams.JumpSpeed / 2);
-        GravityMultiplier.Multipliers.Remove(climbGravityMult);
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
         SpecialState = SpecialState.Normal;
     }
 
@@ -513,7 +495,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         SpecialState = SpecialState.WallClimb;
         MoveDir = new Vector2(dir.x, 0);
         EndJump(force: true);
-        GravityMultiplier.Multipliers[climbGravityMult] = 0f;
+        GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 0f;
         Velocity = new Vector2(0, MovementParams.ClimbSpeed);
         lastClimbDir = MoveDir;
         wallCoyoteFrames = maxCoyoteFrames;
@@ -547,7 +529,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         }
         if (interrupt)
         {
-            GravityMultiplier.Multipliers.Remove(climbGravityMult);
+            GravityMultiplier.Multipliers[StatSource.ClimbGravityMult] = 1f;
             SpecialState = SpecialState.Normal;
             return;
         }

@@ -51,7 +51,7 @@ public class GrappleHand : DynamicEntity
     }
 
 
-    public void AttachToWall(Entity entity, Vector2 direction)
+    private void AttachToWall(Entity entity, Vector2 direction)
     {
         if (entity) transform.SetParent(entity.transform, true);
         lineRenderer.enabled = true;

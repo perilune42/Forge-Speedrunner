@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public enum ShopTab
@@ -13,29 +12,18 @@ public enum ShopTab
 public class ShopManager : Singleton<ShopManager>
 {
     public int Money;
-    public List<UpgradeData> Upgrades;
+    [SerializeField] public List<UpgradeData> Upgrades;
 
-    [SerializeField] private Canvas screen;
-
-    [Header("Prefabs")]
     [SerializeField] private GameObject upgradePrefab;
-
-    [Header("Nav Panel Refs")]
+    [SerializeField] private Transform upgradeLayoutGroup;
     [SerializeField] private TMP_Text moneyText;
-    [SerializeField] private GameObject[] tabs;
-
-    [Header("Overview Tab Refs")]
     [SerializeField] private TMP_Text runTimeText;
     [SerializeField] private TMP_Text targetTimeText;
     [SerializeField] private TMP_Text moneyGainedText;
 
-    [Header("Upgrade Tab Refs")]
-    [SerializeField] private Transform upgradeLayoutGroup;
-    [SerializeField] private Image upgradeInfoIcon;
-    [SerializeField] private TMP_Text upgradeInfoNameText;
-    [SerializeField] private TMP_Text upgradeInfoDescriptionText;
+    [SerializeField] private GameObject[] tabs;
 
-    [Header("Continue Tab Refs")]
+    [SerializeField] private Canvas screen;
 
     private const float chargeChance = 0.5f;
 
@@ -80,15 +68,6 @@ public class ShopManager : Singleton<ShopManager>
             newUpgrade.GetComponent<Upgrade>().Init(abilityData.ID, useCharges);
 
         }
-    }
-
-    public void ShowUpgradeInfo(UpgradeData upgradeData)
-    {
-        if (upgradeData == null) return;
-
-        upgradeInfoIcon.sprite = upgradeData.Icon;
-        upgradeInfoNameText.text = upgradeData.Name;
-        upgradeInfoDescriptionText.text = upgradeData.Description;
     }
 
     public void CloseShop()

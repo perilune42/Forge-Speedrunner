@@ -6,7 +6,7 @@ using UnityEngine;
 public class Parry : Ability
 {
 
-    [SerializeField] int hitstopFrames, parryPrimedFrames;
+    [SerializeField] int hitstopFrames, parryPrimedFrames, minHitstopFrames;
     private int hitstopRemaining, parryPrimedRemaining;
     private float storedSpeed;
 
@@ -52,7 +52,8 @@ public class Parry : Ability
         if (hitstopRemaining > 0)
         {
             hitstopRemaining--;
-            if (hitstopRemaining == 0)
+            int hitstopCurrent = hitstopFrames - hitstopRemaining;
+            if (hitstopRemaining == 0 || hitstopCurrent > minHitstopFrames && PInput.Instance.MoveVector.normalized != Vector2.zero)
             {
                 ReleaseParry();
             }
@@ -82,7 +83,10 @@ public class Parry : Ability
 
     private void StartParry(Vector2 hitSurfaceDir)
     {
-        Debug.Log("bonk");
+        if (AbilityManager.Instance.TryGetAbility<GroundSlam>(out GroundSlam gs))
+        {
+            gs.OnGround();
+        }
         storedSpeed = pm.PreCollisionVelocity.magnitude;
         pm.Locked = true;
         hitstopRemaining = hitstopFrames;
@@ -101,6 +105,7 @@ public class Parry : Ability
         pm.Locked = false;
         pm.Velocity = inputDir * (storedSpeed * speedMultiplier) + -surfaceDir * baseReflectSpeed;
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
+        hitstopRemaining = 0;
         circle.enabled = false;
         pm.CanClimb = true;
     }

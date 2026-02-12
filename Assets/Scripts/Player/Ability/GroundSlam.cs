@@ -105,7 +105,7 @@ public class GroundSlam : Ability
         return base.CanUseAbility();
     }
 
-    private void OnGround()
+    public void OnGround()
     {
         Debug.Log(rampUpTime * heightConversion);
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion + minimumSpeedGain);

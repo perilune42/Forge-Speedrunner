@@ -107,6 +107,12 @@ public class AbilityManager : Singleton<AbilityManager>
         return null;
     }
 
+    public bool TryGetAbility<T>(out T ability) where T : Ability
+    {
+        ability = GetAbility<T>();
+        return ability != null;
+    }
+
     public List<Ability> GetAllAbilities()
     {
         return playerAbilities;

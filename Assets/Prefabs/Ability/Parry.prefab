@@ -143,6 +143,9 @@ MonoBehaviour:
   MaxCharges: 0
   UsesCharges: 0
   cooldown: 60
-  hitstopFrames: 15
-  parryPrimedFrames: 15
+  hitstopFrames: 20
+  parryPrimedFrames: 45
+  minHitstopFrames: 15
   circle: {fileID: 7302307563846284303}
+  baseReflectSpeed: 6
+  speedMultiplier: 1

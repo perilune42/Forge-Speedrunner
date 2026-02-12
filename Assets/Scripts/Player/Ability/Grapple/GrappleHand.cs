@@ -9,6 +9,7 @@ public class GrappleHand : DynamicEntity
     private float width;
     private float alpha;
     private Color color;
+    [SerializeField] private Sprite attachedSprite;
     protected override void Awake()
     {
         base.Awake();
@@ -60,6 +61,7 @@ public class GrappleHand : DynamicEntity
         CollisionsEnabled = false;
         Locked = true;
         Grapple.Attach(direction);
+        GetComponent<SpriteRenderer>().sprite = attachedSprite;
         //Grapple.CreateGrappleArrow();
     }
 }

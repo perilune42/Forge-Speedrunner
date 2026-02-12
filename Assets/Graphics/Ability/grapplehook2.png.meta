@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 084efbd0d7750e34496e612d33d38570
+guid: c7e241e36a67ab881a8337cdd6f6797e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3949421889175453842
-    second: GrappleArrow_0
+      213: 743475129896708291
+    second: grapplehook2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,11 +46,11 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
+  alignment: 4
+  spritePivot: {x: 0, y: 0.5}
   spritePixelsToUnits: 10
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -425,7 +425,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
@@ -438,20 +438,14 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      player-walk_0: -1300822034
-      player-walk_1: -483112800
-      player-walk_10: 509091466
-      player-walk_11: 1922392950
-      player-walk_12: 1541424455
-      player-walk_13: -1508517782
-      player-walk_2: -30020749
-      player-walk_3: -835660304
-      player-walk_4: 618468497
-      player-walk_5: -1033616898
-      player-walk_6: 1617428656
-      player-walk_7: -657080366
-      player-walk_8: -764499486
-      player-walk_9: 603235647
+      grapplehook2_0: -275182472
+      grapplehook2_1: -1175763632
+      grapplehook2_2: -1753488089
+      grapplehook2_3: 1473426138
+      grapplehook2_4: 324219986
+      grapplehook2_5: -826487096
+      grapplehook2_6: 520825218
+      grapplehook2_7: -229497667
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

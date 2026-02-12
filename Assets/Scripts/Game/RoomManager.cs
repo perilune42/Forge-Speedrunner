@@ -222,6 +222,7 @@ public class RoomManager : Singleton<RoomManager>
     private IEnumerator roomTransition(Room room)
     {
         Debug.Log("start room transition");
+        AbilityManager.Instance.ResetAbilites();
         FadeToBlack.Instance.FadeIn();
         for (int i = 0; i < TransitionFadeFrames; i++)
         {

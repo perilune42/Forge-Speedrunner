@@ -168,7 +168,7 @@ public class Grapple : Ability
             Vector2 throwDir = GetThrowDir();
 
             grappleHand.Velocity += throwDir * HandLaunchSpeed;
-
+            grappleHand.transform.eulerAngles = Vector3.forward * (Mathf.Atan2(throwDir.y, throwDir.x) * Mathf.Rad2Deg);
             grappleState = GrappleState.Launch;
             curCooldown = pullCooldown;
         }
@@ -228,7 +228,7 @@ public class Grapple : Ability
         {
             PlayerMovement.Jump();
         }
-        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.turquoise);
+        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.orange);
         RemoveGrapple();
         //Destroy(grappleArrow);
 
@@ -264,6 +264,14 @@ public class Grapple : Ability
         AttachedDirection = direction;
     }
     
+    [ContextMenu("Reset")]
+    public void Reset()
+    {
+        if (grappleHand == null) return;
+        Destroy(grappleHand.gameObject);
+        grappleState = GrappleState.Idle;
+    }
+
     /*public void CreateGrappleArrow()
     {
         grappleArrow = Instantiate(GrappleArrowPrefab, PlayerMovement.transform);

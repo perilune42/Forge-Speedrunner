@@ -117,6 +117,18 @@ public class AbilityManager : Singleton<AbilityManager>
     {
         return playerAbilities;
     }
+
+    /// <summary>
+    /// Use during room transitions to reset ability states
+    /// Currently only Grapple uses this functionality
+    /// </summary>
+    public void ResetAbilites()
+    {
+        if (TryGetAbility<Grapple>(out Grapple grapple))
+        {
+            grapple.Reset();
+        }
+    }
 }
 
 [System.Serializable]

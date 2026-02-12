@@ -48,6 +48,7 @@ public class DynamicEntity : MonoBehaviour
 
     public bool GravityEnabled = true;
     public Stat GravityMultiplier = new Stat(1f);
+
     public bool CollisionsEnabled = true;
     public bool Locked = false;
 

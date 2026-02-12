@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grapple : Ability
+public class Grapple : Ability, IStatSource
 {
     public float LaunchSpeed;
     public float HandLaunchSpeed;
@@ -200,7 +200,7 @@ public class Grapple : Ability
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         }
         grappleState = GrappleState.Pulling;
-        PlayerMovement.GravityMultiplier.Multipliers[StatSource.GrappleGravityMult] = 0f;
+        PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
         Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
         PlayerMovement.Velocity = direction * pullSpeed;
     }
@@ -264,7 +264,7 @@ public class Grapple : Ability
         {
             curCooldown = cooldown;
         }
-        PlayerMovement.GravityMultiplier.Multipliers[StatSource.GrappleGravityMult] = 1f;
+        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
     }
 
     public void Attach(Vector2 direction)

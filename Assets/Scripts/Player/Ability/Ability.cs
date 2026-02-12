@@ -38,6 +38,7 @@ public abstract class Ability : MonoBehaviour
     }
     
 
+
     public virtual void Start()
     {
         if (AbilityManager.Instance.AbilityInfoParent == null) return;
@@ -106,6 +107,11 @@ public abstract class Ability : MonoBehaviour
         }
         OnActivate?.Invoke();
         return false;
+    }
+
+    public void Recharge()
+    {
+        curCooldown = 0;
     }
 
     public void SetInputButton(PInput.InputButton button)

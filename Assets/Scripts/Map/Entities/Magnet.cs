@@ -17,7 +17,9 @@ public class Magnet : Entity
     private BoxCollider2D coll;
     private int curCooldown;
     [SerializeField] private ParticleSystem particle, particleActive;
-    [SerializeField] private float particleSpeed, particleSpeedActive;
+    [SerializeField] private float particleSpeed;
+    private int suckFrames;
+    [SerializeField] private int maxSuckFrames;
     private bool active;
     
     private void Start()
@@ -28,12 +30,12 @@ public class Magnet : Entity
         coll.size = new Vector2(beamColl.size.x * beamRange, beamColl.size.y * beamWidth);
         coll.offset = new Vector2(beamColl.offset.x * beamRange, beamColl.offset.y * beamWidth);
         bigBeamColl = beamColl;
-        bigBeamColl.size = new Vector2(bigBeamColl.size.x, bigBeamColl.size.y + 1f);
+        bigBeamColl.edgeRadius = 1f;
         Hitbox = coll;
 
     
         InitializeParticles(particle, particleSpeed);
-        InitializeParticles(particleActive, particleSpeedActive);
+        InitializeParticles(particleActive, particleSpeed * 2f);
         particle.gameObject.SetActive(true);
         particleActive.gameObject.SetActive(false);
     }
@@ -41,7 +43,7 @@ public class Magnet : Entity
 
     private void InitializeParticles(ParticleSystem particle, float speed)
     {
-        particle.transform.localPosition = new Vector3(coll.size.x * beamWidth * 2, 0, 0);
+        particle.transform.localPosition = new Vector3(coll.size.x * beamWidth * 2f, 0, 0);
         var mainModule = particle.main;
         var sr = mainModule.startRotation;
         sr.constant = -transform.eulerAngles.z * Mathf.Deg2Rad;
@@ -50,7 +52,7 @@ public class Magnet : Entity
         SetParticleSpeed(particle, speed);
 
         var ssy = mainModule.startSizeY;
-        ssy = coll.size.y * transform.localScale.y;
+        ssy = coll.size.y * transform.localScale.y * 1.2f;
         mainModule.startSizeY = ssy;
     }
 
@@ -72,6 +74,7 @@ public class Magnet : Entity
         active = true;
         particle.gameObject.SetActive(false);
         particleActive.gameObject.SetActive(true);
+        suckFrames = 0;
     }
 
     private void Deactivate()
@@ -93,7 +96,7 @@ public class Magnet : Entity
             {
                 playerMovement = null;
                 curCooldown = 0;
-            if (active) Deactivate();
+                if (active) Deactivate();
             }
         }
         else
@@ -121,8 +124,8 @@ public class Magnet : Entity
         {
             playerMovement.Velocity = newVelocity;
         }
-
-        if (Vector2.Distance(playerPos, transform.position) < minRange)
+        suckFrames++;
+        if (suckFrames >= maxSuckFrames || Vector2.Distance(playerPos, transform.position) < minRange)
         {
             curCooldown = cooldown;
             playerMovement.Velocity *= speedDropoff;

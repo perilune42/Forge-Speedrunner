@@ -11,9 +11,12 @@ public class GrappleHand : DynamicEntity
     private Color color;
     [SerializeField] Color fullyChargedColor;
     [SerializeField] private Sprite attachedSprite;
+
+    public Collider col;
     protected override void Awake()
     {
         base.Awake();
+        col = GetComponent<Collider>();
         OnHitWallAny += AttachToWall;
         GravityEnabled = false;
         lineRenderer.enabled = false;

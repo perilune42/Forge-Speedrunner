@@ -34,7 +34,6 @@ public class Grapple : Ability, IStatSource
     private int minPullDuration = 10;    // cannot launch until this many frames has passed
     private int forcePullTimer = 0;
 
-
     private float throwOffset => Player.Instance.Movement.PlayerHeight / 2;
 
     public override void Start()
@@ -123,7 +122,7 @@ public class Grapple : Ability, IStatSource
         {
             Vector2 launchdir = GetThrowDir();
             foreach (var entityHit in PlayerMovement.CustomBoxCastAll((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
-                            new Vector2(0.9f, 0.9f), 0f,
+                            new Vector2(1.4f, 1.4f) - Vector2.one * 0.1f, 0f,
                             launchdir, GetExpectedRange(), LayerMask.GetMask("Entity")))
             {
                 if (entityHit.collider.GetComponent<Drone>() != null)
@@ -134,8 +133,8 @@ public class Grapple : Ability, IStatSource
                 }
             }
 
-            var hit = PlayerMovement.CustomBoxCast((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset, 
-                                        new Vector2(0.1f,0.1f), 0f,
+            var hit = PlayerMovement.CustomBoxCast((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
+                                        new Vector2(1.4f, 1.4f), 0f,
                                         launchdir, GetExpectedRange(), LayerMask.GetMask("Solid"));
             if (hit)
             {

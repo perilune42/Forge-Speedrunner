@@ -70,6 +70,10 @@ public class RoomManager : Singleton<RoomManager>
 
         foreach (Passage pass in AllPassages)
         {
+            if (pass.door1 == null)
+            {
+                Debug.LogError($"Passage: {pass.name} is invalid!");
+            }
             pass.door1.passage = pass;
             pass.door2.passage = pass;
         }

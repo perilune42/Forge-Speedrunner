@@ -10,6 +10,8 @@ public class Parry : Ability
     private int hitstopRemaining, parryPrimedRemaining;
     private float storedSpeed;
 
+    [SerializeField] ParticleSystem shockwaveParticles;
+
     PlayerMovement pm => Player.Instance.Movement;
 
     [SerializeField]SpriteRenderer circle;
@@ -109,6 +111,12 @@ public class Parry : Ability
         hitstopRemaining = 0;
         circle.enabled = false;
         pm.CanClimb = true;
+        var p = Instantiate(shockwaveParticles);
+        p.transform.position = transform.position + (Vector3)(Vector2.up * pm.PlayerHeight * 0.5f);
+        p.transform.position += new Vector3(surfaceDir.x * pm.PlayerWidth * 0.5f, surfaceDir.y * pm.PlayerHeight * 0.5f);
+
+        p.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, -inputDir));
+        p.Play();
     }
 
     public override bool CanUseAbility()

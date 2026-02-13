@@ -56,7 +56,8 @@ MonoBehaviour:
   GrappleHandPrefab: {fileID: -8708498888079459233, guid: 794a165b42fee426c8df542e3de23a4c, type: 3}
   GrappleArrowPrefab: {fileID: 8032734590852053490, guid: b78737686d50b8b2db44777a1cb38bd3, type: 3}
   GrappleIndicatorPrefab: {fileID: 513631767980366331, guid: 6fdd4051814a90d46859e5bcc4d3605c, type: 3}
-  pullCooldown: 20
+  pullCooldown: 10
+  throwCooldown: 20
   GrappleHandActive: 0
   grappleState: 0
   chargePerTick: 0.006

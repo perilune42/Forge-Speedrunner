@@ -33,7 +33,8 @@ public class GrappleHand : DynamicEntity
         lifetime--;
         if (lifetime <= 0)
         {
-            Grapple.grappleState = GrappleState.Idle;
+            Grapple.Abort();
+
             Destroy(gameObject);
         }
     }

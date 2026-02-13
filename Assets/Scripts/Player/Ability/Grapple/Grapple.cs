@@ -11,6 +11,7 @@ public class Grapple : Ability
     [SerializeField] private GameObject GrappleArrowPrefab;
     [SerializeField] private GrappleIndicator GrappleIndicatorPrefab;
     [SerializeField] private int pullCooldown;
+    [SerializeField] private int throwCooldown;
     private GrappleHand grappleHand;
     private GrappleIndicator grappleIndicator;
     //private GameObject grappleArrow;
@@ -27,6 +28,10 @@ public class Grapple : Ability
     [SerializeField] private float verticalBoost = 7f;
     [SerializeField] private float pullSpeed = 20f;
     [SerializeField] private float minLaunchDistance = 3;   // force launch when getting within 3 tiles
+
+    private int minPullDuration = 15;    // cannot launch until this many frames has passed
+    private int forcePullTimer = 0;
+
 
     private float throwOffset => Player.Instance.Movement.PlayerHeight / 2;
 
@@ -54,6 +59,7 @@ public class Grapple : Ability
     {
         base.FixedUpdate();
         if (curCooldown > 0) curCooldown--;
+        if (forcePullTimer > 0) forcePullTimer--;
         if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
 
         if (grappleState == GrappleState.Pulling)
@@ -62,13 +68,28 @@ public class Grapple : Ability
             float dist = vecToHand.magnitude;
             Vector2 direction = vecToHand.normalized;
             PlayerMovement.Velocity = direction * pullSpeed;
-            if (PInput.Instance.Jump.HasPressed)
+            if (forcePullTimer == 0)
             {
-                LaunchPlayer(LaunchSpeed, true);
+                if (PInput.Instance.Jump.HasPressed)
+                {
+                    PInput.Instance.Jump.ConsumeBuffer();
+                    LaunchPlayer(LaunchSpeed, true);
+                }
+                else if (!inputButton.IsPressing)
+                {
+                    LaunchPlayer(LaunchSpeed, false);
+                }
             }
             else if (dist <= minLaunchDistance)
             {
                 LaunchPlayer(LaunchSpeed, false);
+            }
+        }
+        else if(grappleState == GrappleState.Active)
+        {
+            if (inputButton.IsPressing & curCooldown == 0)
+            {
+                StartPulling();
             }
         }
 
@@ -170,11 +191,7 @@ public class Grapple : Ability
             grappleHand.Velocity += throwDir * HandLaunchSpeed;
             grappleHand.transform.eulerAngles = Vector3.forward * (Mathf.Atan2(throwDir.y, throwDir.x) * Mathf.Rad2Deg);
             grappleState = GrappleState.Launch;
-            curCooldown = pullCooldown;
-        }
-        else if (grappleState == GrappleState.Active)
-        {
-            StartPulling();
+            
         }
         return true;
     }
@@ -189,6 +206,7 @@ public class Grapple : Ability
         PlayerMovement.GravityMultiplier.Multipliers[StatSource.GrappleGravityMult] = 0f;
         Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
         PlayerMovement.Velocity = direction * pullSpeed;
+        forcePullTimer = minPullDuration;
     }
 
     private void LaunchPlayer(float launchVelocity, bool jumpBoost)
@@ -262,6 +280,14 @@ public class Grapple : Ability
             CurCharges--;
         }
         AttachedDirection = direction;
+        curCooldown = pullCooldown;
+        Player.Instance.Movement.Velocity.y = verticalBoost;
+    }
+
+    public void Abort()
+    {
+        grappleState = GrappleState.Idle;
+        curCooldown = throwCooldown;
     }
     
     [ContextMenu("Reset")]

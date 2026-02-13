@@ -14,8 +14,13 @@ public class CameraRestrictions : CinemachineExtension
 
     public Vector2 BoundsPos;
     public Vector2 BoundsSize;
-    public bool xBound = false;
-    public bool yBound = false;
+
+    private const float pixelsPerUnit = 10;
+
+    private float snapToPixel(float value)
+    {
+        return Mathf.Round(value * pixelsPerUnit) / pixelsPerUnit;
+    }
 
     protected override void PostPipelineStageCallback(
         CinemachineVirtualCameraBase vcam,
@@ -31,19 +36,14 @@ public class CameraRestrictions : CinemachineExtension
             Vector3 pos = state.RawPosition;
             Vector3 posCorr = state.PositionCorrection;
 
-            if (xBound)
-            {
-                float newX = Mathf.Clamp(pos.x, BoundsPos.x + camWidth, BoundsPos.x + BoundsSize.x - camWidth);
-                posCorr.x = newX != pos.x ? 0.0f : posCorr.x;
-                pos.x = newX;
-            }
+            float newX = Mathf.Clamp(pos.x, BoundsPos.x + camWidth, BoundsPos.x + BoundsSize.x - camWidth);
+            posCorr.x = newX != pos.x ? 0.0f : posCorr.x;
+            pos.x = snapToPixel(newX);
 
-            if (yBound)
-            {
-                float newY = Mathf.Clamp(pos.y, BoundsPos.y + camHeight, BoundsPos.y + BoundsSize.y - camHeight);
-                posCorr.y = newY != pos.y ? 0.0f : posCorr.y;
-                pos.y = newY;
-            }
+            float newY = Mathf.Clamp(pos.y, BoundsPos.y + camHeight, BoundsPos.y + BoundsSize.y - camHeight);
+            posCorr.y = newY != pos.y ? 0.0f : posCorr.y;
+            pos.y = snapToPixel(newY);
+
             state.RawPosition = pos;
             state.PositionCorrection = posCorr;
         }
@@ -54,13 +54,13 @@ public class CameraRestrictions : CinemachineExtension
             var posCorr = state.PositionCorrection;
             if (xLocked)
             {
-                pos.x = xPosition;
+                pos.x = snapToPixel(xPosition);
                 posCorr.x = 0.0f;
             }
 
             if (yLocked)
             {
-                pos.y = yPosition;
+                pos.y = snapToPixel(yPosition);
                 posCorr.y = 0.0f;
             }
             state.RawPosition = pos;
@@ -90,27 +90,9 @@ public class CameraRestrictions : CinemachineExtension
         yLocked = false;
     }
 
-    public void BoundX(Vector2 boundsPos, Vector2 boundsSize)
+    public void SetBounds(Vector2 boundsPos, Vector2 boundsSize)
     {
-        xBound = true;
         BoundsPos = boundsPos;
         BoundsSize = boundsSize;
-    }
-
-    public void BoundY(Vector2 boundsPos, Vector2 boundsSize)
-    {
-        yBound = true;
-        BoundsPos = boundsPos;
-        BoundsSize = boundsSize;
-    }
-
-    public void UnboundX()
-    {
-        xBound = false;
-    }
-
-    public void UnboundY()
-    {
-        yBound = false;
     }
 }

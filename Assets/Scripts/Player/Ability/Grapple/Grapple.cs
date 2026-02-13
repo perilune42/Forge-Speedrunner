@@ -30,7 +30,7 @@ public class Grapple : Ability, IStatSource
     [SerializeField] private float pullSpeed = 20f;
     [SerializeField] private float minLaunchDistance = 3;   // force launch when getting within 3 tiles
 
-    private int minPullDuration = 15;    // cannot launch until this many frames has passed
+    private int minPullDuration = 10;    // cannot launch until this many frames has passed
     private int forcePullTimer = 0;
 
 

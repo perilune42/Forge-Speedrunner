@@ -48,6 +48,7 @@ public class DynamicEntity : MonoBehaviour
 
     public bool GravityEnabled = true;
     public Stat GravityMultiplier = new Stat(1f);
+
     public bool CollisionsEnabled = true;
     public bool Locked = false;
 
@@ -371,11 +372,14 @@ public class DynamicEntity : MonoBehaviour
 
     private bool CollideWithSemisolid(SemisolidEntity ss)
     {
-        return transform.position.y >= ss.GetBounds().max.y;
+        // collide unless coming from under
+        float minX = SurfaceCollider.bounds.min.x;
+        float maxX = SurfaceCollider.bounds.max.x;
+        return (maxX <= ss.GetBounds().min.x || minX >= ss.GetBounds().max.x ) || transform.position.y >= ss.GetBounds().max.y;
     }
 
     // includes semisolid logic
-    public RaycastHit2D[] CustomBoxCastAll(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
+    public RaycastHit2D[] CustomBoxCastAll(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask, bool semiSolidIsSolid = false)
     {
         RaycastHit2D[] hits = Physics2D.BoxCastAll(origin, size, 0f, direction, distance, layerMask);
         List<RaycastHit2D> finalHits = new();
@@ -384,7 +388,7 @@ public class DynamicEntity : MonoBehaviour
             if (hit)
             {
                 SemisolidEntity hitSemisolid = hit.collider.GetComponent<SemisolidEntity>();
-                if (hitSemisolid == null || (hitSemisolid != null && CollideWithSemisolid(hitSemisolid)))
+                if (hitSemisolid == null || (hitSemisolid != null && (semiSolidIsSolid || CollideWithSemisolid(hitSemisolid))))
                 {
                     finalHits.Add(hit);
                 }
@@ -393,13 +397,13 @@ public class DynamicEntity : MonoBehaviour
         return finalHits.ToArray();
     }
 
-    public RaycastHit2D CustomBoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
+    public RaycastHit2D CustomBoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask, bool semiSolidIsSolid = false)
     {
         var hit = Physics2D.BoxCast(origin, size, 0f, direction, distance, layerMask);
         if (hit)
         {
             SemisolidEntity hitSemisolid = hit.collider.GetComponent<SemisolidEntity>();
-            if (hitSemisolid == null || (hitSemisolid != null && CollideWithSemisolid(hitSemisolid)))
+            if (hitSemisolid == null || (hitSemisolid != null && (semiSolidIsSolid || CollideWithSemisolid(hitSemisolid))))
             {
                 return hit;
             }

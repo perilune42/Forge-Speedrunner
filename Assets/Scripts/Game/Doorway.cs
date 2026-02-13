@@ -91,6 +91,9 @@ public class Doorway : MonoBehaviour
             // }
             blocker.transform.SetParent(transform, false);
             blocker.transform.position = transform.position - (Vector3)GetTransitionDirection();
+            // blocker.transform.position += (Vector3)(GetTransitionDirection()) * 0.5F;
+            if(enclosingRoom.doorwaysLeft.Contains(this) || enclosingRoom.doorwaysUp.Contains(this))
+                blocker.transform.localRotation = Quaternion.Euler(0F, 0F, 180F);
         }
     }
 }

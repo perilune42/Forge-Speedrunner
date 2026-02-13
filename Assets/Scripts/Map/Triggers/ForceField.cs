@@ -1,14 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ForceField : Trigger 
+public class ForceField : Trigger, IStatSource
 {
-    private bool playerInside = false;
 
     [SerializeField] Vector2 force;
+    [SerializeField] Vector2 relativeVelocity;
     [SerializeField] float maxSpeed;
     [SerializeField] float gravityMultiplier = 1f;
+    [SerializeField] float centering = 0;
+    [SerializeField] float stabilization = 0;
 
+    const float minCenteringDist = 0.25f;
+
+    // if true, removes excess velocity that isn't in the direction of the boost
     protected override void Awake()
     {
         base.Awake();
@@ -18,17 +23,61 @@ public class ForceField : Trigger
     {
         if (playerInside)
         {
+            float fdt = Time.fixedDeltaTime;
             Vector2 vel = Player.Instance.Movement.Velocity;
-            Vector2 fh = force.normalized;
+            Vector2 fh;
+            bool isVertical;
+            if (force != Vector2.zero)
+            {
+                fh = force.normalized;
+                isVertical = force.y != 0;
+            }
+            else
+            { 
+                fh = relativeVelocity.normalized;
+                isVertical = relativeVelocity.y != 0;
+            }
+                Vector2 pvProj = Util.Vec2Proj(vel, fh);
+            Vector2 pvPerp = vel - pvProj;
+
+            pvPerp -= pvPerp.normalized * (Mathf.Max(stabilization, pvPerp.magnitude)) * fdt;
+            Player.Instance.Movement.Velocity = pvProj + pvPerp;
+            vel = Player.Instance.Movement.Velocity;
+
+            
+            float midpoint;
+            if (!isVertical)
+            {
+                midpoint = col.bounds.center.y;
+                float d = midpoint - Player.Instance.Movement.transform.position.y;
+                if (Mathf.Abs(d) > minCenteringDist) {
+                    vel += Util.SignOr0(d) * centering * Vector2.up * fdt;
+                }
+                
+            }
+            else
+            {
+                midpoint = col.bounds.center.x;
+                float d = midpoint - Player.Instance.Movement.transform.position.x;
+                if (Mathf.Abs(d) > minCenteringDist)
+                {
+                    vel += Util.SignOr0(d) * centering * Vector2.right * fdt;
+                }
+            }
+
+            Player.Instance.Movement.Velocity = vel;
+            pvProj = Util.Vec2Proj(vel, fh);
+            pvPerp = vel - pvProj;
+
             if (Vector2.Dot(vel, fh) > maxSpeed) return;
-            vel += force * Time.fixedDeltaTime;
+            vel += force * fdt;
+
             if (Vector2.Dot(vel, fh) > maxSpeed) {
                 vel = Player.Instance.Movement.Velocity;
-                Vector2 pvProj = Util.Vec2Proj(vel, fh);
-                Vector2 pvPerp = vel - pvProj;
                 vel = fh * maxSpeed + pvPerp;
-
             }
+
+
             Player.Instance.Movement.Velocity = vel;
         }
     }
@@ -36,20 +85,21 @@ public class ForceField : Trigger
     public override void OnPlayerEnter()
     {
         base.OnPlayerEnter();
-        playerInside = true;
-        Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = gravityMultiplier;
+        Player.Instance.Movement.GravityMultiplier.Multipliers[this] = gravityMultiplier;
+        Player.Instance.Movement.RelativeVelocity.Offsets[this] = relativeVelocity;
     }
 
     public override void OnPlayerExit()
     {
         base.OnPlayerExit();
-        playerInside = false;
-        Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = 1;
+        Player.Instance.Movement.GravityMultiplier.Multipliers.Remove(this);
+        Player.Instance.Movement.RelativeVelocity.Offsets.Remove(this);
     }
 
     [ContextMenu("Set Visual")]
     public void SetVisual()
     {
+        ZeroColliderOffset();
         BoxCollider2D col = GetComponent<BoxCollider2D>();
         SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
         if (sr != null && col != null)

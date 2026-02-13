@@ -71,7 +71,7 @@ public class Drone : Entity
         var grapple = AbilityManager.Instance.GetAbility<Grapple>();
         if (grapple != null && grapple.grappleState == GrappleState.Pulling) return;
         pm.onGround?.Invoke();
-
+        AbilityManager.Instance.GetAbility<Dash>().Recharge();
 
         rechargeTimer = RechargeDuration;
         pm.CanJumpOverride = false;

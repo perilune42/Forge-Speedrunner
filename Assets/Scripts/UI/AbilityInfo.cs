@@ -14,7 +14,7 @@ public class AbilityInfo : MonoBehaviour
     
     private void Start()
     {
-        icon.sprite = Ability.Data.Upgrades[Ability.Level - 1].Icon;
+        icon.sprite = Ability.Data.Icon;
         Ability.onRecharged += () =>
         {
             flashMask.color = Color.white;

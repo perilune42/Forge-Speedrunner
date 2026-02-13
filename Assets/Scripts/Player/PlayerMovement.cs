@@ -357,15 +357,15 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     }
 
-    private bool CanJump()
+    public bool CanJump(bool canOverride = true)
     {
-        return CanJumpOverride || (
+        return (canOverride && CanJumpOverride) || (
             (State == BodyState.OnGround || coyoteFrames > 0)
             && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash)
             );
     }
 
-    private bool CanWallJump()
+    public bool CanWallJump()
     {
         return SpecialState == SpecialState.WallClimb || wallCoyoteFrames > 0;
     }
@@ -377,12 +377,15 @@ public class PlayerMovement : DynamicEntity, IStatSource
         return CanClimb && IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
     }
 
-    private bool CanWallClimb(Vector2 dir)
+    public bool CanWallClimb(Vector2 dir, bool wallLatch = false)
     {
-        if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash && SpecialState != SpecialState.WallClimb) return false;
-        if (!CanClimb) return false;
+        if (!wallLatch)
+        {
+            if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash && SpecialState != SpecialState.WallClimb) return false;
+            if (!CanClimb) return false;
+        }
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 0.5f * PlayerHeight);
-        Vector2 size = new(PlayerWidth, PlayerHeight);
+        Vector2 size = new(PlayerWidth, wallLatch ? PlayerHeight * 1.1f : PlayerHeight);
         RaycastHit2D[] hits = new RaycastHit2D[8];
         ContactFilter2D contactFilter = new ContactFilter2D();
         contactFilter.SetLayerMask(collisionLayer);

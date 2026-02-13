@@ -82,7 +82,7 @@ public class Grapple : Ability, IStatSource
                     LaunchPlayer(false);
                 }
             }
-            else if (dist <= minLaunchDistance)
+            if (grappleState == GrappleState.Pulling && dist <= minLaunchDistance)
             {
                 LaunchPlayer(false);
             }
@@ -123,7 +123,7 @@ public class Grapple : Ability, IStatSource
         {
             Vector2 launchdir = GetThrowDir();
             foreach (var entityHit in PlayerMovement.CustomBoxCastAll((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
-                            new Vector2(0.1f, 0.1f), 0f,
+                            new Vector2(0.9f, 0.9f), 0f,
                             launchdir, GetExpectedRange(), LayerMask.GetMask("Entity")))
             {
                 if (entityHit.collider.GetComponent<Drone>() != null)

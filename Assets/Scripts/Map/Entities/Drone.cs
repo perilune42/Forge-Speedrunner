@@ -66,7 +66,7 @@ public class Drone : Entity
 
     private void TryConsume()
     {
-        if (!active) return;
+        if (!active || pm.CanJump(false) || pm.CanWallJump()) return;
 
         var grapple = AbilityManager.Instance.GetAbility<Grapple>();
         if (grapple != null && grapple.grappleState == GrappleState.Pulling) return;

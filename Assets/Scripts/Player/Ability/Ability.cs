@@ -112,6 +112,7 @@ public abstract class Ability : MonoBehaviour
     public void Recharge()
     {
         curCooldown = 0;
+        onRecharged?.Invoke();
     }
 
     public void SetInputButton(PInput.InputButton button)

@@ -92,8 +92,19 @@ public class PassageEditor : MonoBehaviour
             // take first two 
             if (allColliders.Length >= 2) 
             {
-                Doorway door1 = allColliders[0].GetComponent<Doorway>();
-                Doorway door2 = allColliders[1].GetComponent<Doorway>();
+                Doorway door1 = null;
+                Doorway door2 = null;
+                foreach (Collider2D col in allColliders)
+                {
+                    var potentialDoor = col.GetComponent<Doorway>();
+                    if (potentialDoor != null)
+                    {
+                        if (door1 == null) door1 = potentialDoor;
+                        else if (door2 == null) door2 = potentialDoor;
+                        else break;
+                    }
+                }
+
                 // Debug.Log($"door1: {door1}, door2: {door2}");
                 // Debug.Log($"door1 raw: {allColliders[0]}, door2 raw: {allColliders[1]}");
                 if(door1 != null && door2 != null)

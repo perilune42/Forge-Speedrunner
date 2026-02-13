@@ -13,7 +13,7 @@ public class RoomManager_Inspector : Editor
         RoomManager rm = (RoomManager)target;
         if(GUILayout.Button("Finalize rooms"))
         {
-            rm.AllRooms = rm.GetComponentsInChildren<Room>().ToList();
+            rm.AllRooms = FindObjectsByType<Room>(FindObjectsSortMode.InstanceID).ToList();
 
             foreach (Room room in rm.AllRooms) {
                 Undo.RecordObject(room.transform, "Grid-align rooms");
@@ -23,7 +23,7 @@ public class RoomManager_Inspector : Editor
                 roomPos.y = room.gridPosition.y * rm.BaseHeight * 1.2f;
                 room.transform.position = roomPos;
             }
-
+            
             EditorUtility.SetDirty(rm);
         }
     }

@@ -70,11 +70,16 @@ public class WallLatch : Ability
         }
         pm.Locked = true;
         latchedDirection = dir;
+        pm.onGround?.Invoke();
     }
 
     private void LatchJump()
     {
-        
+        bool instantRecharge = false;
+        if (pm.CanWallClimb(latchedDirection, true))
+        {
+            instantRecharge = true;
+        }
         pm.Jump();
         pm.Velocity.y = verticalSpeed;
         if (pm.FacingDir == latchedDirection)
@@ -88,6 +93,7 @@ public class WallLatch : Ability
             pm.Velocity.x = pm.FacingDir.x * outwardBoost;
         }
         CancelLatch();
+        if (instantRecharge) Recharge();
     }
 
     private void CancelLatch(bool setState = true)

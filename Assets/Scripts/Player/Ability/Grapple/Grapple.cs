@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class Grapple : Ability, IStatSource
@@ -68,22 +69,22 @@ public class Grapple : Ability, IStatSource
             Vector2 vecToHand = grappleHand.transform.position - PlayerMovement.transform.position;
             float dist = vecToHand.magnitude;
             Vector2 direction = vecToHand.normalized;
-            PlayerMovement.Velocity = direction * pullSpeed;
+            PlayerMovement.Velocity = direction * pullSpeed * (1 + chargeTime * chargePerTick);
             if (forcePullTimer == 0)
             {
                 if (PInput.Instance.Jump.HasPressed)
                 {
                     PInput.Instance.Jump.ConsumeBuffer();
-                    LaunchPlayer(LaunchSpeed, true);
+                    LaunchPlayer(true);
                 }
                 else if (!inputButton.IsPressing)
                 {
-                    LaunchPlayer(LaunchSpeed, false);
+                    LaunchPlayer(false);
                 }
             }
             else if (dist <= minLaunchDistance)
             {
-                LaunchPlayer(LaunchSpeed, false);
+                LaunchPlayer(false);
             }
         }
         else if(grappleState == GrappleState.Active)
@@ -96,16 +97,13 @@ public class Grapple : Ability, IStatSource
 
         if (charging)
         {
-            chargeTime++;
-            //grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
-            grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick);
-            /*
-            if (chargeTime >= maxCharge || AbilityButton.StoppedPressing)
+            if (chargeTime < maxCharge)
             {
-                LaunchPlayer(LaunchSpeed * (1f + chargeTime * chargePerTick));
-                chargeTime = 0;
+                chargeTime++;
             }
-            */
+
+            // grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
+            grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick, chargeTime == maxCharge);
         }
 
 
@@ -221,47 +219,24 @@ public class Grapple : Ability, IStatSource
         Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
         PlayerMovement.Velocity = direction * pullSpeed;
         forcePullTimer = minPullDuration;
+        charging = false;
     }
 
-    private void LaunchPlayer(float launchVelocity, bool jumpBoost)
+    private void LaunchPlayer(bool jumpBoost)
     {
+        float launchVelocity = LaunchSpeed * (1f + chargeTime * chargePerTick);
         if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         }
         Vector2 direction = (grappleHand.transform.position - PlayerMovement.transform.position).normalized;
-        Vector2 finalVel;
-        // for quick (non-charged) launches:
-        // mainly give velocity in desired axis
-        /*
-        if (chargeTime < 20)
-        {
-            if (AttachedDirection.x != 0)
-            {
-                finalVel = new Vector2(direction.x * launchVelocity, direction.y * launchVelocity * 0.5f);
-            }
-            else
-            {
-                finalVel = new Vector2(direction.x * launchVelocity * 0.5f, direction.y * launchVelocity);
-            }
-        }
-        else
-        {
-            finalVel = direction * launchVelocity;
-        }
-        if (AttachedDirection.y == 0)
-        {
-            // give small vertical boost on horizontal grapples
-            finalVel += Vector2.up * verticalBoost;
-        }
-        PlayerMovement.Velocity = finalVel;
-        */
         if (jumpBoost)
         {
             PlayerMovement.Jump();
         }
         stopParticleAction += PlayerVFXTrail.PlayParticle(Color.orange);
         RemoveGrapple();
+        chargeTime = 0;
         //Destroy(grappleArrow);
 
         // gain a temporary bonus to ledge climbing
@@ -270,7 +245,7 @@ public class Grapple : Ability, IStatSource
         PlayerMovement.LedgeClimbBonus = 0.5f;
         StartCoroutine(Util.FDelayedCall(60, () => PlayerMovement.LedgeClimbBonus = 0));
         */
-        
+
     }
 
     private void RemoveGrapple()
@@ -296,6 +271,9 @@ public class Grapple : Ability, IStatSource
         AttachedDirection = direction;
         curCooldown = pullCooldown;
         Player.Instance.Movement.Velocity.y = verticalBoost;
+
+        // if (level 2...)
+        charging = true;
     }
 
     public void Abort()

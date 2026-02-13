@@ -9,6 +9,7 @@ public class GrappleHand : DynamicEntity
     private float width;
     private float alpha;
     private Color color;
+    [SerializeField] Color fullyChargedColor;
     [SerializeField] private Sprite attachedSprite;
     protected override void Awake()
     {
@@ -44,10 +45,14 @@ public class GrappleHand : DynamicEntity
         this.lifetime = lifetime;
     }
 
-    public void ApplyChargeVFX(float charge)
+    public void ApplyChargeVFX(float charge, bool fullyCharged)
     {
         lineRenderer.startWidth = width * charge;
         lineRenderer.endWidth = width * charge;
+
+        Color color = this.color;
+        if (fullyCharged) color = fullyChargedColor;
+
         lineRenderer.startColor = new Color(color.r, color.g, color.b, alpha * charge);
         lineRenderer.endColor = new Color(color.r, color.g, color.b, alpha * charge);
     }

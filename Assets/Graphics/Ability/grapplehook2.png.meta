@@ -109,6 +109,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -438,14 +451,14 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      grapplehook2_0: -1734518911
-      grapplehook2_1: 125880489
-      grapplehook2_2: -384373219
-      grapplehook2_3: -193309561
-      grapplehook2_4: -943308526
-      grapplehook2_5: -271524321
-      grapplehook2_6: 1512739852
-      grapplehook2_7: -44806207
+      grapplehook2_0: 132531919
+      grapplehook2_1: -1474070067
+      grapplehook2_2: 32100865
+      grapplehook2_3: 316766722
+      grapplehook2_4: -865840264
+      grapplehook2_5: 1371318244
+      grapplehook2_6: -816808402
+      grapplehook2_7: -1571754301
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

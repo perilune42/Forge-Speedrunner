@@ -19,6 +19,7 @@ public class ShopManager : Singleton<ShopManager>
 
     [Header("Prefabs")]
     [SerializeField] private GameObject upgradePrefab;
+    [SerializeField] private GameObject shopAbilityPrefab;
 
     [Header("Nav Panel Refs")]
     [SerializeField] private TMP_Text moneyText;
@@ -30,6 +31,8 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private TMP_Text moneyGainedText;
 
     [Header("Upgrade Tab Refs")]
+    [SerializeField] private Transform abilityLayoutGroup;
+
     [SerializeField] private Transform upgradeLayoutGroup;
     [SerializeField] private Image upgradeInfoIcon;
     [SerializeField] private TMP_Text upgradeInfoNameText;
@@ -79,6 +82,24 @@ public class ShopManager : Singleton<ShopManager>
             }
             newUpgrade.GetComponent<Upgrade>().Init(abilityData.ID, useCharges);
 
+        }
+
+        UpdateShopAbilities();
+    }
+
+    public void UpdateShopAbilities()
+    {
+        for (int i = 0; i < abilityLayoutGroup.childCount; i++)
+        {
+            Destroy(abilityLayoutGroup.GetChild(i).gameObject);
+        }
+
+        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
+        {
+            if (abilityData.Level <= 0) continue;
+
+            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilityLayoutGroup);
+            shopAbility.GetComponent<ShopAbility>().Init(abilityData);
         }
     }
 

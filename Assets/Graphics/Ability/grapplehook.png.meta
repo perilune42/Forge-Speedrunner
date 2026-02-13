@@ -109,6 +109,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -438,21 +451,21 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      grapplehook_0: -1719981713
-      grapplehook_1: 917026083
-      grapplehook_10: 1620093685
-      grapplehook_11: -832172249
-      grapplehook_12: -1351732773
-      grapplehook_13: 397848504
-      grapplehook_14: -960574227
-      grapplehook_2: 115750290
-      grapplehook_3: 937636863
-      grapplehook_4: -75461807
-      grapplehook_5: 531275583
-      grapplehook_6: -1392078448
-      grapplehook_7: -8149666
-      grapplehook_8: 947773914
-      grapplehook_9: 644501795
+      grapplehook_0: 382190687
+      grapplehook_1: 928127105
+      grapplehook_10: 51246870
+      grapplehook_11: 1145094394
+      grapplehook_12: -617599877
+      grapplehook_13: -1370332504
+      grapplehook_14: 2102981962
+      grapplehook_2: -278675750
+      grapplehook_3: -1939262413
+      grapplehook_4: -461482862
+      grapplehook_5: -393871668
+      grapplehook_6: -1235443272
+      grapplehook_7: -1785700733
+      grapplehook_8: 268386199
+      grapplehook_9: -480621532
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

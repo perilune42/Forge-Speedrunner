@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityData
   ID: 3
   Level: 2
+  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
   Upgrades:
   - {fileID: 11400000, guid: b5f8093e6b52af44a89dad296cd9f8b8, type: 2}
   - {fileID: 11400000, guid: 4306b6f201f71fd479bdcbd4ff2de33a, type: 2}
   MaxCharges: 5
   UsesCharges: 0
+  BindingDisplayString: 

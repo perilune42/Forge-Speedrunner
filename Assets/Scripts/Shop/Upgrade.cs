@@ -35,6 +35,8 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
             ProgressionData.Instance.AbilityDataArray[index].Level++;
             ProgressionData.Instance.AbilityDataArray[index].UsesCharges = usesCharges;
+
+            ShopManager.Instance.UpdateShopAbilities();
         }
     }
 

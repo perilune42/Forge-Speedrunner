@@ -45,6 +45,6 @@ public class Settings : MonoBehaviour
 
     private bool IsValidPath(string path)
     {
-        return path.StartsWith("<Keyboard>");
+        return path.StartsWith("<Keyboard>") || path.StartsWith("<Gamepad>");
     }
 }

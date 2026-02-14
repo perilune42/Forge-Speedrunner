@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7609895826873112746}
   - component: {fileID: 4099927134470676110}
+  - component: {fileID: 1563590238389162049}
   m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
@@ -91,6 +92,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &1563590238389162049
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1087239784804331826}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7af8eceb558d5214680c4c7d64bebc03, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3090179162694909700
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,3 +211,4 @@ MonoBehaviour:
   bounceSpeed: 40
   audioClips:
   - {fileID: 8300000, guid: 395a324baf065c74e8abe6f45569c2c5, type: 3}
+  animator: {fileID: 1563590238389162049}

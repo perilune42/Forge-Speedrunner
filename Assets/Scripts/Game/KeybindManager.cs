@@ -11,7 +11,7 @@ public class KeybindManager : Singleton<KeybindManager>
     public override void Awake()
     {
         base.Awake();
-        LoadKeybindStrings(false);
+        LoadKeybindStrings(true);
         InputSystem.onDeviceChange += (device, change) =>
         {
             switch (change)

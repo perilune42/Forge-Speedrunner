@@ -43,7 +43,7 @@ public class Magnet : Entity
 
     private void InitializeParticles(ParticleSystem particle, float speed)
     {
-        particle.transform.localPosition = new Vector3(coll.size.x * beamWidth * 2f, 0, 0);
+        particle.transform.localPosition = new Vector3(coll.size.x, 0, 0);
         var mainModule = particle.main;
         var sr = mainModule.startRotation;
         sr.constant = -transform.eulerAngles.z * Mathf.Deg2Rad;
@@ -65,7 +65,7 @@ public class Magnet : Entity
         mainModule.startSpeed = ss;
 
         var sl = mainModule.startLifetime;
-        sl.constant = coll.size.x * transform.localScale.x / mainModule.startSpeed.constant;
+        sl.constant = coll.size.x * transform.localScale.x * 0.95f / mainModule.startSpeed.constant;
         mainModule.startLifetime = sl;
     }
 

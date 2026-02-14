@@ -17,7 +17,26 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Update()
     {
-        if (playerMovement.MoveDir != Vector2.zero)
+        if (playerMovement.SpecialState == SpecialState.Dash)
+        {
+            anim.Play("PlayerDash");
+        }
+        else if (playerMovement.SpecialState == SpecialState.WallClimb)
+        {
+            anim.Play("PlayerClimb");
+        }
+        else if (playerMovement.State == BodyState.InAir)
+        {
+            if (playerMovement.jumpFrames > 0)
+            {
+                anim.Play("PlayerJump");
+            }
+            else
+            {
+                anim.Play("PlayerFall");
+            }
+        }
+        else if (playerMovement.MoveDir != Vector2.zero)
         {
             anim.Play("PlayerWalk");
         }

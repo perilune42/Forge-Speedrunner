@@ -20,4 +20,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9134dbc839d0cf0499a7fad811ba8fd3, type: 2}
   MaxCharges: 5
   UsesCharges: 0
-  BindingDisplayString: 
+  BindingDisplayString: U

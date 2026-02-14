@@ -107,11 +107,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4776960669041274326, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: beamRange
-      value: 6
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 4776960669041274326, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: beamWidth
-      value: 0.5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4776960669041274326, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: maxSuckSpeed
@@ -123,15 +123,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7840750390193503643, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: m_LocalScale.x
-      value: 16
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7840750390193503643, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: m_LocalScale.y
-      value: 16
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7840750390193503643, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: m_LocalScale.z
-      value: 16
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7840750390193503643, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: m_LocalPosition.x
@@ -707,6 +707,10 @@ PrefabInstance:
     - target: {fileID: 1288256834093317551, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1928248093444279697, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 64.50003
       objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: 'doorwaysUp.Array.data[0]'

@@ -91,13 +91,13 @@ public class Parry : Ability
             gs.OnGround();
         }
         storedSpeed = pm.PreCollisionVelocity.magnitude;
-        pm.Locked = true;
         hitstopRemaining = hitstopFrames;
         parryPrimedRemaining = 0;
         circle.enabled = true;
         circle.transform.localScale = Vector3.one * 5;
         circle.transform.DOScale(0f, hitstopFrames * Time.fixedDeltaTime).SetEase(Ease.InCubic);
         pm.SpecialState = SpecialState.Normal;
+        pm.Locked = true;
         surfaceDir = hitSurfaceDir;
 
     }

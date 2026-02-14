@@ -12,6 +12,7 @@ public class Bouncer : Entity
     private int currCooldown = 0;
 
     [SerializeField] private List<AudioClip> audioClips;
+    [SerializeField] Animator animator;
 
     const float verticalBoost = 5f;
 
@@ -56,7 +57,7 @@ public class Bouncer : Entity
         }
 
         currCooldown = bounceCooldown;
-
+        animator.Play("BouncerActive");
 
 
         AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);

@@ -53,6 +53,7 @@ public abstract class Ability : MonoBehaviour
         {
             SetInputButton(PInput.Instance.AddAbilityInputButton());
         }
+        UpdateBindingText(inputButton.GetAction());
     }
 
     protected virtual void FixedUpdate()

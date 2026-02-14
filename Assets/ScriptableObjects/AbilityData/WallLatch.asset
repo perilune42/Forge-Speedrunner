@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e1703e4db60ae329daecb721fc074d, type: 3}
   m_Name: WallLatch
   m_EditorClassIdentifier: Assembly-CSharp::AbilityData
-  ID: 3
-  Level: 2
+  ID: 4
+  Level: 1
   Icon: {fileID: 21300000, guid: 28f20b3e67bd4504096a35dc3e8af406, type: 3}
   Upgrades:
   - {fileID: 11400000, guid: eb772b87c2d09db4b8989786e6fc39d2, type: 2}
   - {fileID: 11400000, guid: 55f9b1f2f814d7a4890a7e7556a9499c, type: 2}
   MaxCharges: 5
   UsesCharges: 0
-  BindingDisplayString: 
+  BindingDisplayString: O

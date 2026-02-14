@@ -121,6 +121,8 @@ public class Parry : Ability
 
     public override bool CanUseAbility()
     {
+        if (pm.IsTouching(Vector2.up) || pm.IsTouching(Vector2.down) 
+            ||  pm.IsTouching(Vector2.left) ||  pm.IsTouching(Vector2.right)) return false;
         return base.CanUseAbility();
     }
 

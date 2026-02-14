@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e1703e4db60ae329daecb721fc074d, type: 3}
   m_Name: Parry
   m_EditorClassIdentifier: Assembly-CSharp::AbilityData
-  ID: 4
+  ID: 3
   Level: 0
   Icon: {fileID: 21300000, guid: fe3f002b73e4b4b40bc323238646db1b, type: 3}
   Upgrades:
@@ -20,4 +20,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 110d034fb6705004f8133cbd9700bc05, type: 2}
   MaxCharges: 5
   UsesCharges: 0
-  BindingDisplayString: O
+  BindingDisplayString: L

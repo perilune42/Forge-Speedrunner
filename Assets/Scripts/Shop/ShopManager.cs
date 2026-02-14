@@ -40,7 +40,7 @@ public class ShopManager : Singleton<ShopManager>
 
     [Header("Continue Tab Refs")]
 
-    private const float chargeChance = 0.5f;
+    private const float chargeChance = 0f;
 
     public override void Awake()
     {

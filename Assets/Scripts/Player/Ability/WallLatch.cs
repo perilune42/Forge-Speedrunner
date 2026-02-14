@@ -25,7 +25,11 @@ public class WallLatch : Ability
 
         pm.OnSpecialStateChange += (newState) =>
         {
-            CancelLatch(false);
+            if (latchedDirection != Vector2.zero)
+            {
+                CancelLatch(false);
+            }
+
         };
     }
 

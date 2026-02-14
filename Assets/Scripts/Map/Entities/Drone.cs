@@ -75,7 +75,7 @@ public class Drone : Entity
 
         rechargeTimer = RechargeDuration;
         pm.CanJumpOverride = false;
-        sr.color = Color.white * 0.8f;
+        sr.color = Color.white * 0.5f;
     }
     private void Recharge()
     {

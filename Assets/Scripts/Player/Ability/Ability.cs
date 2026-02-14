@@ -118,7 +118,6 @@ public abstract class Ability : MonoBehaviour
     public void SetInputButton(PInput.InputButton button)
     {
         inputButton = button;
-        Data.BindingDisplayString = inputButton.GetBindingDisplayString();
     }
 
     public void UpdateBindingText(InputAction action)
@@ -126,7 +125,13 @@ public abstract class Ability : MonoBehaviour
         if (inputButton.GetAction().Equals(action))
         {
             Debug.Log("Updated binding display string for ability");
-            Data.BindingDisplayString = inputButton.GetBindingDisplayString();
+            Data.BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
+            Debug.Log(Data.BindingDisplayString);
         }
+    }
+
+    public void UpdateBindingText()
+    {
+        UpdateBindingText(inputButton.GetAction());
     }
 }

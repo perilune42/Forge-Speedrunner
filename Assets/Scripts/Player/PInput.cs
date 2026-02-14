@@ -93,11 +93,11 @@ public class PInput : Singleton<PInput>
             bufferFramesLeft = 0;
         }
 
-        public string GetBindingDisplayString()
+        public string GetBindingDisplayString(int index)
         {
-            string s = action.GetBindingDisplayString();
+            string s = action.GetBindingDisplayString(index);
             
-            return Util.FixControlString(s, action);
+            return Util.FixControlString(s, action, index);
         }
 
         public InputAction GetAction()

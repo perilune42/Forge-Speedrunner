@@ -250,9 +250,9 @@ public static class Util
     /// Some characters, such as Enter and Space, show up as empty when returned by GetBindingDisplayString()
     /// since these are "control characters"
     /// </summary>
-    public static string FixControlString(string s, InputAction action, int index = 0)
+    public static string FixControlString(string s, InputAction action, int index)
     {
-        if ((int)s.ToCharArray()[0] <= 32)
+        if (s.Length == 0 || (int)s.ToCharArray()[0] <= 32)
         {
             string fallbackText = action.bindings[index].path;
             fallbackText = fallbackText.Substring(fallbackText.LastIndexOf('/') + 1);

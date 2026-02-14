@@ -20,6 +20,20 @@ public class AbilityInfo : MonoBehaviour
             flashMask.color = Color.white;
             flashMask.DOColor(Color.clear, 0.5f);
         };
+        
+        InputSystem.onDeviceChange += (device, change) =>
+        {
+            switch (change)
+            {
+                case InputDeviceChange.Added:
+                    if (device is Gamepad) Ability.UpdateBindingText();
+                    break;
+
+                case InputDeviceChange.Removed:
+                    if (device is Gamepad) Ability.UpdateBindingText();
+                    break;
+            }
+        };
     }
 
     private void Update()

@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 
@@ -28,5 +29,10 @@ public class GameplayUI : MonoBehaviour
         {
             Timer.Instance.Pause(false);
         }
+    }
+
+    public void OpenShop()
+    {
+        Game.Instance.GoToShop();
     }
 }

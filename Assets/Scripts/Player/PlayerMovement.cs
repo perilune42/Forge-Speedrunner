@@ -21,7 +21,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     public Vector2 FacingDir = Vector2.right;
 
     public int MaxJumpFrames = 20;
-    private int jumpFrames = 0;
+    public int jumpFrames = 0;
 
     private int coyoteFrames = 0;
     [SerializeField]

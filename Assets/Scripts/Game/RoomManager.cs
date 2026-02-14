@@ -140,8 +140,8 @@ public class RoomManager : Singleton<RoomManager>
     // todo: add fallback in case player hasn't touched one in this room
     public void Respawn()
     {
-        StartCoroutine(roomTransition(activeRoom));
-        StartCoroutine(warpTo(RespawnPosition, Vector2.zero, Vector2.zero, 30));
+        Player.Instance.Movement.Locked = true;
+        StartCoroutine(RoomTransition(activeRoom, RespawnPosition, Vector2.zero, Vector2.zero));
     }
 
     public void ReEnterRoom()
@@ -225,11 +225,10 @@ public class RoomManager : Singleton<RoomManager>
          */
         door2.SuppressNextTransition();
         // do these sequentially. looks clearer
-        yield return roomTransition(door2.enclosingRoom);
-        yield return warpTo(newPlayerPos, preservedVelocity, dir);
+        yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
         door2.EnableTransition();
     }
-    public IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
+    public void WarpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
     {
         PlayerMovement pm = Player.Instance.Movement;
 
@@ -273,16 +272,16 @@ public class RoomManager : Singleton<RoomManager>
             // set one more time in case of jank
             pm.GravityEnabled = false;
         }
-        for (int i = 0; i < lockDuration; i++)
+        StartCoroutine(Util.FDelayedCall(lockDuration, () =>
         {
-            yield return new WaitForFixedUpdate();
-        }
-        PInput.Instance.EnableControls = true;
-        PInput.Instance.MoveInputOverrride = Vector2.zero;
-        pm.GravityEnabled = true;
+            PInput.Instance.EnableControls = true;
+            PInput.Instance.MoveInputOverrride = Vector2.zero;
+            pm.GravityEnabled = true;
+        }));
     }
 
-    private IEnumerator roomTransition(Room room)
+
+    private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
         Debug.Log("start room transition");
         AbilityManager.Instance.ResetAbilites();
@@ -294,6 +293,7 @@ public class RoomManager : Singleton<RoomManager>
 
         // logic moved to CameraController
         CameraController.Instance.SnapToRoom(room);
+        WarpTo(position, preservedVelocity, dir);
 
         // 3 cope frames
         for (int i = 0; i < 3; i++)

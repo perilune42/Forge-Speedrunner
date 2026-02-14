@@ -10,6 +10,6 @@ public class AbilityData : ScriptableObject
     public Sprite Icon;
     public UpgradeData[] Upgrades;
     public int MaxCharges = 5;
-    [HideInInspector] public bool UsesCharges = false;
+    public bool UsesCharges = false;
     [HideInInspector] public string BindingDisplayString;
 }

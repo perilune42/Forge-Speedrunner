@@ -118,6 +118,12 @@ public class Grapple : Ability, IStatSource
 
     private void UpdateIndicator()
     {
+        if (PlayerMovement.IsTouching(GetThrowDir()))
+        {
+            grappleIndicator.gameObject.SetActive(false);
+            return;
+        }
+
         if (CanUseAbility() && grappleState == GrappleState.Idle)
         {
             Vector2 launchdir = GetThrowDir();

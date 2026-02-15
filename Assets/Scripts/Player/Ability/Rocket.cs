@@ -38,12 +38,12 @@ public class Rocket : Ability
                     speed += acceleration;
                     if (speed > maxSpeed) speed = maxSpeed;
                     curSteering *= steeringLoss;
-                    if (Level >= 2 && curSteering < launchSteeringUpgraded) curSteering = launchSteeringUpgraded;
+                    if (CurrentLevel >= 2 && curSteering < launchSteeringUpgraded) curSteering = launchSteeringUpgraded;
                     inertia *= 0.9f;
                 }
                 else
                 {
-                    curSteering = Level >= 2 ? launchSteeringUpgraded : launchSteering;
+                    curSteering = CurrentLevel >= 2 ? launchSteeringUpgraded : launchSteering;
                 }
                 HandleSteering();
                 PlayerMovement.Velocity = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * speed + inertia;

@@ -58,13 +58,13 @@ public class GroundSlam : Ability
     public bool DashInterrupt()
     {
         // if groundslam is level 1 and we are groundslamming, we cannot dash
-        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && Level == 1)
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && CurrentLevel == 1)
         {
             return false;
         }
         // check if we are currently groundslamming and groundSlam is level 2
         // if so, we set the flag of wasSlammingBeforeDash to true
-        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && Level >= 2)
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && CurrentLevel >= 2)
         {
             wasSlammingBeforeDash = true;
             preservedVelocity = Player.Instance.Movement.Velocity;

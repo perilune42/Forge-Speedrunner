@@ -5,27 +5,18 @@ using UnityEngine;
 // stores constant game resources and definitions to be accessed by other classes in any scene
 public class GameRegistry : Singleton<GameRegistry>
 {
-    public AbilitySceneContainer[] Abilities;
+    public Ability[] Abilities;
 
 
     public override void Awake()
     {
         base.Awake();
+        for (int i = 0; i < Abilities.Length; i++)
+        {
+            Ability ability = Abilities[i];
+            ability.ID = i;
+        }
         DontDestroyOnLoad(gameObject);
     }
 
-    public AbilityData[] GetInitialAbilities()
-    {
-        AbilityData[] arr = new AbilityData[Abilities.Length];
-        for (int i = 0; i < Abilities.Length; i++)
-        {
-            Abilities[i].data.ID = i;
-            if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash)
-                Abilities[i].data.Level = 1;
-            else Abilities[i].data.Level = 0;
-
-            arr[i] = Abilities[i].data;
-        }
-        return arr;
-    }
 }

@@ -39,6 +39,7 @@ public class ShopManager : Singleton<ShopManager>
     [Header("Continue Tab Refs")]
 
     private const float chargeChance = 0f;
+    [SerializeField] private int shopOffers = 3;
 
     public override void Awake()
     {
@@ -66,8 +67,13 @@ public class ShopManager : Singleton<ShopManager>
 
         var currentAbilities = AbilityManager.Instance.PlayerAbilities;
 
-        foreach (Ability possibleAbility in GameRegistry.Instance.Abilities)
+        List<Ability> abilityChoices = GameRegistry.Instance.Abilities.Shuffled();
+
+        int count = 0, idx = 0;
+        while (count < shopOffers && idx < abilityChoices.Count)
         {
+            Ability possibleAbility = abilityChoices[idx];
+            idx++;
             bool abilityExists = currentAbilities.TryGetValue(possibleAbility.ID, out var currentAbility);
             if (abilityExists && currentAbility.CurrentLevel >= currentAbility.AllLevels.Length - 1) continue; // upgrade is already max level
 
@@ -87,7 +93,7 @@ public class ShopManager : Singleton<ShopManager>
             }
             int levelToUpgrade = abilityExists ? currentAbility.CurrentLevel + 1 : 0;
             newUpgrade.GetComponent<Upgrade>().Init(possibleAbility, levelToUpgrade, useCharges);
-
+            count++;
         }
 
         UpdateShopAbilities();

@@ -21,6 +21,12 @@ public class Rocket : Ability
         };
     }
 
+    public override void OnReset()
+    {
+        base.OnReset();
+
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();

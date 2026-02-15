@@ -27,6 +27,8 @@ public abstract class Ability : MonoBehaviour
     public bool UsesCharges = false;
     public bool StartUnlocked;
 
+    [HideInInspector] public string BindingDisplayString;
+
     [Header("===========")]
 
     [SerializeField] protected int cooldown;
@@ -135,10 +137,7 @@ public abstract class Ability : MonoBehaviour
         if (inputButton.GetAction().Equals(action))
         {
             Debug.Log("Updated binding display string for ability");
-            /*
-            Data.BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
-            Debug.Log(Data.BindingDisplayString);
-            */
+            BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
         }
     }
 
@@ -146,4 +145,7 @@ public abstract class Ability : MonoBehaviour
     {
         UpdateBindingText(inputButton.GetAction());
     }
+
+    [ContextMenu("Reset")]
+    public virtual void OnReset() { }
 }

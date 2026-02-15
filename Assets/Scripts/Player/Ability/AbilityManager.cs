@@ -118,15 +118,24 @@ public class AbilityManager : Singleton<AbilityManager>
         return PlayerAbilities.Values.ToList();
     }
 
-    /// <summary>
-    /// Use during room transitions to reset ability states
-    /// Currently only Grapple uses this functionality
-    /// </summary>
     public void ResetAbilites()
     {
-        if (TryGetAbility<Grapple>(out Grapple grapple))
+        foreach (var ability in PlayerAbilities.Values)
         {
-            grapple.Reset();
+            ability.OnReset();
+        }
+
+    }
+
+    public void RechargeAbilities()
+    {
+        foreach (Ability ability in PlayerAbilities.Values)
+        {
+            ability.Recharge();
+            if (ability.UsesCharges)
+            {
+                ability.CurCharges = ability.MaxCharges;
+            }
         }
     }
 }

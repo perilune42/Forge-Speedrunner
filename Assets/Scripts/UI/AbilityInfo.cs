@@ -49,7 +49,7 @@ public class AbilityInfo : MonoBehaviour
         
         icon.color = active ? Color.white : Color.gray;
         chargeText.text = Ability.UsesCharges ? $"{Ability.CurCharges}/{Ability.MaxCharges}" : "";
-        // keybindText.SetText(Ability.Data.BindingDisplayString);
+        keybindText.SetText(Ability.BindingDisplayString);
     }
 
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -92,6 +93,24 @@ public class PlayerMovement : DynamicEntity, IStatSource
         OnHitWallRight += DoCollosionChecks;
 
         FacingDir = Vector2.right;
+
+    }
+
+    public void OnReset()
+    {
+        Locked = false;
+        State = BodyState.InAir;
+        SpecialState = SpecialState.Normal;
+        forceMoveFrames = 0;
+        coyoteFrames = 0;
+        jumpFrames = 0;
+        GravityMultiplier.Reset();
+        RelativeVelocity.Reset();
+        CanJumpOverride = false;
+        CanClimb = true;
+        hangTime = false;
+        retainedSpeed = 0;
+        Velocity = Vector2.zero;
     }
 
 

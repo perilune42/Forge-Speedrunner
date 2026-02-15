@@ -93,6 +93,7 @@ public class PInput : Singleton<PInput>
         {
             // a valid input was accepted, clear the input buffer
             bufferFramesLeft = 0;
+            HasPressed = false;
         }
 
         public string GetBindingDisplayString(int index)

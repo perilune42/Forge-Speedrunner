@@ -59,7 +59,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
         // Set UI elements
         UpgradeImage.sprite = ability.Icon;
-        NameText.text = ability.Name;
+        NameText.text = $"{ability.Name} {level}";
         CostText.text = $"${cost}";
         ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
     }

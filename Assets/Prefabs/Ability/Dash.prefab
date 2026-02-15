@@ -44,13 +44,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb899b6878b54cd0f89f7b25bb4ba6d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
-  Data: {fileID: 11400000, guid: 279aa8fc5560780259c7c1cc56a38042, type: 2}
+  Name: Dash
+  Icon: {fileID: 21300000, guid: c59b4faa2ee75474d94098ccc5adcae4, type: 3}
+  AllLevels:
+  - Description: I like cheese
+    Cost: 0
+  - Description: I like cheese
+    Cost: 5
   ID: 0
-  Level: 0
+  CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
+  StartUnlocked: 1
   cooldown: 40
+  info: {fileID: 0}
   dashDuration: 11
   dashVelocity: 15
   CanDiagonalDash: 1

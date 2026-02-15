@@ -17,6 +17,8 @@ public class FullscreenMapUI : MonoBehaviour
     private Color panelColor;
     private Color newColor;
 
+    private bool showingMap;
+
     [SerializeField] private Vector2Int passageSize = new Vector2Int(20, 10); // In pixels
     [SerializeField] private Vector2Int roomSizeMinus = new Vector2Int(8, 8); // Remove some unitX and unitY to show borders
     [SerializeField] private Vector2Int youAreHereSize = new Vector2Int(2, 2); // In pixels
@@ -33,20 +35,15 @@ public class FullscreenMapUI : MonoBehaviour
         screenRes = transform.parent.GetComponent<RectTransform>().sizeDelta;
         panelColor = gameObject.GetComponent<Image>().color;
         newColor = panelColor;
-        toggleMap(); // don't show the panel in the beginning
+        produceImages();
+        toggleMap(false);
     }
 
     private void FixedUpdate()
     {
         if (PInput.Instance.Map.StoppedPressing)
         {
-            if (toggleMap()) {
-                Debug.Log("Produced");
-                produceImages();
-            } else {
-                Debug.Log("Cleared");
-                clearImages();
-            }
+            toggleMap(!showingMap);
         }
     }
 
@@ -173,15 +170,16 @@ public class FullscreenMapUI : MonoBehaviour
     }
 
     // toggles map panel
-    private bool toggleMap() {
-        if (newColor == panelColor) {
-            newColor.a = 0f;
-            gameObject.GetComponent<Image>().color = newColor;
-            return false;
-        } else {
-            newColor = panelColor;
-            gameObject.GetComponent<Image>().color = newColor;
+    private bool toggleMap(bool toggle) {
+        if (toggle) {
+            GetComponent<Canvas>().enabled = true;
+            showingMap = true;
             return true;
+        } else {
+            GetComponent<Canvas>().enabled = false;
+            showingMap = false;
+            return false;
+
         }
     }
 }

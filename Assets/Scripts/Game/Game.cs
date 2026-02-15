@@ -26,7 +26,17 @@ public class Game : Singleton<Game> {
         // start the count at 0
         Timer.speedrunTime = 0F;
         Timer.Instance.Pause(false);
+
+        RoomManager.Instance.SpawnAtStart();
+
+        AbilityManager.Instance.ResetAbilites();
+        AbilityManager.Instance.RechargeAbilities();
+
+        Player.Instance.Movement.OnReset();
+        PInput.Instance.OnReset();
     }
+
+
 
     void Update()
     {

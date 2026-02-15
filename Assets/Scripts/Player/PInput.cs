@@ -18,6 +18,7 @@ public class PInput : Singleton<PInput>
 
     public List<InputButton> AbilityButtons;
 
+    public List<InputButton> AllButtons;
 
     public class InputButton
     {
@@ -37,6 +38,7 @@ public class PInput : Singleton<PInput>
         {
             action = act;
             bufferFrames = buf;
+            Instance.AllButtons.Add(this);
         }
 
         public void Update()
@@ -109,6 +111,7 @@ public class PInput : Singleton<PInput>
     private void Start()
     {
         AbilityButtons = new();
+        AllButtons = new();
 
         move = InputSystem.actions.FindAction("Move");
         Jump = new InputButton(InputSystem.actions.FindAction("Jump"), 8);
@@ -135,20 +138,24 @@ public class PInput : Singleton<PInput>
         { 
             MoveVector = MoveInputOverrride; 
         }
-        Jump.Update();
-        Dash.Update();
-        Map.Update();
-        Interact.Update();
-        foreach (InputButton button in AbilityButtons) button.Update();
+        foreach (InputButton button in AllButtons) button.Update();
     }
 
     private void FixedUpdate()
     {
-        Jump.FixedUpdate();
-        Dash.FixedUpdate();
-        Map.FixedUpdate();
-        Interact.FixedUpdate();
-        foreach (InputButton button in AbilityButtons) button.FixedUpdate();
+        foreach (InputButton button in AllButtons) button.FixedUpdate();
+    }
+
+    public void OnReset()
+    {
+        EnableControls = true;
+        MoveInputOverrride = Vector2.zero;
+        ClearBuffers();
+    }
+
+    public void ClearBuffers()
+    {
+        foreach (InputButton button in AllButtons) button.ConsumeBuffer();
     }
 
     public InputButton AddAbilityInputButton()

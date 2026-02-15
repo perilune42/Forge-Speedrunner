@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class Dash : Ability, IStatSource
 {
     private bool canDash;
+    private bool dashing;
     [SerializeField] private int dashDuration;
     private int curDashDuration;
     [SerializeField] private float dashVelocity;
@@ -23,6 +24,11 @@ public class Dash : Ability, IStatSource
         base.Awake();
     }
 
+    public override void OnReset()
+    {
+        CancelDash();
+    }
+
     public override void Start()
     {
         base.Start();
@@ -37,7 +43,7 @@ public class Dash : Ability, IStatSource
         };
     }
 
-    private bool dashing;
+    
 
 
     public void RefillDash()

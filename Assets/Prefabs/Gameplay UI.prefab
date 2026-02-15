@@ -2233,10 +2233,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Timer, Assembly-CSharp
-        m_MethodName: Pause
-        m_Mode: 6
+      - m_Target: {fileID: 5052318373043881143}
+        m_TargetAssemblyTypeName: GameplayUI, Assembly-CSharp
+        m_MethodName: OpenShop
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2610,9 +2610,10 @@ MonoBehaviour:
   passageSize: {x: 20, y: 10}
   roomSizeMinus: {x: 8, y: 8}
   youAreHereSize: {x: 8, y: 8}
+  negativePosRooms: 0
   roomImage: {fileID: 4328790571213072890, guid: 0fcb0d56a64d14e798fc2d49e891b469, type: 3}
-  passageImage: {fileID: 4328790571213072890, guid: 2236d67d692364317bf4f105d1735a7a, type: 3}
   youAreHereImage: {fileID: 4328790571213072890, guid: 94dad1fff2bce4d4b84f49fc3881a01e, type: 3}
+  passageImage: {fileID: 4328790571213072890, guid: 2236d67d692364317bf4f105d1735a7a, type: 3}
   sizeMult: 0.9
 --- !u!1 &9108139890550181636
 GameObject:

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,18 +15,16 @@ public class AbilityManager : Singleton<AbilityManager>
     [SerializeField] bool allAbilitiesAreCharged = false;
 
 
-    // migrated to GameRegistry, as they are constant definitions
-    // public AbilitySceneContainer[] Abilities;
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent;
     [SerializeField] private GameObject player;
     public PlayerMovement playerMovement;
-    private List<Ability> playerAbilities;
+    public Dictionary<int, Ability> PlayerAbilities;
     
     public override void Awake()
     {
         base.Awake();
-        playerAbilities = new();
+        PlayerAbilities = new();
 
         if (shopDebugMode)
         {
@@ -50,24 +49,24 @@ public class AbilityManager : Singleton<AbilityManager>
 
     private void GivePlayerAbilities()
     {
-        foreach (Ability ability in playerAbilities)
+        foreach (Ability ability in PlayerAbilities.Values)
         {
             Destroy(ability.gameObject);
         }
+        PlayerAbilities.Clear();
         int count = 0;
-        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
+        foreach (Ability presetAbility in GameRegistry.Instance.Abilities)
         {
-
-            if (abilityData.Level > 0 || giveAllAbilities)
+            if (presetAbility.StartUnlocked)
             {
                 if (count >= 4)
                 {
-                    Debug.LogWarning($"Ability {abilityData.name} not given");
+                    Debug.LogWarning($"Ability {presetAbility.Name} not given");
                 }
                 else
                 {
-                    GivePlayerAbility(abilityData.ID);
-                    if (abilityData.ID != 0) count++;
+                    GivePlayerAbility(presetAbility.ID);
+                    if (presetAbility.ID != 0) count++;
                 }
 
             }
@@ -76,30 +75,31 @@ public class AbilityManager : Singleton<AbilityManager>
     
     public void GivePlayerAbility(int index)
     {
-        Ability ability = Instantiate(GameRegistry.Instance.Abilities[index].abilityPrefab, player.transform).GetComponent<Ability>();
-        playerAbilities.Add(ability);
-        ability.Data = ProgressionData.Instance.AbilityDataArray[index];
+        Ability ability = Instantiate(GameRegistry.Instance.Abilities[index], player.transform);
+        PlayerAbilities[index] = ability;
         ability.ID = index;
         if (giveAllAbilities)
         {
-            ability.Level = 2;
+            ability.CurrentLevel = ability.AllLevels.Length - 1;
         }
         else
         {
-            ability.Level = ProgressionData.Instance.AbilityDataArray[index].Level;
+            ability.CurrentLevel = 0;
         }
+        /*
         if (ability.ID != 0 && (allAbilitiesAreCharged || ability.Data.UsesCharges))
         {
             ability.UsesCharges = true;
             ability.MaxCharges = ability.Data.MaxCharges;
             ability.CurCharges = ability.MaxCharges;
         }
+        */
 
     }
 
     public T GetAbility<T>() where T : Ability
     {
-        foreach (Ability ability in playerAbilities)
+        foreach (Ability ability in PlayerAbilities.Values)
         {
             if  (ability.GetType() == typeof(T)) return ability as T;
         }
@@ -115,27 +115,30 @@ public class AbilityManager : Singleton<AbilityManager>
 
     public List<Ability> GetAllAbilities()
     {
-        return playerAbilities;
+        return PlayerAbilities.Values.ToList();
     }
 
-    /// <summary>
-    /// Use during room transitions to reset ability states
-    /// Currently only Grapple uses this functionality
-    /// </summary>
     public void ResetAbilites()
     {
-        if (TryGetAbility<Grapple>(out Grapple grapple))
+        foreach (var ability in PlayerAbilities.Values)
         {
-            grapple.Reset();
+            ability.OnReset();
+        }
+
+    }
+
+    public void RechargeAbilities()
+    {
+        foreach (Ability ability in PlayerAbilities.Values)
+        {
+            ability.Recharge();
+            if (ability.UsesCharges)
+            {
+                ability.CurCharges = ability.MaxCharges;
+            }
         }
     }
 }
 
-[System.Serializable]
-public struct AbilitySceneContainer
-{
-    public GameObject abilityPrefab;
-    public AbilityData data;
-}
 
 

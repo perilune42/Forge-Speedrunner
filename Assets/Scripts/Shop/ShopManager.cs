@@ -13,8 +13,6 @@ public enum ShopTab
 public class ShopManager : Singleton<ShopManager>
 {
     public int Money;
-    public List<UpgradeData> Upgrades;
-
     [SerializeField] private Canvas screen;
 
     [Header("Prefabs")]
@@ -41,6 +39,7 @@ public class ShopManager : Singleton<ShopManager>
     [Header("Continue Tab Refs")]
 
     private const float chargeChance = 0f;
+    [SerializeField] private int shopOffers = 3;
 
     public override void Awake()
     {
@@ -61,14 +60,26 @@ public class ShopManager : Singleton<ShopManager>
         UpdateMoney();
         UpdateTimeTaken();
 
-        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
+        for (int i = 0; i < upgradeLayoutGroup.childCount; i++)
         {
-            if (abilityData.Level >= abilityData.Upgrades.Length) continue; // upgrade is already max level
+            Destroy(upgradeLayoutGroup.GetChild(i).gameObject);
+        }
+
+        var currentAbilities = AbilityManager.Instance.PlayerAbilities;
+
+        List<Ability> abilityChoices = GameRegistry.Instance.Abilities.Shuffled();
+
+        int count = 0, idx = 0;
+        while (count < shopOffers && idx < abilityChoices.Count)
+        {
+            Ability possibleAbility = abilityChoices[idx];
+            idx++;
+            bool abilityExists = currentAbilities.TryGetValue(possibleAbility.ID, out var currentAbility);
+            if (abilityExists && currentAbility.CurrentLevel >= currentAbility.AllLevels.Length - 1) continue; // upgrade is already max level
 
             GameObject newUpgrade = Instantiate(upgradePrefab, upgradeLayoutGroup);
-
             bool useCharges = false;
-            if (abilityData.Level == 0)
+            if (!abilityExists)
             {
                 // newly bought abilities have a chance to be charge based
                 if (Random.value < chargeChance)
@@ -78,10 +89,11 @@ public class ShopManager : Singleton<ShopManager>
             }
             else
             {
-                useCharges = abilityData.UsesCharges;
+                useCharges = currentAbility.UsesCharges;
             }
-            newUpgrade.GetComponent<Upgrade>().Init(abilityData.ID, useCharges);
-
+            int levelToUpgrade = abilityExists ? currentAbility.CurrentLevel + 1 : 0;
+            newUpgrade.GetComponent<Upgrade>().Init(possibleAbility, levelToUpgrade, useCharges);
+            count++;
         }
 
         UpdateShopAbilities();
@@ -94,22 +106,18 @@ public class ShopManager : Singleton<ShopManager>
             Destroy(abilityLayoutGroup.GetChild(i).gameObject);
         }
 
-        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
+        foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
         {
-            if (abilityData.Level <= 0) continue;
-
             GameObject shopAbility = Instantiate(shopAbilityPrefab, abilityLayoutGroup);
-            shopAbility.GetComponent<ShopAbility>().Init(abilityData);
+            shopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
         }
     }
 
-    public void ShowUpgradeInfo(UpgradeData upgradeData)
+    public void ShowUpgradeInfo(Ability ability, int level)
     {
-        if (upgradeData == null) return;
-
-        upgradeInfoIcon.sprite = upgradeData.Icon;
-        upgradeInfoNameText.text = upgradeData.Name;
-        upgradeInfoDescriptionText.text = upgradeData.Description;
+        upgradeInfoIcon.sprite = ability.Icon;
+        upgradeInfoNameText.text = $"{ability.Name} {level}";
+        upgradeInfoDescriptionText.text = ability.AllLevels[level].Description;
     }
 
     public void CloseShop()

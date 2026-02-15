@@ -17,6 +17,13 @@ public class Ricochet : Ability
         PlayerMovement.OnHitWallRight += OnHitWallRight;
     }
 
+    public override void OnReset()
+    {
+        base.OnReset();
+        active = false;
+        curDuration = 0;
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();

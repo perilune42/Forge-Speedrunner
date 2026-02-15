@@ -14,7 +14,7 @@ public class AbilityInfo : MonoBehaviour
     
     private void Start()
     {
-        icon.sprite = Ability.Data.Icon;
+        // icon.sprite = Ability.Data.Icon;
         Ability.onRecharged += () =>
         {
             flashMask.color = Color.white;
@@ -36,6 +36,12 @@ public class AbilityInfo : MonoBehaviour
         };
     }
 
+    public void SetAbility(Ability ability)
+    {
+        this.Ability = ability;
+        icon.sprite = ability.Icon;
+    }
+
     private void Update()
     {
         bool active = Ability.CanUseAbility();
@@ -43,7 +49,7 @@ public class AbilityInfo : MonoBehaviour
         
         icon.color = active ? Color.white : Color.gray;
         chargeText.text = Ability.UsesCharges ? $"{Ability.CurCharges}/{Ability.MaxCharges}" : "";
-        keybindText.SetText(Ability.Data.BindingDisplayString);
+        keybindText.SetText(Ability.BindingDisplayString);
     }
 
 

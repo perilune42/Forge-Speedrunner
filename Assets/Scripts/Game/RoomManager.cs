@@ -57,14 +57,11 @@ public class RoomManager : Singleton<RoomManager>
             originalPosition = Player.Instance.Movement.transform.position;
             RespawnPosition = originalPosition;
             originalRoom = activeRoom;
+            CameraController.Instance.SnapToRoom(activeRoom);
         }
         else
         {
-            activeRoom = StartingRoom;
-            originalPosition = StartingSpawn.position;
-            RespawnPosition = StartingSpawn.position;
-            Player.Instance.Movement.transform.position = StartingSpawn.position;
-            originalRoom = StartingRoom;
+            SpawnAtStart();
         }
 
 
@@ -77,6 +74,16 @@ public class RoomManager : Singleton<RoomManager>
             pass.door1.passage = pass;
             pass.door2.passage = pass;
         }
+        
+    }
+
+    public void SpawnAtStart()
+    {
+        activeRoom = StartingRoom;
+        originalPosition = StartingSpawn.position;
+        RespawnPosition = StartingSpawn.position;
+        Player.Instance.Movement.transform.position = StartingSpawn.position;
+        originalRoom = StartingRoom;
         CameraController.Instance.SnapToRoom(activeRoom);
     }
 

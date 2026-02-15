@@ -44,13 +44,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9a47e2576f6443e4881bafb345f8fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grapple
-  Data: {fileID: 0}
-  ID: 0
-  Level: 0
+  Name: Grapple
+  Icon: {fileID: 21300000, guid: 15ee6fa21e5a1f5458c15e5d7fffa128, type: 3}
+  AllLevels:
+  - Description: I like cheese
+    Cost: 5
+  - Description: I like cheese
+    Cost: 5
+  ID: 1
+  CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
+  StartUnlocked: 1
+  BindingDisplayString: 
   cooldown: 240
+  info: {fileID: 0}
   LaunchSpeed: 24
   HandLaunchSpeed: 80
   GrappleHandPrefab: {fileID: -8708498888079459233, guid: 794a165b42fee426c8df542e3de23a4c, type: 3}

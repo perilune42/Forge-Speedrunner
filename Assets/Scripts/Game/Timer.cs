@@ -15,6 +15,7 @@ public class Timer : Singleton<Timer>
     public const float MAX_TIME = 600f; // Max speedrun time (seconds) in the beggining of a new game
     public static float targetSpeedrunTime = -1f; // Variable to hold max speedrun time
     public static float previousSpeedrunTime;
+    public static float previousTargetTime;
     public static float speedrunTime = 0.0f;
     public static bool timeSpeedrun = true;
 
@@ -63,6 +64,7 @@ public class Timer : Singleton<Timer>
     public static void RecordTime()
     {
         previousSpeedrunTime = speedrunTime;
+        previousTargetTime = targetSpeedrunTime;
         targetSpeedrunTime = previousSpeedrunTime * SPEEDRUN_TIME_SHRINKER;
     }
 

@@ -136,7 +136,6 @@ public abstract class Ability : MonoBehaviour
     {
         if (inputButton.GetAction().Equals(action))
         {
-            Debug.Log("Updated binding display string for ability");
             BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
         }
     }

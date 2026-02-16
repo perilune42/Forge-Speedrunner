@@ -33,6 +33,6 @@ public class GameplayUI : MonoBehaviour
 
     public void OpenShop()
     {
-        Game.Instance.GoToShop();
+        Game.Instance.GoToShop(true);
     }
 }

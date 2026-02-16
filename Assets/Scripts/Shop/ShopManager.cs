@@ -20,12 +20,13 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private GameObject shopAbilityPrefab;
 
     [Header("Nav Panel Refs")]
-    [SerializeField] private TMP_Text moneyText;
+    [SerializeField] private TMP_Text roundText;
+    [SerializeField] private TMP_Text moneyText, prevTargetText, newTargetText;
+
     [SerializeField] private GameObject[] tabs;
 
     [Header("Overview Tab Refs")]
     [SerializeField] private TMP_Text runTimeText;
-    [SerializeField] private TMP_Text targetTimeText;
     [SerializeField] private TMP_Text moneyGainedText;
 
     [Header("Upgrade Tab Refs")]
@@ -53,12 +54,15 @@ public class ShopManager : Singleton<ShopManager>
     }
 
     // pulls up the shop screen with the most updated information
-    public void LoadShop()
+    public void LoadShop(bool newRound)
     {
         screen.gameObject.SetActive(true);
+
+        if (newRound) GainReward();
+
         SwitchTab((int)ShopTab.Review);
-        UpdateMoney();
-        UpdateTimeTaken();
+
+        UpdateRoundInfo();
 
         for (int i = 0; i < upgradeLayoutGroup.childCount; i++)
         {
@@ -97,6 +101,7 @@ public class ShopManager : Singleton<ShopManager>
         }
 
         UpdateShopAbilities();
+        UpdateMoney();
     }
 
     public void UpdateShopAbilities()
@@ -144,7 +149,7 @@ public class ShopManager : Singleton<ShopManager>
 
     private void GainReward()
     {
-        int moneyGained = (int)(Timer.targetSpeedrunTime - Timer.speedrunTime);
+        int moneyGained = (int)(Timer.previousTargetTime - Timer.previousSpeedrunTime);
         moneyGainedText.text = moneyGained + "";
         Money += moneyGained;
         UpdateMoney();
@@ -152,12 +157,14 @@ public class ShopManager : Singleton<ShopManager>
 
     public void UpdateMoney()
     {
-        moneyText.text = Money.ToString();
+        moneyText.text = $"${Money}";
     }
 
-    public void UpdateTimeTaken() {
-        runTimeText.text = Util.SecondsToTime(Timer.speedrunTime);
-        targetTimeText.text = Util.SecondsToTime(Timer.targetSpeedrunTime);
+    public void UpdateRoundInfo() {
+        roundText.text = $"Round {Game.Instance.CurrentRound}";
+        runTimeText.text = $"{Util.SecondsToTime(Timer.previousSpeedrunTime)} / {Util.SecondsToTime(Timer.previousTargetTime)}";
+        prevTargetText.text = $"Prev Target:\n{Util.SecondsToTime(Timer.previousTargetTime)}";
+        newTargetText.text = $"New Target:\n{Util.SecondsToTime(Timer.targetSpeedrunTime)}";
     }
 
     public void ReturnToWorld()

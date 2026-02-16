@@ -6,9 +6,7 @@ public class GameEndTrigger : Trigger
     public override void OnPlayerEnter()
     {
         base.OnPlayerEnter();
-        Timer.RecordTime();
-        // SceneManager.LoadScene("Shop");
-        Game.Instance.GoToShop();
+        Game.Instance.FinishRound();
     }
 
 }

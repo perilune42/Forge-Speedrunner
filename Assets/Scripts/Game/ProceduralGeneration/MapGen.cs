@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class MapGen : MonoBehaviour
@@ -13,11 +14,11 @@ public class MapGen : MonoBehaviour
     }
     public void CreateMap()
     {
-        Room[] roomPrefabs = Array.ConvertAll(GameRegistry.Instance.RoomPrefabs, x => (Room)x);
-        Room start = (Room)GameRegistry.Instance.StartRoom;
+        Room[] roomPrefabs = Array.ConvertAll(GameRegistry.Instance.RoomPrefabs, x => x.GetComponent<Room>());
+        Room start = GameRegistry.Instance.StartRoom.GetComponent<Room>();
         pathGen = new RandomFromPoint(roomPrefabs, start, null); // end is kind of ignored for now
         List<Cell> path = pathGen.Generate(pathSize);
-        Debug.Log("here we are");
+        Debug.Log($"here we are. size: {path.Count}");
 
         foreach(Cell c in path)
         {

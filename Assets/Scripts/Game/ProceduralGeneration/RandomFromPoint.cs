@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using System.Text;
 using Offset = UnityEngine.Vector2Int;
 using static Direction;
 
@@ -20,24 +21,29 @@ public class RandomFromPoint : IPathGenerator
         this.grid = new();
         this.stack = new();
         stack.extractAll(start, new(0,0));
+        grid.InsertRoom(start, new(0,0));
     }
     public List<Cell> Generate(int pathLength)
     {
         for(int i = 0; i < pathLength; i++)
         {
+            Debug.Log($"step {i}");
             Step();
         }
         return grid.uniqueCells; // problem: pointer to internal state
     }
     private void Step()
     {
+        grid.LogEntries();
+
         Direction dir; Offset off; Offset botleft;
         (dir, off) = stack.PopRandom();
         Room possibleRoom = findRoomWith(dir, in roomPrefabs);
         bool fitRoom = grid.CanFit(possibleRoom, off, dir, out botleft);
         if(fitRoom)
         {
-            grid.InsertRoom(possibleRoom, botleft);
+            Debug.Log($"room fit at coord {botleft}");
+            bool x = grid.InsertRoom(possibleRoom, botleft);
             stack.extractAll(possibleRoom, botleft);
         }
     }
@@ -79,6 +85,12 @@ internal class Grid
     private Dictionary<Vector2Int, Openings> grid;
     public List<Cell> uniqueCells;
 
+    public Grid()
+    {
+        grid = new();
+        uniqueCells = new();
+    }
+
     private bool ObstructionWithin(Offset botLeft, Offset topRight, out Offset obstruction)
     {
         Offset current = botLeft;
@@ -89,10 +101,10 @@ internal class Grid
             if(grid.ContainsKey(current))
             {
                 obstruction = current;
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /* Given a ROOM, an entry point at OFFSET, and an entry direction DIR, fit the room. 
@@ -104,6 +116,7 @@ internal class Grid
      */
     public bool CanFit(Room room, Offset offset, Direction dir, out Offset botleft)
     {
+        Debug.Log($"Checking offset {offset} and direction {dir}.");
         // 1. increment by direction
         Offset increment;
         if(dir == LEFT || dir == RIGHT)
@@ -115,19 +128,20 @@ internal class Grid
         List<Doorway> doors;
         if(dir == LEFT)
             doors = room.doorwaysLeft;
-        if(dir == RIGHT)
+        else if(dir == RIGHT)
             doors = room.doorwaysRight;
-        if(dir == UP)
+        else if(dir == UP)
             doors = room.doorwaysUp;
-        if(dir == DOWN)
+        else // dir == DOWN
             doors = room.doorwaysDown;
 
         // 3. true bottom left at current offset
-        Offset trueBotLeft = offset;
+        Offset startingBotLeft = offset;
         if(dir == UP)
-            trueBotLeft.y -= room.size.y+1;
+            startingBotLeft.y -= room.size.y;
         if(dir == RIGHT)
-            trueBotLeft.x -= room.size.x+1;
+            startingBotLeft.x -= room.size.x;
+        Offset trueBotLeft = startingBotLeft;
 
         // 3.1. line up with possible door
         for(int i = 0; i < doors.Count; i++)
@@ -145,6 +159,7 @@ internal class Grid
 
         // 4. check if there's any problem at the default placement
         Offset obstruction;
+        Debug.Log($"Checking ({trueBotLeft.x},{trueBotLeft.y}) and ({topRightBound.x},{topRightBound.y})");
         bool obsExists = ObstructionWithin(trueBotLeft, topRightBound, out obstruction);
         if(!obsExists)
         {
@@ -152,18 +167,19 @@ internal class Grid
             botleft = trueBotLeft;
             return true;
         }
+        Debug.Log($"obsExists: {obsExists}. obstruction: {obstruction}");
 
 
         // 5. find a possible room right below obstruction
         Offset obstructionBound = obstruction;
         if(dir == LEFT || dir == RIGHT)
         {
-            obstructionBound.x = botLeft.x + room.size.x;
+            obstructionBound.x = trueBotLeft.x + room.size.x;
             trueBotLeft.y = obstructionBound.y - room.size.y;
         }
         else
         {
-            obstructionBound.y = botLeft.y + room.size.y;
+            obstructionBound.y = trueBotLeft.y + room.size.y;
             trueBotLeft.x = obstructionBound.x - room.size.x;
         }
 
@@ -175,14 +191,16 @@ internal class Grid
         {
             Offset finalObstruction;
             Offset finalBotLeft = startingBotLeft - increment * connectingDoorwayInd;
-            bool finalObsExist = ObstructionWithin(finalBotLeft, obstructionBound, finalObstruction);
+            bool finalObsExist = ObstructionWithin(finalBotLeft, obstructionBound, out finalObstruction);
             if(!finalObsExist)
             {
                 botleft = finalBotLeft;
                 return true;
             }
+            botleft = new(0,0);
             return false;
         }
+        botleft = new(0,0);
         return false;
     }
 
@@ -194,7 +212,7 @@ internal class Grid
     private void OpenAt(Offset offset, Direction dir)
     {
         Openings opens;
-        bool success = grid.TryGetValue(offset, opens);
+        bool success = grid.TryGetValue(offset, out opens);
         if(success)
         {
             if(dir == LEFT)
@@ -203,12 +221,12 @@ internal class Grid
                 opens.right = true;
             else if(dir == UP)
                 opens.up = true;
-            else if(dir == DOWN)
+            else // dir == DOWN
                 opens.down = true;
             grid[offset] = opens;
         }
         else
-            Debug.Log("Called OpenAt on a nonexistent grid cell!");
+            Debug.Log($"Called OpenAt on a nonexistent grid cell! ({offset.x},{offset.y}).");
 
     }
     public bool InsertRoom(Room room, Offset offset)
@@ -223,8 +241,10 @@ internal class Grid
         }
 
         // update left and right walls
-        for(int j = offset.y; j < offset.y + room.size.y; j++)
+        // for(int j = offset.y; j < offset.y + room.size.y; j++)
+        for(int j = 0; j < room.size.y; j++)
         {
+            int offY = offset.y + j;
             if(room.doorwaysLeft[j] != null)
             {
                 Offset leftOff = new(offset.x, j);
@@ -232,30 +252,54 @@ internal class Grid
             }
             if(room.doorwaysRight[j] != null)
             {
-                Offset rightOff = new(offset.x+roomSize.x-1, j);
+                Offset rightOff = new(offset.x+room.size.x-1, j);
                 OpenAt(rightOff, RIGHT);
             }
         }
 
         // up and down walls
-        for(int i = offset.x; i < offset.x + room.size.x - 1; i++)
+        // for(int i = offset.x; i < offset.x + room.size.x - 1; i++)
+        for(int i = 0; i < room.size.x; i++)
         {
+            int offX = i + offset.x;
             if(room.doorwaysUp[i] != null)
             {
-                Offset upOff = new(i, offset.y);
+                Offset upOff = new(offX, offset.y);
                 OpenAt(upOff, UP);
             }
-            if(room.doorwaysDown[j] != null)
+            if(room.doorwaysDown[i] != null)
             {
-                Offset downOff = new(i, offset.y+room.size.y-1);
+                Offset downOff = new(offX, offset.y+room.size.y-1);
                 OpenAt(downOff, DOWN);
             }
         }
+
+        // create a cell
+        Cell cell = new Cell(room, offset);
+        uniqueCells.Add(cell);
         return true;
     }
     public List<Passage> RealizePath()
     {
-
+        HashSet<Offset> visited = new();
+        Stack<Offset> toVisit = new();
+        List<Passage> passages = new();
+        toVisit.Push(new(0,0));
+        while(toVisit.Count > 0)
+        {
+            break;
+        }
+        // TODO: ACTUALLY FINISH THIS 
+        return null;
+    }
+    public void LogEntries()
+    {
+        StringBuilder sb = new("Grid contains keys:");
+        foreach(Offset x in grid.Keys)
+        {
+            sb.Append($"({x.x},{x.y}) ");
+        }
+        Debug.Log(sb.ToString());
     }
 }
 
@@ -309,7 +353,7 @@ internal class GenStack
             else // UP or DOWN
                 newOffset.x += i;
 
-            newOffset += DirMethods.calcOffset(facingDir);
+            newOffset = DirMethods.calcOffset(newOffset, facingDir);
 
             dirs.Add(facingDir);
             offsets.Add(startingOffset);
@@ -325,10 +369,10 @@ internal class GenStack
         startUp.y += r.size.y;
 
         // extract from all directions
-        this.extractFrom(r.doorwaysLeft, LEFT, startingOffset)
-            .extractFrom(r.doorwaysDown, DOWN, startingOffset)
-            .extractFrom(r.doorwaysUp, UP, startUp)
-            .extractFrom(r.doorwaysRight, RIGHT, startRight);
+        this.extractFrom(r.doorwaysLeft, RIGHT, startingOffset)
+            .extractFrom(r.doorwaysDown, UP, startingOffset)
+            .extractFrom(r.doorwaysUp, DOWN, startUp)
+            .extractFrom(r.doorwaysRight, LEFT, startRight);
         return this;
     }
 }

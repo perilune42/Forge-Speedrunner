@@ -61,7 +61,25 @@ internal class Grid
             this.right = right;
         }
     }
+    // NOTE: i end up not really using Cell "properly" here.
     private Dictionary<Vector2Int, Openings> grid;
+    private List<Cell> uniqueCells;
+
+    private bool ObstructionWithin(Offset botLeft, Offset topRight, out Offset obstruction)
+    {
+        Offset current = botleft;
+        obstruction = current; // prevent compiler error
+        for(int i = botLeft.x; i < topRight.x; i++)
+            for(int j = botLeft.y; j < topRight.y; j++)
+        {
+            if(grid.ContainsKey(current))
+            {
+                obstruction = current;
+                return false;
+            }
+        }
+        return true;
+    }
 
     /* Given a ROOM, an entry point at OFFSET, and an entry direction DIR, fit the room. 
      *   Return TRUE if successful.
@@ -72,7 +90,73 @@ internal class Grid
      */
     public bool CanFit(Room room, Offset offset, Direction dir, out Offset botleft)
     {
+        // 1. increment by direction
+        Offset increment;
+        if(dir == LEFT || dir == RIGHT)
+            increment = new(0, -1);
+        else
+            increment = new(-1, 0);
 
+        // 2. doorway list by direction
+        List<Doorway> doors;
+        if(dir == LEFT)
+            doors = room.doorwaysLeft;
+        if(dir == RIGHT)
+            doors = room.doorwaysRight;
+        if(dir == UP)
+            doors = room.doorwaysUp;
+        if(dir == DOWN)
+            doors = room.doorwaysDown;
+
+        // 3. true bottom left at current offset
+        Offset trueBotLeft = offset;
+        if(dir == UP)
+            trueBotLeft.y -= room.size.y+1;
+        if(dir == RIGHT)
+            trueBotLeft.x -= room.size.x+1;
+
+        // 3.1. line up with possible door
+        int doorwayInd = 0;
+        for(; doorwayInd < doors.Count; doorway++)
+        {
+            if(doors[doorwayInd] == null)
+            {
+                trueBotLeft -= increment;
+            }
+            else
+            {
+                break;
+            }
+        }
+        Offset topRightBound = trueBotLeft + room.size;
+
+        // 4. check if there's any problem at the default placement
+        Offset obstruction;
+        bool obsExists = ObstructionWithin(trueBotLeft, topRightBound, out obstruction);
+        if(!obsExists)
+        {
+            // end here if no problem
+            botleft = trueBotLeft;
+            return true;
+        }
+
+        // 5. find a possible room right below obstruction
+        Offset obstructionBound = obstruction;
+        if(dir == LEFT || dir == RIGHT)
+        {
+            obstructionBound.x = botLeft.x + room.size.x;
+            trueBotLeft.y = obstructionBound.y - room.size.y;
+        }
+        else
+        {
+            obstructionBound.y = botLeft.y + room.size.y;
+            trueBotLeft.x = obstructionBound.x - room.size.x;
+        }
+
+        // 6. find corresponding doorway (if none, end here)
+
+
+        return false;
     }
 
     /* Place the ROOM at the OFFSET inside the internal grid. return TRUE if success.
@@ -134,12 +218,13 @@ internal class Grid
                 Offset upOff = new(i, offset.y);
                 OpenAt(upOff, UP);
             }
-            if(room.doorwaysRight[j] != null)
+            if(room.doorwaysDown[j] != null)
             {
                 Offset downOff = new(i, offset.y+room.size.y-1);
-                OpenAt(downOff, UP);
+                OpenAt(downOff, DOWN);
             }
         }
+        return true;
     }
     public List<Passage> RealizePath()
     {
@@ -196,6 +281,8 @@ internal class GenStack
                 newOffset.y += i;
             else // UP or DOWN
                 newOffset.x += i;
+
+            newOffset += DirMethods.calcOffset(facingDir);
 
             dirs.Add(facingDir);
             offsets.Add(startingOffset);

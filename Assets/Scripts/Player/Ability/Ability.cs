@@ -95,7 +95,8 @@ public abstract class Ability : MonoBehaviour
     /// </summary>
     public virtual bool CanUseAbility()
     {
-        if (PlayerMovement.SpecialState == SpecialState.Rocket && this is not Ricochet) return false;
+        if (PlayerMovement.SpecialState == SpecialState.Rocket && this is not Ricochet && this is not Recall) return false;
+        if (PlayerMovement.SpecialState == SpecialState.Teleport) return false;
         if (UsesCharges)
         {
             return CurCharges > 0;

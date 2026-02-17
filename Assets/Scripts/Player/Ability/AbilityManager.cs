@@ -57,7 +57,7 @@ public class AbilityManager : Singleton<AbilityManager>
         int count = 0;
         foreach (Ability presetAbility in GameRegistry.Instance.Abilities)
         {
-            if (presetAbility.StartUnlocked)
+            if (presetAbility.StartUnlocked || giveAllAbilities)
             {
                 if (count >= 4)
                 {

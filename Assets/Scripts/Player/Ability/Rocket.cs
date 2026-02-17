@@ -10,6 +10,7 @@ public class Rocket : Ability
     private Vector2 inertia;
     private bool launched;
     private float angle;
+    private bool shouldCancel = false;
     [SerializeField] private GameObject rocketVisualPrefab;
     private GameObject rocketVisual;
     public override void Start()
@@ -59,6 +60,7 @@ public class Rocket : Ability
                 CancelAbility();
             }
         }
+        else if (shouldCancel) CancelAbility();
         else if (inputButton.HasPressed) UseAbility();
     }
 
@@ -96,11 +98,14 @@ public class Rocket : Ability
         inertia = PlayerMovement.Velocity;
         launched = false;
         rocketVisual = Instantiate(rocketVisualPrefab, Player.Instance.Sprite.transform);
+        shouldCancel = true;
         return base.UseAbility();
     }
 
     private void CancelAbility()
     {
+        if (PlayerMovement.SpecialState == SpecialState.Teleport) return;
+        Debug.Log("cancelled " + PlayerMovement.SpecialState);
         PlayerMovement.SpecialState = SpecialState.Normal;
         rocketVisual.transform.SetParent(null, true);
         DynamicEntity de = rocketVisual.GetComponent<DynamicEntity>();
@@ -111,5 +116,6 @@ public class Rocket : Ability
         Player.Instance.Sprite.transform.eulerAngles = Vector3.zero;
         launched = false;
         stopParticleAction?.Invoke();
+        shouldCancel = false;
     }
 } 

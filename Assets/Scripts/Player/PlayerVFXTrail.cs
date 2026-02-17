@@ -16,6 +16,8 @@ public class PlayerVFXTrail : MonoBehaviour
 
     private void Awake()
     {
+        if (playerSpriteRenderer == null) playerSpriteRenderer = Player.Instance.Sprite;
+        if (playerMovement == null) playerMovement = Player.Instance.Movement;
         whitePlayerTexture = new Texture2D(playerSpriteRenderer.sprite.texture.width,
             playerSpriteRenderer.sprite.texture.height);
         Color[] pixels = playerSpriteRenderer.sprite.texture.GetPixels();
@@ -86,4 +88,5 @@ public class PlayerVFXTrail : MonoBehaviour
 
         colorOverLifetime.color = gradient;
     }
+
 }

@@ -67,7 +67,7 @@ internal class Grid
 
     private bool ObstructionWithin(Offset botLeft, Offset topRight, out Offset obstruction)
     {
-        Offset current = botleft;
+        Offset current = botLeft;
         obstruction = current; // prevent compiler error
         for(int i = botLeft.x; i < topRight.x; i++)
             for(int j = botLeft.y; j < topRight.y; j++)
@@ -116,10 +116,9 @@ internal class Grid
             trueBotLeft.x -= room.size.x+1;
 
         // 3.1. line up with possible door
-        int doorwayInd = 0;
-        for(; doorwayInd < doors.Count; doorway++)
+        for(int i = 0; i < doors.Count; doorway++)
         {
-            if(doors[doorwayInd] == null)
+            if(doors[i] == null)
             {
                 trueBotLeft -= increment;
             }
@@ -140,6 +139,7 @@ internal class Grid
             return true;
         }
 
+
         // 5. find a possible room right below obstruction
         Offset obstructionBound = obstruction;
         if(dir == LEFT || dir == RIGHT)
@@ -154,8 +154,21 @@ internal class Grid
         }
 
         // 6. find corresponding doorway (if none, end here)
-
-
+        int connectingDoorwayInd = (dir == LEFT || dir == RIGHT)
+            ? startingBotLeft.y - obstructionBound.y
+            : startingBotLeft.x - obstructionBound.x;
+        if(connectingDoorwayInd < doors.Count)
+        {
+            Offset finalObstruction;
+            Offset finalBotLeft = startingBotLeft - increment * connectingDoorwayInd;
+            bool finalObsExist = ObstructionWithin(finalBotLeft, obstructionBound, finalObstruction);
+            if(!finalObsExist)
+            {
+                botleft = finalBotLeft;
+                return true;
+            }
+            return false;
+        }
         return false;
     }
 

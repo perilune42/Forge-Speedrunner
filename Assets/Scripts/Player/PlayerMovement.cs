@@ -293,7 +293,14 @@ public class PlayerMovement : DynamicEntity, IStatSource
         }
             
     }
-    
+
+    public void ForceMove(Vector2 dir, int frames)
+    {
+        MoveDir = dir;
+        forceMoveFrames = frames;
+    }
+
+
     public void EndForceMove()
     {
         forceMoveFrames = 0;
@@ -445,13 +452,14 @@ public class PlayerMovement : DynamicEntity, IStatSource
         float xVel = -wallDir.x * MovementParams.JumpSpeed;
         Velocity = new Vector2(xVel, MovementParams.JumpSpeed);
         // player not allowed to turn around for 5 frames
-        MoveDir = new Vector2(-wallDir.x, 0);
-        forceMoveFrames = maxForceMoveFrames;
+        ForceMove(new Vector2(-wallDir.x, 0), maxForceMoveFrames);
         jumpFrames = MaxJumpFrames;
         wallCoyoteFrames = 0;
         onJump?.Invoke();
         GravityMultiplier.Multipliers[jumpGravityMult] = MovementParams.JumpGravityMult;
     }
+
+
 
     public void EndJump(bool force = false)
     { 

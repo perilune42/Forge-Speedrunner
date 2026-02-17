@@ -17,15 +17,29 @@ public class RandomFromPoint : IPathGenerator
         this.start = start;
         this.end = end;
         this.roomPrefabs = roomPrefabs;
+        this.grid = new();
+        this.stack = new();
+        stack.extractAll(start, new(0,0));
     }
     public List<Cell> Generate(int pathLength)
     {
-        return null;
+        for(int i = 0; i < pathLength; i++)
+        {
+            Step();
+        }
+        return grid.uniqueCells; // problem: pointer to internal state
     }
-    private void Update()
+    private void Step()
     {
-        Direction dir; Offset off;
+        Direction dir; Offset off; Offset botleft;
         (dir, off) = stack.PopRandom();
+        Room possibleRoom = findRoomWith(dir, in roomPrefabs);
+        bool fitRoom = CanFit(possibleRoom, off, dir, out botleft);
+        if(fitRoom)
+        {
+            InsertRoom(possibleRoom, botleft);
+            stack.extractAll(possibleRoom);
+        }
     }
     private Room findRoomWith(Direction entranceDir, in Room[] roomPrefabs)
     {
@@ -63,7 +77,7 @@ internal class Grid
     }
     // NOTE: i end up not really using Cell "properly" here.
     private Dictionary<Vector2Int, Openings> grid;
-    private List<Cell> uniqueCells;
+    public List<Cell> uniqueCells;
 
     private bool ObstructionWithin(Offset botLeft, Offset topRight, out Offset obstruction)
     {

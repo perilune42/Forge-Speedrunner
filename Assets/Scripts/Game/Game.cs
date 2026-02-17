@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Game : Singleton<Game> {
     public int CurrentRound = 1;
+    public bool IsPracticeMode = false;
 
     public void FinishRound()
     {
@@ -41,6 +42,9 @@ public class Game : Singleton<Game> {
 
         Player.Instance.Movement.OnReset();
         PInput.Instance.OnReset();
+
+        IsPracticeMode = practiceMode;
+        GameplayUI.Instance.TogglePracticeMode(practiceMode);
     }
 
 
@@ -54,5 +58,10 @@ public class Game : Singleton<Game> {
             ReturnToPlay(false);
         else if(Input.GetKeyDown(KeyCode.X))
             GoToShop(true);
+
+        if (IsPracticeMode && Input.GetKeyDown(KeyCode.Return))
+        {
+            GoToShop(false);
+        }
     }
 }

@@ -58,12 +58,24 @@ public class ShopManager : Singleton<ShopManager>
     {
         screen.gameObject.SetActive(true);
 
-        if (newRound) GainReward();
+        if (newRound)
+        {
+            GainReward();
+            RestockShop();
+        }
 
         SwitchTab((int)ShopTab.Review);
 
         UpdateRoundInfo();
 
+        
+
+        UpdateShopAbilities();
+        UpdateMoney();
+    }
+
+    public void RestockShop()
+    {
         for (int i = 0; i < upgradeLayoutGroup.childCount; i++)
         {
             Destroy(upgradeLayoutGroup.GetChild(i).gameObject);
@@ -99,9 +111,6 @@ public class ShopManager : Singleton<ShopManager>
             newUpgrade.GetComponent<Upgrade>().Init(possibleAbility, levelToUpgrade, useCharges);
             count++;
         }
-
-        UpdateShopAbilities();
-        UpdateMoney();
     }
 
     public void UpdateShopAbilities()
@@ -165,6 +174,13 @@ public class ShopManager : Singleton<ShopManager>
         runTimeText.text = $"{Util.SecondsToTime(Timer.previousSpeedrunTime)} / {Util.SecondsToTime(Timer.previousTargetTime)}";
         prevTargetText.text = $"Prev Target:\n{Util.SecondsToTime(Timer.previousTargetTime)}";
         newTargetText.text = $"New Target:\n{Util.SecondsToTime(Timer.targetSpeedrunTime)}";
+    }
+
+    // BUTTON REFS
+
+    public void PracticeMode()
+    {
+        Game.Instance.ReturnToPlay(true);
     }
 
     public void ReturnToWorld()

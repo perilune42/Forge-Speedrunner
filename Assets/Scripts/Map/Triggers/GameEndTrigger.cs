@@ -6,7 +6,14 @@ public class GameEndTrigger : Trigger
     public override void OnPlayerEnter()
     {
         base.OnPlayerEnter();
-        Game.Instance.FinishRound();
+        if (!Game.Instance.IsPracticeMode)
+        {
+            Game.Instance.FinishRound();
+        }
+        else
+        {
+            Game.Instance.GoToShop(false);
+        }
     }
 
 }

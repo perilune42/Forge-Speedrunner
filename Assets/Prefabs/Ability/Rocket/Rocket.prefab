@@ -50,7 +50,8 @@ MonoBehaviour:
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  cooldown: 180
+  cooldown: 2400
+  info: {fileID: 0}
   duration: 90
   windupDuration: 60
   minSpeed: 2

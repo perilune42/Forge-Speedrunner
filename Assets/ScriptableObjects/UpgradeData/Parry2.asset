@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e268dea8b3f79df4daabd1b7428c41fa, type: 3}
   m_Name: Parry2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  Name: Ricochet
-  Description: Makes you bounce off walls for a few seconds
-  Icon: {fileID: 6341714471231913716, guid: e39b35a6b74e44c1b937042f0e53025b, type: 3}
+  Name: Parry Upgrade
+  Description: 
+  Icon: {fileID: 0}
   Cost: 6

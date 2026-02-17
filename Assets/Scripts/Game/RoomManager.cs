@@ -35,6 +35,52 @@ public class RoomManager : Singleton<RoomManager>
     [HideInInspector] public ActivatableEntity[] ActivatableEntities;
     [HideInInspector] public Passage[] AllPassages;
 
+    public Vector2 RespawnPosition;
+    public Room StartingRoom;
+    public Transform StartingSpawn;
+
+    [SerializeField] bool overrideStartingRoom;
+
+    void Start()
+    {
+        // Change index of GetChild based on the index of the Passages object's 
+        // index in the children hierarchy
+        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+
+        // AllRooms = GetComponentsInChildren<Room>().ToList();
+
+        ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
+
+        if (overrideStartingRoom)
+        {
+            activeRoom = findActiveRoom(AllRooms);
+            originalPosition = Player.Instance.Movement.transform.position;
+            RespawnPosition = originalPosition;
+            originalRoom = activeRoom;
+        }
+        else
+        {
+            activeRoom = StartingRoom;
+            originalPosition = StartingSpawn.position;
+            RespawnPosition = StartingSpawn.position;
+            Player.Instance.Movement.transform.position = StartingSpawn.position;
+            originalRoom = StartingRoom;
+        }
+
+
+        foreach (Passage pass in AllPassages)
+        {
+            if (pass.door1 == null)
+            {
+                Debug.LogError($"Passage: {pass.name} is invalid!");
+            }
+            pass.door1.passage = pass;
+            pass.door2.passage = pass;
+        }
+        CameraController.Instance.SnapToRoom(activeRoom);
+    }
+
+
     private Room findActiveRoom(List<Room> allRooms)
     {
         Vector3 playerPos = Player.Instance.Movement.transform.position;
@@ -59,28 +105,6 @@ public class RoomManager : Singleton<RoomManager>
         return targetRoom;
     }
 
-    void Start()
-    {
-        // Change index of GetChild based on the index of the Passages object's 
-        // index in the children hierarchy
-        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
-
-        // AllRooms = GetComponentsInChildren<Room>().ToList();
-
-        ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
-
-        activeRoom = findActiveRoom(AllRooms);
-
-        originalPosition = Player.Instance.Movement.transform.position;
-        originalRoom = activeRoom;
-
-        foreach(Passage pass in AllPassages)
-        {
-            pass.door1.passage = pass;
-            pass.door2.passage = pass;
-        }
-        CameraController.Instance.SnapToRoom(activeRoom);
-    }
 
     public void ResetAllEntities()
     {
@@ -111,18 +135,24 @@ public class RoomManager : Singleton<RoomManager>
     {
         StartCoroutine(SwitchRoomCoroutine(door1, door2));
     }
+    
+    // respawn location set by safe zones
+    // todo: add fallback in case player hasn't touched one in this room
     public void Respawn()
+    {
+        Player.Instance.Movement.Locked = true;
+        StartCoroutine(RoomTransition(activeRoom, RespawnPosition, Vector2.zero, Vector2.zero));
+    }
+
+    public void ReEnterRoom()
     {
         PlayerMovement pm = Player.Instance.Movement;
 
-        // in this case, skip most of this. just teleport back to placement position
         if (previousDoorway == null)
         {
-            Debug.Log("hey");
-            StartCoroutine(roomTransition(activeRoom));
-            StartCoroutine(warpTo(originalPosition, new Vector2(0F,0F), new Vector2(1F, 0F)));
             return;
         }
+
 
         // come from the reverse direction this time
         Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
@@ -195,11 +225,10 @@ public class RoomManager : Singleton<RoomManager>
          */
         door2.SuppressNextTransition();
         // do these sequentially. looks clearer
-        yield return roomTransition(door2.enclosingRoom);
-        yield return warpTo(newPlayerPos, preservedVelocity, dir);
+        yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
         door2.EnableTransition();
     }
-    private IEnumerator warpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    public void WarpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
     {
         PlayerMovement pm = Player.Instance.Movement;
 
@@ -226,28 +255,36 @@ public class RoomManager : Singleton<RoomManager>
         const float minTransitionSpeed = 0;
 
         // give some minimum velocity entering the room
-        if (Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
+        if (dir != Vector2.zero && Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
         {
             preservedVelocity = preservedVelocity - dir * Vector2.Dot(preservedVelocity, dir) + dir * minTransitionSpeed;
         }
-        pm.Velocity = preservedVelocity;
+        if (dir != Vector2.zero)
+        {
+            pm.Velocity = preservedVelocity;
+        }
+        else
+        {
+            pm.Velocity = Vector2.zero;
+        }
         if (dir == Vector2.up)
         {
             // set one more time in case of jank
             pm.GravityEnabled = false;
         }
-        for (int i = 0; i < 10; i++)
+        StartCoroutine(Util.FDelayedCall(lockDuration, () =>
         {
-            yield return new WaitForFixedUpdate();
-        }
-        PInput.Instance.EnableControls = true;
-        PInput.Instance.MoveInputOverrride = Vector2.zero;
-        pm.GravityEnabled = true;
+            PInput.Instance.EnableControls = true;
+            PInput.Instance.MoveInputOverrride = Vector2.zero;
+            pm.GravityEnabled = true;
+        }));
     }
 
-    private IEnumerator roomTransition(Room room)
+
+    private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
         Debug.Log("start room transition");
+        AbilityManager.Instance.ResetAbilites();
         FadeToBlack.Instance.FadeIn();
         for (int i = 0; i < TransitionFadeFrames; i++)
         {
@@ -256,6 +293,7 @@ public class RoomManager : Singleton<RoomManager>
 
         // logic moved to CameraController
         CameraController.Instance.SnapToRoom(room);
+        WarpTo(position, preservedVelocity, dir);
 
         // 3 cope frames
         for (int i = 0; i < 3; i++)

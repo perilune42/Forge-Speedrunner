@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   Name: Rocket
   Description: Accelerates you upward.
-  Icon: {fileID: 8609001856656305256, guid: a6ed645b583fa4e6292debdd0fb7f956, type: 3}
+  Icon: {fileID: 21300000, guid: 9fb9934563483d43bbf98df48efaf053, type: 3}
   Cost: 6

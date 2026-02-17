@@ -53,4 +53,4 @@ MonoBehaviour:
   cooldown: 60
   inwardBoost: 6
   outwardBoost: 12
-  verticalSpeed: 14
+  verticalSpeed: 16

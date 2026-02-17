@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 1965864452825060634}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 32, y: 18, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -188,7 +188,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8103520801833904326
 Transform:
   m_ObjectHideFlags: 0
@@ -315,17 +315,7 @@ CompositeCollider2D:
   m_GeometryType: 1
   m_GenerationType: 0
   m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: 7133008913918198279}
-    m_ColliderPaths:
-    - - X: 640000000
-        Y: 360000000
-      - X: 0
-        Y: 360000000
-      - X: 0
-        Y: 0
-      - X: 640000000
-        Y: 0
+  m_ColliderPaths: []
   m_CompositePaths:
     m_Paths:
     - - {x: 63.99997, y: 0}
@@ -385,8 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   Cam: {fileID: 8308772575406028692}
   CinemachineCam: {fileID: 6513534852654443328}
-  CameraBounds: {fileID: 7133008913918198279}
-  CameraConfiner: {fileID: 7258932059136789955}
+  CameraBounds: {fileID: 0}
 --- !u!1 &6851330819165627367
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,7 +387,7 @@ GameObject:
   - component: {fileID: 1725500328616480885}
   - component: {fileID: 6513534852654443328}
   - component: {fileID: 3622866412133707019}
-  - component: {fileID: 7258932059136789955}
+  - component: {fileID: 7637568067024059408}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -495,7 +484,7 @@ MonoBehaviour:
     Time: 0
     Smoothing: 0
     IgnoreY: 0
---- !u!114 &7258932059136789955
+--- !u!114 &7637568067024059408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -504,14 +493,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6851330819165627367}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b2da3fc7fa19bc4dbb48f4d2bfd18cd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineConfiner2D
-  BoundingShape2D: {fileID: 7133008913918198279}
-  Damping: 0.5
-  SlowingDistance: 5
-  OversizeWindow:
-    Enabled: 0
-    MaxWindowSize: 0
-    Padding: 0
-  m_LegacyMaxWindowSize: -2
+  m_EditorClassIdentifier: Assembly-CSharp::CameraRestrictions
+  xPosition: 0
+  xLocked: 0
+  yPosition: 0
+  yLocked: 0
+  BoundsPos: {x: 0, y: 0}
+  BoundsSize: {x: 0, y: 0}

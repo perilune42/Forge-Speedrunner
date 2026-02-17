@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ForceField : Trigger 
+public class ForceField : Trigger, IStatSource
 {
-    private bool playerInside = false;
 
     [SerializeField] Vector2 force;
+    [SerializeField] Vector2 relativeVelocity;
     [SerializeField] float maxSpeed;
     [SerializeField] float gravityMultiplier = 1f;
     [SerializeField] float centering = 0;
@@ -24,17 +24,27 @@ public class ForceField : Trigger
         if (playerInside)
         {
             float fdt = Time.fixedDeltaTime;
-
             Vector2 vel = Player.Instance.Movement.Velocity;
-            Vector2 fh = force.normalized;
-            Vector2 pvProj = Util.Vec2Proj(vel, fh);
+            Vector2 fh;
+            bool isVertical;
+            if (force != Vector2.zero)
+            {
+                fh = force.normalized;
+                isVertical = force.y != 0;
+            }
+            else
+            { 
+                fh = relativeVelocity.normalized;
+                isVertical = relativeVelocity.y != 0;
+            }
+                Vector2 pvProj = Util.Vec2Proj(vel, fh);
             Vector2 pvPerp = vel - pvProj;
 
             pvPerp -= pvPerp.normalized * (Mathf.Max(stabilization, pvPerp.magnitude)) * fdt;
             Player.Instance.Movement.Velocity = pvProj + pvPerp;
             vel = Player.Instance.Movement.Velocity;
 
-            bool isVertical = force.y != 0;
+            
             float midpoint;
             if (!isVertical)
             {
@@ -42,7 +52,6 @@ public class ForceField : Trigger
                 float d = midpoint - Player.Instance.Movement.transform.position.y;
                 if (Mathf.Abs(d) > minCenteringDist) {
                     vel += Util.SignOr0(d) * centering * Vector2.up * fdt;
-                    Debug.Log($"Applying centering force: {Util.SignOr0(d) * centering * Vector2.up * fdt}");
                 }
                 
             }
@@ -76,20 +85,21 @@ public class ForceField : Trigger
     public override void OnPlayerEnter()
     {
         base.OnPlayerEnter();
-        playerInside = true;
-        Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = gravityMultiplier;
+        Player.Instance.Movement.GravityMultiplier.Multipliers[this] = gravityMultiplier;
+        Player.Instance.Movement.RelativeVelocity.Offsets[this] = relativeVelocity;
     }
 
     public override void OnPlayerExit()
     {
         base.OnPlayerExit();
-        playerInside = false;
-        Player.Instance.Movement.GravityMultiplier.Multipliers[StatSource.ForceFieldGravityMult] = 1;
+        Player.Instance.Movement.GravityMultiplier.Multipliers.Remove(this);
+        Player.Instance.Movement.RelativeVelocity.Offsets.Remove(this);
     }
 
     [ContextMenu("Set Visual")]
     public void SetVisual()
     {
+        ZeroColliderOffset();
         BoxCollider2D col = GetComponent<BoxCollider2D>();
         SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
         if (sr != null && col != null)

@@ -6,7 +6,9 @@ public class GroundSlam : Ability
 {
     [SerializeField] private float initialVelocity;
     private int rampUpTime;
-    [SerializeField] private float rampUpAcceleration;
+    [SerializeField] private int timeBeforeAcceleration;
+    [SerializeField] private float rampUpVelocity, rampUpAcceleration;
+    private float rampUpVelocityDefault;
     [SerializeField] private float terminalVelocitySlam;
     private float terminalVelocityDefault;
     [SerializeField] private float heightConversion;
@@ -25,6 +27,7 @@ public class GroundSlam : Ability
             if (PlayerMovement.SpecialState == SpecialState.GroundSlam
                 /* or the ground slam is level 2 and player recently dashed*/) OnGround();
         };
+        rampUpVelocityDefault = rampUpVelocity;
     }
 
     protected override void FixedUpdate()
@@ -44,7 +47,8 @@ public class GroundSlam : Ability
             // If we are currently dashing, then don't apply slam velocity down yet
             if (PlayerMovement.SpecialState == SpecialState.GroundSlam)
             {
-                PlayerMovement.Velocity += Vector2.down * rampUpAcceleration;
+                PlayerMovement.Velocity += Vector2.down * rampUpVelocity;
+                if (rampUpTime >= timeBeforeAcceleration && PlayerMovement.Velocity.y > -initialVelocity) rampUpVelocity += rampUpAcceleration;
             }
         }
         if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
@@ -87,6 +91,7 @@ public class GroundSlam : Ability
         PlayerMovement.SpecialState = SpecialState.GroundSlam;
         terminalVelocityDefault = PlayerMovement.TerminalVelocity;
         PlayerMovement.TerminalVelocity = terminalVelocitySlam;
+        rampUpVelocity = rampUpVelocityDefault;
         rampUpTime = 0;
         base.UseAbility();
         stopParticleAction += PlayerVFXTrail.PlayParticle(Color.purple);
@@ -100,7 +105,7 @@ public class GroundSlam : Ability
         return base.CanUseAbility();
     }
 
-    private void OnGround()
+    public void OnGround()
     {
         Debug.Log(rampUpTime * heightConversion);
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion + minimumSpeedGain);

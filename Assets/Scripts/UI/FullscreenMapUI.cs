@@ -1,9 +1,8 @@
-using System.Collections;
+using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FullscreenMapUI : MonoBehaviour
 {
@@ -12,61 +11,86 @@ public class FullscreenMapUI : MonoBehaviour
     private static Vector2 screenRes;
     private int width;
     private int height;
-    private float maxPosXY;
-    private float minResXY;
+    private float maxPosX;
+    private float maxPosY;
     private Passage[] allPassages;
+    private Color panelColor;
+    private Color newColor;
 
     [SerializeField] private Vector2Int passageSize = new Vector2Int(20, 10); // In pixels
     [SerializeField] private Vector2Int roomSizeMinus = new Vector2Int(8, 8); // Remove some unitX and unitY to show borders
     [SerializeField] private Vector2Int youAreHereSize = new Vector2Int(2, 2); // In pixels
+    [SerializeField] private bool negativePosRooms = false; // Are there rooms on the left side of the starting room too?
     [SerializeField] private Object roomImage;
-    [SerializeField] private Object passageImage;
     [SerializeField] private Object youAreHereImage;
+    [SerializeField] private Object passageImage; // size 2x2
     [SerializeField] [Range(0.1f, 1)] private float sizeMult = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        screenRes = new Vector2(Screen.width, Screen.height);
-
-        // A delay so that allPasssages can be populated first
-        StartCoroutine(produceImages());
+        // screenRes = new Vector2(Screen.width, Screen.height);
+        screenRes = transform.parent.GetComponent<RectTransform>().sizeDelta;
+        panelColor = gameObject.GetComponent<Image>().color;
+        newColor = panelColor;
+        toggleMap(); // don't show the panel in the beginning
     }
 
     private void FixedUpdate()
     {
-        if (PInput.Instance.Map.HasPressed)
+        if (PInput.Instance.Map.StoppedPressing)
         {
-            // pull up the map
+            if (toggleMap()) {
+                Debug.Log("Produced");
+                produceImages();
+            } else {
+                Debug.Log("Cleared");
+                clearImages();
+            }
         }
     }
 
-    IEnumerator produceImages()
+    private void clearImages()
     {
-        yield return new WaitForSeconds(0.05f);
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void produceImages()
+    {
 
         roomManager = RoomManager.Instance;
         allPassages = roomManager.AllPassages;
+        Debug.Log("PAssages: " + allPassages.Length);
         allRooms = roomManager.AllRooms;
         width = roomManager.BaseWidth;
         height = roomManager.BaseHeight;
         FindMaxXY();
-        FindMinResXY();
-        float unitX = sizeMult * minResXY/(maxPosXY * 2);
+
+        Vector2 divided = screenRes / new Vector2 (maxPosX, maxPosY);
+        float unitX = sizeMult * (Mathf.Min(divided.x, divided.y) / 2);
         float unitY = unitX * height/width;
+        float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX - unitX*roomSizeMinus.x/(width));
+        float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY - unitY*roomSizeMinus.y/(height));
+        if (!negativePosRooms) {
+            unitX *= 2;
+            unitY *= 2;
+        }
         
         foreach (Room room in allRooms)
         {
             Object roomObj = Instantiate(roomImage, transform);
-            Vector2 relativePos = new Vector2(room.gridPosition.x * unitX - unitX/2, 
-                room.gridPosition.y * unitY - unitY/2);
+            Vector2 relativePos = new Vector2(room.gridPosition.x * unitX - offsetX, 
+                room.gridPosition.y * unitY - offsetY);
             Vector2 relativeSize = new Vector2(room.size.x * unitX - unitX*roomSizeMinus.x/width, 
                 room.size.y * unitY - unitY*roomSizeMinus.y/height);
             RectTransform roomRect = roomObj.GetComponent<RectTransform>();
             roomRect.localPosition = relativePos;
             roomRect.sizeDelta = relativeSize;
             roomRect.SetAsFirstSibling();
-
+            
             if (roomManager.activeRoom == room)
             {
                 Object youAreHere = Instantiate(youAreHereImage, roomRect);
@@ -74,7 +98,6 @@ public class FullscreenMapUI : MonoBehaviour
                     new Vector2(relativeSize.x/(width*room.size.x) * youAreHereSize.x, 
                     relativeSize.y/(height*room.size.y) * youAreHereSize.y);
             }
-            
 
             foreach (Doorway door in GetDoors(room))
             {
@@ -82,28 +105,22 @@ public class FullscreenMapUI : MonoBehaviour
                 float y = door.transform.localPosition.y;
                 bool show = false;
 
-                // Choosing whether to show the passage (only if left or down)
-                if (x == 0 || x == -0.5) // Left
+                // Centering the doors before instantiating them (when pivot is bottom left)
+                if ((x >= -0.5 && x <= 0) || (y >= -0.5 && y <= 0)) // Left or Down Door
                 {
                     show = true;
-                    y -= roomSizeMinus.y/2;                    
-                } else if (y ==0 || y == -0.5) // Down
-                {
-                    show = true;
-                    x -= roomSizeMinus.x/2;
                 }
 
                 if (show) 
                 {
                     Object passageObj = Instantiate(passageImage, transform);
-                    Vector2 relPos = new Vector2(relativePos.x + (x/width)*unitX, 
-                        relativePos.y + (y/height)*unitY);
+                    Vector2 relPos = new Vector2(relativePos.x + (x/width)*unitX, relativePos.y + (y/height)*unitY);
                     RectTransform passageRect = passageObj.GetComponent<RectTransform>();
                     passageRect.localPosition = relPos;
                     passageRect.sizeDelta = 
                         new Vector2(relativeSize.x/(width*room.size.x) * passageSize.x, 
                         relativeSize.y/(height*room.size.y) * passageSize.y);
-                    if (y == 0)
+                    if (y >= -0.5 && y <= 0)
                     {
                         passageRect.Rotate(0, 0, 90f); 
                     }
@@ -112,7 +129,7 @@ public class FullscreenMapUI : MonoBehaviour
         }
     }
 
-    // Finding all doors for that room
+    // Finding all passages for that room
     private List<Doorway> GetDoors(Room room)
     {
         List<Doorway> doors = new List<Doorway>();
@@ -135,29 +152,36 @@ public class FullscreenMapUI : MonoBehaviour
     // Finding the max X and Y of the grid positions of the room
     private void FindMaxXY()
     {
-        maxPosXY = 1; // Defaulted at 1
+        maxPosX = 1; // Defaulted at 1
+        maxPosY = 1; // Defaulted at 1
         foreach (Room room in allRooms)
         {
-            int x = Mathf.Abs(room.gridPosition.x);
-            int y = Mathf.Abs(room.gridPosition.y);
+            int x = room.gridPosition.x;
+            int y = room.gridPosition.y;
             // Add one if positive x, y because the grid location is based on bottom left corner
-            int fixedX = (x > 0) ? (x + 1) : x; 
-            int fixedY = (y > 0) ? (y + 1) : y; 
-            if (fixedX > maxPosXY)
+            int fixedX = (x > 0) ? (Mathf.Abs(x) + room.size.x) : Mathf.Abs(x); 
+            int fixedY = (y > 0) ? (Mathf.Abs(y) + room.size.y) : Mathf.Abs(y); 
+            if (fixedX > maxPosX)
             {
-                maxPosXY = fixedX;
+                maxPosX = fixedX;
             }
-            if (fixedY > maxPosXY)
+            if (fixedY > maxPosY)
             {
-                maxPosXY = fixedY;
+                maxPosY = fixedY;
             }
         }
     }
 
-    // Finding the smaller between Screen resolutions height and width
-    // This will be used to find a unit for the UI map elements
-    private void FindMinResXY()
-    {
-        minResXY = (screenRes.x < screenRes.y) ? screenRes.x : screenRes.y;
+    // toggles map panel
+    private bool toggleMap() {
+        if (newColor == panelColor) {
+            newColor.a = 0f;
+            gameObject.GetComponent<Image>().color = newColor;
+            return false;
+        } else {
+            newColor = panelColor;
+            gameObject.GetComponent<Image>().color = newColor;
+            return true;
+        }
     }
 }

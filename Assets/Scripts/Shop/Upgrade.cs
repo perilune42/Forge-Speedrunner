@@ -1,18 +1,20 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Upgrade : MonoBehaviour
+public class Upgrade : MonoBehaviour, IPointerEnterHandler
 {
-    private int index;
-    private UpgradeData data;
     public bool IsBought;
 
-    public Image UpgradeImage;
-    public TMP_Text CostText;
-    public TMP_Text ChargeText;
-
+    private int index;
+    private UpgradeData data;
     private bool usesCharges;
+    
+    [SerializeField] private Image UpgradeImage;
+    [SerializeField] private TMP_Text NameText;
+    [SerializeField] private TMP_Text CostText;
+    [SerializeField] private TMP_Text ChargeText;
 
     public void BuyUpgrade()
     {
@@ -33,18 +35,28 @@ public class Upgrade : MonoBehaviour
 
             ProgressionData.Instance.AbilityDataArray[index].Level++;
             ProgressionData.Instance.AbilityDataArray[index].UsesCharges = usesCharges;
+
+            ShopManager.Instance.UpdateShopAbilities();
         }
     }
 
     public void Init(int abilityIndex, bool usesCharges = false)
     {
+        // Set data
         index = abilityIndex;
-        var abilityData = ProgressionData.Instance.AbilityDataArray[abilityIndex];
-        this.data = abilityData.Upgrades[abilityData.Level];
-        UpgradeImage.sprite = this.data.Icon;
-        CostText.text = this.data.Name;
+        AbilityData abilityData = ProgressionData.Instance.AbilityDataArray[abilityIndex];
+        data = abilityData.Upgrades[abilityData.Level];
         this.usesCharges = usesCharges;
-        ChargeText.text = usesCharges ? $"Charges: {abilityData.MaxCharges}" : "";
 
+        // Set UI elements
+        UpgradeImage.sprite = data.Icon;
+        NameText.text = data.Name;
+        CostText.text = $"${data.Cost}";
+        ChargeText.text = usesCharges ? $"({abilityData.MaxCharges})" : "";
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        ShopManager.Instance.ShowUpgradeInfo(data);
     }
 }

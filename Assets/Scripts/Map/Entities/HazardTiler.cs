@@ -6,14 +6,19 @@ using UnityEditor;
 public class HazardTiler : MonoBehaviour
 {
     private Hazard hazard;
-    private SpriteRenderer spriteRenderer;
+    [SerializeField] private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxColl;
     private bool valueChanged = false;
-    public Vector2 DimensionsXY = new(1,1);
+    public Vector2Int DimensionsXY = new(1,1);
+
+    public Vector2 colOffset;
 
     public void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
         hazard = GetComponent<Hazard>();
         boxColl = GetComponent<BoxCollider2D>();
         if(spriteRenderer == null || hazard == null || boxColl == null)
@@ -22,7 +27,7 @@ public class HazardTiler : MonoBehaviour
             return;
         }
         spriteRenderer.drawMode = SpriteDrawMode.Tiled;
-        boxColl.autoTiling = true;
+        // boxColl.autoTiling = true;
     }
 
     private void OnValidate()
@@ -37,13 +42,16 @@ public class HazardTiler : MonoBehaviour
         if(!valueChanged) return;
 
         // new size calculation
-        Rect dim = spriteRenderer.sprite.rect;
+        // Rect dim = spriteRenderer.sprite.rect;
         float unitConversion = spriteRenderer.sprite.pixelsPerUnit;
-        Vector2 newSize =  new Vector2(dim.width, dim.height);
+        Vector2 newSize =  Vector2.one;
         newSize *= DimensionsXY;
-        newSize /= unitConversion;
+        // newSize /= unitConversion;
 
         // set size safely
+        boxColl.size = new Vector2(newSize.x, boxColl.size.y);
+        boxColl.offset = colOffset;
+
         Undo.RecordObject(spriteRenderer, "OnValidate resize in editor");
         spriteRenderer.size = newSize;
         EditorUtility.SetDirty(spriteRenderer);

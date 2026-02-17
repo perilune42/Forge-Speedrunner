@@ -9,9 +9,14 @@ public class GrappleHand : DynamicEntity
     private float width;
     private float alpha;
     private Color color;
+    [SerializeField] Color fullyChargedColor;
+    [SerializeField] private Sprite attachedSprite;
+
+    public Collider col;
     protected override void Awake()
     {
         base.Awake();
+        col = GetComponent<Collider>();
         OnHitWallAny += AttachToWall;
         GravityEnabled = false;
         lineRenderer.enabled = false;
@@ -32,7 +37,8 @@ public class GrappleHand : DynamicEntity
         lifetime--;
         if (lifetime <= 0)
         {
-            Grapple.grappleState = GrappleState.Idle;
+            Grapple.Abort();
+
             Destroy(gameObject);
         }
     }
@@ -42,16 +48,20 @@ public class GrappleHand : DynamicEntity
         this.lifetime = lifetime;
     }
 
-    public void ApplyChargeVFX(float charge)
+    public void ApplyChargeVFX(float charge, bool fullyCharged)
     {
         lineRenderer.startWidth = width * charge;
         lineRenderer.endWidth = width * charge;
+
+        Color color = this.color;
+        if (fullyCharged) color = fullyChargedColor;
+
         lineRenderer.startColor = new Color(color.r, color.g, color.b, alpha * charge);
         lineRenderer.endColor = new Color(color.r, color.g, color.b, alpha * charge);
     }
 
 
-    private void AttachToWall(Entity entity, Vector2 direction)
+    public void AttachToWall(Entity entity, Vector2 direction)
     {
         if (entity) transform.SetParent(entity.transform, true);
         lineRenderer.enabled = true;
@@ -60,6 +70,7 @@ public class GrappleHand : DynamicEntity
         CollisionsEnabled = false;
         Locked = true;
         Grapple.Attach(direction);
+        GetComponent<SpriteRenderer>().sprite = attachedSprite;
         //Grapple.CreateGrappleArrow();
     }
 }

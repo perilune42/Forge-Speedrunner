@@ -7,8 +7,9 @@ public class AbilityData : ScriptableObject
 {
     [HideInInspector] public int ID = -1;
     [HideInInspector] public int Level = 0;
+    public Sprite Icon;
     public UpgradeData[] Upgrades;
     public int MaxCharges = 5;
-    [HideInInspector] public bool UsesCharges = false;
+    public bool UsesCharges = false;
     [HideInInspector] public string BindingDisplayString;
 }

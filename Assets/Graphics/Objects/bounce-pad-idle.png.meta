@@ -5,12 +5,6 @@ TextureImporter:
   - first:
       213: 176517552131904066
     second: bounce-pad-idle_0
-  - first:
-      213: 6796981119954738113
-    second: bounce-pad-idle_1
-  - first:
-      213: -6542808590731764625
-    second: bounce-pad-idle_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 10
@@ -123,9 +117,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 60
-        width: 20
-        height: 30
+        y: 39
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7d66095cb4e946e4f966494a81c4eaa1
-      internalID: -1160689237
+      spriteID: ef3ff33aaee1d1e479777c883ee9a640
+      internalID: -518927636
       vertices: []
       indices: 
       edges: []
@@ -144,10 +138,10 @@ TextureImporter:
       name: bounce-pad-idle_1
       rect:
         serializedVersion: 2
-        x: 20
-        y: 60
-        width: 20
-        height: 30
+        x: 22
+        y: 39
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,8 +150,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 72b7135a9dcf04b4988cf742a7789b90
-      internalID: 1960385773
+      spriteID: ef40fbc3acedf974e998c4802594b6df
+      internalID: 1515068520
       vertices: []
       indices: 
       edges: []
@@ -166,10 +160,10 @@ TextureImporter:
       name: bounce-pad-idle_2
       rect:
         serializedVersion: 2
-        x: 40
-        y: 60
-        width: 20
-        height: 30
+        x: 44
+        y: 39
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,8 +172,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e7330db783186114abe2bcafe227347c
-      internalID: -1473661854
+      spriteID: c0e2d061142559a4d8e941f1fb01108a
+      internalID: 513097243
       vertices: []
       indices: 
       edges: []
@@ -188,10 +182,10 @@ TextureImporter:
       name: bounce-pad-idle_3
       rect:
         serializedVersion: 2
-        x: 60
-        y: 60
-        width: 20
-        height: 30
+        x: 0
+        y: 26
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,8 +194,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dfcd3f9cf7e225e4cb4ba8f00d9a1d24
-      internalID: 2041872122
+      spriteID: 713f1c3919d5e8a41b2221a31bc4a8f6
+      internalID: 2088577366
       vertices: []
       indices: 
       edges: []
@@ -210,10 +204,10 @@ TextureImporter:
       name: bounce-pad-idle_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 30
-        width: 20
-        height: 30
+        x: 22
+        y: 26
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -222,8 +216,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 62973f1c3d94d6947a68090d69444836
-      internalID: -1391929680
+      spriteID: 8bf52918837afb645ae02dc6f2246d49
+      internalID: 1984457262
       vertices: []
       indices: 
       edges: []
@@ -232,10 +226,10 @@ TextureImporter:
       name: bounce-pad-idle_5
       rect:
         serializedVersion: 2
-        x: 20
-        y: 30
-        width: 20
-        height: 30
+        x: 44
+        y: 26
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -244,8 +238,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 01851f60a79eb9243adf17c429a481cb
-      internalID: 499962911
+      spriteID: fa4a7d1288fad8d45861c9e3bf2dcd68
+      internalID: -953064935
       vertices: []
       indices: 
       edges: []
@@ -254,10 +248,10 @@ TextureImporter:
       name: bounce-pad-idle_6
       rect:
         serializedVersion: 2
-        x: 40
-        y: 30
-        width: 20
-        height: 30
+        x: 0
+        y: 13
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -266,8 +260,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 480535d7cb094e6499bd2d56373abf8c
-      internalID: -1323225138
+      spriteID: 4fd5ec0e3bb274c479ad4c74f10db037
+      internalID: -1766094381
       vertices: []
       indices: 
       edges: []
@@ -276,10 +270,10 @@ TextureImporter:
       name: bounce-pad-idle_7
       rect:
         serializedVersion: 2
-        x: 60
-        y: 30
-        width: 20
-        height: 30
+        x: 22
+        y: 13
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -288,8 +282,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 29c499e3916c73d4885c4d76c875eb8c
-      internalID: 1401736031
+      spriteID: 363c088e648e4f0419166142f5829fbc
+      internalID: 1496946547
       vertices: []
       indices: 
       edges: []
@@ -298,10 +292,10 @@ TextureImporter:
       name: bounce-pad-idle_8
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 20
-        height: 30
+        x: 44
+        y: 13
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -310,8 +304,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 32570c78a0c396c4f954ed0cc5bc18fa
-      internalID: 1493090082
+      spriteID: d052687c05017b84494d561f11361009
+      internalID: -308653844
       vertices: []
       indices: 
       edges: []
@@ -320,10 +314,10 @@ TextureImporter:
       name: bounce-pad-idle_9
       rect:
         serializedVersion: 2
-        x: 20
+        x: 0
         y: 0
-        width: 20
-        height: 30
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -332,8 +326,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b145dde9fa37cc1499937c559cf8ef6b
-      internalID: -1734980004
+      spriteID: 65ae729fce0c0d64e92a9a7ef70068a2
+      internalID: -2089144581
       vertices: []
       indices: 
       edges: []
@@ -342,10 +336,10 @@ TextureImporter:
       name: bounce-pad-idle_10
       rect:
         serializedVersion: 2
-        x: 40
+        x: 22
         y: 0
-        width: 20
-        height: 30
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -354,8 +348,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 59260946c8771ad4485224177071fed3
-      internalID: 1496038238
+      spriteID: 4a109d429a1651d4b9c9f690a826f7c8
+      internalID: 287098960
       vertices: []
       indices: 
       edges: []
@@ -364,10 +358,10 @@ TextureImporter:
       name: bounce-pad-idle_11
       rect:
         serializedVersion: 2
-        x: 60
+        x: 44
         y: 0
-        width: 20
-        height: 30
+        width: 22
+        height: 13
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -376,8 +370,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: af836dac2713c86408881eeffb8e82bc
-      internalID: -2085887233
+      spriteID: cfec7f6f36c985f40b315ef9a9980289
+      internalID: 117283501
       vertices: []
       indices: 
       edges: []
@@ -396,20 +390,20 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":3.0},"gridSpriteSize":{"x":20.0,"y":30.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":3.0,"y":4.0},"gridSpriteSize":{"x":22.0,"y":13.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      bounce-pad-idle_0: -1160689237
-      bounce-pad-idle_1: 1960385773
-      bounce-pad-idle_10: 1496038238
-      bounce-pad-idle_11: -2085887233
-      bounce-pad-idle_2: -1473661854
-      bounce-pad-idle_3: 2041872122
-      bounce-pad-idle_4: -1391929680
-      bounce-pad-idle_5: 499962911
-      bounce-pad-idle_6: -1323225138
-      bounce-pad-idle_7: 1401736031
-      bounce-pad-idle_8: 1493090082
-      bounce-pad-idle_9: -1734980004
+      bounce-pad-idle_0: -518927636
+      bounce-pad-idle_1: 1515068520
+      bounce-pad-idle_10: 287098960
+      bounce-pad-idle_11: 117283501
+      bounce-pad-idle_2: 513097243
+      bounce-pad-idle_3: 2088577366
+      bounce-pad-idle_4: 1984457262
+      bounce-pad-idle_5: -953064935
+      bounce-pad-idle_6: -1766094381
+      bounce-pad-idle_7: 1496946547
+      bounce-pad-idle_8: -308653844
+      bounce-pad-idle_9: -2089144581
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

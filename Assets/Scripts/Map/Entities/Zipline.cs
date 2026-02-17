@@ -123,6 +123,7 @@ public class Zipline : Entity, IInteractable
     private void CancelZipline()
     {
         playerIsRiding = false;
+        pm.State = BodyState.InAir;
     }
 
 

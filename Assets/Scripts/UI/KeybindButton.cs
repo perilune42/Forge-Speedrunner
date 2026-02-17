@@ -25,7 +25,9 @@ public class KeybindButton : MonoBehaviour
             operation =>
             {
                 Debug.Log($"Rebound {inputAction} to {operation.selectedControl}");
-                bindText.text = Util.FixControlString(inputAction.GetBindingDisplayString(index), inputAction, index);
+                string bindingString = Util.FixControlString(inputAction.GetBindingDisplayString(index), inputAction, index);
+                bindText.text = bindingString;
+                KeybindManager.Instance.bindingStrings[inputAction] = bindingString;
                 foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
                 {
                     ability.UpdateBindingText(inputAction);

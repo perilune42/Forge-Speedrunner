@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public enum ShopTab
@@ -12,20 +13,34 @@ public enum ShopTab
 public class ShopManager : Singleton<ShopManager>
 {
     public int Money;
-    [SerializeField] public List<UpgradeData> Upgrades;
+    public List<UpgradeData> Upgrades;
 
+    [SerializeField] private Canvas screen;
+
+    [Header("Prefabs")]
     [SerializeField] private GameObject upgradePrefab;
-    [SerializeField] private Transform upgradeLayoutGroup;
+    [SerializeField] private GameObject shopAbilityPrefab;
+
+    [Header("Nav Panel Refs")]
     [SerializeField] private TMP_Text moneyText;
+    [SerializeField] private GameObject[] tabs;
+
+    [Header("Overview Tab Refs")]
     [SerializeField] private TMP_Text runTimeText;
     [SerializeField] private TMP_Text targetTimeText;
     [SerializeField] private TMP_Text moneyGainedText;
 
-    [SerializeField] private GameObject[] tabs;
+    [Header("Upgrade Tab Refs")]
+    [SerializeField] private Transform abilityLayoutGroup;
 
-    [SerializeField] private Canvas screen;
+    [SerializeField] private Transform upgradeLayoutGroup;
+    [SerializeField] private Image upgradeInfoIcon;
+    [SerializeField] private TMP_Text upgradeInfoNameText;
+    [SerializeField] private TMP_Text upgradeInfoDescriptionText;
 
-    private const float chargeChance = 0.5f;
+    [Header("Continue Tab Refs")]
+
+    private const float chargeChance = 0f;
 
     public override void Awake()
     {
@@ -68,6 +83,33 @@ public class ShopManager : Singleton<ShopManager>
             newUpgrade.GetComponent<Upgrade>().Init(abilityData.ID, useCharges);
 
         }
+
+        UpdateShopAbilities();
+    }
+
+    public void UpdateShopAbilities()
+    {
+        for (int i = 0; i < abilityLayoutGroup.childCount; i++)
+        {
+            Destroy(abilityLayoutGroup.GetChild(i).gameObject);
+        }
+
+        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
+        {
+            if (abilityData.Level <= 0) continue;
+
+            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilityLayoutGroup);
+            shopAbility.GetComponent<ShopAbility>().Init(abilityData);
+        }
+    }
+
+    public void ShowUpgradeInfo(UpgradeData upgradeData)
+    {
+        if (upgradeData == null) return;
+
+        upgradeInfoIcon.sprite = upgradeData.Icon;
+        upgradeInfoNameText.text = upgradeData.Name;
+        upgradeInfoDescriptionText.text = upgradeData.Description;
     }
 
     public void CloseShop()

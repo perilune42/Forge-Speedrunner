@@ -53,7 +53,8 @@ MonoBehaviour:
   Velocity: {x: 0, y: 0}
   Gravity: 75
   GravityEnabled: 1
-  GravityMultiplier: 1
+  GravityMultiplier:
+    BaseValue: 1
   CollisionsEnabled: 1
   Locked: 0
   TerminalVelocity: 30
@@ -65,6 +66,8 @@ MonoBehaviour:
     m_Bits: 0
   Grapple: {fileID: 0}
   lineRenderer: {fileID: -8626148767616273302}
+  fullyChargedColor: {r: 0, g: 0.90713024, b: 1, a: 0}
+  attachedSprite: {fileID: 21300000, guid: 6eb17c53f5fb2e3a2925b0e01db11033, type: 3}
 --- !u!61 &-3952376419283584309
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -102,14 +105,14 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.2, y: 1.9}
+    pivot: {x: 0, y: 0.5}
+    oldSize: {x: 1.4, y: 2.6}
     newSize: {x: 2.2, y: 1.9}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 1.5, y: 1.5}
   m_EdgeRadius: 0
 --- !u!212 &4766239049310229237
 SpriteRenderer:
@@ -156,11 +159,11 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -2006356351
+  m_SortingLayer: 1
+  m_SortingOrder: 11
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 8609001856656305256, guid: a6ed645b583fa4e6292debdd0fb7f956, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c7e241e36a67ab881a8337cdd6f6797e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -269,17 +272,17 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0, g: 1, b: 0.78378844, a: 0.7254902}
-      key1: {r: 0, g: 1, b: 0.78431374, a: 0.6392157}
-      key2: {r: 0, g: 0.012297691, b: 0.16037738, a: 1}
-      key3: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.5754717, g: 0.42919657, b: 0.06243326, a: 0.75686276}
+      key1: {r: 0.5754717, g: 0.42919657, b: 0.06243326, a: 0.75686276}
+      key2: {r: 0, g: 1, b: 0.78431374, a: 1}
+      key3: {r: 0, g: 1, b: 0.78431374, a: 1}
       key4: {r: 0, g: 0, b: 0, a: 1}
       key5: {r: 0, g: 0, b: 0, a: 0}
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
       ctime1: 65535
-      ctime2: 59560
+      ctime2: 65535
       ctime3: 65535
       ctime4: 0
       ctime5: 0

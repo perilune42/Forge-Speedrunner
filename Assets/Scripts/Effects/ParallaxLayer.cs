@@ -42,7 +42,8 @@ public class ParallaxLayer : MonoBehaviour
 
         Destroy(baseTile.gameObject);
     }
-    void FixedUpdate()
+
+    void LateUpdate()
     {
         timeOffset += xSpeed * Time.fixedDeltaTime;
         timeOffset = Util.RepeatSigned(timeOffset, 1.5f * tilesOnEachSide * tileWidth);

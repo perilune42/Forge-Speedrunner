@@ -12,6 +12,7 @@ public class Bouncer : Entity
     private int currCooldown = 0;
 
     [SerializeField] private List<AudioClip> audioClips;
+    [SerializeField] Animator animator;
 
     const float verticalBoost = 5f;
 
@@ -52,10 +53,11 @@ public class Bouncer : Entity
                 // less vertical boost when slammed
                 de.Velocity.y = Util.PDir2Vec(bounceDirection).y * bounceSpeed * 0.33f;
             }
+            AbilityManager.Instance.GetAbility<Dash>().Recharge();
         }
 
         currCooldown = bounceCooldown;
-
+        animator.Play("BouncerActive");
 
 
         AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);

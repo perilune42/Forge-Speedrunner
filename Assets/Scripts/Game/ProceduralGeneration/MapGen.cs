@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class MapGen : MonoBehaviour
 {
-    public IPathGenerator pathGen = new DrunkenWalk();
+    public IPathGenerator pathGen;
     public List<Room> createdRooms = new();
     public int pathSize;
     
@@ -13,7 +13,9 @@ public class MapGen : MonoBehaviour
     }
     public void CreateMap()
     {
-        pathGen = new DrunkenWalk();
+        Room[] roomPrefabs = Array.ConvertAll(GameRegistry.Instance.RoomPrefabs, x => (Room)x);
+        Room start = (Room)GameRegistry.Instance.StartRoom;
+        pathGen = new RandomFromPoint(roomPrefabs, start, null); // end is kind of ignored for now
         List<Cell> path = pathGen.Generate(pathSize);
         Debug.Log("here we are");
 

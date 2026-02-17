@@ -27,19 +27,4 @@ public class GameRegistry : Singleton<GameRegistry>
         }
         DontDestroyOnLoad(gameObject);
     }
-
-    public AbilityData[] GetInitialAbilities()
-    {
-        AbilityData[] arr = new AbilityData[Abilities.Length];
-        for (int i = 0; i < Abilities.Length; i++)
-        {
-            Abilities[i].data.ID = i;
-            if (Abilities[i].abilityPrefab.GetComponent<Ability>() is Dash)
-                Abilities[i].data.Level = 1;
-            else Abilities[i].data.Level = 0;
-
-            arr[i] = Abilities[i].data;
-        }
-        return arr;
-    }
 }

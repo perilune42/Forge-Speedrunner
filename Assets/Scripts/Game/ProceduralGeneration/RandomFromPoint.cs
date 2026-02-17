@@ -34,11 +34,11 @@ public class RandomFromPoint : IPathGenerator
         Direction dir; Offset off; Offset botleft;
         (dir, off) = stack.PopRandom();
         Room possibleRoom = findRoomWith(dir, in roomPrefabs);
-        bool fitRoom = CanFit(possibleRoom, off, dir, out botleft);
+        bool fitRoom = grid.CanFit(possibleRoom, off, dir, out botleft);
         if(fitRoom)
         {
-            InsertRoom(possibleRoom, botleft);
-            stack.extractAll(possibleRoom);
+            grid.InsertRoom(possibleRoom, botleft);
+            stack.extractAll(possibleRoom, botleft);
         }
     }
     private Room findRoomWith(Direction entranceDir, in Room[] roomPrefabs)
@@ -130,7 +130,7 @@ internal class Grid
             trueBotLeft.x -= room.size.x+1;
 
         // 3.1. line up with possible door
-        for(int i = 0; i < doors.Count; doorway++)
+        for(int i = 0; i < doors.Count; i++)
         {
             if(doors[i] == null)
             {

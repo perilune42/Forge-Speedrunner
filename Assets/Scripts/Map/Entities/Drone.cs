@@ -14,6 +14,8 @@ public class Drone : Entity
     private bool active => rechargeTimer == 0;
     private bool canJumpNow = false;
 
+    [SerializeField] ParticleSystem jumpParticles;
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -83,6 +85,7 @@ public class Drone : Entity
         rechargeTimer = RechargeDuration;
         canJumpNow = false;
         sr.color = Color.white * 0.5f;
+        jumpParticles.Play();
         return true;
     }
     private void Recharge()

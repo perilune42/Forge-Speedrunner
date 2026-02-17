@@ -62,7 +62,6 @@ MonoBehaviour:
   - {fileID: 4794753739058842650}
   ActivatableEntities: []
   AllPassages: []
-  RespawnPosition: {x: 0, y: 0}
   StartingRoom: {fileID: 4794753739058842650}
   StartingSpawn: {fileID: 7819545021735431735}
   overrideStartingRoom: 0

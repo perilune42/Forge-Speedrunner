@@ -25,8 +25,8 @@ public class Doorway : MonoBehaviour
     {
         if (collision.GetComponent<PlayerMovement>() != null)
         {
-            Debug.Log("you'd normally un-suppress transitions here.");
-            // suppressTransition = false;
+            //Debug.Log("you'd normally un-suppress transitions here.");
+            suppressTransition = false;
         }
     }
 

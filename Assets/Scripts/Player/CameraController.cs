@@ -15,7 +15,6 @@ public class CameraController : Singleton<CameraController>
 
     public void SnapToRoom(Room room)
     {
-        Debug.Log("snapping");
         CameraBounds.transform.position = room.transform.position;
         float xSize = room.size.x * RoomManager.Instance.BaseWidth;
         float ySize = room.size.y * RoomManager.Instance.BaseHeight;

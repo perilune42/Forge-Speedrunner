@@ -10,10 +10,11 @@ public class ShopAbility : MonoBehaviour
     [SerializeField] TextMeshProUGUI abilityName;
     [SerializeField] TextMeshProUGUI abilityCharge;
 
-    public void Init(AbilityData abilityData)
+    public void Init(Ability ability, int level)
     {
-        abilityImage.sprite = abilityData.Icon;
-        abilityName.text = abilityData.name;
-        abilityCharge.text = abilityData.MaxCharges.ToString();
+        AbilityLevel levelInfo = ability.AllLevels[level];
+        abilityImage.sprite = ability.Icon;
+        abilityName.text = $"{ability.Name} {level}";
+        abilityCharge.text = ability.MaxCharges.ToString();
     }
 }

@@ -35,6 +35,12 @@ public class Stat
         }
         return BaseValue * totalMult + totalOffset;
     }
+
+    public void Reset()
+    {
+        Multipliers.Clear();
+        Offsets.Clear();
+    }
 }
 
 [Serializable]
@@ -65,5 +71,10 @@ public class VecStat
             totalOffset += kvp.Value;
         }
         return BaseValue * totalMult + totalOffset;
+    }
+    public void Reset()
+    {
+        Multipliers.Clear();
+        Offsets.Clear();
     }
 }

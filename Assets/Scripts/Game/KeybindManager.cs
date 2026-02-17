@@ -29,7 +29,6 @@ public class KeybindManager : Singleton<KeybindManager>
     
     private void LoadKeybindStrings(bool gamepad)
     {
-        Debug.Log(gamepad);
         foreach (InputAction action in InputSystem.ListEnabledActions())
         {
             for (int i = 0; i < action.bindings.Count; i++)

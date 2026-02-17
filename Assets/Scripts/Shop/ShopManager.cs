@@ -13,8 +13,6 @@ public enum ShopTab
 public class ShopManager : Singleton<ShopManager>
 {
     public int Money;
-    public List<UpgradeData> Upgrades;
-
     [SerializeField] private Canvas screen;
 
     [Header("Prefabs")]
@@ -22,12 +20,13 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private GameObject shopAbilityPrefab;
 
     [Header("Nav Panel Refs")]
-    [SerializeField] private TMP_Text moneyText;
+    [SerializeField] private TMP_Text roundText;
+    [SerializeField] private TMP_Text moneyText, prevTargetText, newTargetText;
+
     [SerializeField] private GameObject[] tabs;
 
     [Header("Overview Tab Refs")]
     [SerializeField] private TMP_Text runTimeText;
-    [SerializeField] private TMP_Text targetTimeText;
     [SerializeField] private TMP_Text moneyGainedText;
 
     [Header("Upgrade Tab Refs")]
@@ -41,6 +40,7 @@ public class ShopManager : Singleton<ShopManager>
     [Header("Continue Tab Refs")]
 
     private const float chargeChance = 0f;
+    [SerializeField] private int shopOffers = 3;
 
     public override void Awake()
     {
@@ -54,21 +54,48 @@ public class ShopManager : Singleton<ShopManager>
     }
 
     // pulls up the shop screen with the most updated information
-    public void LoadShop()
+    public void LoadShop(bool newRound)
     {
         screen.gameObject.SetActive(true);
-        SwitchTab((int)ShopTab.Review);
-        UpdateMoney();
-        UpdateTimeTaken();
 
-        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
+        if (newRound)
         {
-            if (abilityData.Level >= abilityData.Upgrades.Length) continue; // upgrade is already max level
+            GainReward();
+            RestockShop();
+        }
+
+        SwitchTab((int)ShopTab.Review);
+
+        UpdateRoundInfo();
+
+        
+
+        UpdateShopAbilities();
+        UpdateMoney();
+    }
+
+    public void RestockShop()
+    {
+        for (int i = 0; i < upgradeLayoutGroup.childCount; i++)
+        {
+            Destroy(upgradeLayoutGroup.GetChild(i).gameObject);
+        }
+
+        var currentAbilities = AbilityManager.Instance.PlayerAbilities;
+
+        List<Ability> abilityChoices = GameRegistry.Instance.Abilities.Shuffled();
+
+        int count = 0, idx = 0;
+        while (count < shopOffers && idx < abilityChoices.Count)
+        {
+            Ability possibleAbility = abilityChoices[idx];
+            idx++;
+            bool abilityExists = currentAbilities.TryGetValue(possibleAbility.ID, out var currentAbility);
+            if (abilityExists && currentAbility.CurrentLevel >= currentAbility.AllLevels.Length - 1) continue; // upgrade is already max level
 
             GameObject newUpgrade = Instantiate(upgradePrefab, upgradeLayoutGroup);
-
             bool useCharges = false;
-            if (abilityData.Level == 0)
+            if (!abilityExists)
             {
                 // newly bought abilities have a chance to be charge based
                 if (Random.value < chargeChance)
@@ -78,13 +105,12 @@ public class ShopManager : Singleton<ShopManager>
             }
             else
             {
-                useCharges = abilityData.UsesCharges;
+                useCharges = currentAbility.UsesCharges;
             }
-            newUpgrade.GetComponent<Upgrade>().Init(abilityData.ID, useCharges);
-
+            int levelToUpgrade = abilityExists ? currentAbility.CurrentLevel + 1 : 0;
+            newUpgrade.GetComponent<Upgrade>().Init(possibleAbility, levelToUpgrade, useCharges);
+            count++;
         }
-
-        UpdateShopAbilities();
     }
 
     public void UpdateShopAbilities()
@@ -94,22 +120,18 @@ public class ShopManager : Singleton<ShopManager>
             Destroy(abilityLayoutGroup.GetChild(i).gameObject);
         }
 
-        foreach (AbilityData abilityData in ProgressionData.Instance.AbilityDataArray)
+        foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
         {
-            if (abilityData.Level <= 0) continue;
-
             GameObject shopAbility = Instantiate(shopAbilityPrefab, abilityLayoutGroup);
-            shopAbility.GetComponent<ShopAbility>().Init(abilityData);
+            shopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
         }
     }
 
-    public void ShowUpgradeInfo(UpgradeData upgradeData)
+    public void ShowUpgradeInfo(Ability ability, int level)
     {
-        if (upgradeData == null) return;
-
-        upgradeInfoIcon.sprite = upgradeData.Icon;
-        upgradeInfoNameText.text = upgradeData.Name;
-        upgradeInfoDescriptionText.text = upgradeData.Description;
+        upgradeInfoIcon.sprite = ability.Icon;
+        upgradeInfoNameText.text = $"{ability.Name} {level}";
+        upgradeInfoDescriptionText.text = ability.AllLevels[level].Description;
     }
 
     public void CloseShop()
@@ -136,7 +158,7 @@ public class ShopManager : Singleton<ShopManager>
 
     private void GainReward()
     {
-        int moneyGained = (int)(Timer.targetSpeedrunTime - Timer.speedrunTime);
+        int moneyGained = (int)(Timer.previousTargetTime - Timer.previousSpeedrunTime);
         moneyGainedText.text = moneyGained + "";
         Money += moneyGained;
         UpdateMoney();
@@ -144,12 +166,21 @@ public class ShopManager : Singleton<ShopManager>
 
     public void UpdateMoney()
     {
-        moneyText.text = Money.ToString();
+        moneyText.text = $"${Money}";
     }
 
-    public void UpdateTimeTaken() {
-        runTimeText.text = Util.SecondsToTime(Timer.speedrunTime);
-        targetTimeText.text = Util.SecondsToTime(Timer.targetSpeedrunTime);
+    public void UpdateRoundInfo() {
+        roundText.text = $"Round {Game.Instance.CurrentRound}";
+        runTimeText.text = $"{Util.SecondsToTime(Timer.previousSpeedrunTime)} / {Util.SecondsToTime(Timer.previousTargetTime)}";
+        prevTargetText.text = $"Prev Target:\n{Util.SecondsToTime(Timer.previousTargetTime)}";
+        newTargetText.text = $"New Target:\n{Util.SecondsToTime(Timer.targetSpeedrunTime)}";
+    }
+
+    // BUTTON REFS
+
+    public void PracticeMode()
+    {
+        Game.Instance.ReturnToPlay(true);
     }
 
     public void ReturnToWorld()

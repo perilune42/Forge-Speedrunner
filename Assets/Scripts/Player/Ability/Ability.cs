@@ -3,22 +3,33 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[Serializable]
+public struct AbilityLevel
+{
+    public string Description;
+    public int Cost;
+}
+
 public abstract class Ability : MonoBehaviour
 {
-    
-    /// <summary>
-    /// Used for UI in shops and stuff.
-    /// Includes the name, description, and icon of the ability.
-    /// </summary>
-    [HideInInspector] public AbilityData Data;
+    [Header("Ability Metadata")]
 
-    [HideInInspector] public int ID;
+    public string Name;
+    public Sprite Icon;
+
+    public AbilityLevel[] AllLevels;
+    public int ID;
     
-    [HideInInspector] public int Level;
+    public int CurrentLevel;    // 0-indexed
 
     [HideInInspector] public int CurCharges;
-    [HideInInspector] public int MaxCharges;
+    public int MaxCharges;
     public bool UsesCharges = false;
+    public bool StartUnlocked;
+
+    [HideInInspector] public string BindingDisplayString;
+
+    [Header("===========")]
 
     [SerializeField] protected int cooldown;
     protected int curCooldown;
@@ -44,7 +55,7 @@ public abstract class Ability : MonoBehaviour
         if (AbilityManager.Instance.AbilityInfoParent == null) return;
         info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
             AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
-        info.Ability = this;
+        info.SetAbility(this);
         if (this is Dash)
         {
             SetInputButton(PInput.Instance.Dash);
@@ -125,9 +136,7 @@ public abstract class Ability : MonoBehaviour
     {
         if (inputButton.GetAction().Equals(action))
         {
-            Debug.Log("Updated binding display string for ability");
-            Data.BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
-            Debug.Log(Data.BindingDisplayString);
+            BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
         }
     }
 
@@ -135,4 +144,7 @@ public abstract class Ability : MonoBehaviour
     {
         UpdateBindingText(inputButton.GetAction());
     }
+
+    [ContextMenu("Reset")]
+    public virtual void OnReset() { }
 }

@@ -36,7 +36,7 @@ public class PlayerAnimator : MonoBehaviour
                 anim.Play("PlayerFall");
             }
         }
-        else if (playerMovement.MoveDir != Vector2.zero)
+        else if (playerMovement.MoveDir.x != 0)
         {
             anim.Play("PlayerWalk");
         }

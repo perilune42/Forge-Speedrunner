@@ -285,14 +285,15 @@ public class Grapple : Ability, IStatSource
         grappleState = GrappleState.Idle;
         curCooldown = throwCooldown;
     }
-    
-    [ContextMenu("Reset")]
-    public void Reset()
+
+    public override void OnReset()
     {
+        base.OnReset();
         if (grappleHand == null) return;
         Destroy(grappleHand.gameObject);
         grappleState = GrappleState.Idle;
     }
+
 
     /*public void CreateGrappleArrow()
     {

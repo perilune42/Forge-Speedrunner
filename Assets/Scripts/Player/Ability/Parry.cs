@@ -33,6 +33,15 @@ public class Parry : Ability
         };
     }
 
+    public override void OnReset()
+    {
+        base.OnReset();
+        hitstopRemaining = 0;
+        parryPrimedRemaining = 0;
+        storedSpeed = 0;
+        circle.enabled = false;
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -75,7 +84,6 @@ public class Parry : Ability
 
         return true;
     }
-
     private void PrimeParry()
     {
         parryPrimedRemaining = parryPrimedFrames;

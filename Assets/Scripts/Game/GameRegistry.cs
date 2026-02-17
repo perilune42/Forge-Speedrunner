@@ -5,7 +5,7 @@ using UnityEngine;
 // stores constant game resources and definitions to be accessed by other classes in any scene
 public class GameRegistry : Singleton<GameRegistry>
 {
-    public AbilitySceneContainer[] Abilities;
+    public Ability[] Abilities;
 
     // NOTE: make sure RoomPrefabs does not include StartRoom!
     public GameObject[] RoomPrefabs;
@@ -20,6 +20,11 @@ public class GameRegistry : Singleton<GameRegistry>
     public override void Awake()
     {
         base.Awake();
+        for (int i = 0; i < Abilities.Length; i++)
+        {
+            Ability ability = Abilities[i];
+            ability.ID = i;
+        }
         DontDestroyOnLoad(gameObject);
     }
 

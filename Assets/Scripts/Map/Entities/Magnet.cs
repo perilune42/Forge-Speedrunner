@@ -80,8 +80,10 @@ public class Magnet : Entity
     private void Deactivate()
     {
         active = false;
-        particle.gameObject.SetActive(true);
+        particle.gameObject.SetActive(false);
         particleActive.gameObject.SetActive(false);
+        curCooldown = cooldown;            
+        playerMovement = null;
     }
 
     protected override void FixedUpdate()
@@ -94,14 +96,18 @@ public class Magnet : Entity
             Suck();
             if (!playerCollider.IsTouching(bigBeamColl))
             {
-                playerMovement = null;
-                curCooldown = 0;
                 if (active) Deactivate();
             }
         }
         else
         {
             curCooldown--;
+            if (!particle.gameObject.activeInHierarchy && curCooldown <= 0) 
+                particle.gameObject.SetActive(true);
+            if (Hitbox.IsTouching(Player.Instance.Movement.SurfaceCollider))
+            {
+                OnCollide(Player.Instance.Movement, Vector2.zero);
+            }
         }
     }
 
@@ -120,16 +126,11 @@ public class Magnet : Entity
         float angleToMagnet = Mathf.Atan2(transform.position.y - playerPos.y, transform.position.x - playerPos.x);
         Vector2 pullVec = new Vector2(Mathf.Cos(angleToMagnet), Mathf.Sin((angleToMagnet))) * suckStrength;
         Vector2 newVelocity = playerMovement.Velocity + pullVec;
-        if (true /*!(newVelocity.magnitude > playerMovement.Velocity.magnitude && newVelocity.magnitude > maxSuckSpeed)*/)
-        {
-            playerMovement.Velocity = newVelocity;
-        }
+        playerMovement.Velocity = newVelocity;
         suckFrames++;
         if (suckFrames >= maxSuckFrames || Vector2.Distance(playerPos, transform.position) < minRange)
         {
-            curCooldown = cooldown;
             playerMovement.Velocity *= speedDropoff;
-            playerMovement = null;
             if (active) Deactivate();
         }
     }

@@ -58,11 +58,11 @@ MonoBehaviour:
   BlockerHorzPrefab: {fileID: 9020449635309121990, guid: 74a2df4e21cec9449933074b41401604, type: 3}
   BlockerVertPrefab: {fileID: 4855476455387979540, guid: 9c5bf47116b360b4a911af488f7df831, type: 3}
   InteractionTriggerPrefab: {fileID: 7099816317498756728, guid: c760bb0f90cea2449ab0441204a95c46, type: 3}
+  EntranceIndicatorPrefab: {fileID: 0}
   AllRooms:
   - {fileID: 4794753739058842650}
   ActivatableEntities: []
   AllPassages: []
-  RespawnPosition: {x: 0, y: 0}
   StartingRoom: {fileID: 4794753739058842650}
   StartingSpawn: {fileID: 7819545021735431735}
   overrideStartingRoom: 0

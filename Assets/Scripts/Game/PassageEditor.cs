@@ -7,36 +7,17 @@ public class PassageEditor_Inspector : Editor
 {
     override public void OnInspectorGUI()
     {
-        const string PASSAGE_NAME = "Passages";
+        
         PassageEditor pe = (PassageEditor)target;
         DrawDefaultInspector();
 
         if(GUILayout.Button("Finalize Passage"))
         {
-            // since Start hasn't been called for RoomManager yet, this is the only way to get an instance
-            RoomManager rm = Object.FindFirstObjectByType<RoomManager>();
-            if(rm == null)
-            {
-                Debug.Log($"ERROR: No RoomManager found. Please create one, and give it a child object named '{PASSAGE_NAME}'");
-                return;
-            }
-            Transform passageFolder = rm.transform.Find(PASSAGE_NAME);
-            if(passageFolder != null)
-            {
-                EditorUtility.SetDirty(pe.attachedPassage); // changes don't persist without this
-                Debug.Log($"Found RoomManager {{{rm}}} and passage folder {{{passageFolder}}}\nDeploying!");
-                pe.transform.SetParent(passageFolder, true);
-            }
-            else
-            {
-                string debugMsg = $"ERROR: Could not find passage folder! This script tries to make all passages children of a GameObject named '{PASSAGE_NAME}'. ";
-                Debug.Log(debugMsg);
-
-            }
-
+            pe.FinalizePassage();
         }
     }
 }
+
 #endif
 
 [ExecuteAlways]
@@ -70,6 +51,31 @@ public class PassageEditor : MonoBehaviour
             Vector3 successSize = new(fitSize.x, fitSize.y, 0);
             Gizmos.color = SuccessColor;
             Gizmos.DrawCube(matchMidpoint, successSize);
+        }
+    }
+
+    public void FinalizePassage()
+    {
+        const string PASSAGE_NAME = "Passages";
+        // since Start hasn't been called for RoomManager yet, this is the only way to get an instance
+        RoomManager rm = Object.FindFirstObjectByType<RoomManager>();
+        if (rm == null)
+        {
+            Debug.Log($"ERROR: No RoomManager found. Please create one, and give it a child object named '{PASSAGE_NAME}'");
+            return;
+        }
+        Transform passageFolder = rm.transform.Find(PASSAGE_NAME);
+        if (passageFolder != null)
+        {
+            EditorUtility.SetDirty(attachedPassage); // changes don't persist without this
+            Debug.Log($"Found RoomManager {{{rm}}} and passage folder {{{passageFolder}}}\nDeploying!");
+            transform.SetParent(passageFolder, true);
+        }
+        else
+        {
+            string debugMsg = $"ERROR: Could not find passage folder! This script tries to make all passages children of a GameObject named '{PASSAGE_NAME}'. ";
+            Debug.Log(debugMsg);
+
         }
     }
 

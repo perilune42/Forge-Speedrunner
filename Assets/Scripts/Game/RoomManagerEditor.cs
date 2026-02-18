@@ -23,6 +23,11 @@ public class RoomManager_Inspector : Editor
                 roomPos.y = room.gridPosition.y * rm.BaseHeight * 1.2f;
                 room.transform.position = roomPos;
             }
+            foreach (Passage passage in FindObjectsByType<Passage>(FindObjectsSortMode.None))
+            {
+                var pe = passage.GetComponent<PassageEditor>();
+                pe.FinalizePassage();
+            }
             
             EditorUtility.SetDirty(rm);
         }

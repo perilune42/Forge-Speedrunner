@@ -31,15 +31,23 @@ public class RoomManager : Singleton<RoomManager>
     public BoxCollider2D BlockerHorzPrefab, BlockerVertPrefab;
     public InteractionTrigger InteractionTriggerPrefab;
 
+    public GameObject EntranceIndicatorPrefab;
+
     public List<Room> AllRooms = new();
     [HideInInspector] public ActivatableEntity[] ActivatableEntities;
     [HideInInspector] public Passage[] AllPassages;
 
-    public Vector2 RespawnPosition;
+    private Vector2 respawnPosition;
+    private bool respawnIsSet = false;
     public Room StartingRoom;
     public Transform StartingSpawn;
 
     [SerializeField] bool overrideStartingRoom;
+
+    public Vector2 RespawnPosition { get => respawnPosition; set { 
+            respawnPosition = value;
+            respawnIsSet = true;
+    } }
 
     void Start()
     {
@@ -85,6 +93,7 @@ public class RoomManager : Singleton<RoomManager>
         Player.Instance.Movement.transform.position = StartingSpawn.position;
         originalRoom = StartingRoom;
         CameraController.Instance.SnapToRoom(activeRoom);
+        respawnIsSet = false;
     }
 
 
@@ -140,15 +149,51 @@ public class RoomManager : Singleton<RoomManager>
 
     public void SwitchRoom(Doorway door1, Doorway door2)
     {
-        StartCoroutine(SwitchRoomCoroutine(door1, door2));
+        PlayerMovement pm = Player.Instance.Movement;
+
+        // calculate player velocity
+        Vector2 dir = door1.GetTransitionDirection();
+        Vector2 preservedVelocity;
+
+        // on up transitions, give player a boost
+        const float upBoost = 1.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
+        {
+            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
+        }
+        else preservedVelocity = pm.Velocity;
+        Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
+
+        // calculate relativePos, which is unavoidable
+        relativePos = pm.transform.position - door1.transform.position;
+
+        previousDoorway = door2;
+        activeRoom = door2.enclosingRoom;
+
+
+        StartCoroutine(GoThroughDoorway(door2, preservedVelocity, dir));
     }
     
     // respawn location set by safe zones
-    // todo: add fallback in case player hasn't touched one in this room
     public void Respawn()
     {
         Player.Instance.Movement.Locked = true;
-        StartCoroutine(RoomTransition(activeRoom, RespawnPosition, Vector2.zero, Vector2.zero));
+        Vector2 pos;
+        if (respawnIsSet)
+        {
+            pos = RespawnPosition;
+            StartCoroutine(RoomTransition(activeRoom, RespawnPosition, Vector2.zero, Vector2.zero));
+        }
+        else if (previousDoorway != null)
+        {
+            StartCoroutine(GoThroughDoorway(previousDoorway, Vector2.zero, -previousDoorway.GetTransitionDirection()));
+        }
+        else
+        {
+            StartCoroutine(RoomTransition(activeRoom, originalPosition, Vector2.zero, Vector2.zero));
+        }
+            
     }
 
     public void ReEnterRoom()
@@ -174,52 +219,12 @@ public class RoomManager : Singleton<RoomManager>
             preservedVelocity.y += pm.MovementParams.JumpSpeed * upBoost;
         }
 
-        Debug.Log($"Respawning in {previousDoorway}. doorway is in {previousDoorway.enclosingRoom}, hopefully expected!");
-        StartCoroutine(warpTo(previousDoorway, preservedVelocity, dir));
+        StartCoroutine(GoThroughDoorway(previousDoorway, preservedVelocity, dir));
     }
 
-    private IEnumerator SwitchRoomCoroutine(Doorway door1, Doorway door2)
+
+    private IEnumerator GoThroughDoorway(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
-        PlayerMovement pm = Player.Instance.Movement;
-
-        // calculate player velocity
-        Vector2 dir = door1.GetTransitionDirection();
-        Vector2 preservedVelocity;
-
-        // on up transitions, give player a boost
-        const float upBoost = 1.5f;
-        if (dir == Vector2.up
-                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
-        {
-            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
-        }
-        else preservedVelocity = pm.Velocity;
-        Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
-
-        // calculate relativePos, which is unavoidable
-        relativePos = pm.transform.position - door1.transform.position;
-
-        previousDoorway = door2;
-        activeRoom = door2.enclosingRoom;
-
-
-        return warpTo(door2, preservedVelocity, dir);
-    }
-    private IEnumerator warpTo(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
-    {
-
-        // assuming doorways are placed correctly in world space
-        // i.e. centered properly along the world grid
-        // NOTE: the code below works every time for switchroom, but for respawning it is problematic.
-        // if (door2.IsHorizontal())
-        // {
-        //     relativePos = new Vector2(0, pm.transform.position.y - door2.transform.position.y);
-        // }
-        // else
-        // {
-        //     relativePos = new Vector2(pm.transform.position.x - door2.transform.position.x, 0);
-        // }
-
         // calculate new player position
         Vector2 newPlayerPos = (Vector2)door2.transform.position;
         if (door2.IsHorizontal())
@@ -231,17 +236,48 @@ public class RoomManager : Singleton<RoomManager>
          * start doing things to the player here
          */
         door2.SuppressNextTransition();
-        // do these sequentially. looks clearer
+        respawnIsSet = false;
         yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
         door2.EnableTransition();
     }
-    public void WarpTo(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
+
+    private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    {
+        Debug.Log("start room transition");
+        AbilityManager.Instance.ResetAbilites();
+        FadeToBlack.Instance.FadeIn();
+        if (dir == Vector2.up)
+        {
+            Player.Instance.Movement.GravityEnabled = false;
+        }
+        for (int i = 0; i < TransitionFadeFrames; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        // logic moved to CameraController
+        CameraController.Instance.SnapToRoom(room);
+        WarpToPosition(position, preservedVelocity, dir);
+        
+
+        // 3 cope frames
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        FadeToBlack.Instance.FadeOut();
+        for (int i = 0; i < TransitionFadeFrames; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        Debug.Log("end room transition");
+    }
+
+    public void WarpToPosition(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
     {
         PlayerMovement pm = Player.Instance.Movement;
-
-
         PInput.Instance.EnableControls = false;
-        pm.GravityEnabled = false;
         pm.EndJump(true);
         pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
 
@@ -276,7 +312,6 @@ public class RoomManager : Singleton<RoomManager>
         }
         if (dir == Vector2.up)
         {
-            // set one more time in case of jank
             pm.GravityEnabled = false;
         }
         StartCoroutine(Util.FDelayedCall(lockDuration, () =>
@@ -288,31 +323,5 @@ public class RoomManager : Singleton<RoomManager>
     }
 
 
-    private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
-    {
-        Debug.Log("start room transition");
-        AbilityManager.Instance.ResetAbilites();
-        FadeToBlack.Instance.FadeIn();
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
 
-        // logic moved to CameraController
-        CameraController.Instance.SnapToRoom(room);
-        WarpTo(position, preservedVelocity, dir);
-
-        // 3 cope frames
-        for (int i = 0; i < 3; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        FadeToBlack.Instance.FadeOut();
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-        Debug.Log("end room transition");
-    }
 }

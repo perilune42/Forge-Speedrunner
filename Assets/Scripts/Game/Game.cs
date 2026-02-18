@@ -2,11 +2,19 @@ using TMPro;
 using UnityEngine;
 
 public class Game : Singleton<Game> {
-    // timer stuff all moved to Timer class
+    public int CurrentRound = 1;
+    public bool IsPracticeMode = false;
 
-    public void GoToShop()
+    public void FinishRound()
     {
-        ShopManager.Instance.LoadShop();
+        Timer.RecordTime();
+        CurrentRound++;
+        GoToShop(true);
+    }
+
+    public void GoToShop(bool newRound)
+    {
+        ShopManager.Instance.LoadShop(newRound);
         // deactivate all the stuff in the world
         RoomManager.Instance.gameObject.SetActive(false);
         Player.Instance.gameObject.SetActive(false);
@@ -34,6 +42,9 @@ public class Game : Singleton<Game> {
 
         Player.Instance.Movement.OnReset();
         PInput.Instance.OnReset();
+
+        IsPracticeMode = practiceMode;
+        GameplayUI.Instance.TogglePracticeMode(practiceMode);
     }
 
 
@@ -46,6 +57,11 @@ public class Game : Singleton<Game> {
         else if(Input.GetKeyDown(KeyCode.Z))
             ReturnToPlay(false);
         else if(Input.GetKeyDown(KeyCode.X))
-            GoToShop();
+            GoToShop(true);
+
+        if (IsPracticeMode && Input.GetKeyDown(KeyCode.Return))
+        {
+            GoToShop(false);
+        }
     }
 }

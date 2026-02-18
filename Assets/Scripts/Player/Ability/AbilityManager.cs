@@ -42,7 +42,7 @@ public class AbilityManager : Singleton<AbilityManager>
         if (GUILayout.Button("Go to shop"))
         {
             // SceneManager.LoadScene("Shop");
-            Game.Instance.GoToShop();
+            Game.Instance.GoToShop(true);
         }
     }
 

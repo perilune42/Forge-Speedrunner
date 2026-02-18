@@ -60,7 +60,6 @@ public class FullscreenMapUI : MonoBehaviour
 
         roomManager = RoomManager.Instance;
         allPassages = roomManager.AllPassages;
-        Debug.Log("PAssages: " + allPassages.Length);
         allRooms = roomManager.AllRooms;
         width = roomManager.BaseWidth;
         height = roomManager.BaseHeight;

@@ -36,7 +36,7 @@ public abstract class Ability : MonoBehaviour
 
     protected PlayerMovement PlayerMovement => Player.Instance.Movement;
     protected PlayerVFXTrail PlayerVFXTrail => Player.Instance.VFXTrail;
-    public AbilityInfo info;
+    [HideInInspector] public AbilityInfo info;
 
     public Action OnActivate;
     protected Action stopParticleAction;
@@ -137,7 +137,6 @@ public abstract class Ability : MonoBehaviour
     {
         if (inputButton.GetAction().Equals(action))
         {
-            Debug.Log("Updated binding display string for ability");
             BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
         }
     }

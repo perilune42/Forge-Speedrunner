@@ -12,6 +12,7 @@ public class Doorway : MonoBehaviour
         enclosingRoom = GetComponentInParent<Room>();
         GenerateGuideRails();
         GenerateBlocker();
+        GenerateEntranceIndicator();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -25,8 +26,8 @@ public class Doorway : MonoBehaviour
     {
         if (collision.GetComponent<PlayerMovement>() != null)
         {
-            Debug.Log("you'd normally un-suppress transitions here.");
-            // suppressTransition = false;
+            //Debug.Log("you'd normally un-suppress transitions here.");
+            suppressTransition = false;
         }
     }
 
@@ -94,6 +95,16 @@ public class Doorway : MonoBehaviour
             // blocker.transform.position += (Vector3)(GetTransitionDirection()) * 0.5F;
             if(enclosingRoom.doorwaysLeft.Contains(this) || enclosingRoom.doorwaysUp.Contains(this))
                 blocker.transform.localRotation = Quaternion.Euler(0F, 0F, 180F);
+        }
+    }
+
+    private void GenerateEntranceIndicator()
+    {
+        if (passage != null)
+        {
+            GameObject indicator = Instantiate(RoomManager.Instance.EntranceIndicatorPrefab, transform);
+            indicator.transform.eulerAngles = new Vector3(0,0, Vector2.SignedAngle(Vector2.up, GetTransitionDirection()));
+            indicator.transform.position = (Vector2)transform.position + -3 * GetTransitionDirection();
         }
     }
 }

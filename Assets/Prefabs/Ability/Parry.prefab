@@ -144,20 +144,23 @@ MonoBehaviour:
     Cost: 5
   - Description: I like cheese
     Cost: 5
-  ID: 0
+  ID: 3
   CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
+  StartUnlocked: 1
+  BindingDisplayString: 
   cooldown: 60
   info: {fileID: 0}
+  maxLeniencyFrames: 5
   hitstopFrames: 20
   parryPrimedFrames: 45
   minHitstopFrames: 15
   shockwaveParticles: {fileID: 5069689749388298177}
   circle: {fileID: 7302307563846284303}
-  baseReflectSpeed: 6
-  speedMultiplier: 1
+  baseReflectSpeed: 5
+  speedMultiplier: 1.2
 --- !u!1 &7806262450183880219
 GameObject:
   m_ObjectHideFlags: 0

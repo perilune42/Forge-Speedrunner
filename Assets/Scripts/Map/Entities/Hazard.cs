@@ -7,5 +7,9 @@ public class Hazard : Entity
     {
         if(de == Player.Instance.Movement)
             RoomManager.Instance.Respawn();
+        else if (de.GetComponent<GrappleHand>() != null)
+        {
+            de.GetComponent<GrappleHand>().Grapple.Abort();
+        }
     }
 }

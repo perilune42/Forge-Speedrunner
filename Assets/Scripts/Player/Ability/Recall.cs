@@ -1,17 +1,38 @@
 using System;
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
-public class Recall : Ability
+public class Recall : Ability, IStatSource
 {
     [SerializeField] private GameObject clonePrefab;
     [SerializeField] private int teleportDelay;
     private int curTeleportTime;
-    [SerializeField] private float teleportSpeed;
+    [SerializeField] private float teleportSpeed, teleportAcceleration;
+    private float curTeleportSpeed;
     private GameObject clone;
     private Vector2 storedVelocity;
+    private float storedGravityMult;
     private SpecialState storedState;
     private Action stopCloneParticleAction;
+
+    [SerializeField] private Volume volume;
+    private LiftGammaGain gamma;
+    private ColorAdjustments colors;
+    [SerializeField] private Vector4 darkVector;
+    [SerializeField] private float saturation;
+    [SerializeField] private GameObject shatterParticle;
+
+    public override void Start()
+    {
+        base.Start();
+
+        if (volume.profile.TryGet<LiftGammaGain>(out LiftGammaGain gammaProfile)) gamma = gammaProfile;
+        if (volume.profile.TryGet<ColorAdjustments>(out ColorAdjustments colorsProfile)) colors = colorsProfile;
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -26,14 +47,13 @@ public class Recall : Ability
             PlayerMovement.transform.position = Vector3.MoveTowards(
                 PlayerMovement.transform.position,
                 clone.transform.position,
-                teleportSpeed
+                curTeleportSpeed
             );
+            curTeleportSpeed *= teleportAcceleration;
             if (Vector3.Distance(PlayerMovement.transform.position, clone.transform.position) < 0.1f)
             {
-                PlayerMovement.SpecialState = storedState;
-                PlayerMovement.Velocity = storedVelocity;
-                stopCloneParticleAction?.Invoke();
-                Destroy(clone);
+                Instantiate(shatterParticle, clone.transform.position, Quaternion.identity);
+                CancelTeleport();
             }
         }
         else if (clone != null)
@@ -45,7 +65,7 @@ public class Recall : Ability
             }
         }
     }
-
+    
     public override bool UseAbility()
     {
         if (clone == null)
@@ -69,12 +89,31 @@ public class Recall : Ability
     {
         if (clone == null) return;
         storedVelocity = PlayerMovement.Velocity;   
+        PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
         if (PlayerMovement.SpecialState == SpecialState.Dash || 
             PlayerMovement.SpecialState == SpecialState.GroundSlam ||
             PlayerMovement.SpecialState == SpecialState.Rocket) storedState = PlayerMovement.SpecialState;
         else storedState = SpecialState.Normal;
-        Debug.Log(storedState);
         PlayerMovement.SpecialState = SpecialState.Teleport;
+        gamma.gamma.Override(darkVector);
+        colors.saturation.Override(saturation);
+        stopParticleAction += PlayerVFXTrail.PlayParticle(Color.white);
+        PlayerMovement.SurfaceCollider.enabled = false;
+        curTeleportSpeed = teleportSpeed;
+        PlayerMovement.Velocity = Vector2.zero;
+    }
+
+    private void CancelTeleport()
+    {
+        PlayerMovement.SpecialState = storedState;
+        PlayerMovement.Velocity = storedVelocity;
+        stopCloneParticleAction?.Invoke();
+        Destroy(clone);
+        gamma.gamma.Override(new Vector4(1f, 1f, 1f, 0f));
+        colors.saturation.Override(0f);
+        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
+        stopParticleAction?.Invoke();
+        PlayerMovement.SurfaceCollider.enabled = true;
     }
 
 }

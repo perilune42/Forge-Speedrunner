@@ -4996,6 +4996,7 @@ GameObject:
   - component: {fileID: 6918076599363534606}
   - component: {fileID: 322447632429274300}
   - component: {fileID: 2477743847521277099}
+  - component: {fileID: 1786430320422701529}
   m_Layer: 8
   m_Name: Drone
   m_TagString: Untagged
@@ -5035,6 +5036,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Drone
   Hitbox: {fileID: 0}
   RechargeDuration: 60
+  ExtraJumpBoost: 2
   sr: {fileID: 8131125723258874159}
   indicatorSr: {fileID: 6810862382009064518}
   jumpParticles: {fileID: 5325196812698345404}
@@ -5084,6 +5086,28 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
+--- !u!95 &1786430320422701529
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6770157365412620450}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 19ca6413723cfbb48ad34e9ed1267929, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8892730489914200973
 GameObject:
   m_ObjectHideFlags: 0

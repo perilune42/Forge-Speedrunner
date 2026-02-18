@@ -85,6 +85,8 @@ public class Zipline : Entity, IInteractable
         pm.transform.position = Util.ProjectPointOntoSegment(pm.transform.position, transform.position, node.position) + positionOffset;
         Vector2 vecToNode = (node.transform.position - transform.position).normalized;
         towardsNode = Vector2.Dot(pm.FacingDir, vecToNode) > 0;
+        if (vecToNode.y > 0.9) towardsNode = true;
+        else if (vecToNode.y < -0.9) towardsNode = false;
         if (transform.position.x == node.transform.position.x) towardsNode = true;
         pm.Velocity = towardsNode ? vecToNode * ziplineSpeed : -vecToNode * ziplineSpeed;
         playerIsRiding = true;

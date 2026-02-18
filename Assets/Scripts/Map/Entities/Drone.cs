@@ -8,6 +8,7 @@ public class Drone : Entity
     PlayerMovement pm => Player.Instance.Movement;
 
     public int RechargeDuration = 60;
+    public int ExtraJumpBoost = 4;
     private int rechargeTimer;
 
     [SerializeField] SpriteRenderer sr, indicatorSr;
@@ -79,6 +80,7 @@ public class Drone : Entity
         if (grapple != null && grapple.grappleState == GrappleState.Pulling) return false;
         pm.Jump();
         PInput.Instance.Jump.ConsumeBuffer();
+        pm.Velocity.y += ExtraJumpBoost;
         pm.onGround?.Invoke();
         AbilityManager.Instance.GetAbility<Dash>().Recharge();
 

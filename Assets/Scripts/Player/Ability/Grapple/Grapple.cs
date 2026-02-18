@@ -95,13 +95,21 @@ public class Grapple : Ability, IStatSource
 
         if (charging)
         {
-            if (chargeTime < maxCharge)
+            if (grappleState == GrappleState.Idle)
             {
-                chargeTime++;
+                charging = false;
+                chargeTime = 0;
             }
+            else
+            {
+                if (chargeTime < maxCharge)
+                {
+                    chargeTime++;
+                }
 
-            // grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
-            grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick, chargeTime == maxCharge);
+                // grappleArrow.transform.localScale = Vector3.one * 4f * (1f + chargeTime * chargePerTick);
+                grappleHand.ApplyChargeVFX(1f + chargeTime * chargePerTick, chargeTime == maxCharge);
+            }
         }
 
 
@@ -284,6 +292,9 @@ public class Grapple : Ability, IStatSource
     {
         grappleState = GrappleState.Idle;
         curCooldown = throwCooldown;
+        charging = false;
+        chargeTime = 0;
+        Destroy(grappleHand.gameObject);
     }
 
     public override void OnReset()

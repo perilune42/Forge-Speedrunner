@@ -31,6 +31,8 @@ public class RoomManager : Singleton<RoomManager>
     public BoxCollider2D BlockerHorzPrefab, BlockerVertPrefab;
     public InteractionTrigger InteractionTriggerPrefab;
 
+    public GameObject EntranceIndicatorPrefab;
+
     public List<Room> AllRooms = new();
     [HideInInspector] public ActivatableEntity[] ActivatableEntities;
     [HideInInspector] public Passage[] AllPassages;

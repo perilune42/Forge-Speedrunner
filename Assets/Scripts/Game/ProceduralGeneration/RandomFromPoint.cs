@@ -35,6 +35,7 @@ public class RandomFromPoint : IPathGenerator
     private void Step()
     {
         grid.LogEntries();
+        stack.LogEntries();
 
         Direction dir; Offset off; Offset botleft;
         (dir, off) = stack.PopRandom();
@@ -98,6 +99,8 @@ internal class Grid
         for(int i = botLeft.x; i < topRight.x; i++)
             for(int j = botLeft.y; j < topRight.y; j++)
         {
+            current.x = i;
+            current.y = j;
             if(grid.ContainsKey(current))
             {
                 obstruction = current;
@@ -126,28 +129,30 @@ internal class Grid
 
         // 2. doorway list by direction
         List<Doorway> doors;
-        if(dir == LEFT)
+        if(dir == RIGHT)
             doors = room.doorwaysLeft;
-        else if(dir == RIGHT)
+        else if(dir == LEFT)
             doors = room.doorwaysRight;
-        else if(dir == UP)
+        else if(dir == DOWN)
             doors = room.doorwaysUp;
-        else // dir == DOWN
+        else // dir == UP
             doors = room.doorwaysDown;
 
         // 3. true bottom left at current offset
         Offset startingBotLeft = offset;
-        if(dir == UP)
+        if(dir == DOWN)
             startingBotLeft.y -= room.size.y;
-        if(dir == RIGHT)
+        if(dir == LEFT)
             startingBotLeft.x -= room.size.x;
         Offset trueBotLeft = startingBotLeft;
+        Debug.Log($"Initially believe trueBotLeft to be ({trueBotLeft.x},{trueBotLeft.y})");
 
         // 3.1. line up with possible door
         for(int i = 0; i < doors.Count; i++)
         {
             if(doors[i] == null)
             {
+                Debug.Log("incr");
                 trueBotLeft -= increment;
             }
             else
@@ -159,12 +164,13 @@ internal class Grid
 
         // 4. check if there's any problem at the default placement
         Offset obstruction;
-        Debug.Log($"Checking ({trueBotLeft.x},{trueBotLeft.y}) and ({topRightBound.x},{topRightBound.y})");
+        Debug.Log($"Now checking between {trueBotLeft} and {topRightBound}");
         bool obsExists = ObstructionWithin(trueBotLeft, topRightBound, out obstruction);
         if(!obsExists)
         {
             // end here if no problem
             botleft = trueBotLeft;
+            Debug.Log("no obstruction.");
             return true;
         }
         Debug.Log($"obsExists: {obsExists}. obstruction: {obstruction}");
@@ -182,20 +188,25 @@ internal class Grid
             obstructionBound.y = trueBotLeft.y + room.size.y;
             trueBotLeft.x = obstructionBound.x - room.size.x;
         }
+        Debug.Log($"let's try {trueBotLeft} and {obstructionBound}.");
 
         // 6. find corresponding doorway (if none, end here)
         int connectingDoorwayInd = (dir == LEFT || dir == RIGHT)
             ? startingBotLeft.y - obstructionBound.y
             : startingBotLeft.x - obstructionBound.x;
+        Debug.Log($"connectingDoorwayInd: {connectingDoorwayInd}.");
         if(connectingDoorwayInd < doors.Count)
         {
             Offset finalObstruction;
-            Offset finalBotLeft = startingBotLeft - increment * connectingDoorwayInd;
+            Offset finalBotLeft = trueBotLeft;
             bool finalObsExist = ObstructionWithin(finalBotLeft, obstructionBound, out finalObstruction);
             if(!finalObsExist)
             {
                 botleft = finalBotLeft;
                 return true;
+            }
+            else {
+                Debug.Log($"obstruction at {finalObstruction}");
             }
             botleft = new(0,0);
             return false;
@@ -213,6 +224,7 @@ internal class Grid
     {
         Openings opens;
         bool success = grid.TryGetValue(offset, out opens);
+        Debug.Log($"Opening ({offset}), direction {dir}");
         if(success)
         {
             if(dir == LEFT)
@@ -237,6 +249,7 @@ internal class Grid
         for(int i = offset.x; i < offset.x + room.size.x; i++)
             for(int j = offset.y; j < offset.y + room.size.y; j++)
         {
+            Debug.Log($"insert ({i},{j})");
             grid.Add(new(i,j), closedEverywhere);
         }
 
@@ -247,12 +260,12 @@ internal class Grid
             int offY = offset.y + j;
             if(room.doorwaysLeft[j] != null)
             {
-                Offset leftOff = new(offset.x, j);
+                Offset leftOff = new(offset.x, offY);
                 OpenAt(leftOff, LEFT);
             }
             if(room.doorwaysRight[j] != null)
             {
-                Offset rightOff = new(offset.x+room.size.x-1, j);
+                Offset rightOff = new(offset.x+room.size.x-1, offY);
                 OpenAt(rightOff, RIGHT);
             }
         }
@@ -356,7 +369,7 @@ internal class GenStack
             newOffset = DirMethods.calcOffset(newOffset, facingDir);
 
             dirs.Add(facingDir);
-            offsets.Add(startingOffset);
+            offsets.Add(newOffset);
         }
         return this;
     }
@@ -365,14 +378,23 @@ internal class GenStack
         // calculate starting states here (extractFrom cannot know)
         Offset startUp = startingOffset;
         Offset startRight = startingOffset;
-        startRight.x += r.size.x;
-        startUp.y += r.size.y;
+        startRight.x += r.size.x-1;
+        startUp.y += r.size.y-1;
 
         // extract from all directions
-        this.extractFrom(r.doorwaysLeft, RIGHT, startingOffset)
-            .extractFrom(r.doorwaysDown, UP, startingOffset)
-            .extractFrom(r.doorwaysUp, DOWN, startUp)
-            .extractFrom(r.doorwaysRight, LEFT, startRight);
+        this.extractFrom(r.doorwaysLeft, LEFT, startingOffset)
+            .extractFrom(r.doorwaysDown, DOWN, startingOffset)
+            .extractFrom(r.doorwaysUp, UP, startUp)
+            .extractFrom(r.doorwaysRight, RIGHT, startRight);
         return this;
+    }
+    public void LogEntries()
+    {
+        StringBuilder sb = new("GenStack contains:\n");
+        for(int i = 0; i < dirs.Count; i++)
+        {
+            sb.Append($"\t({offsets[i].x},{offsets[i].y}), {dirs[i]}\n");
+        }
+        Debug.Log(sb.ToString());
     }
 }

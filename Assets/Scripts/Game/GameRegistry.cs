@@ -13,9 +13,9 @@ public class GameRegistry : Singleton<GameRegistry>
 
     private void OnValidate()
     {
+        Debug.Log("here i am\n");
         Awake();
     }
-
 
     public override void Awake()
     {

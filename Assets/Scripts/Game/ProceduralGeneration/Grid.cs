@@ -320,7 +320,7 @@ public class Grid
     }
     public void WriteConnections(PathCreator pc)
     {
-        HashSet<Offset> visited = new();
+        HashSet<(Offset, Direction)> exists = new();
         List<Offset> allOffsets = grid.Keys.ToList();
         while(allOffsets.Count > 0)
         {
@@ -329,54 +329,43 @@ public class Grid
             allOffsets.RemoveAt(allOffsets.Count-1);
 
             // process in all directions
-            TryStep(current, UP, allOffsets, pc);
-            TryStep(current, DOWN, allOffsets, pc);
-            TryStep(current, LEFT, allOffsets, pc);
-            TryStep(current, RIGHT, allOffsets, pc);
+            TryStep(current, UP, pc, exists);
+            TryStep(current, DOWN, pc, exists);
+            TryStep(current, LEFT, pc, exists);
+            TryStep(current, RIGHT, pc, exists);
         }
     }
     // only useful in above function WriteConnections
-    private void TryStep(Offset current, Direction dir, List<Offset> allOffsets, PathCreator pc)
+    private bool TryStep(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
     {
-        if(TryAddConnection(current, dir, pc, out Offset neighbor))
-        {
-            allOffsets.Remove(neighbor);
-        }
-    }
+        // do not build duplicate connections
+        if(exists.Contains((currentOff, dir)))
+            return false;
 
-    private bool TryAddConnection(Offset currentOff,
-            Direction dir,
-            PathCreator pc,
-            out Offset dirOff)
-    {
         // direction data
-        dirOff = DirMethods.calcOffset(currentOff, dir);
+        Offset dirOff = DirMethods.calcOffset(currentOff, dir);
 
         Openings dirOpens;
-        bool success = grid.TryGetValue(dirOff, out dirOpens);
-        if(!success) // early end if not found
+        if(!grid.TryGetValue(dirOff, out dirOpens)) // early end if not found
             return false;
 
         Openings currOpens;
-        success = grid.TryGetValue(currentOff, out currOpens);
-        if(!success) // early end if not found (this one should not happen)
+        if(!grid.TryGetValue(currentOff, out currOpens)) // early end if not found (this one should not happen)
             return false;
 
         Cell currentCell = cellsByGrid[currentOff];
         Cell dirCell = cellsByGrid[dirOff];
-
         if(currentCell.room == dirCell.room)
             return false;
 
-        bool valid = dir == UP
-            ? (dirOpens.down && currOpens.up)
-            : dir == DOWN
-            ? (dirOpens.up && currOpens.down)
-            : dir == LEFT
-            ? (dirOpens.right && currOpens.left)
-            : dir == RIGHT
-            ? (dirOpens.left && currOpens.right)
-            : false;
+        bool valid = dir switch
+        {
+            DOWN => (dirOpens.up && currOpens.down),
+            UP => (dirOpens.down && currOpens.up),
+            LEFT => (dirOpens.right && currOpens.left),
+            RIGHT => (dirOpens.left && currOpens.right),
+            _ => false,
+        };
 
         if(!valid)
         {
@@ -388,20 +377,17 @@ public class Grid
         Offset relativeDirOff = dirOff - dirCell.offset;
 
         int currentIndex; int dirIndex;
-        if(dir == LEFT || dir == RIGHT)
+        (currentIndex, dirIndex) = dir switch
         {
-            currentIndex = relativeCurrOff.y;
-            dirIndex = relativeDirOff.y;
-        }
-        else // UP OR DOWN
-        {
-            currentIndex = relativeCurrOff.x;
-            dirIndex = relativeDirOff.x;
-        }
+            LEFT or RIGHT => (relativeCurrOff.y, relativeDirOff.y),
+            _ => (relativeCurrOff.x, relativeDirOff.x),
+        };
+
         Debug.Log($"Connection between ({currentCell.room}) and ({dirCell.room}): ({currentOff}) -> ({dirOff})");
         Debug.Log($"For current ({currentCell.room}), dir ({dirCell.room}): \n currentIndex: {currentIndex}, dirIndex: {dirIndex}\n relativeCurrOff: {relativeCurrOff}, relativeDirOff: {relativeDirOff}\n currentOff: {currentOff}, dirOff: {dirOff}\n currentCell.offset: {currentCell.offset}, dirCell.offset: {dirCell.offset}\ndirection: {dir}");
 
         pc.AddConnection(currentCell, dirCell, currentIndex, dirIndex, dir);
+        exists.Add((dirOff, DirMethods.opposite(dir)));
         return true;
     }
 

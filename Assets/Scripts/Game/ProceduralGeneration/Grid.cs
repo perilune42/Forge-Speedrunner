@@ -23,12 +23,14 @@ public class Grid
     }
     // NOTE: i end up not really using Cell "properly" here.
     private Dictionary<Vector2Int, Openings> grid;
+    private Dictionary<Vector2Int, Room> roomsByGrid;
     public List<Cell> uniqueCells;
 
     public Grid()
     {
         grid = new();
         uniqueCells = new();
+        roomsByGrid = new();
     }
 
     private bool ObstructionWithin(Offset botLeft, Offset topRight, out Offset obstruction)
@@ -62,9 +64,9 @@ public class Grid
         // 1. increment by direction
         Offset increment;
         if(dir == LEFT || dir == RIGHT)
-            increment = new(0, -1);
+            increment = new(0, 1);
         else
-            increment = new(-1, 0);
+            increment = new(1, 0);
 
         // 2. doorway list by direction
         List<Doorway> doors;
@@ -190,6 +192,7 @@ public class Grid
         {
             Debug.Log($"insert ({i},{j})");
             grid.Add(new(i,j), closedEverywhere);
+            roomsByGrid.Add(new(i,j), room);
         }
 
         // update left and right walls

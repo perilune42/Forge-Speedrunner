@@ -210,8 +210,7 @@ public class Grid
             for(int j = 0; valid && j < room.size.y; j++)
         {
             obstruction = botleft + new Offset(i,j);
-            if(grid.ContainsKey(obstruction))
-                valid = false;
+            valid = !grid.ContainsKey(obstruction);
         }
         if(valid) return true;
         Debug.Log($"obstruction at {obstruction}");
@@ -227,8 +226,7 @@ public class Grid
             for(int j = 0; valid && j < room.size.y; j++)
         {
             obstruction = botleft + new Offset(i,j);
-            if(grid.ContainsKey(obstruction))
-                valid = false;
+            valid = !grid.ContainsKey(obstruction);
         }
         Debug.Log($"obstruction again at {obstruction}. giving up.");
 
@@ -275,6 +273,7 @@ public class Grid
 
         // insert all elements
         Cell roomCell = new Cell(room, offset);
+        uniqueCells.Add(roomCell); // also log the unique cell
         for(int i = offset.x; i < offset.x + room.size.x; i++)
             for(int j = offset.y; j < offset.y + room.size.y; j++)
         {
@@ -317,9 +316,6 @@ public class Grid
             }
         }
 
-        // create a cell
-        Cell cell = new Cell(room, offset);
-        uniqueCells.Add(cell);
         return true;
     }
     public void WriteConnections(PathCreator pc)

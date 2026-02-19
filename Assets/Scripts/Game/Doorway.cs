@@ -7,11 +7,17 @@ public class Doorway : MonoBehaviour
 
     private bool suppressTransition = false;
 
-    void Start()
+    private void Awake()
     {
         enclosingRoom = GetComponentInParent<Room>();
+    }
+
+    void Start()
+    {
+        
         GenerateGuideRails();
         GenerateBlocker();
+        GenerateEntranceIndicator();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -50,11 +56,20 @@ public class Doorway : MonoBehaviour
     {
         suppressTransition = true;
         // in case the trigger exit wasn't detected
-        // StartCoroutine(Util.FDelayedCall(30, () => suppressTransition = false));
+        StartCoroutine(Util.FDelayedCall(30, () => suppressTransition = false));
     }
     public void EnableTransition()
     {
         suppressTransition = false;
+    }
+
+    public int GetIndex()
+    {
+        if (enclosingRoom.doorwaysLeft.Contains(this)) return enclosingRoom.doorwaysLeft.IndexOf(this);
+        else if (enclosingRoom.doorwaysRight.Contains(this)) return enclosingRoom.doorwaysRight.IndexOf(this);
+        else if (enclosingRoom.doorwaysUp.Contains(this)) return enclosingRoom.doorwaysUp.IndexOf(this);
+        else if (enclosingRoom.doorwaysDown.Contains(this)) return enclosingRoom.doorwaysDown.IndexOf(this);
+        return -1;
     }
 
     private void GenerateGuideRails()
@@ -71,7 +86,7 @@ public class Doorway : MonoBehaviour
         BoxCollider2D freezeTrigger = Instantiate(RoomManager.Instance.FreezeTriggerPrefab, transform);
         freezeTrigger.transform.localPosition = Vector2.zero;
         freezeTrigger.size = Vector2.one + 3 * new Vector2(Mathf.Abs(dir.y), Mathf.Abs(dir.x));
-        freezeTrigger.offset = dir * 2;
+        freezeTrigger.offset = dir * 2.5f;
         freezeTrigger.transform.rotation = Quaternion.identity;
     }
 
@@ -94,6 +109,16 @@ public class Doorway : MonoBehaviour
             // blocker.transform.position += (Vector3)(GetTransitionDirection()) * 0.5F;
             if(enclosingRoom.doorwaysLeft.Contains(this) || enclosingRoom.doorwaysUp.Contains(this))
                 blocker.transform.localRotation = Quaternion.Euler(0F, 0F, 180F);
+        }
+    }
+
+    private void GenerateEntranceIndicator()
+    {
+        if (passage != null)
+        {
+            GameObject indicator = Instantiate(RoomManager.Instance.EntranceIndicatorPrefab, transform);
+            indicator.transform.eulerAngles = new Vector3(0,0, Vector2.SignedAngle(Vector2.up, GetTransitionDirection()));
+            indicator.transform.position = (Vector2)transform.position + -3 * GetTransitionDirection();
         }
     }
 }

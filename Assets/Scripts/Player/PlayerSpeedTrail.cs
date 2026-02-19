@@ -9,7 +9,7 @@ public class PlayerSpeedTrail : MonoBehaviour
 
     private void Update()
     {
-        float strength = playerMovement.Velocity.magnitude - minSpeedThresold;
+        float strength = Mathf.Abs(playerMovement.Velocity.x) - minSpeedThresold;
         if (strength < 0 || playerMovement.SpecialState == SpecialState.Rocket) strength = 0;
         strength *= speedScaling;
         var emission = particle.emission;

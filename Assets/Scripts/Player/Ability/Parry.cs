@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class Parry : Ability
 {
-
+    [SerializeField] int maxLeniencyFrames;
     [SerializeField] int hitstopFrames, parryPrimedFrames, minHitstopFrames;
-    private int hitstopRemaining, parryPrimedRemaining;
+    private int hitstopRemaining, parryPrimedRemaining, leniencyFramesRemaining;
     private float storedSpeed;
 
     [SerializeField] ParticleSystem shockwaveParticles;
@@ -26,9 +26,15 @@ public class Parry : Ability
 
         pm.OnHitWallAny += (e, dir) =>
         {
+            surfaceDir = dir;
+            storedSpeed = Vector2.Dot(pm.PreCollisionVelocity, dir);
             if (parryPrimedRemaining > 0)
             {
                 StartParry(dir);
+            }
+            else
+            {
+                leniencyFramesRemaining = maxLeniencyFrames;
             }
         };
     }
@@ -38,6 +44,7 @@ public class Parry : Ability
         base.OnReset();
         hitstopRemaining = 0;
         parryPrimedRemaining = 0;
+        leniencyFramesRemaining = 0;
         storedSpeed = 0;
         circle.enabled = false;
     }
@@ -69,6 +76,10 @@ public class Parry : Ability
                 ReleaseParry();
             }
         }
+        if (leniencyFramesRemaining > 0)
+        {
+            leniencyFramesRemaining--;
+        }
     }
 
 
@@ -81,6 +92,10 @@ public class Parry : Ability
     {
         base.UseAbility();
         PrimeParry();
+        if (IsTouchingAny() && leniencyFramesRemaining > 0)
+        {
+            StartParry(surfaceDir);
+        }
 
         return true;
     }
@@ -98,7 +113,6 @@ public class Parry : Ability
         {
             gs.OnGround();
         }
-        storedSpeed = pm.PreCollisionVelocity.magnitude;
         hitstopRemaining = hitstopFrames;
         parryPrimedRemaining = 0;
         circle.enabled = true;
@@ -106,7 +120,6 @@ public class Parry : Ability
         circle.transform.DOScale(0f, hitstopFrames * Time.fixedDeltaTime).SetEase(Ease.InCubic);
         pm.SpecialState = SpecialState.Normal;
         pm.Locked = true;
-        surfaceDir = hitSurfaceDir;
 
     }
 
@@ -114,11 +127,22 @@ public class Parry : Ability
     {
         Vector2 inputDir = PInput.Instance.MoveVector.normalized;
         pm.Locked = false;
-        pm.Velocity = inputDir * (storedSpeed * speedMultiplier) + -surfaceDir * baseReflectSpeed;
+        pm.Velocity = inputDir * (storedSpeed * speedMultiplier + baseReflectSpeed);
+        if (Vector2.Dot(inputDir, -surfaceDir) <= 0)
+        {
+            pm.Velocity += -surfaceDir * baseReflectSpeed;
+        } 
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
         hitstopRemaining = 0;
         circle.enabled = false;
-        pm.CanClimb = true;
+        
+
+        pm.ForceMove(inputDir, 3);
+        StartCoroutine(Util.FDelayedCall(3, () =>
+        {
+            pm.CanClimb = true;
+        }));
+
         var p = Instantiate(shockwaveParticles);
         p.transform.position = transform.position + (Vector3)(Vector2.up * pm.PlayerHeight * 0.5f);
         p.transform.position += new Vector3(surfaceDir.x * pm.PlayerWidth * 0.5f, surfaceDir.y * pm.PlayerHeight * 0.5f);
@@ -129,9 +153,17 @@ public class Parry : Ability
 
     public override bool CanUseAbility()
     {
-        if (pm.IsTouching(Vector2.up) || pm.IsTouching(Vector2.down) 
-            ||  pm.IsTouching(Vector2.left) ||  pm.IsTouching(Vector2.right)) return false;
+        if (!(leniencyFramesRemaining > 0))
+        {
+            if (IsTouchingAny()) return false;
+        }
         return base.CanUseAbility();
+    }
+
+    private bool IsTouchingAny()
+    {
+        return pm.IsTouching(Vector2.up) || pm.IsTouching(Vector2.down)
+            || pm.IsTouching(Vector2.left) || pm.IsTouching(Vector2.right);
     }
 
 

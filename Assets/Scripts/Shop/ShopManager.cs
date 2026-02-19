@@ -42,6 +42,7 @@ public class ShopManager : Singleton<ShopManager>
     private const float chargeChance = 0f;
     [SerializeField] private int shopOffers = 3;
 
+    [SerializeField] private FullscreenMapUI shopMap;
     public override void Awake()
     {
         base.Awake();
@@ -72,6 +73,9 @@ public class ShopManager : Singleton<ShopManager>
 
         UpdateShopAbilities();
         UpdateMoney();
+
+        shopMap.clearImages();
+        shopMap.produceImages();
     }
 
     public void RestockShop()

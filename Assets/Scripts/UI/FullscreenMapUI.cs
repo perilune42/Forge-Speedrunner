@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class FullscreenMapUI : MonoBehaviour
 {
     private List<Room> allRooms;
     private RoomManager roomManager;
-    private static Vector2 screenRes;
+    private Vector2 screenRes;
     private int width;
     private int height;
     private float maxPosX;
@@ -19,6 +20,9 @@ public class FullscreenMapUI : MonoBehaviour
 
     private bool showingMap;
 
+    [SerializeField] private bool shopMode;
+
+
     [SerializeField] private Vector2Int passageSize = new Vector2Int(20, 10); // In pixels
     [SerializeField] private Vector2Int roomSizeMinus = new Vector2Int(8, 8); // Remove some unitX and unitY to show borders
     [SerializeField] private Vector2Int youAreHereSize = new Vector2Int(2, 2); // In pixels
@@ -28,26 +32,42 @@ public class FullscreenMapUI : MonoBehaviour
     [SerializeField] private Object passageImage; // size 2x2
     [SerializeField] [Range(0.1f, 1)] private float sizeMult = 1;
 
+    bool initialized = false;
+
+    List<MapSpawnSelector> mapSpawnSelectors;
+
+    [SerializeField] MapSpawnSelector mapSpawnSelectorPrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // screenRes = new Vector2(Screen.width, Screen.height);
-        screenRes = transform.parent.GetComponent<RectTransform>().sizeDelta;
+        Init();
+        if (!shopMode)
+        {
+            produceImages();
+            toggleMap(false);
+        }
+
+    }
+
+    private void Init()
+    {
+        screenRes = GameplayUI.Instance.GetComponent<RectTransform>().sizeDelta;
         panelColor = gameObject.GetComponent<Image>().color;
         newColor = panelColor;
-        produceImages();
-        toggleMap(false);
+        initialized = true;
     }
 
     private void FixedUpdate()
     {
-        if (PInput.Instance.Map.StoppedPressing)
+        if (!shopMode && PInput.Instance.Map.StoppedPressing)
         {
             toggleMap(!showingMap);
         }
+
     }
 
-    private void clearImages()
+    public void clearImages()
     {
         foreach (Transform child in transform)
         {
@@ -55,9 +75,9 @@ public class FullscreenMapUI : MonoBehaviour
         }
     }
 
-    private void produceImages()
+    public void produceImages()
     {
-
+        if (!initialized) Init();  
         roomManager = RoomManager.Instance;
         allPassages = roomManager.AllPassages;
         allRooms = roomManager.AllRooms;
@@ -68,8 +88,10 @@ public class FullscreenMapUI : MonoBehaviour
         Vector2 divided = screenRes / new Vector2 (maxPosX, maxPosY);
         float unitX = sizeMult * (Mathf.Min(divided.x, divided.y) / 2);
         float unitY = unitX * height/width;
-        float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX - unitX*roomSizeMinus.x/(width));
-        float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY - unitY*roomSizeMinus.y/(height));
+        //float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX - unitX*roomSizeMinus.x/(width));
+        //float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY - unitY*roomSizeMinus.y/(height));
+        float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX);
+        float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY);
         if (!negativePosRooms) {
             unitX *= 2;
             unitY *= 2;
@@ -85,42 +107,67 @@ public class FullscreenMapUI : MonoBehaviour
             RectTransform roomRect = roomObj.GetComponent<RectTransform>();
             roomRect.localPosition = relativePos;
             roomRect.sizeDelta = relativeSize;
+            roomRect.localPosition += new Vector3(unitX * roomSizeMinus.x / (2 * width), unitY * roomSizeMinus.y / (2 * height));
             roomRect.SetAsFirstSibling();
             
-            if (roomManager.activeRoom == room)
+            if (!shopMode && roomManager.activeRoom == room)
             {
                 Object youAreHere = Instantiate(youAreHereImage, roomRect);
                 youAreHere.GetComponent<RectTransform>().sizeDelta = 
                     new Vector2(relativeSize.x/(width*room.size.x) * youAreHereSize.x, 
                     relativeSize.y/(height*room.size.y) * youAreHereSize.y);
             }
-
             foreach (Doorway door in GetDoors(room))
             {
+                
                 float x = door.transform.localPosition.x;
                 float y = door.transform.localPosition.y;
                 bool show = false;
 
+                Vector2 dir = door.GetTransitionDirection();
+                float xIdx, yIdx;
+                if (dir.y == 0)
+                {
+                    // vertical
+                    xIdx = dir.x == 1 ? room.size.x : 0;
+                    yIdx = door.GetIndex() + 0.5f;
+                }
+                else
+                {
+                    // horizontal
+                    xIdx = door.GetIndex() + 0.5f;
+                    yIdx = dir.y == 1 ? room.size.y : 0;
+                }
+
+
                 // Centering the doors before instantiating them (when pivot is bottom left)
-                if ((x >= -0.5 && x <= 0) || (y >= -0.5 && y <= 0)) // Left or Down Door
+                if (dir == Vector2.left || dir == Vector2.down) // Left or Down Door
                 {
                     show = true;
                 }
-
+                Vector2 relPos = new Vector2(relativePos.x + xIdx * unitX, relativePos.y + yIdx * unitY);
                 if (show) 
                 {
+                    
                     Object passageObj = Instantiate(passageImage, transform);
-                    Vector2 relPos = new Vector2(relativePos.x + (x/width)*unitX, relativePos.y + (y/height)*unitY);
                     RectTransform passageRect = passageObj.GetComponent<RectTransform>();
                     passageRect.localPosition = relPos;
                     passageRect.sizeDelta = 
                         new Vector2(relativeSize.x/(width*room.size.x) * passageSize.x, 
                         relativeSize.y/(height*room.size.y) * passageSize.y);
-                    if (y >= -0.5 && y <= 0)
+                    if (dir == Vector2.down)
                     {
                         passageRect.Rotate(0, 0, 90f); 
                     }
-                }          
+                }
+                
+                if (shopMode)
+                {
+                    MapSpawnSelector mapSpawnSelector = Instantiate(mapSpawnSelectorPrefab, transform);
+                    mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -30;
+                    mapSpawnSelector.LinkToDoorway(door);
+                }
+
             }
         }
     }
@@ -129,18 +176,10 @@ public class FullscreenMapUI : MonoBehaviour
     private List<Doorway> GetDoors(Room room)
     {
         List<Doorway> doors = new List<Doorway>();
-        foreach (Passage pass in allPassages)
-        {
-            Room room1 = pass.door1.enclosingRoom;
-            Room room2 = pass.door2.enclosingRoom;
-            if (room1 == room)
-            {
-                doors.Add(pass.door1);
-            } else if (room2 == room)
-            {
-                doors.Add(pass.door2);
-            }
-        }
+        doors.AddRange(room.doorwaysDown.Where((door) => door != null && door.passage != null));
+        doors.AddRange(room.doorwaysLeft.Where((door) => door != null && door.passage != null));
+        doors.AddRange(room.doorwaysRight.Where((door) => door != null && door.passage != null));
+        doors.AddRange(room.doorwaysUp.Where((door) => door != null && door.passage != null));
 
         return doors;
     }

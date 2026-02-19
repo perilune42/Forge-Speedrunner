@@ -63,11 +63,12 @@ MonoBehaviour:
     m_Bits: 64
   interactLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   Grapple: {fileID: 0}
   lineRenderer: {fileID: -8626148767616273302}
   fullyChargedColor: {r: 0, g: 0.90713024, b: 1, a: 0}
   attachedSprite: {fileID: 21300000, guid: 6eb17c53f5fb2e3a2925b0e01db11033, type: 3}
+  col: {fileID: 0}
 --- !u!61 &-3952376419283584309
 BoxCollider2D:
   m_ObjectHideFlags: 0

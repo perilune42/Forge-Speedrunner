@@ -39,7 +39,7 @@ public class RandomFromPoint : IPathGenerator
 
         Direction dir; Offset off; Offset botleft;
         (dir, off) = stack.PopRandom();
-        Room possibleRoom = findRoomWith(dir, in roomPrefabs);
+        Room possibleRoom = findRoomWith(DirMethods.opposite(dir), in roomPrefabs);
         bool fitRoom = grid.CanFit(possibleRoom, off, dir, out botleft);
         if(fitRoom)
         {

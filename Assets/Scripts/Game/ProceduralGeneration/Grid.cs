@@ -282,6 +282,9 @@ public class Grid
         Cell currentCell = cellsByGrid[currentOff];
         Cell dirCell = cellsByGrid[dirOff];
 
+        if(currentCell.room == dirCell.room)
+            return false;
+
         List<Doorway> currentDoors = currentCell.room.doorwaysUp;
         List<Doorway> dirDoors = dirCell.room.doorwaysDown;
 
@@ -299,6 +302,7 @@ public class Grid
             currentIndex = relativeCurrOff.x;
             dirIndex = relativeDirOff.x;
         }
+        Debug.Log($"currentIndex for ({currentCell.room}): {currentIndex}, dirIndex for ({dirCell.room}): {dirIndex}");
 
         pass = new Passage();
         pass.door1 = currentDoors[currentIndex];

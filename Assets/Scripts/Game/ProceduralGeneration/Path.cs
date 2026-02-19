@@ -49,7 +49,7 @@ public class PathCreator
             Room room = c.room;
 
             Room realRoom = (Room)GameObject.Instantiate(room, screenPosition, Quaternion.identity);
-            createdRooms.Add(c.offset, realRoom);
+            createdRooms.Add(c, realRoom);
             realRoom.gridPosition = c.offset;
             realRoom.transform.SetParent(roomParent);
         }
@@ -65,19 +65,20 @@ public class PathCreator
             {
                 case LEFT:
                     sourceDoors = roomSource.doorwaysLeft;
-                    sinkDoors = roomSource.doorwaysRight;
+                    sinkDoors = roomSink.doorwaysRight;
                     break;
                 case RIGHT:
                     sourceDoors = roomSource.doorwaysRight;
-                    sinkDoors = roomSource.doorwaysLeft;
+                    sinkDoors = roomSink.doorwaysLeft;
                     break;
                 case UP:
                     sourceDoors = roomSource.doorwaysUp;
-                    sinkDoors = roomSource.doorwaysDown;
+                    sinkDoors = roomSink.doorwaysDown;
                     break;
                 default: // DOWN
-                    sourceDoors = roomSource.doorwaysUp;
-                    sinkDoors = roomSource.doorwaysDown;
+                    sourceDoors = roomSource.doorwaysDown;
+                    sinkDoors = roomSink.doorwaysUp;
+                    break;
             }
 
             Doorway sourceDoor = sourceDoors[c.SourceInd];
@@ -89,6 +90,11 @@ public class PathCreator
             passages.Add(pass);
         }
 
-        return (createdRooms.Values.ToList(), passages);
+        // TODO replace when i have internet with something more sane
+        List<Room> roomsTemp = new();
+        foreach(Room r in createdRooms.Values)
+            roomsTemp.Add(r);
+
+        return (roomsTemp, passages);
     }
 }

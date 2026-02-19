@@ -182,6 +182,14 @@ public class Grid
             Debug.Log($"Called OpenAt on a nonexistent grid cell! ({offset.x},{offset.y}).");
 
     }
+
+    public PathCreator ProduceCreator()
+    {
+        PathCreator pc = new(uniqueCells);
+        WriteConnections(pc);
+        return pc;
+    }
+
     public bool InsertRoom(Room room, Offset offset)
     {
         Openings closedEverywhere = new Openings(false,false,false,false);
@@ -235,11 +243,10 @@ public class Grid
         uniqueCells.Add(cell);
         return true;
     }
-    public List<Passage> RealizePath()
+    public void WriteConnections(PathCreator pc)
     {
         HashSet<Offset> visited = new();
         List<Offset> allOffsets = grid.Keys.ToList();
-        List<Passage> passages = new();
         while(allOffsets.Count > 0)
         {
             // dequeue
@@ -247,32 +254,29 @@ public class Grid
             allOffsets.RemoveAt(allOffsets.Count-1);
 
             // process in all directions
-            TryRealizeStep(current, UP, allOffsets, passages);
-            TryRealizeStep(current, DOWN, allOffsets, passages);
-            TryRealizeStep(current, LEFT, allOffsets, passages);
-            TryRealizeStep(current, RIGHT, allOffsets, passages);
+            TryStep(current, UP, allOffsets, pc);
+            TryStep(current, DOWN, allOffsets, pc);
+            TryStep(current, LEFT, allOffsets, pc);
+            TryStep(current, RIGHT, allOffsets, pc);
         }
-        return passages;
     }
-    // only useful in above function RealizePath
-    private void TryRealizeStep(Offset current, Direction dir, List<Offset> allOffsets, List<Passage> passages)
+    // only useful in above function WriteConnections
+    private void TryStep(Offset current, Direction dir, List<Offset> allOffsets, PathCreator pc)
     {
-        if(TryBuildPass(current, dir, out Passage pass, out Offset neighbor))
+        if(TryAddConnection(current, dir, pc, out Offset neighbor))
         {
             Debug.Log($"Connection! {current} -> {neighbor}");
             allOffsets.Remove(neighbor);
-            passages.Add(pass);
         }
     }
-    // NOTE: can return null!
-    private bool TryBuildPass(Offset currentOff,
+
+    private bool TryAddConnection(Offset currentOff,
             Direction dir,
-            out Passage pass,
+            PathCreator pc,
             out Offset dirOff)
     {
         // direction data
         dirOff = DirMethods.calcOffset(currentOff, dir);
-        pass = null;
 
         Openings dirOpens;
         bool success = grid.TryGetValue(dirOff, out dirOpens);
@@ -284,9 +288,6 @@ public class Grid
 
         if(currentCell.room == dirCell.room)
             return false;
-
-        List<Doorway> currentDoors = currentCell.room.doorwaysUp;
-        List<Doorway> dirDoors = dirCell.room.doorwaysDown;
 
         Offset relativeCurrOff = currentOff - currentCell.offset;
         Offset relativeDirOff = dirOff - dirCell.offset;
@@ -304,9 +305,7 @@ public class Grid
         }
         Debug.Log($"currentIndex for ({currentCell.room}): {currentIndex}, dirIndex for ({dirCell.room}): {dirIndex}");
 
-        pass = new Passage();
-        pass.door1 = currentDoors[currentIndex];
-        pass.door2 = dirDoors[dirIndex];
+        pc.AddConnection(currentCell, dirCell, currentIndex, dirIndex, dir);
         return true;
     }
 

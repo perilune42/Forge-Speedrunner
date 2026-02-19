@@ -23,18 +23,14 @@ public class RandomFromPoint : IPathGenerator
         stack.extractAll(start, new(0,0));
         grid.InsertRoom(start, new(0,0));
     }
-    public List<Cell> Generate(int pathLength)
+    public PathCreator Generate(int pathLength)
     {
         for(int i = 0; i < pathLength; i++)
         {
             Debug.Log($"step {i}");
             Step();
         }
-        return grid.uniqueCells; // problem: pointer to internal state
-    }
-    public List<Passage> RealizePath()
-    {
-        return grid.RealizePath();
+        return grid.ProduceCreator();
     }
     private void Step()
     {

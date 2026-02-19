@@ -36,6 +36,10 @@ public class PathCreator
         conn.ConnectionDir = dir;
         Connections.Add(conn);
     }
+    public void RegisterParent(Transform parent)
+    {
+        roomParent = parent;
+    }
 
     public (List<Room>, List<Passage>) Create()
     {
@@ -57,8 +61,17 @@ public class PathCreator
         // form paths
         foreach(Connection c in Connections)
         {
-            Room roomSource = createdRooms[c.Source];
-            Room roomSink = createdRooms[c.Sink];
+            Room roomSource; Room roomSink;
+            if(!createdRooms.TryGetValue(c.Source, out roomSource))
+            {
+                Debug.Log($"Can't find anything for cell at {c.Source.offset}");
+                continue;
+            }
+            if(!createdRooms.TryGetValue(c.Sink, out roomSink))
+            {
+                Debug.Log($"Can't find anything for cell at {c.Sink.offset}");
+                continue;
+            }
 
             List<Doorway> sourceDoors; List<Doorway> sinkDoors;
             switch(c.ConnectionDir)

@@ -1,3 +1,10 @@
+using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text;
+using Offset = UnityEngine.Vector2Int;
+using static Direction;
 public class Grid
 {
     internal struct Openings

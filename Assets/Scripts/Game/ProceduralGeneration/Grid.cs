@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Text;
+using System; // exceptions
 using Offset = UnityEngine.Vector2Int;
 using static Direction;
 public class Grid
@@ -154,6 +155,89 @@ public class Grid
         }
         botleft = new(0,0);
         return false;
+    }
+
+    /* Attempt at writing a cleaner CanFit
+     */
+    public bool CanFit2(Room room, Offset offset, Direction dir, out Offset botleft)
+    {
+        // initial constants important for calculations
+        // functional match on enum is fun
+        Offset mask = dir switch
+        {
+            LEFT or RIGHT => new(0,1),
+            _ => new(1,0),
+        };
+
+        List<Doorway> roomDoorsAtDir = dir switch
+        {
+            LEFT => room.doorwaysLeft,
+            RIGHT => room.doorwaysRight,
+            UP => room.doorwaysUp,
+            DOWN => room.doorwaysDown,
+            _ => throw new Exception("this is not going to happen"),
+        };
+
+
+        // find bottom left where offset refers to the first element of the doorway list
+        botleft = offset;
+        if(dir == UP)
+        {
+            botleft.y += room.size.y-1; // top of room
+        }
+        else if(dir == RIGHT)
+        {
+            botleft.x += room.size.x-1; // end of room
+        }
+
+        // subtract from bottom left the difference from first element to first non-null element
+        int firstNonNull = -1;
+        // for(; firstNonNull < roomDoorsAtDir roomDoorsAtDir[firstNonNull] == null; firstNonNull++);
+        for(int i = 0; i < roomDoorsAtDir.Count; i++)
+        {
+            if(roomDoorsAtDir[i] != null)
+            {
+                firstNonNull = i;
+                break;
+            }
+        }
+
+        // early return if no doorways are non null (should not happen)
+        if(firstNonNull < 0)
+            return false;
+        botleft -= mask * firstNonNull;
+
+        // check if there are no obstructions from offset to offset+room.size
+        // return early if there are none
+        Offset obstruction = botleft;
+        bool valid = true;
+        for(int i = 0; valid && i < room.size.x; i++)
+            for(int j = 0; valid && j < room.size.y; j++)
+        {
+            obstruction = botleft + new Offset(i,j);
+            if(grid.ContainsKey(obstruction))
+                valid = false;
+        }
+        if(valid) return true;
+        Debug.Log($"obstruction at {obstruction}");
+
+        // if there are obstructions, recalculate offset so that obstruction is outside.
+        // obstruction's x or y coordinate depending on direction - room.size.xory
+        // subtract this from botleft
+        botleft -= mask * (obstruction - room.size) + mask;
+
+        // check botleft again. return early if there are no obstructions
+        valid = true;
+        for(int i = 0; valid && i < room.size.x; i++)
+            for(int j = 0; valid && j < room.size.y; j++)
+        {
+            obstruction = botleft + new Offset(i,j);
+            if(grid.ContainsKey(obstruction))
+                valid = false;
+        }
+        Debug.Log($"obstruction again at {obstruction}. giving up.");
+
+        return valid;
     }
 
     /* Place the ROOM at the OFFSET inside the internal grid. return TRUE if success.

@@ -6,6 +6,7 @@ public class MapGen : MonoBehaviour
 {
     public IPathGenerator pathGen;
     public List<Room> createdRooms = new();
+    public List<Passage> passagesDebug;
     public int pathSize;
     
     void Awake()
@@ -16,8 +17,9 @@ public class MapGen : MonoBehaviour
     {
         Room[] roomPrefabs = Array.ConvertAll(GameRegistry.Instance.RoomPrefabs, x => x.GetComponent<Room>());
         Room start = GameRegistry.Instance.StartRoom.GetComponent<Room>();
-        pathGen = new RandomFromPoint(roomPrefabs, start, null); // end is kind of ignored for now
+        RandomFromPoint pathGen = new RandomFromPoint(roomPrefabs, start, null); // end is kind of ignored for now
         List<Cell> path = pathGen.Generate(pathSize);
+        passagesDebug = pathGen.RealizePath();
         Debug.Log($"here we are. size: {path.Count}");
 
         foreach(Cell c in path)

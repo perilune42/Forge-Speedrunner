@@ -32,6 +32,10 @@ public class RandomFromPoint : IPathGenerator
         }
         return grid.uniqueCells; // problem: pointer to internal state
     }
+    public List<Passage> RealizePath()
+    {
+        return grid.RealizePath();
+    }
     private void Step()
     {
         grid.LogEntries();

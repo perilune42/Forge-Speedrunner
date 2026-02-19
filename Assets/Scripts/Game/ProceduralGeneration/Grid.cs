@@ -242,48 +242,70 @@ public class Grid
         List<Passage> passages = new();
         while(allOffsets.Count > 0)
         {
-            // 1. dequeue
+            // dequeue
             Offset current = allOffsets[allOffsets.Count-1];
             allOffsets.RemoveAt(allOffsets.Count-1);
 
-            Openings currentOpens = grid[current];
-            if(currentOpens.up)
-            {
-                Offset up = current;
-                up.y += 1;
-                Openings upOpenings;
-                bool success = grid.TryGetValue(up, out upOpenings);
-                if(success && upOpenings.down)
-                {
-                    Passage newPassage = new();
-                    Cell currCell = cellsByGrid[current].room;
-                    Cell upCell = cellsByGrid[up].room;
-                    List<Doorway> currentDoors = currCell.doorwaysUp;
-                    List<Doorway> upDoors = upCell.doorwaysDown;
-                    int currentIndex = current.x - currCell.offset.x;
-                    int upIndex = up.x - upCell.offset.x;
-                    newPassage.door1 = currentDoors[currentIndex];
-                    newPassage.door2 = currentDoors[upIndex];
-                    passages.Add(passage);
-                    allOffsets.Remove(up);
-                }
-            }
-            if(currentOpens.down)
-            {
-
-            }
-            if(currentOpens.left)
-            {
-
-            }
-            if(currentOpens.right)
-            {
-
-            }
+            // process in all directions
+            TryRealizeStep(current, UP, allOffsets, passages);
+            TryRealizeStep(current, DOWN, allOffsets, passages);
+            TryRealizeStep(current, LEFT, allOffsets, passages);
+            TryRealizeStep(current, RIGHT, allOffsets, passages);
         }
-        // TODO: ACTUALLY FINISH THIS 
-        return null;
+        return passages;
     }
+    // only useful in above function RealizePath
+    private void TryRealizeStep(Offset current, Direction dir, List<Offset> allOffsets, List<Passage> passages)
+    {
+        if(TryBuildPass(current, dir, out Passage pass, out Offset neighbor))
+        {
+            Debug.Log($"Connection! {current} -> {neighbor}");
+            allOffsets.Remove(neighbor);
+            passages.Add(pass);
+        }
+    }
+    // NOTE: can return null!
+    private bool TryBuildPass(Offset currentOff,
+            Direction dir,
+            out Passage pass,
+            out Offset dirOff)
+    {
+        // direction data
+        dirOff = DirMethods.calcOffset(currentOff, dir);
+        pass = null;
+
+        Openings dirOpens;
+        bool success = grid.TryGetValue(dirOff, out dirOpens);
+        if(!success) // early end if not found
+            return false;
+
+        Cell currentCell = cellsByGrid[currentOff];
+        Cell dirCell = cellsByGrid[dirOff];
+
+        List<Doorway> currentDoors = currentCell.room.doorwaysUp;
+        List<Doorway> dirDoors = dirCell.room.doorwaysDown;
+
+        Offset relativeCurrOff = currentOff - currentCell.offset;
+        Offset relativeDirOff = dirOff - dirCell.offset;
+
+        int currentIndex; int dirIndex;
+        if(dir == LEFT || dir == RIGHT)
+        {
+            currentIndex = relativeCurrOff.y;
+            dirIndex = relativeDirOff.y;
+        }
+        else // UP OR DOWN
+        {
+            currentIndex = relativeCurrOff.x;
+            dirIndex = relativeDirOff.x;
+        }
+
+        pass = new Passage();
+        pass.door1 = currentDoors[currentIndex];
+        pass.door2 = dirDoors[dirIndex];
+        return true;
+    }
+
     public void LogEntries()
     {
         StringBuilder sb = new("Grid contains keys:");

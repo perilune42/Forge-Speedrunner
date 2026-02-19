@@ -19,6 +19,7 @@ public class PathCreator
     private List<Cell> Cells;
     private List<Connection> Connections;
     private Transform roomParent;
+    public GameObject PassPrefab;
 
     public PathCreator(List<Cell> cells)
     {
@@ -101,7 +102,7 @@ public class PathCreator
             if(sinkDoor == null)
                 Debug.Log($"sinkDoor null for room {roomSink} at index {c.SinkInd}, direction {c.ConnectionDir}");
 
-            Passage pass = new();
+            Passage pass = GameObject.Instantiate(PassPrefab).GetComponent<Passage>();
             pass.door1 = sourceDoor;
             pass.door2 = sinkDoor;
             passages.Add(pass);

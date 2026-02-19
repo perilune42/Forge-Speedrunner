@@ -7,6 +7,7 @@ public class MapGen : MonoBehaviour
     public IPathGenerator pathGen;
     public List<Room> createdRooms = new();
     public List<Passage> passagesDebug;
+    public GameObject PassPrefab; 
     public int pathSize;
     
     void Awake()
@@ -22,6 +23,7 @@ public class MapGen : MonoBehaviour
         // passagesDebug = pathGen.RealizePath();
         // Debug.Log($"here we are. size: {path.Count}");
         PathCreator pc = pathGen.Generate(pathSize);
+        pc.PassPrefab = this.PassPrefab;
         pc.RegisterParent(transform);
 
         (createdRooms, passagesDebug) = pc.Create();

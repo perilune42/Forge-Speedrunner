@@ -265,7 +265,6 @@ public class Grid
     {
         if(TryAddConnection(current, dir, pc, out Offset neighbor))
         {
-            Debug.Log($"Connection! {current} -> {neighbor}");
             allOffsets.Remove(neighbor);
         }
     }
@@ -283,11 +282,32 @@ public class Grid
         if(!success) // early end if not found
             return false;
 
+        Openings currOpens;
+        success = grid.TryGetValue(currentOff, out currOpens);
+        if(!success) // early end if not found (this one should not happen)
+            return false;
+
         Cell currentCell = cellsByGrid[currentOff];
         Cell dirCell = cellsByGrid[dirOff];
 
         if(currentCell.room == dirCell.room)
             return false;
+
+        bool valid = dir == UP
+            ? (dirOpens.down && currOpens.up)
+            : dir == DOWN
+            ? (dirOpens.up && currOpens.down)
+            : dir == LEFT
+            ? (dirOpens.right && currOpens.left)
+            : dir == RIGHT
+            ? (dirOpens.left && currOpens.right)
+            : false;
+
+        if(!valid)
+        {
+            Debug.Log($"no connection between {currentCell.room} and {dirCell.room}");
+            return false;
+        }
 
         Offset relativeCurrOff = currentOff - currentCell.offset;
         Offset relativeDirOff = dirOff - dirCell.offset;
@@ -303,7 +323,8 @@ public class Grid
             currentIndex = relativeCurrOff.x;
             dirIndex = relativeDirOff.x;
         }
-        Debug.Log($"currentIndex for ({currentCell.room}): {currentIndex}, dirIndex for ({dirCell.room}): {dirIndex}");
+        Debug.Log($"Connection between ({currentCell.room}) and ({dirCell.room}): ({currentOff}) -> ({dirOff})");
+        Debug.Log($"For current ({currentCell.room}), dir ({dirCell.room}): \n currentIndex: {currentIndex}, dirIndex: {dirIndex}\n relativeCurrOff: {relativeCurrOff}, relativeDirOff: {relativeDirOff}\n currentOff: {currentOff}, dirOff: {dirOff}\n currentCell.offset: {currentCell.offset}, dirCell.offset: {dirCell.offset}\ndirection: {dir}");
 
         pc.AddConnection(currentCell, dirCell, currentIndex, dirIndex, dir);
         return true;

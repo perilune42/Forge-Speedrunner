@@ -43,7 +43,7 @@ public class PathCreator
 
     public (List<Room>, List<Passage>) Create()
     {
-        Dictionary<Cell, Room> createdRooms = new();
+        Dictionary<Vector2Int, Room> createdRooms = new();
         List<Passage> passages = new();
         // form rooms
         foreach(Cell c in Cells)
@@ -53,7 +53,7 @@ public class PathCreator
             Room room = c.room;
 
             Room realRoom = (Room)GameObject.Instantiate(room, screenPosition, Quaternion.identity);
-            createdRooms.Add(c, realRoom);
+            createdRooms.Add(c.offset, realRoom);
             realRoom.gridPosition = c.offset;
             realRoom.transform.SetParent(roomParent);
         }
@@ -62,12 +62,12 @@ public class PathCreator
         foreach(Connection c in Connections)
         {
             Room roomSource; Room roomSink;
-            if(!createdRooms.TryGetValue(c.Source, out roomSource))
+            if(!createdRooms.TryGetValue(c.Source.offset, out roomSource))
             {
                 Debug.Log($"Can't find anything for cell at {c.Source.offset}");
                 continue;
             }
-            if(!createdRooms.TryGetValue(c.Sink, out roomSink))
+            if(!createdRooms.TryGetValue(c.Sink.offset, out roomSink))
             {
                 Debug.Log($"Can't find anything for cell at {c.Sink.offset}");
                 continue;
@@ -96,6 +96,10 @@ public class PathCreator
 
             Doorway sourceDoor = sourceDoors[c.SourceInd];
             Doorway sinkDoor = sinkDoors[c.SinkInd];
+            if(sourceDoor == null)
+                Debug.Log($"sourceDoor null for room {roomSource} at index {c.SourceInd}, direction {c.ConnectionDir}");
+            if(sinkDoor == null)
+                Debug.Log($"sinkDoor null for room {roomSink} at index {c.SinkInd}, direction {c.ConnectionDir}");
 
             Passage pass = new();
             pass.door1 = sourceDoor;

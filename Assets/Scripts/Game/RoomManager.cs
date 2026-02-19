@@ -59,18 +59,9 @@ public class RoomManager : Singleton<RoomManager>
 
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
 
-        if (overrideStartingRoom)
-        {
-            activeRoom = findActiveRoom(AllRooms);
-            originalPosition = Player.Instance.Movement.transform.position;
-            RespawnPosition = originalPosition;
-            originalRoom = activeRoom;
-            CameraController.Instance.SnapToRoom(activeRoom);
-        }
-        else
-        {
-            SpawnAtStart();
-        }
+        SpawnAtStart();
+
+
 
 
         foreach (Passage pass in AllPassages)
@@ -87,13 +78,25 @@ public class RoomManager : Singleton<RoomManager>
 
     public void SpawnAtStart()
     {
-        activeRoom = StartingRoom;
-        originalPosition = StartingSpawn.position;
-        RespawnPosition = StartingSpawn.position;
-        Player.Instance.Movement.transform.position = StartingSpawn.position;
-        originalRoom = StartingRoom;
-        CameraController.Instance.SnapToRoom(activeRoom);
-        respawnIsSet = false;
+        if (overrideStartingRoom)
+        {
+            activeRoom = findActiveRoom(AllRooms);
+            originalPosition = Player.Instance.Movement.transform.position;
+            RespawnPosition = originalPosition;
+            originalRoom = activeRoom;
+            CameraController.Instance.SnapToRoom(activeRoom);
+        }
+        else
+        {
+            activeRoom = StartingRoom;
+            originalPosition = StartingSpawn.position;
+            RespawnPosition = StartingSpawn.position;
+            Player.Instance.Movement.transform.position = StartingSpawn.position;
+            originalRoom = StartingRoom;
+            CameraController.Instance.SnapToRoom(activeRoom);
+            respawnIsSet = false;
+        }
+
     }
 
 

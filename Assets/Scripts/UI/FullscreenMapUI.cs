@@ -8,7 +8,7 @@ public class FullscreenMapUI : MonoBehaviour
 {
     private List<Room> allRooms;
     private RoomManager roomManager;
-    private static Vector2 screenRes;
+    private Vector2 screenRes;
     private int width;
     private int height;
     private float maxPosX;
@@ -19,6 +19,9 @@ public class FullscreenMapUI : MonoBehaviour
 
     private bool showingMap;
 
+    [SerializeField] private bool shopMode;
+
+
     [SerializeField] private Vector2Int passageSize = new Vector2Int(20, 10); // In pixels
     [SerializeField] private Vector2Int roomSizeMinus = new Vector2Int(8, 8); // Remove some unitX and unitY to show borders
     [SerializeField] private Vector2Int youAreHereSize = new Vector2Int(2, 2); // In pixels
@@ -28,26 +31,38 @@ public class FullscreenMapUI : MonoBehaviour
     [SerializeField] private Object passageImage; // size 2x2
     [SerializeField] [Range(0.1f, 1)] private float sizeMult = 1;
 
+    bool initialized = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // screenRes = new Vector2(Screen.width, Screen.height);
-        screenRes = transform.parent.GetComponent<RectTransform>().sizeDelta;
+        Init();
+        if (!shopMode)
+        {
+            produceImages();
+            toggleMap(false);
+        }
+
+    }
+
+    private void Init()
+    {
+        screenRes = GameplayUI.Instance.GetComponent<RectTransform>().sizeDelta;
         panelColor = gameObject.GetComponent<Image>().color;
         newColor = panelColor;
-        produceImages();
-        toggleMap(false);
+        initialized = true;
     }
 
     private void FixedUpdate()
     {
-        if (PInput.Instance.Map.StoppedPressing)
+        if (!shopMode && PInput.Instance.Map.StoppedPressing)
         {
             toggleMap(!showingMap);
         }
+
     }
 
-    private void clearImages()
+    public void clearImages()
     {
         foreach (Transform child in transform)
         {
@@ -55,9 +70,10 @@ public class FullscreenMapUI : MonoBehaviour
         }
     }
 
-    private void produceImages()
+    public void produceImages()
     {
-
+        if (!initialized) Init();  
+        Debug.Log("hi");
         roomManager = RoomManager.Instance;
         allPassages = roomManager.AllPassages;
         allRooms = roomManager.AllRooms;
@@ -87,7 +103,7 @@ public class FullscreenMapUI : MonoBehaviour
             roomRect.sizeDelta = relativeSize;
             roomRect.SetAsFirstSibling();
             
-            if (roomManager.activeRoom == room)
+            if (!shopMode && roomManager.activeRoom == room)
             {
                 Object youAreHere = Instantiate(youAreHereImage, roomRect);
                 youAreHere.GetComponent<RectTransform>().sizeDelta = 

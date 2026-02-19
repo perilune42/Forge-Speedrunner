@@ -171,24 +171,16 @@ public class Grid
 
         List<Doorway> roomDoorsAtDir = dir switch
         {
-            LEFT => room.doorwaysLeft,
-            RIGHT => room.doorwaysRight,
-            UP => room.doorwaysUp,
-            DOWN => room.doorwaysDown,
+            LEFT => room.doorwaysRight,
+            RIGHT => room.doorwaysLeft,
+            UP => room.doorwaysDown,
+            DOWN => room.doorwaysUp,
             _ => throw new Exception("this is not going to happen"),
         };
 
 
         // find bottom left where offset refers to the first element of the doorway list
-        botleft = offset;
-        if(dir == UP)
-        {
-            botleft.y += room.size.y-1; // top of room
-        }
-        else if(dir == RIGHT)
-        {
-            botleft.x += room.size.x-1; // end of room
-        }
+        botleft = offset + mask * room.size - mask;
 
         // subtract from bottom left the difference from first element to first non-null element
         int firstNonNull = -1;
@@ -204,7 +196,10 @@ public class Grid
 
         // early return if no doorways are non null (should not happen)
         if(firstNonNull < 0)
+        {
+            Debug.Log($"first non null for {room} direction {dir}");
             return false;
+        }
         botleft -= mask * firstNonNull;
 
         // check if there are no obstructions from offset to offset+room.size

@@ -33,6 +33,10 @@ public class FullscreenMapUI : MonoBehaviour
 
     bool initialized = false;
 
+    List<MapSpawnSelector> mapSpawnSelectors;
+
+    [SerializeField] MapSpawnSelector mapSpawnSelectorPrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -73,7 +77,6 @@ public class FullscreenMapUI : MonoBehaviour
     public void produceImages()
     {
         if (!initialized) Init();  
-        Debug.Log("hi");
         roomManager = RoomManager.Instance;
         allPassages = roomManager.AllPassages;
         allRooms = roomManager.AllRooms;
@@ -84,8 +87,10 @@ public class FullscreenMapUI : MonoBehaviour
         Vector2 divided = screenRes / new Vector2 (maxPosX, maxPosY);
         float unitX = sizeMult * (Mathf.Min(divided.x, divided.y) / 2);
         float unitY = unitX * height/width;
-        float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX - unitX*roomSizeMinus.x/(width));
-        float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY - unitY*roomSizeMinus.y/(height));
+        //float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX - unitX*roomSizeMinus.x/(width));
+        //float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY - unitY*roomSizeMinus.y/(height));
+        float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX);
+        float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY);
         if (!negativePosRooms) {
             unitX *= 2;
             unitY *= 2;
@@ -101,6 +106,7 @@ public class FullscreenMapUI : MonoBehaviour
             RectTransform roomRect = roomObj.GetComponent<RectTransform>();
             roomRect.localPosition = relativePos;
             roomRect.sizeDelta = relativeSize;
+            roomRect.localPosition += new Vector3(unitX * roomSizeMinus.x / (2 * width), unitY * roomSizeMinus.y / (2 * height));
             roomRect.SetAsFirstSibling();
             
             if (!shopMode && roomManager.activeRoom == room)
@@ -117,26 +123,49 @@ public class FullscreenMapUI : MonoBehaviour
                 float y = door.transform.localPosition.y;
                 bool show = false;
 
+                Vector2 dir = door.GetTransitionDirection();
+                float xIdx, yIdx;
+                if (dir.y == 0)
+                {
+                    // vertical
+                    xIdx = dir.x == 1 ? room.size.x : 0;
+                    yIdx = door.GetIndex() + 0.5f;
+                }
+                else
+                {
+                    // horizontal
+                    xIdx = door.GetIndex() + 0.5f;
+                    yIdx = dir.y == 1 ? room.size.y : 0;
+                }
+
+
                 // Centering the doors before instantiating them (when pivot is bottom left)
-                if ((x >= -0.5 && x <= 0) || (y >= -0.5 && y <= 0)) // Left or Down Door
+                if (dir == Vector2.left || dir == Vector2.down) // Left or Down Door
                 {
                     show = true;
                 }
-
+                Vector2 relPos = new Vector2(relativePos.x + xIdx * unitX, relativePos.y + yIdx * unitY);
                 if (show) 
                 {
                     Object passageObj = Instantiate(passageImage, transform);
-                    Vector2 relPos = new Vector2(relativePos.x + (x/width)*unitX, relativePos.y + (y/height)*unitY);
                     RectTransform passageRect = passageObj.GetComponent<RectTransform>();
                     passageRect.localPosition = relPos;
                     passageRect.sizeDelta = 
                         new Vector2(relativeSize.x/(width*room.size.x) * passageSize.x, 
                         relativeSize.y/(height*room.size.y) * passageSize.y);
-                    if (y >= -0.5 && y <= 0)
+                    if (dir == Vector2.down)
                     {
                         passageRect.Rotate(0, 0, 90f); 
                     }
-                }          
+                }
+                
+                if (shopMode)
+                {
+                    MapSpawnSelector mapSpawnSelector = Instantiate(mapSpawnSelectorPrefab, transform);
+                    mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -50;
+                    mapSpawnSelector.LinkToDoorway(door);
+                }
+
             }
         }
     }

@@ -97,7 +97,8 @@ MonoBehaviour:
   roomImage: {fileID: 4328790571213072890, guid: 0fcb0d56a64d14e798fc2d49e891b469, type: 3}
   youAreHereImage: {fileID: 4328790571213072890, guid: 94dad1fff2bce4d4b84f49fc3881a01e, type: 3}
   passageImage: {fileID: 4328790571213072890, guid: 2236d67d692364317bf4f105d1735a7a, type: 3}
-  sizeMult: 0.9
+  sizeMult: 0.85
+  mapSpawnSelectorPrefab: {fileID: -4485618519477302183, guid: d75a38d518e3b4d4fbd908dcdc0c701e, type: 3}
 --- !u!223 &8353377626837914858
 Canvas:
   m_ObjectHideFlags: 0

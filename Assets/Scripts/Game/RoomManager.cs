@@ -43,6 +43,7 @@ public class RoomManager : Singleton<RoomManager>
     public Transform StartingSpawn;
 
     [SerializeField] bool overrideStartingRoom;
+    bool transitionOngoing = false;
 
     public Vector2 RespawnPosition { get => respawnPosition; set { 
             respawnPosition = value;
@@ -96,7 +97,19 @@ public class RoomManager : Singleton<RoomManager>
             CameraController.Instance.SnapToRoom(activeRoom);
             respawnIsSet = false;
         }
+    }
 
+    public void SpawnAtDoorway(Doorway door)
+    {
+        activeRoom = door.enclosingRoom;
+        originalPosition = door.transform.position;
+        previousDoorway = door;
+        originalRoom = activeRoom;
+        CameraController.Instance.SnapToRoom(activeRoom);
+        respawnIsSet = false;
+        Vector2 dir = -previousDoorway.GetTransitionDirection();
+        Debug.Log($"Spawning at doorway in room: {activeRoom}");
+        StartCoroutine(GoThroughDoorway(previousDoorway, DeterminePreservedVelocity(dir), dir));
     }
 
 
@@ -124,6 +137,20 @@ public class RoomManager : Singleton<RoomManager>
         return targetRoom;
     }
 
+    private Vector2 DeterminePreservedVelocity(Vector2 dir)
+    {
+        Vector2 preservedVelocity;
+        var pm = Player.Instance.Movement;
+        // on up transitions, give player a boost
+        const float upBoost = 1.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
+        {
+            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
+        }
+        else preservedVelocity = pm.Velocity;
+        return preservedVelocity;
+    }
 
     public void ResetAllEntities()
     {
@@ -158,15 +185,6 @@ public class RoomManager : Singleton<RoomManager>
         Vector2 dir = door1.GetTransitionDirection();
         Vector2 preservedVelocity;
 
-        // on up transitions, give player a boost
-        const float upBoost = 1.5f;
-        if (dir == Vector2.up
-                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
-        {
-            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
-        }
-        else preservedVelocity = pm.Velocity;
-        Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
 
         // calculate relativePos, which is unavoidable
         relativePos = pm.transform.position - door1.transform.position;
@@ -175,7 +193,7 @@ public class RoomManager : Singleton<RoomManager>
         activeRoom = door2.enclosingRoom;
 
 
-        StartCoroutine(GoThroughDoorway(door2, preservedVelocity, dir));
+        StartCoroutine(GoThroughDoorway(door2, DeterminePreservedVelocity(dir), dir));
     }
     
     // respawn location set by safe zones
@@ -228,20 +246,26 @@ public class RoomManager : Singleton<RoomManager>
 
     private IEnumerator GoThroughDoorway(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
-        // calculate new player position
-        Vector2 newPlayerPos = (Vector2)door2.transform.position;
-        if (door2.IsHorizontal())
-            newPlayerPos.y += relativePos.y;
-        else
-            newPlayerPos.x += relativePos.x;
+        if (!transitionOngoing)
+        {
+            transitionOngoing = true;
+            // calculate new player position
+            Vector2 newPlayerPos = (Vector2)door2.transform.position;
+            if (door2.IsHorizontal())
+                newPlayerPos.y += relativePos.y;
+            else
+                newPlayerPos.x += relativePos.x;
 
-        /**
-         * start doing things to the player here
-         */
-        door2.SuppressNextTransition();
-        respawnIsSet = false;
-        yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
-        door2.EnableTransition();
+            /**
+             * start doing things to the player here
+             */
+            door2.SuppressNextTransition();
+            respawnIsSet = false;
+            yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
+            door2.EnableTransition();
+            transitionOngoing = false;
+        }
+
     }
 
     private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)

@@ -51,11 +51,20 @@ public class Doorway : MonoBehaviour
     {
         suppressTransition = true;
         // in case the trigger exit wasn't detected
-        // StartCoroutine(Util.FDelayedCall(30, () => suppressTransition = false));
+        StartCoroutine(Util.FDelayedCall(30, () => suppressTransition = false));
     }
     public void EnableTransition()
     {
         suppressTransition = false;
+    }
+
+    public int GetIndex()
+    {
+        if (enclosingRoom.doorwaysLeft.Contains(this)) return enclosingRoom.doorwaysLeft.IndexOf(this);
+        else if (enclosingRoom.doorwaysRight.Contains(this)) return enclosingRoom.doorwaysRight.IndexOf(this);
+        else if (enclosingRoom.doorwaysUp.Contains(this)) return enclosingRoom.doorwaysUp.IndexOf(this);
+        else if (enclosingRoom.doorwaysDown.Contains(this)) return enclosingRoom.doorwaysDown.IndexOf(this);
+        return -1;
     }
 
     private void GenerateGuideRails()
@@ -72,7 +81,7 @@ public class Doorway : MonoBehaviour
         BoxCollider2D freezeTrigger = Instantiate(RoomManager.Instance.FreezeTriggerPrefab, transform);
         freezeTrigger.transform.localPosition = Vector2.zero;
         freezeTrigger.size = Vector2.one + 3 * new Vector2(Mathf.Abs(dir.y), Mathf.Abs(dir.x));
-        freezeTrigger.offset = dir * 2;
+        freezeTrigger.offset = dir * 2.5f;
         freezeTrigger.transform.rotation = Quaternion.identity;
     }
 

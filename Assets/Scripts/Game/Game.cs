@@ -23,7 +23,7 @@ public class Game : Singleton<Game> {
         Timer.Instance.Pause(true);
     }
 
-    public void ReturnToPlay(bool practiceMode)
+    public void ReturnToPlay(bool practiceMode, Doorway startDoorway = null)
     {
         ShopManager.Instance.CloseShop();
         // reset rooms and player
@@ -35,7 +35,7 @@ public class Game : Singleton<Game> {
         Timer.speedrunTime = 0F;
         Timer.Instance.Pause(false);
 
-        RoomManager.Instance.SpawnAtStart();
+
 
         AbilityManager.Instance.ResetAbilites();
         AbilityManager.Instance.RechargeAbilities();
@@ -45,6 +45,15 @@ public class Game : Singleton<Game> {
 
         IsPracticeMode = practiceMode;
         GameplayUI.Instance.TogglePracticeMode(practiceMode);
+
+        if (startDoorway == null)
+        {
+            RoomManager.Instance.SpawnAtStart();
+        }
+        else
+        {
+            RoomManager.Instance.SpawnAtDoorway(startDoorway);
+        }
     }
 
 

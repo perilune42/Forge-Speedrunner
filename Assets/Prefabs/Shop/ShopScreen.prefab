@@ -800,7 +800,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 186.515, y: -346.1}
-  m_SizeDelta: {x: 255.03, y: 114.2}
+  m_SizeDelta: {x: 0, y: 114.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7835176150066317141
 CanvasRenderer:
@@ -4198,8 +4198,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7273054404556120701, guid: 26c80aadc1b7cf44f828d759e722c953, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6770307006454818023}
   m_SourcePrefab: {fileID: 100100000, guid: 26c80aadc1b7cf44f828d759e722c953, type: 3}
+--- !u!1 &4923827838087692289 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7273054404556120701, guid: 26c80aadc1b7cf44f828d759e722c953, type: 3}
+  m_PrefabInstance: {fileID: 2358732982934430332}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6770307006454818023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4923827838087692289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!224 &5593134152261013935 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7864739354857599955, guid: 26c80aadc1b7cf44f828d759e722c953, type: 3}
@@ -4210,7 +4235,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5789526823416994712, guid: 26c80aadc1b7cf44f828d759e722c953, type: 3}
   m_PrefabInstance: {fileID: 2358732982934430332}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4923827838087692289}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 23cee81e8b0ae444284b2b6c9a2e4efc, type: 3}

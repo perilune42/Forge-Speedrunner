@@ -23,14 +23,14 @@ public class Grid
     }
     // NOTE: i end up not really using Cell "properly" here.
     private Dictionary<Vector2Int, Openings> grid;
-    private Dictionary<Vector2Int, Room> roomsByGrid;
+    private Dictionary<Vector2Int, Cell> cellsByGrid;
     public List<Cell> uniqueCells;
 
     public Grid()
     {
         grid = new();
         uniqueCells = new();
-        roomsByGrid = new();
+        cellsByGrid = new();
     }
 
     private bool ObstructionWithin(Offset botLeft, Offset topRight, out Offset obstruction)
@@ -187,12 +187,13 @@ public class Grid
         Openings closedEverywhere = new Openings(false,false,false,false);
 
         // insert all elements
+        Cell roomCell = new Cell(room, offset);
         for(int i = offset.x; i < offset.x + room.size.x; i++)
             for(int j = offset.y; j < offset.y + room.size.y; j++)
         {
             Debug.Log($"insert ({i},{j})");
             grid.Add(new(i,j), closedEverywhere);
-            roomsByGrid.Add(new(i,j), room);
+            cellsByGrid.Add(new(i,j), roomCell);
         }
 
         // update left and right walls
@@ -237,12 +238,48 @@ public class Grid
     public List<Passage> RealizePath()
     {
         HashSet<Offset> visited = new();
-        Stack<Offset> toVisit = new();
+        List<Offset> allOffsets = grid.Keys.ToList();
         List<Passage> passages = new();
-        toVisit.Push(new(0,0));
-        while(toVisit.Count > 0)
+        while(allOffsets.Count > 0)
         {
-            break;
+            // 1. dequeue
+            Offset current = allOffsets[allOffsets.Count-1];
+            allOffsets.RemoveAt(allOffsets.Count-1);
+
+            Openings currentOpens = grid[current];
+            if(currentOpens.up)
+            {
+                Offset up = current;
+                up.y += 1;
+                Openings upOpenings;
+                bool success = grid.TryGetValue(up, out upOpenings);
+                if(success && upOpenings.down)
+                {
+                    Passage newPassage = new();
+                    Cell currCell = cellsByGrid[current].room;
+                    Cell upCell = cellsByGrid[up].room;
+                    List<Doorway> currentDoors = currCell.doorwaysUp;
+                    List<Doorway> upDoors = upCell.doorwaysDown;
+                    int currentIndex = current.x - currCell.offset.x;
+                    int upIndex = up.x - upCell.offset.x;
+                    newPassage.door1 = currentDoors[currentIndex];
+                    newPassage.door2 = currentDoors[upIndex];
+                    passages.Add(passage);
+                    allOffsets.Remove(up);
+                }
+            }
+            if(currentOpens.down)
+            {
+
+            }
+            if(currentOpens.left)
+            {
+
+            }
+            if(currentOpens.right)
+            {
+
+            }
         }
         // TODO: ACTUALLY FINISH THIS 
         return null;

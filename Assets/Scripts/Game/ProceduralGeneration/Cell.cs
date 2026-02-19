@@ -1,5 +1,5 @@
 using UnityEngine;
-public struct Cell
+public class Cell
 {
     public Room room{get; private set;}
     public Vector2Int offset {get; private set;} // from start

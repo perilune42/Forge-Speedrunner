@@ -7,9 +7,14 @@ public class Doorway : MonoBehaviour
 
     private bool suppressTransition = false;
 
-    void Start()
+    private void Awake()
     {
         enclosingRoom = GetComponentInParent<Room>();
+    }
+
+    void Start()
+    {
+        
         GenerateGuideRails();
         GenerateBlocker();
         GenerateEntranceIndicator();

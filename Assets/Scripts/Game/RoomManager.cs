@@ -50,11 +50,17 @@ public class RoomManager : Singleton<RoomManager>
             respawnIsSet = true;
     } }
 
+    public override void Awake()
+    {
+        base.Awake();
+        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+    }
+
     void Start()
     {
         // Change index of GetChild based on the index of the Passages object's 
         // index in the children hierarchy
-        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+        
 
         // AllRooms = GetComponentsInChildren<Room>().ToList();
 

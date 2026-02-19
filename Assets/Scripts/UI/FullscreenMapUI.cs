@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class FullscreenMapUI : MonoBehaviour
 {
@@ -116,9 +117,9 @@ public class FullscreenMapUI : MonoBehaviour
                     new Vector2(relativeSize.x/(width*room.size.x) * youAreHereSize.x, 
                     relativeSize.y/(height*room.size.y) * youAreHereSize.y);
             }
-
             foreach (Doorway door in GetDoors(room))
             {
+                
                 float x = door.transform.localPosition.x;
                 float y = door.transform.localPosition.y;
                 bool show = false;
@@ -147,6 +148,7 @@ public class FullscreenMapUI : MonoBehaviour
                 Vector2 relPos = new Vector2(relativePos.x + xIdx * unitX, relativePos.y + yIdx * unitY);
                 if (show) 
                 {
+                    
                     Object passageObj = Instantiate(passageImage, transform);
                     RectTransform passageRect = passageObj.GetComponent<RectTransform>();
                     passageRect.localPosition = relPos;
@@ -162,7 +164,7 @@ public class FullscreenMapUI : MonoBehaviour
                 if (shopMode)
                 {
                     MapSpawnSelector mapSpawnSelector = Instantiate(mapSpawnSelectorPrefab, transform);
-                    mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -50;
+                    mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -30;
                     mapSpawnSelector.LinkToDoorway(door);
                 }
 
@@ -174,18 +176,10 @@ public class FullscreenMapUI : MonoBehaviour
     private List<Doorway> GetDoors(Room room)
     {
         List<Doorway> doors = new List<Doorway>();
-        foreach (Passage pass in allPassages)
-        {
-            Room room1 = pass.door1.enclosingRoom;
-            Room room2 = pass.door2.enclosingRoom;
-            if (room1 == room)
-            {
-                doors.Add(pass.door1);
-            } else if (room2 == room)
-            {
-                doors.Add(pass.door2);
-            }
-        }
+        doors.AddRange(room.doorwaysDown.Where((door) => door != null && door.passage != null));
+        doors.AddRange(room.doorwaysLeft.Where((door) => door != null && door.passage != null));
+        doors.AddRange(room.doorwaysRight.Where((door) => door != null && door.passage != null));
+        doors.AddRange(room.doorwaysUp.Where((door) => door != null && door.passage != null));
 
         return doors;
     }

@@ -69,7 +69,8 @@ public class RoomManager : Singleton<RoomManager>
         originalRoom = findActiveRoom(AllRooms);
         SpawnAtStart();
 
-
+        // Set room to visited
+        originalRoom.visited = true;
 
 
         foreach (Passage pass in AllPassages)
@@ -196,6 +197,13 @@ public class RoomManager : Singleton<RoomManager>
 
         previousDoorway = door2;
         activeRoom = door2.enclosingRoom;
+
+        // set room to visited
+        door1.enclosingRoom.visited = true;
+        activeRoom.visited = true;
+        door1.passage.visited = true;
+        door2.passage.visited = true;
+        Debug.Log(door1.passage);
 
 
         StartCoroutine(GoThroughDoorway(door2, DeterminePreservedVelocity(dir), dir));

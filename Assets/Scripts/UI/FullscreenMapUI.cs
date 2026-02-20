@@ -8,13 +8,13 @@ using System.Linq;
 public class FullscreenMapUI : MonoBehaviour
 {
     private List<Room> allRooms;
+    private List<Room> visitedRooms = new List<Room>();
     private RoomManager roomManager;
     private Vector2 screenRes;
     private int width;
     private int height;
     private float maxPosX;
     private float maxPosY;
-    private Passage[] allPassages;
     private Color panelColor;
     private Color newColor;
 
@@ -66,6 +66,11 @@ public class FullscreenMapUI : MonoBehaviour
     {
         if (!shopMode && PInput.Instance.Map.StoppedPressing)
         {
+            if (!showingMap)
+            {
+                clearImages();
+                produceImages();
+            }
             toggleMap(!showingMap);
         }
 
@@ -85,6 +90,7 @@ public class FullscreenMapUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        visitedRooms.Clear();
         roomRects.Clear();
     }
 
@@ -92,8 +98,8 @@ public class FullscreenMapUI : MonoBehaviour
     {
         if (!initialized) Init();  
         roomManager = RoomManager.Instance;
-        allPassages = roomManager.AllPassages;
         allRooms = roomManager.AllRooms;
+
         width = roomManager.BaseWidth;
         height = roomManager.BaseHeight;
         FindMaxXY();
@@ -109,8 +115,17 @@ public class FullscreenMapUI : MonoBehaviour
             unitX *= 2;
             unitY *= 2;
         }
+
+        // show only visited rooms and passages
+        for (int i = allRooms.Count - 1; i >= 0; i--)
+        {
+            if (allRooms[i].visited)
+            {
+                visitedRooms.Add(allRooms[i]);
+            }
+        }
         
-        foreach (Room room in allRooms)
+        foreach (Room room in visitedRooms)
         {
             Object roomObj = Instantiate(roomImage, transform);
             Vector2 relativePos = new Vector2(room.gridPosition.x * unitX - offsetX, 
@@ -154,8 +169,6 @@ public class FullscreenMapUI : MonoBehaviour
                     yIdx = dir.y == 1 ? room.size.y : 0;
                 }
 
-
-                // Centering the doors before instantiating them (when pivot is bottom left)
                 if (dir == Vector2.left || dir == Vector2.down) // Left or Down Door
                 {
                     show = true;
@@ -196,10 +209,10 @@ public class FullscreenMapUI : MonoBehaviour
     private List<Doorway> GetDoors(Room room)
     {
         List<Doorway> doors = new List<Doorway>();
-        doors.AddRange(room.doorwaysDown.Where((door) => door != null && door.passage != null));
-        doors.AddRange(room.doorwaysLeft.Where((door) => door != null && door.passage != null));
-        doors.AddRange(room.doorwaysRight.Where((door) => door != null && door.passage != null));
-        doors.AddRange(room.doorwaysUp.Where((door) => door != null && door.passage != null));
+        doors.AddRange(room.doorwaysDown.Where((door) => door != null && door.passage != null && door.passage.visited));
+        doors.AddRange(room.doorwaysLeft.Where((door) => door != null && door.passage != null && door.passage.visited));
+        doors.AddRange(room.doorwaysRight.Where((door) => door != null && door.passage != null && door.passage.visited));
+        doors.AddRange(room.doorwaysUp.Where((door) => door != null && door.passage != null && door.passage.visited));
 
         return doors;
     }
@@ -225,6 +238,8 @@ public class FullscreenMapUI : MonoBehaviour
                 maxPosY = fixedY;
             }
         }
+
+        Debug.Log("MaxPasX" + maxPosX);
     }
 
     // toggles map panel
@@ -237,7 +252,6 @@ public class FullscreenMapUI : MonoBehaviour
             GetComponent<Canvas>().enabled = false;
             showingMap = false;
             return false;
-
         }
     }
 

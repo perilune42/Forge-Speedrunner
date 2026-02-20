@@ -23,6 +23,7 @@ public class PathFactoryBuilder
     {
         start = room;
         stack.extractAll(room, new Offset(0,0));
+        grid.InsertRoom(room, new Offset(0,0));
         return this;
     }
     public PathFactoryBuilder WithFinishRoom(Room room)
@@ -32,17 +33,16 @@ public class PathFactoryBuilder
     }
     public PathFactoryBuilder GenerateWith(IRoomChoiceStrategy strategy, int pathLength)
     {
-        // temporary logging of stack
-        grid.LogEntries();
-        stack.LogEntries();
-
         // spots that were rejected by strategy
         GenStack rejectedStack = new();
 
         Direction dir; Offset off; Offset botleft;
         for(int i = 0; i < pathLength; i++)
         {
+            // temporary logging of stack
             Debug.Log($"step {i+1}");
+            grid.LogEntries();
+            stack.LogEntries();
             (dir, off) = stack.PopRandom();
             Room possibleRoom = strategy.FindRoom(dir, off);
             if(possibleRoom == null)

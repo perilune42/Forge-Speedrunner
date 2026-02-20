@@ -221,9 +221,7 @@ public class Grid
         Debug.Log($"obstruction at {obstruction}");
 
         // if there are obstructions, recalculate offset so that obstruction is outside.
-        // obstruction's x or y coordinate depending on direction - room.size.xory
-        // subtract this from botleft
-        botleft -= mask * (obstruction - room.size) + mask;
+        botleft -= mask * (obstruction - botleft + room.size);
 
         // check botleft again. return early if there are no obstructions
         valid = true;
@@ -335,16 +333,23 @@ public class Grid
     // only useful in above function WriteConnections
     private bool TryStep(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
     {
-        // do not build duplicate connections
-        if(exists.Contains((currentOff, dir)))
-            return false;
-
         // direction data
         Offset dirOff = DirMethods.calcOffset(currentOff, dir);
 
+        // do not build duplicate connections
+        if(exists.Contains((currentOff, dir)))
+        {
+            Debug.Log($"risk of building duplicate connection between {currentOff} and {dirOff}.");
+            return false;
+        }
+
+
         Openings dirOpens;
         if(!grid.TryGetValue(dirOff, out dirOpens)) // early end if not found
+        {
+            Debug.Log($"nothing in {dirOff}");
             return false;
+        }
 
         Openings currOpens;
         if(!grid.TryGetValue(currentOff, out currOpens)) // early end if not found (this one should not happen)

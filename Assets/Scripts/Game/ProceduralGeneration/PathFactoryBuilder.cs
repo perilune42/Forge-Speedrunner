@@ -40,10 +40,11 @@ public class PathFactoryBuilder
         for(int i = 0; i < pathLength; i++)
         {
             // temporary logging of stack
-            Debug.Log($"step {i+1}");
+            Debug.Log($"[GenerateWith] step {i+1}");
             grid.LogEntries();
             stack.LogEntries();
             (dir, off) = stack.PopRandom();
+            Debug.Log($"[GenerateWith] dir: {dir}, off: {off}");
             Room possibleRoom = strategy.FindRoom(dir, off);
             if(possibleRoom == null)
             {
@@ -55,13 +56,13 @@ public class PathFactoryBuilder
             bool fitRoom = grid.CanFit2(possibleRoom, off, dir, out botleft);
             if(fitRoom)
             {
-                Debug.Log($"room fit at coord {botleft}");
+                Debug.Log($"[GenerateWith] room fit at coord {botleft}");
                 bool x = grid.InsertRoom(possibleRoom, botleft);
                 stack.extractAll(possibleRoom, botleft);
             }
             else
             {
-                Debug.Log("room did not fit");
+                Debug.Log("[GenerateWith] room did not fit");
             }
         }
 

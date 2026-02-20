@@ -87,7 +87,7 @@ public class GenStack
     }
     public void LogEntries()
     {
-        StringBuilder sb = new("GenStack contains:\n");
+        StringBuilder sb = new("[GenStack.LogEntries] GenStack contains:\n");
         for(int i = 0; i < dirs.Count; i++)
         {
             sb.Append($"\t({offsets[i].x},{offsets[i].y}), {dirs[i]}\n");

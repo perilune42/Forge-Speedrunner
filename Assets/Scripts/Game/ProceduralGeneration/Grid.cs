@@ -163,6 +163,7 @@ public class Grid
     {
         // initial constants important for calculations
         // functional match on enum is fun
+        Debug.Log($"[CanFit] fitting room at {offset}, size {room.size}.");
         Offset mask = dir switch
         {
             LEFT or RIGHT => new(0,1),
@@ -202,7 +203,7 @@ public class Grid
         // early return if no doorways are non null (should not happen)
         if(firstNonNull < 0)
         {
-            Debug.Log($"first non null for {room} direction {dir}");
+            Debug.Log($"[CanFit] first non null for {room} direction {dir}");
             return false;
         }
         botleft -= mask * firstNonNull;
@@ -218,7 +219,7 @@ public class Grid
             valid = !grid.ContainsKey(obstruction);
         }
         if(valid) return true;
-        Debug.Log($"obstruction at {obstruction}");
+        Debug.Log($"[CanFit] obstruction at {obstruction}");
 
         // if there are obstructions, recalculate offset so that obstruction is outside.
         botleft -= mask * (obstruction - botleft + room.size);
@@ -231,7 +232,7 @@ public class Grid
             obstruction = botleft + new Offset(i,j);
             valid = !grid.ContainsKey(obstruction);
         }
-        Debug.Log($"obstruction again at {obstruction}. giving up.");
+        Debug.Log($"[CanFit] obstruction again at {obstruction}. valid: {valid}.");
 
         return valid;
     }
@@ -245,7 +246,7 @@ public class Grid
     {
         Openings opens;
         bool success = grid.TryGetValue(offset, out opens);
-        Debug.Log($"Opening ({offset}), direction {dir}");
+        Debug.Log($"[OpenAt] Opening ({offset}), direction {dir}");
         if(success)
         {
             if(dir == LEFT)
@@ -259,7 +260,7 @@ public class Grid
             grid[offset] = opens;
         }
         else
-            Debug.Log($"Called OpenAt on a nonexistent grid cell! ({offset.x},{offset.y}).");
+            Debug.Log($"[OpenAt] Called on a nonexistent grid cell! {offset}.");
 
     }
 
@@ -280,7 +281,7 @@ public class Grid
         for(int i = offset.x; i < offset.x + room.size.x; i++)
             for(int j = offset.y; j < offset.y + room.size.y; j++)
         {
-            Debug.Log($"insert ({i},{j})");
+            Debug.Log($"[InsertRoom] insert ({i},{j})");
             grid.Add(new(i,j), closedEverywhere);
             cellsByGrid.Add(new(i,j), roomCell);
         }
@@ -339,7 +340,7 @@ public class Grid
         // do not build duplicate connections
         if(exists.Contains((currentOff, dir)))
         {
-            Debug.Log($"risk of building duplicate connection between {currentOff} and {dirOff}.");
+            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: duplicate");
             return false;
         }
 
@@ -347,7 +348,7 @@ public class Grid
         Openings dirOpens;
         if(!grid.TryGetValue(dirOff, out dirOpens)) // early end if not found
         {
-            Debug.Log($"nothing in {dirOff}");
+            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: {dirOff} is empty");
             return false;
         }
 
@@ -371,7 +372,7 @@ public class Grid
 
         if(!valid)
         {
-            Debug.Log($"no connection between {currentCell.room} and {dirCell.room}. {currentOff} and {dirOff} do not connect.");
+            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: no possible opening");
             return false;
         }
 
@@ -385,8 +386,8 @@ public class Grid
             _ => (relativeCurrOff.x, relativeDirOff.x),
         };
 
-        Debug.Log($"Connection between ({currentCell.room}) and ({dirCell.room}): ({currentOff}) -> ({dirOff})");
-        Debug.Log($"For current ({currentCell.room}), dir ({dirCell.room}): \n currentIndex: {currentIndex}, dirIndex: {dirIndex}\n relativeCurrOff: {relativeCurrOff}, relativeDirOff: {relativeDirOff}\n currentOff: {currentOff}, dirOff: {dirOff}\n currentCell.offset: {currentCell.offset}, dirCell.offset: {dirCell.offset}\ndirection: {dir}");
+        Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: Connection!");
+        // Debug.Log($"For current ({currentCell.room}), dir ({dirCell.room}): \n currentIndex: {currentIndex}, dirIndex: {dirIndex}\n relativeCurrOff: {relativeCurrOff}, relativeDirOff: {relativeDirOff}\n currentOff: {currentOff}, dirOff: {dirOff}\n currentCell.offset: {currentCell.offset}, dirCell.offset: {dirCell.offset}\ndirection: {dir}");
 
         pc.AddConnection(currentCell, dirCell, currentIndex, dirIndex, dir);
         exists.Add((dirOff, DirMethods.opposite(dir)));
@@ -395,7 +396,7 @@ public class Grid
 
     public void LogEntries()
     {
-        StringBuilder sb = new("Grid contains keys:");
+        StringBuilder sb = new("[Grid.LogEntries] Grid contains keys:");
         foreach(Offset x in grid.Keys)
         {
             sb.Append($"({x.x},{x.y}) ");

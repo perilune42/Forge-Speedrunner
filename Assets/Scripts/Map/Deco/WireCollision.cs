@@ -4,7 +4,7 @@ using UnityEngine;
 public class Wire : Entity
 {
     public override bool IsSolid => false;
-    public override bool StrictCollisions => true;
+    public override bool StrictCollisions => false;
 
     [SerializeField] Animator animator;
 

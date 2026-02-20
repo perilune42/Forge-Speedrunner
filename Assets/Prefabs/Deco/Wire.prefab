@@ -124,7 +124,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9206096283909917273}
   - component: {fileID: 7145712912314933212}
-  - component: {fileID: 8149040916827935838}
+  - component: {fileID: 8442748311825271526}
   m_Layer: 8
   m_Name: Wire
   m_TagString: Untagged
@@ -182,7 +182,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.103621006, y: 0.3338896}
+  m_Offset: {x: 1.5, y: 1.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -192,9 +192,9 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.8059409, y: 2.381613}
+  m_Size: {x: 2, y: 4}
   m_EdgeRadius: 0
---- !u!114 &8149040916827935838
+--- !u!114 &8442748311825271526
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -203,8 +203,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3261643265813908177}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 155e9659103d6f943aa28535efda49d0, type: 3}
+  m_Script: {fileID: 11500000, guid: 176aca349d0e1f04485401da47e35d4f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Wire
+  m_EditorClassIdentifier: Assembly-CSharp::DecoEntity
   Hitbox: {fileID: 0}
   animator: {fileID: 3073730545984515145}
+  SnapDistance: 0.5

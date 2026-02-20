@@ -66,6 +66,7 @@ public class RoomManager : Singleton<RoomManager>
 
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
         originalPosition = Player.Instance.Movement.transform.position;
+        originalRoom = findActiveRoom(AllRooms);
         SpawnAtStart();
 
 
@@ -87,9 +88,8 @@ public class RoomManager : Singleton<RoomManager>
     {
         if (overrideStartingRoom)
         {
-            activeRoom = findActiveRoom(AllRooms);
+            activeRoom = originalRoom;
             RespawnPosition = originalPosition;
-            originalRoom = activeRoom;
             CameraController.Instance.SnapToRoom(activeRoom);
         }
         else

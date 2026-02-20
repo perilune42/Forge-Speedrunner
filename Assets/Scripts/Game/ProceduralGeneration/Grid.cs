@@ -34,13 +34,36 @@ public class Grid
         cellsByGrid = new();
     }
 
-    /* Attempt at writing a cleaner CanFit
+    private bool ObstructionWithin(Offset botLeft, Offset topRight, out Offset obstruction)
+    {
+        Offset current = botLeft;
+        obstruction = current; // prevent compiler error
+        for(int i = botLeft.x; i < topRight.x; i++)
+            for(int j = botLeft.y; j < topRight.y; j++)
+        {
+            current.x = i;
+            current.y = j;
+            if(grid.ContainsKey(current))
+            {
+                obstruction = current;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Given a ROOM, an entry point at OFFSET, and an entry direction DIR, fit the room. 
+     *   Return TRUE if successful.
+     * offset = a point of a particular doorway in `Room room`
+     * dir = the direction you would enter the doorway from
+     * room = the room we are trying to fit (useful: room.doors*, room.size)
+     * botleft = the bottom left point that the room can go to
      */
     public bool CanFit2(Room room, Offset offset, Direction dir, out Offset botleft)
     {
         // initial constants important for calculations
         // functional match on enum is fun
-        Debug.Log($"[CanFit] fitting room at {offset}, size {room.size}.");
+        Debug.Log("[CanFit] fitting room at {offset}, size {room.size}.");
         Offset mask = dir switch
         {
             LEFT or RIGHT => new(0,1),

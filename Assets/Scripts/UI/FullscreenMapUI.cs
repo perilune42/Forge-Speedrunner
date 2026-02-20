@@ -238,8 +238,6 @@ public class FullscreenMapUI : MonoBehaviour
                 maxPosY = fixedY;
             }
         }
-
-        Debug.Log("MaxPasX" + maxPosX);
     }
 
     // toggles map panel

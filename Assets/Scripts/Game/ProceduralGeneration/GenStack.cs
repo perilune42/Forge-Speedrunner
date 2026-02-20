@@ -76,6 +76,15 @@ public class GenStack
             .extractFrom(r.doorwaysRight, RIGHT, startRight);
         return this;
     }
+    public void Cannibalize(GenStack other)
+    {
+        Direction dir; Offset off;
+        while(other.NotEmpty())
+        {
+            (dir, off) = other.PopRandom();
+            PutBack(dir, off);
+        }
+    }
     public void LogEntries()
     {
         StringBuilder sb = new("GenStack contains:\n");

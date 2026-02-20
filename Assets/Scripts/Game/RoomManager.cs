@@ -65,7 +65,8 @@ public class RoomManager : Singleton<RoomManager>
         // AllRooms = GetComponentsInChildren<Room>().ToList();
 
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
-
+        originalPosition = Player.Instance.Movement.transform.position;
+        originalRoom = findActiveRoom(AllRooms);
         SpawnAtStart();
 
 
@@ -87,10 +88,8 @@ public class RoomManager : Singleton<RoomManager>
     {
         if (overrideStartingRoom)
         {
-            activeRoom = findActiveRoom(AllRooms);
-            originalPosition = Player.Instance.Movement.transform.position;
+            activeRoom = originalRoom;
             RespawnPosition = originalPosition;
-            originalRoom = activeRoom;
             CameraController.Instance.SnapToRoom(activeRoom);
         }
         else
@@ -355,6 +354,13 @@ public class RoomManager : Singleton<RoomManager>
         }));
     }
 
-
+    // relative position from 0 to 1 in each axis, if in bounds
+    public Vector2 GetRelativePosition(Room room, Vector2 absPos)
+    {
+        Vector2 unscaledRelPos = absPos - (Vector2)room.transform.position;
+        Vector2 relPos = new (unscaledRelPos.x / (room.size.x * BaseWidth),
+                              unscaledRelPos.y / (room.size.y * BaseHeight));
+        return relPos;
+    }
 
 }

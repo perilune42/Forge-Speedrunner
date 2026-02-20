@@ -53,7 +53,7 @@ public class PathFactoryBuilder
             }
 
             // only slot this room in when it can fit
-            bool fitRoom = grid.CanFit2(possibleRoom, off, dir, out botleft);
+            bool fitRoom = grid.CanFit(possibleRoom, off, dir, out botleft);
             if(fitRoom)
             {
                 Debug.Log($"[GenerateWith] room fit at coord {botleft}");

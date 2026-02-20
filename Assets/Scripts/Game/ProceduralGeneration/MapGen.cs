@@ -28,6 +28,12 @@ public class MapGen : MonoBehaviour
 
         (createdRooms, passagesDebug) = pc.Create();
 
+        Transform AllPassages = transform.GetChild(0);
+        foreach(Passage p in passagesDebug)
+        {
+            p.gameObject.transform.SetParent(AllPassages);
+        }
+
         // foreach(Cell c in path)
         // {
         //     Vector3 screenPosition = new(c.offset.x, c.offset.y, 0F);
@@ -46,6 +52,11 @@ public class MapGen : MonoBehaviour
         {
             DestroyImmediate(r.gameObject);
         }
+        foreach(Passage p in passagesDebug)
+        {
+            DestroyImmediate(p.gameObject);
+        }
         createdRooms = new();
+        passagesDebug = new();
     }
 }

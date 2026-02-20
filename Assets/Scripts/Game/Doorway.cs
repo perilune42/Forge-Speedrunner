@@ -3,7 +3,7 @@ using UnityEngine;
 public class Doorway : MonoBehaviour
 {
     [HideInInspector] public Room enclosingRoom;
-    [HideInInspector] public Passage passage;
+    public Passage passage;
 
     private bool suppressTransition = false;
 

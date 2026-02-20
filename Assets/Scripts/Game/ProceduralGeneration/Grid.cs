@@ -180,7 +180,12 @@ public class Grid
 
 
         // find bottom left where offset refers to the first element of the doorway list
-        botleft = offset + mask * room.size - mask;
+        // botleft = offset + mask * room.size - mask;
+        botleft = dir switch
+        {
+            LEFT or DOWN => offset + mask * room.size - mask,
+            _ => offset,
+        };
 
         // subtract from bottom left the difference from first element to first non-null element
         int firstNonNull = -1;
@@ -282,38 +287,30 @@ public class Grid
             cellsByGrid.Add(new(i,j), roomCell);
         }
 
-        // update left and right walls
-        // for(int j = offset.y; j < offset.y + room.size.y; j++)
-        for(int j = 0; j < room.size.y; j++)
+        // left walls
+        Offset xMask = new(1,0);
+        Offset yMask = new(0,1);
+        Offset leftStart = offset;
+        Offset downStart = offset;
+        Offset rightStart = offset + xMask * room.size.x - xMask;
+        Offset upStart = offset + yMask * room.size.y - yMask;
+        for(int i = 0; i < room.size.y; i++)
         {
-            int offY = offset.y + j;
-            if(room.doorwaysLeft[j] != null)
-            {
-                Offset leftOff = new(offset.x, offY);
-                OpenAt(leftOff, LEFT);
-            }
-            if(room.doorwaysRight[j] != null)
-            {
-                Offset rightOff = new(offset.x+room.size.x-1, offY);
-                OpenAt(rightOff, RIGHT);
-            }
+            if(room.doorwaysLeft[i] != null)
+                OpenAt(leftStart, LEFT);
+            if(room.doorwaysRight[i] != null)
+                OpenAt(rightStart, RIGHT);
+            leftStart += yMask;
+            rightStart += yMask;
         }
-
-        // up and down walls
-        // for(int i = offset.x; i < offset.x + room.size.x - 1; i++)
         for(int i = 0; i < room.size.x; i++)
         {
-            int offX = i + offset.x;
             if(room.doorwaysUp[i] != null)
-            {
-                Offset upOff = new(offX, offset.y);
-                OpenAt(upOff, UP);
-            }
+                OpenAt(upStart, UP);
             if(room.doorwaysDown[i] != null)
-            {
-                Offset downOff = new(offX, offset.y+room.size.y-1);
-                OpenAt(downOff, DOWN);
-            }
+                OpenAt(downStart, DOWN);
+            upStart += xMask;
+            downStart += xMask;
         }
 
         return true;
@@ -369,7 +366,7 @@ public class Grid
 
         if(!valid)
         {
-            Debug.Log($"no connection between {currentCell.room} and {dirCell.room}");
+            Debug.Log($"no connection between {currentCell.room} and {dirCell.room}. {currentOff} and {dirOff} do not connect.");
             return false;
         }
 

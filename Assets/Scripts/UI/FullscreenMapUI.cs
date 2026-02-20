@@ -34,9 +34,13 @@ public class FullscreenMapUI : MonoBehaviour
 
     bool initialized = false;
 
-    List<MapSpawnSelector> mapSpawnSelectors;
+    [SerializeField] MapSpawnSelector mapSpawnSelectorPrefab, startSpawnSelectorPrefab;
 
-    [SerializeField] MapSpawnSelector mapSpawnSelectorPrefab;
+    [SerializeField] private Transform roomContainer;
+    [SerializeField] private Transform passageContainer;
+    [SerializeField] private Transform spawnSelectorContainer;
+
+    private Dictionary<Room, RectTransform> roomRects = new();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -69,10 +73,19 @@ public class FullscreenMapUI : MonoBehaviour
 
     public void clearImages()
     {
-        foreach (Transform child in transform)
+        foreach (Transform child in roomContainer)
         {
             Destroy(child.gameObject);
         }
+        foreach (Transform child in passageContainer)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (Transform child in spawnSelectorContainer)
+        {
+            Destroy(child.gameObject);
+        }
+        roomRects.Clear();
     }
 
     public void produceImages()
@@ -108,14 +121,16 @@ public class FullscreenMapUI : MonoBehaviour
             roomRect.localPosition = relativePos;
             roomRect.sizeDelta = relativeSize;
             roomRect.localPosition += new Vector3(unitX * roomSizeMinus.x / (2 * width), unitY * roomSizeMinus.y / (2 * height));
-            roomRect.SetAsFirstSibling();
-            
+            roomRect.transform.SetParent(roomContainer, true);
+            roomRects[room] = roomRect;
+
             if (!shopMode && roomManager.activeRoom == room)
             {
-                Object youAreHere = Instantiate(youAreHereImage, roomRect);
+                GameObject youAreHere = Instantiate(youAreHereImage, roomRect).GameObject();
                 youAreHere.GetComponent<RectTransform>().sizeDelta = 
                     new Vector2(relativeSize.x/(width*room.size.x) * youAreHereSize.x, 
                     relativeSize.y/(height*room.size.y) * youAreHereSize.y);
+                youAreHere.transform.SetParent(roomContainer, true);
             }
             foreach (Doorway door in GetDoors(room))
             {
@@ -149,7 +164,7 @@ public class FullscreenMapUI : MonoBehaviour
                 if (show) 
                 {
                     
-                    Object passageObj = Instantiate(passageImage, transform);
+                    GameObject passageObj = Instantiate(passageImage, transform).GameObject();
                     RectTransform passageRect = passageObj.GetComponent<RectTransform>();
                     passageRect.localPosition = relPos;
                     passageRect.sizeDelta = 
@@ -159,17 +174,22 @@ public class FullscreenMapUI : MonoBehaviour
                     {
                         passageRect.Rotate(0, 0, 90f); 
                     }
+                    passageObj.transform.SetParent(passageContainer, false);
                 }
                 
                 if (shopMode)
                 {
                     MapSpawnSelector mapSpawnSelector = Instantiate(mapSpawnSelectorPrefab, transform);
-                    mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -30;
+                    mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -0.2f * unitX;
+                    mapSpawnSelector.transform.SetParent(spawnSelectorContainer, true);
                     mapSpawnSelector.LinkToDoorway(door);
+                    
                 }
 
             }
         }
+        if (shopMode) PlaceStartingSpawnSelector();
+        ToggleSpawnSelectors(false);
     }
 
     // Finding all passages for that room
@@ -219,5 +239,21 @@ public class FullscreenMapUI : MonoBehaviour
             return false;
 
         }
+    }
+
+    public void ToggleSpawnSelectors(bool toggle)
+    {
+        spawnSelectorContainer.gameObject.SetActive(toggle);
+    }
+
+    private void PlaceStartingSpawnSelector()
+    {
+        var roomRect = roomRects[RoomManager.Instance.StartingRoom];
+        Vector2 roomRoot = roomRect.transform.position;
+        MapSpawnSelector sel = Instantiate(startSpawnSelectorPrefab, transform);
+        var relPos = RoomManager.Instance.GetRelativePosition(RoomManager.Instance.StartingRoom,
+            RoomManager.Instance.StartingSpawn.transform.position);
+        sel.transform.position = roomRoot + new Vector2(roomRect.rect.width * relPos.x, roomRect.rect.height * relPos.y);
+        sel.transform.SetParent(spawnSelectorContainer, true);
     }
 }

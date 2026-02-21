@@ -43,7 +43,7 @@ public class RoomManager : Singleton<RoomManager>
     public Transform StartingSpawn;
 
     [SerializeField] bool overrideStartingRoom;
-    bool transitionOngoing = false;
+    public bool TransitionOngoing = false;
 
     [SerializeField] bool allRoomsDiscovered = false;   
 
@@ -268,9 +268,8 @@ public class RoomManager : Singleton<RoomManager>
 
     private IEnumerator GoThroughDoorway(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
-        if (!transitionOngoing)
+        if (!TransitionOngoing)
         {
-            transitionOngoing = true;
             // calculate new player position
             Vector2 newPlayerPos = (Vector2)door2.transform.position;
             if (door2.IsHorizontal())
@@ -285,7 +284,6 @@ public class RoomManager : Singleton<RoomManager>
             respawnIsSet = false;
             yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
             door2.EnableTransition();
-            transitionOngoing = false;
         }
 
     }
@@ -293,6 +291,7 @@ public class RoomManager : Singleton<RoomManager>
     private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
         Debug.Log("start room transition");
+        TransitionOngoing = true;
         AbilityManager.Instance.ResetAbilites();
         FadeToBlack.Instance.FadeIn();
         if (dir == Vector2.up)
@@ -320,6 +319,7 @@ public class RoomManager : Singleton<RoomManager>
         {
             yield return new WaitForFixedUpdate();
         }
+        TransitionOngoing = false;
         Debug.Log("end room transition");
     }
 

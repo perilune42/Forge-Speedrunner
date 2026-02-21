@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -12,6 +13,8 @@ public enum SpecialState
 
 public class PlayerMovement : DynamicEntity, IStatSource
 {
+    public Collider2D Hurtbox;
+
 
     public MovementParams MovementParams;
     public Action onGround;
@@ -400,7 +403,10 @@ public class PlayerMovement : DynamicEntity, IStatSource
     {
         if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash 
             && SpecialState != SpecialState.WallClimb && SpecialState != SpecialState.LedgeClimb) return false;
-        return CanClimb && IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
+        return CanClimb && IsTouching(dir) 
+            && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) 
+            && GetLedgeHeight(dir) > 0
+            && !HazardOnLedge(dir);
     }
 
     public bool CanWallClimb(Vector2 dir, bool wallLatch = false)
@@ -499,6 +505,21 @@ public class PlayerMovement : DynamicEntity, IStatSource
         // how much the ledge is above the player's foot
         float ledgeHeight = PlayerHeight - groundHit.distance;
         return ledgeHeight;
+    }
+
+    private bool HazardOnLedge(Vector2 dir)
+    {
+        // start a boxcast upwards and to either the left and right of the player, pointing downwards
+        Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight - PlayerHeight * 0.45f);
+        Vector2 origin = (Vector2)transform.position + offset;
+        Vector2 size = new(PlayerWidth, PlayerHeight * 0.1f);
+        var hitEntites = CustomBoxCastAll(origin, size, 0f, Vector2.down, PlayerHeight * 4, interactLayer);
+
+        if (hitEntites.Where(e => e.collider != null && e.collider.GetComponent<Hazard>() != null).Count() > 0)
+        {
+            return true;
+        }
+        return false;
     }
 
 

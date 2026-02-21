@@ -66,6 +66,7 @@ MonoBehaviour:
   StartingRoom: {fileID: 4794753739058842650}
   StartingSpawn: {fileID: 7819545021735431735}
   overrideStartingRoom: 0
+  TransitionOngoing: 0
   allRoomsDiscovered: 0
 --- !u!1 &3966551427848931917
 GameObject:

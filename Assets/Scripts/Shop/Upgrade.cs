@@ -27,16 +27,16 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         if (CanBuy)
         {
             UpgradeImage.color = Color.white;
-            NameText.color = Color.white;
+            if (!isTool) NameText.color = Color.white;
             CostText.color = Color.white;
-            ChargeText.color = Color.white;
+            if (!isTool) ChargeText.color = Color.white;
         }
         else
         {
             UpgradeImage.color = Color.gray;
-            NameText.color = Color.lightGray;
+            if (!isTool) NameText.color = Color.lightGray;
             CostText.color = Color.lightGray;
-            ChargeText.color = Color.lightGray;
+            if (!isTool) ChargeText.color = Color.lightGray;
         }
     }
 

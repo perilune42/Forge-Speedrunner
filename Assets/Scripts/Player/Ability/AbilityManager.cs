@@ -27,6 +27,7 @@ public class AbilityManager : Singleton<AbilityManager>
     {
         base.Awake();
         PlayerAbilities = new();
+        ChronoshiftInfoParent = GameObject.FindWithTag("CHRONOSHIFT_INFO_PARENT"); // jank because I can't push direct changes to the World scene
         if (shopDebugMode)
         {
             Destroy(gameObject);
@@ -40,11 +41,13 @@ public class AbilityManager : Singleton<AbilityManager>
     
     private void OnGUI()
     {
-        if (GUILayout.Button("Go to shop", GUILayout.Width(200)))
+        GUILayout.BeginArea(new Rect(100, 0, 100, 100));
+        if (GUILayout.Button("Go to shop"))
         {
             // SceneManager.LoadScene("Shop");
             Game.Instance.GoToShop(true);
         }
+        GUILayout.EndArea();
     }
 
 

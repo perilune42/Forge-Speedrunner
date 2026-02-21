@@ -2593,7 +2593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6391128455939476041
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2633,7 +2633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3188755836337783359
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3215,6 +3215,7 @@ MonoBehaviour:
   runTimeText: {fileID: 5653341532643979528}
   moneyGainedText: {fileID: 4643561006884796082}
   abilityLayoutGroup: {fileID: 3595223811454391942}
+  toolsLayoutGroup: {fileID: 4190642689693221654}
   abilitySlots: []
   upgradeLayoutGroup: {fileID: 1333244292844741526}
   tooltipInfoIcon: {fileID: 8622939657217013983}

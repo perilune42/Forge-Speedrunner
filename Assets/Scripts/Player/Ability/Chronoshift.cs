@@ -42,7 +42,7 @@ public class Chronoshift : Ability, IStatSource
     {
         base.FixedUpdate();
         if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
-        if (PlayerMovement.SpecialState == SpecialState.Chronoshift && !RoomManager.Instance.transitionWaiting)
+        if (PlayerMovement.SpecialState == SpecialState.Chronoshift && !RoomManager.Instance.TransitionOngoing)
         {
             if (clone == null) // failsafe measure in case functions execute in weird order
             {
@@ -64,8 +64,9 @@ public class Chronoshift : Ability, IStatSource
                     if (curKeyframe.room != RoomManager.Instance.activeRoom)
                     {
                         Debug.Log("Should switch rooms");
-                        Debug.Log(keyframeIndex);
+                        Debug.Log(keyframeIndex + " " + curKeyframe.room + " " + RoomManager.Instance.activeRoom);
                         StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero, Vector2.zero));
+                        RoomManager.Instance.activeRoom = curKeyframe.room;
                     }
                     RoomManager.Instance.RespawnPosition = curKeyframe.respawnPosition;
                     Timer.speedrunTime = curKeyframe.time;

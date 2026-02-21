@@ -42,6 +42,10 @@ public class ShopManager : Singleton<ShopManager>
     private const float chargeChance = 0f;
     [SerializeField] private int shopOffers = 3;
 
+    [SerializeField] private FullscreenMapUI shopMap;
+    [SerializeField] private TMP_Text selectSpawnText;
+
+    private bool goingToPracticeMode = false;
     public override void Awake()
     {
         base.Awake();
@@ -72,6 +76,12 @@ public class ShopManager : Singleton<ShopManager>
 
         UpdateShopAbilities();
         UpdateMoney();
+
+        shopMap.clearImages();
+        shopMap.produceImages();
+
+        goingToPracticeMode = false;
+        selectSpawnText.enabled = false;
     }
 
     public void RestockShop()
@@ -180,7 +190,9 @@ public class ShopManager : Singleton<ShopManager>
 
     public void PracticeMode()
     {
-        Game.Instance.ReturnToPlay(true);
+        goingToPracticeMode = !goingToPracticeMode;
+        shopMap.ToggleSpawnSelectors(goingToPracticeMode);
+        selectSpawnText.enabled = goingToPracticeMode;
     }
 
     public void ReturnToWorld()
@@ -188,4 +200,5 @@ public class ShopManager : Singleton<ShopManager>
         // SceneManager.LoadScene("World");
         Game.Instance.ReturnToPlay(false);
     }
+
 }

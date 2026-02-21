@@ -13,6 +13,7 @@ public class Room : MonoBehaviour
     public List<Doorway> doorwaysRight;
     [SerializeField] private Transform entitiesContainer;
     [HideInInspector] public List<Entity> Entities;
+    [HideInInspector] public bool visited = false;
 
     private void OnValidate()
     {

@@ -43,34 +43,43 @@ public class RoomManager : Singleton<RoomManager>
     public Transform StartingSpawn;
 
     [SerializeField] bool overrideStartingRoom;
-    public bool transitioning;
+    bool transitionOngoing = false;
+
+    [SerializeField] bool allRoomsDiscovered = false;   
 
     public Vector2 RespawnPosition { get => respawnPosition; set { 
             respawnPosition = value;
             respawnIsSet = true;
     } }
 
+    public override void Awake()
+    {
+        base.Awake();
+        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+    }
+
     void Start()
     {
         // Change index of GetChild based on the index of the Passages object's 
         // index in the children hierarchy
-        AllPassages = transform.GetChild(0).GetComponentsInChildren<Passage>();
+        
 
         // AllRooms = GetComponentsInChildren<Room>().ToList();
 
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
+        originalPosition = Player.Instance.Movement.transform.position;
+        originalRoom = findActiveRoom(AllRooms);
+        SpawnAtStart();
 
-        if (overrideStartingRoom)
+        // Set room to visited
+        originalRoom.visited = true;
+
+        if (allRoomsDiscovered)
         {
-            activeRoom = findActiveRoom(AllRooms);
-            originalPosition = Player.Instance.Movement.transform.position;
-            RespawnPosition = originalPosition;
-            originalRoom = activeRoom;
-            CameraController.Instance.SnapToRoom(activeRoom);
-        }
-        else
-        {
-            SpawnAtStart();
+            foreach (var room in AllRooms)
+            {
+                room.visited = true;
+            }
         }
 
 
@@ -82,19 +91,42 @@ public class RoomManager : Singleton<RoomManager>
             }
             pass.door1.passage = pass;
             pass.door2.passage = pass;
+            if (allRoomsDiscovered) pass.visited = true;
         }
         
     }
 
     public void SpawnAtStart()
     {
-        activeRoom = StartingRoom;
-        originalPosition = StartingSpawn.position;
-        RespawnPosition = StartingSpawn.position;
-        Player.Instance.Movement.transform.position = StartingSpawn.position;
-        originalRoom = StartingRoom;
+        if (overrideStartingRoom)
+        {
+            activeRoom = originalRoom;
+            RespawnPosition = originalPosition;
+            CameraController.Instance.SnapToRoom(activeRoom);
+        }
+        else
+        {
+            activeRoom = StartingRoom;
+            originalPosition = StartingSpawn.position;
+            RespawnPosition = StartingSpawn.position;
+            Player.Instance.Movement.transform.position = StartingSpawn.position;
+            originalRoom = StartingRoom;
+            CameraController.Instance.SnapToRoom(activeRoom);
+            respawnIsSet = false;
+        }
+    }
+
+    public void SpawnAtDoorway(Doorway door)
+    {
+        activeRoom = door.enclosingRoom;
+        originalPosition = door.transform.position;
+        previousDoorway = door;
+        originalRoom = activeRoom;
         CameraController.Instance.SnapToRoom(activeRoom);
         respawnIsSet = false;
+        Vector2 dir = -previousDoorway.GetTransitionDirection();
+        Debug.Log($"Spawning at doorway in room: {activeRoom}");
+        StartCoroutine(GoThroughDoorway(previousDoorway, DeterminePreservedVelocity(dir), dir));
     }
 
 
@@ -122,6 +154,20 @@ public class RoomManager : Singleton<RoomManager>
         return targetRoom;
     }
 
+    private Vector2 DeterminePreservedVelocity(Vector2 dir)
+    {
+        Vector2 preservedVelocity;
+        var pm = Player.Instance.Movement;
+        // on up transitions, give player a boost
+        const float upBoost = 1.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
+        {
+            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
+        }
+        else preservedVelocity = pm.Velocity;
+        return preservedVelocity;
+    }
 
     public void ResetAllEntities()
     {
@@ -156,15 +202,6 @@ public class RoomManager : Singleton<RoomManager>
         Vector2 dir = door1.GetTransitionDirection();
         Vector2 preservedVelocity;
 
-        // on up transitions, give player a boost
-        const float upBoost = 1.5f;
-        if (dir == Vector2.up
-                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
-        {
-            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
-        }
-        else preservedVelocity = pm.Velocity;
-        Debug.Log($"Switch from room {door1.enclosingRoom} to room {door2.enclosingRoom}");
 
         // calculate relativePos, which is unavoidable
         relativePos = pm.transform.position - door1.transform.position;
@@ -172,8 +209,13 @@ public class RoomManager : Singleton<RoomManager>
         previousDoorway = door2;
         activeRoom = door2.enclosingRoom;
 
+        // set room to visited
+        door1.enclosingRoom.visited = true;
+        activeRoom.visited = true;
+        door1.passage.visited = true;
+        door2.passage.visited = true;
 
-        StartCoroutine(GoThroughDoorway(door2, preservedVelocity, dir));
+        StartCoroutine(GoThroughDoorway(door2, DeterminePreservedVelocity(dir), dir));
     }
     
     // respawn location set by safe zones
@@ -226,20 +268,26 @@ public class RoomManager : Singleton<RoomManager>
 
     private IEnumerator GoThroughDoorway(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
-        // calculate new player position
-        Vector2 newPlayerPos = (Vector2)door2.transform.position;
-        if (door2.IsHorizontal())
-            newPlayerPos.y += relativePos.y;
-        else
-            newPlayerPos.x += relativePos.x;
+        if (!transitionOngoing)
+        {
+            transitionOngoing = true;
+            // calculate new player position
+            Vector2 newPlayerPos = (Vector2)door2.transform.position;
+            if (door2.IsHorizontal())
+                newPlayerPos.y += relativePos.y;
+            else
+                newPlayerPos.x += relativePos.x;
 
-        /**
-         * start doing things to the player here
-         */
-        door2.SuppressNextTransition();
-        respawnIsSet = false;
-        yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
-        door2.EnableTransition();
+            /**
+             * start doing things to the player here
+             */
+            door2.SuppressNextTransition();
+            respawnIsSet = false;
+            yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
+            door2.EnableTransition();
+            transitionOngoing = false;
+        }
+
     }
 
     public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
@@ -330,6 +378,13 @@ public class RoomManager : Singleton<RoomManager>
         }));
     }
 
-
+    // relative position from 0 to 1 in each axis, if in bounds
+    public Vector2 GetRelativePosition(Room room, Vector2 absPos)
+    {
+        Vector2 unscaledRelPos = absPos - (Vector2)room.transform.position;
+        Vector2 relPos = new (unscaledRelPos.x / (room.size.x * BaseWidth),
+                              unscaledRelPos.y / (room.size.y * BaseHeight));
+        return relPos;
+    }
 
 }

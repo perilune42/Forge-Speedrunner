@@ -45,6 +45,8 @@ public class RoomManager : Singleton<RoomManager>
     [SerializeField] bool overrideStartingRoom;
     bool transitionOngoing = false;
 
+    [SerializeField] bool allRoomsDiscovered = false;   
+
     public Vector2 RespawnPosition { get => respawnPosition; set { 
             respawnPosition = value;
             respawnIsSet = true;
@@ -72,6 +74,14 @@ public class RoomManager : Singleton<RoomManager>
         // Set room to visited
         originalRoom.visited = true;
 
+        if (allRoomsDiscovered)
+        {
+            foreach (var room in AllRooms)
+            {
+                room.visited = true;
+            }
+        }
+
 
         foreach (Passage pass in AllPassages)
         {
@@ -81,6 +91,7 @@ public class RoomManager : Singleton<RoomManager>
             }
             pass.door1.passage = pass;
             pass.door2.passage = pass;
+            if (allRoomsDiscovered) pass.visited = true;
         }
         
     }
@@ -203,8 +214,6 @@ public class RoomManager : Singleton<RoomManager>
         activeRoom.visited = true;
         door1.passage.visited = true;
         door2.passage.visited = true;
-        Debug.Log(door1.passage);
-
 
         StartCoroutine(GoThroughDoorway(door2, DeterminePreservedVelocity(dir), dir));
     }

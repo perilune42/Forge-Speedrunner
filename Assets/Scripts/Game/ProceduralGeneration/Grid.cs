@@ -103,8 +103,15 @@ public class Grid
         if(valid) return true;
         Debug.Log($"[CanFit] obstruction at {obstruction}");
 
+        if(obstruction == botleft)
+        {
+            Debug.Log($"[CanFit] obstruction on top of destination. No point in trying.");
+            return false;
+        }
+
+
         // if there are obstructions, recalculate offset so that obstruction is outside.
-        botleft -= mask * (obstruction - botleft + room.size);
+        botleft -= mask * (obstruction - botleft + room.size) - mask;
 
         // check botleft again. return early if there are no obstructions
         valid = true;

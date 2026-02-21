@@ -8,6 +8,8 @@ public class DecoEntity : MonoBehaviour
     [SerializeField] Animator animator;
     public float SnapDistance = 0.5f;
 
+    public int wireID;
+
     protected virtual void Awake()
     {
         Hitbox = GetComponent<Collider2D>();
@@ -20,7 +22,7 @@ public class DecoEntity : MonoBehaviour
         {
             if (animator != null)
             {
-                animator.Play("WireBumped");
+                animator.Play("WireBumped" + wireID);
             }
         }
     }

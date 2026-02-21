@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameRegistry : Singleton<GameRegistry>
 {
     public Ability[] Abilities;
-
+    public Chronoshift Chronoshift;
 
     public override void Awake()
     {

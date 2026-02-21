@@ -16,16 +16,17 @@ public class AbilityManager : Singleton<AbilityManager>
 
 
     public GameObject AbilityInfoPrefab;
-    public GameObject AbilityInfoParent;
+    public GameObject AbilityInfoParent, ChronoshiftInfoParent;
     [SerializeField] private GameObject player;
     public PlayerMovement playerMovement;
     public Dictionary<int, Ability> PlayerAbilities;
+
+    public int ChronoshiftCharges;
     
     public override void Awake()
     {
         base.Awake();
         PlayerAbilities = new();
-
         if (shopDebugMode)
         {
             Destroy(gameObject);
@@ -39,7 +40,7 @@ public class AbilityManager : Singleton<AbilityManager>
     
     private void OnGUI()
     {
-        if (GUILayout.Button("Go to shop"))
+        if (GUILayout.Button("Go to shop", GUILayout.Width(200)))
         {
             // SceneManager.LoadScene("Shop");
             Game.Instance.GoToShop(true);
@@ -59,19 +60,26 @@ public class AbilityManager : Singleton<AbilityManager>
         {
             if (presetAbility.StartUnlocked || giveAllAbilities)
             {
-                if (count >= 4)
+                if (count >= 4 && !(presetAbility is Chronoshift && ChronoshiftCharges > 0))
                 {
                     Debug.LogWarning($"Ability {presetAbility.Name} not given");
                 }
                 else
                 {
-                    GivePlayerAbility(presetAbility.ID);
+                    if (presetAbility is Chronoshift) GiveChronoshift();
+                    else GivePlayerAbility(presetAbility.ID);
                     if (presetAbility.ID != 0) count++;
                 }
 
             }
         }
-}
+    }
+
+    public void GiveChronoshift()
+    {
+        Ability ability = Instantiate(GameRegistry.Instance.Chronoshift, player.transform);
+        ability.ID = -1;
+    }
     
     public void GivePlayerAbility(int index)
     {

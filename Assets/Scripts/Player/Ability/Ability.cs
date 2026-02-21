@@ -53,17 +53,29 @@ public abstract class Ability : MonoBehaviour
     public virtual void Start()
     {
         if (AbilityManager.Instance.AbilityInfoParent == null) return;
-        info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
-            AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
-        info.SetAbility(this);
-        if (this is Dash)
+        
+        if (this is Chronoshift)
         {
-            SetInputButton(PInput.Instance.Dash);
+            info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
+                AbilityManager.Instance.ChronoshiftInfoParent.transform).GetComponent<AbilityInfo>();
+            info.SetAbility(this);
+            SetInputButton(PInput.Instance.Chronoshift);
         }
         else
         {
-            SetInputButton(PInput.Instance.AddAbilityInputButton());
+            info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
+            AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
+            info.SetAbility(this);
+            if (this is Dash)
+            {
+                SetInputButton(PInput.Instance.Dash);
+            }
+            else
+            {
+                SetInputButton(PInput.Instance.AddAbilityInputButton());
+            }
         }
+        
         UpdateBindingText(inputButton.GetAction());
     }
 
@@ -95,11 +107,12 @@ public abstract class Ability : MonoBehaviour
     /// </summary>
     public virtual bool CanUseAbility()
     {
-        if (PlayerMovement.SpecialState == SpecialState.Rocket && this is not Ricochet && this is not Recall) return false;
-        if (PlayerMovement.SpecialState == SpecialState.Teleport) return false;
+        if (PlayerMovement.SpecialState == SpecialState.Rocket && this is not Ricochet && this is not Recall && this is not Chronoshift) return false;
+        if (PlayerMovement.SpecialState == SpecialState.Teleport && PlayerMovement.SpecialState == SpecialState.Chronoshift) return false;
         if (UsesCharges)
         {
-            return CurCharges > 0;
+            if (this is Chronoshift) return AbilityManager.Instance.ChronoshiftCharges > 0;
+            else return CurCharges > 0;
         }
         else
         {
@@ -112,7 +125,8 @@ public abstract class Ability : MonoBehaviour
     {
         if (UsesCharges)
         {
-            CurCharges--;
+            if (this is Chronoshift) AbilityManager.Instance.ChronoshiftCharges--;
+            else CurCharges--;
         }
         else
         {

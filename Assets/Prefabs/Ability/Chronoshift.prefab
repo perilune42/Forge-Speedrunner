@@ -46,15 +46,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Chronoshift
   Name: Chronoshift
-  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
+  Icon: {fileID: 21300000, guid: 1975cbaf7bc54794e866afab31622925, type: 3}
   AllLevels:
   - Description: Use to create a clone. Use again to rewind time back to that clone.
     Cost: 5
-  ID: 7
+  ID: 8
   CurrentLevel: 0
   CurCharges: 0
-  MaxCharges: 0
-  UsesCharges: 0
+  MaxCharges: 1
+  UsesCharges: 1
   StartUnlocked: 1
   BindingDisplayString: 
   cooldown: 120

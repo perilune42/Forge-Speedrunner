@@ -16,7 +16,7 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private Canvas screen;
 
     [Header("Prefabs")]
-    [SerializeField] private GameObject upgradePrefab;
+    [SerializeField] private GameObject upgradePrefab, toolPrefab;
     [SerializeField] private GameObject shopAbilityPrefab;
 
     [Header("Nav Panel Refs")]
@@ -31,6 +31,7 @@ public class ShopManager : Singleton<ShopManager>
 
     [Header("Upgrade Tab Refs")]
     [SerializeField] private Transform abilityLayoutGroup;
+    [SerializeField] private Transform toolsLayoutGroup;
 
     [SerializeField] private Transform upgradeLayoutGroup;
     [SerializeField] private Image upgradeInfoIcon;
@@ -90,6 +91,10 @@ public class ShopManager : Singleton<ShopManager>
         {
             Destroy(upgradeLayoutGroup.GetChild(i).gameObject);
         }
+        for (int i = 0; i < toolsLayoutGroup.childCount; i++)
+        {
+            Destroy(toolsLayoutGroup.GetChild(i).gameObject);
+        }
 
         var currentAbilities = AbilityManager.Instance.PlayerAbilities;
 
@@ -121,6 +126,10 @@ public class ShopManager : Singleton<ShopManager>
             newUpgrade.GetComponent<Upgrade>().Init(possibleAbility, levelToUpgrade, useCharges);
             count++;
         }
+
+        Chronoshift chronoshift = GameRegistry.Instance.Chronoshift;
+        GameObject chronoshiftUpgrade = Instantiate(toolPrefab, toolsLayoutGroup);
+        chronoshiftUpgrade.GetComponent<Upgrade>().Init(chronoshift, 0, true);
     }
 
     public void UpdateShopAbilities()
@@ -129,6 +138,7 @@ public class ShopManager : Singleton<ShopManager>
         {
             Destroy(abilityLayoutGroup.GetChild(i).gameObject);
         }
+
 
         foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
         {

@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Recall
   Name: Recall
-  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
+  Icon: {fileID: 21300000, guid: 48be522cb3aa80b0a918abe7e257c7c7, type: 3}
   AllLevels:
   - Description: Recall 1
     Cost: 5

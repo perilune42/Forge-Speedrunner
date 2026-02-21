@@ -48,7 +48,8 @@ public class AbilityInfo : MonoBehaviour
         mask.fillAmount = 1f - Ability.GetCooldown();
         
         icon.color = active ? Color.white : Color.gray;
-        chargeText.text = Ability.UsesCharges ? $"{Ability.CurCharges}/{Ability.MaxCharges}" : "";
+        if (Ability is Chronoshift) chargeText.text = $"{AbilityManager.Instance.ChronoshiftCharges}/{Ability.MaxCharges}";
+        else chargeText.text = Ability.UsesCharges ? $"{Ability.CurCharges}/{Ability.MaxCharges}" : "";
         keybindText.SetText(Ability.BindingDisplayString);
     }
 

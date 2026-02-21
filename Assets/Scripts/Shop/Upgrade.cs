@@ -16,7 +16,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private TMP_Text NameText;
     [SerializeField] private TMP_Text CostText;
     [SerializeField] private TMP_Text ChargeText;
-
+    [SerializeField] private bool isTool; // whether this shows up in the Tools group and thus doesn't show its name or charge count
     private int cost => ability.AllLevels[levelToUpgrade].Cost;
 
     public void BuyUpgrade()
@@ -39,13 +39,18 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
             bool abilityExists = AbilityManager.Instance.PlayerAbilities.TryGetValue(ability.ID, out var existingAbility);
             if (abilityExists)
             {
-                existingAbility.CurrentLevel++;
-                existingAbility.UsesCharges = usesCharges;
+                if (existingAbility is not Chronoshift)
+                {
+                    existingAbility.CurrentLevel++;
+                    existingAbility.UsesCharges = usesCharges;
+                }
             }
             else
             {
-                AbilityManager.Instance.GivePlayerAbility(ability.ID);
+                if (ability is Chronoshift) AbilityManager.Instance.GiveChronoshift();
+                else AbilityManager.Instance.GivePlayerAbility(ability.ID);
             }
+            if (ability is Chronoshift) AbilityManager.Instance.ChronoshiftCharges++;
             ShopManager.Instance.UpdateShopAbilities();
         }
     }
@@ -59,9 +64,9 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
         // Set UI elements
         UpgradeImage.sprite = ability.Icon;
-        NameText.text = $"{ability.Name} {level}";
+        if (!isTool) NameText.text = $"{ability.Name} {level}";
         CostText.text = $"${cost}";
-        ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
+        if (!isTool) ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -14,9 +14,6 @@ public class Chronoshift : Ability, IStatSource
     [SerializeField] private float teleportSpeed, teleportAcceleration;
     private float curTeleportSpeed;
     private GameObject clone;
-    private Vector2 storedVelocity;
-    private float storedGravityMult;
-    private SpecialState storedState;
     private Action stopCloneParticleAction;
 
     [SerializeField] private Volume volume;
@@ -36,7 +33,7 @@ public class Chronoshift : Ability, IStatSource
     public override void Start()
     {
         base.Start();
-
+        MaxCharges = AbilityManager.Instance.ChronoshiftCharges;
         if (volume.profile.TryGet<LiftGammaGain>(out LiftGammaGain gammaProfile)) gamma = gammaProfile;
         if (volume.profile.TryGet<ColorAdjustments>(out ColorAdjustments colorsProfile)) colors = colorsProfile;
     }
@@ -70,6 +67,7 @@ public class Chronoshift : Ability, IStatSource
                         Debug.Log(keyframeIndex);
                         StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero, Vector2.zero));
                     }
+                    RoomManager.Instance.RespawnPosition = curKeyframe.respawnPosition;
                     Timer.speedrunTime = curKeyframe.time;
                 }
             }
@@ -97,7 +95,8 @@ public class Chronoshift : Ability, IStatSource
                 ChronoshiftKeyframe kf = new ChronoshiftKeyframe(
                     PlayerMovement.transform.position, 
                     Timer.speedrunTime, 
-                    RoomManager.Instance.activeRoom);
+                    RoomManager.Instance.activeRoom,
+                    RoomManager.Instance.RespawnPosition);
                 keyframes.Insert(0, kf);
                 curKeyframeTime = keyframeInterval;
             }
@@ -131,12 +130,7 @@ public class Chronoshift : Ability, IStatSource
     private void Teleport()
     {
         if (clone == null) return;
-        storedVelocity = PlayerMovement.Velocity;   
         PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
-        if (PlayerMovement.SpecialState == SpecialState.Dash || 
-            PlayerMovement.SpecialState == SpecialState.GroundSlam ||
-            PlayerMovement.SpecialState == SpecialState.Rocket) storedState = PlayerMovement.SpecialState;
-        else storedState = SpecialState.Normal;
         PlayerMovement.SpecialState = SpecialState.Chronoshift;
         gamma.gamma.Override(darkVector);
         colors.saturation.Override(saturation);
@@ -148,13 +142,10 @@ public class Chronoshift : Ability, IStatSource
         
         curKeyframe = keyframes[0];
         keyframeIndex = 0;
-        
     }
 
     private void CancelTeleport()
     {
-        PlayerMovement.SpecialState = storedState;
-        PlayerMovement.Velocity = storedVelocity;
         stopCloneParticleAction?.Invoke();
         Destroy(clone);
         gamma.gamma.Override(new Vector4(1f, 1f, 1f, 0f));
@@ -177,10 +168,12 @@ public struct ChronoshiftKeyframe
     public Vector3 position;
     public float time;
     public Room room;
-    public ChronoshiftKeyframe(Vector3 position, float time, Room room)
+    public Vector3 respawnPosition;
+    public ChronoshiftKeyframe(Vector3 position, float time, Room room, Vector3 respawnPosition)
     {
         this.position = position;
         this.time = time;
         this.room = room;
+        this.respawnPosition = respawnPosition;
     }
 }

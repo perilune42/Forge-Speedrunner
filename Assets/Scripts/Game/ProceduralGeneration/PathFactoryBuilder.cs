@@ -14,6 +14,7 @@ public class PathFactoryBuilder
     private Room finish;
     public PathFactoryBuilder()
     {
+        // TODO: initialize stack with strategy pattern class to pick doorway
         stack = new();
         grid = new();
         start = null;

@@ -43,6 +43,7 @@ public class RoomManager : Singleton<RoomManager>
     public Transform StartingSpawn;
 
     [SerializeField] bool overrideStartingRoom;
+    public bool transitioning;
 
     public Vector2 RespawnPosition { get => respawnPosition; set { 
             respawnPosition = value;
@@ -241,9 +242,10 @@ public class RoomManager : Singleton<RoomManager>
         door2.EnableTransition();
     }
 
-    private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
         Debug.Log("start room transition");
+        transitioning = true;
         AbilityManager.Instance.ResetAbilites();
         FadeToBlack.Instance.FadeIn();
         if (dir == Vector2.up)
@@ -271,6 +273,12 @@ public class RoomManager : Singleton<RoomManager>
         {
             yield return new WaitForFixedUpdate();
         }
+        if (activeRoom != room)
+        {
+            activeRoom = room;
+            Debug.Log("forced activeRoom to be current room");
+        }
+        transitioning = false;
         Debug.Log("end room transition");
     }
 
@@ -279,7 +287,7 @@ public class RoomManager : Singleton<RoomManager>
         PlayerMovement pm = Player.Instance.Movement;
         PInput.Instance.EnableControls = false;
         pm.EndJump(true);
-        pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
+        if (pm.SpecialState != SpecialState.Chronoshift) pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
 
         if (dir.y == 0)
         {
@@ -294,7 +302,7 @@ public class RoomManager : Singleton<RoomManager>
         // suppress target trigger to avoid transitioning back
         pm.transform.position = position;
         pm.Locked = false;
-        pm.SpecialState = SpecialState.Normal;
+        if (pm.SpecialState != SpecialState.Chronoshift) pm.SpecialState = SpecialState.Normal;
         const float minTransitionSpeed = 0;
 
         // give some minimum velocity entering the room

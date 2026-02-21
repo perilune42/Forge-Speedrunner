@@ -7,7 +7,7 @@ using UnityEngine.Rendering.Universal;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch, Rocket, Teleport
+    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch, Rocket, Teleport, Chronoshift
 }
 
 public class PlayerMovement : DynamicEntity, IStatSource

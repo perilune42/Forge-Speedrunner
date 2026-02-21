@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2440259896007548432
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6807444166784370458}
+  - component: {fileID: -1099716880147980981}
+  - component: {fileID: 8964761794167442913}
+  m_Layer: 0
+  m_Name: Chronoshift
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6807444166784370458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2440259896007548432}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-1099716880147980981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2440259896007548432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3dcd11dbd17bcd589b0f5f03118a3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Chronoshift
+  Name: Chronoshift
+  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
+  AllLevels:
+  - Description: Use to create a clone. Use again to rewind time back to that clone.
+    Cost: 5
+  ID: 7
+  CurrentLevel: 0
+  CurCharges: 0
+  MaxCharges: 0
+  UsesCharges: 0
+  StartUnlocked: 1
+  BindingDisplayString: 
+  cooldown: 120
+  info: {fileID: 0}
+  clonePrefab: {fileID: 7445932514781297407, guid: 5044718d1c697ac168bf133e43048f76, type: 3}
+  teleportDelay: 1500
+  teleportSpeed: 0.1
+  teleportAcceleration: 1.03
+  volume: {fileID: 8964761794167442913}
+  darkVector: {x: 1, y: 1, z: 1, w: -0.7}
+  saturation: -100
+  shatterParticle: {fileID: 4306868182974682692, guid: 8a2078565c677538095b8d435a8a95a8, type: 3}
+  keyframeInterval: 30
+--- !u!114 &8964761794167442913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2440259896007548432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 1
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 4f997ede5bec21172847b4757ffe7688, type: 2}

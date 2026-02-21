@@ -126,7 +126,10 @@ public class Magnet : Entity
         float angleToMagnet = Mathf.Atan2(transform.position.y - playerPos.y, transform.position.x - playerPos.x);
         Vector2 pullVec = new Vector2(Mathf.Cos(angleToMagnet), Mathf.Sin((angleToMagnet))) * suckStrength;
         Vector2 newVelocity = playerMovement.Velocity + pullVec;
-        playerMovement.Velocity = newVelocity;
+        if (playerMovement.SpecialState != SpecialState.LedgeClimb && playerMovement.SpecialState != SpecialState.WallClimb /*!(newVelocity.magnitude > playerMovement.Velocity.magnitude && newVelocity.magnitude > maxSuckSpeed)*/)
+        {
+            playerMovement.Velocity = newVelocity;
+        }
         suckFrames++;
         if (suckFrames >= maxSuckFrames || Vector2.Distance(playerPos, transform.position) < minRange)
         {

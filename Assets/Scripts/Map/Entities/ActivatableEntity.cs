@@ -8,6 +8,7 @@ public abstract class ActivatableEntity : Entity
 
     public void SetColor(Color color)
     {
+        if (colorIndicator == null) return;
         colorIndicator.color = color;
     }
 }

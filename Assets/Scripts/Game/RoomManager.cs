@@ -44,7 +44,7 @@ public class RoomManager : Singleton<RoomManager>
 
     [SerializeField] bool overrideStartingRoom;
     bool transitionOngoing = false;
-
+    public bool transitionWaiting = false; // needed for Chronoshift ability
     [SerializeField] bool allRoomsDiscovered = false;   
 
     public Vector2 RespawnPosition { get => respawnPosition; set { 
@@ -293,7 +293,7 @@ public class RoomManager : Singleton<RoomManager>
     public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
         Debug.Log("start room transition");
-        transitioning = true;
+        transitionWaiting = true;
         AbilityManager.Instance.ResetAbilites();
         FadeToBlack.Instance.FadeIn();
         if (dir == Vector2.up)
@@ -326,7 +326,7 @@ public class RoomManager : Singleton<RoomManager>
             activeRoom = room;
             Debug.Log("forced activeRoom to be current room");
         }
-        transitioning = false;
+        transitionWaiting = false;
         Debug.Log("end room transition");
     }
 

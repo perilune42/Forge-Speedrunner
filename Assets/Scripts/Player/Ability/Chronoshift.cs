@@ -45,7 +45,7 @@ public class Chronoshift : Ability, IStatSource
     {
         base.FixedUpdate();
         if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
-        if (PlayerMovement.SpecialState == SpecialState.Chronoshift && !RoomManager.Instance.transitioning)
+        if (PlayerMovement.SpecialState == SpecialState.Chronoshift && !RoomManager.Instance.transitionWaiting)
         {
             if (clone == null) // failsafe measure in case functions execute in weird order
             {

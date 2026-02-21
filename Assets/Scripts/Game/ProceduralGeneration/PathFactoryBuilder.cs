@@ -35,9 +35,10 @@ public class PathFactoryBuilder
     {
         // spots that were rejected by strategy
         GenStack rejectedStack = new();
+        HashSet<Room> placedRooms = new();
 
         Direction dir; Offset off; Offset botleft;
-        for(int i = 0; i < pathLength; i++)
+        for(int i = 0; stack.NotEmpty() && i < pathLength; i++)
         {
             // temporary logging of stack
             Debug.Log($"[GenerateWith] step {i+1}");
@@ -45,7 +46,7 @@ public class PathFactoryBuilder
             stack.LogEntries();
             (dir, off) = stack.PopRandom();
             Debug.Log($"[GenerateWith] dir: {dir}, off: {off}");
-            Room possibleRoom = strategy.FindRoom(dir, off);
+            Room possibleRoom = strategy.FindRoom(dir, off, in placedRooms);
             if(possibleRoom == null)
             {
                 rejectedStack.PutBack(dir, off);
@@ -59,6 +60,7 @@ public class PathFactoryBuilder
                 Debug.Log($"[GenerateWith] room fit at coord {botleft}");
                 bool x = grid.InsertRoom(possibleRoom, botleft);
                 stack.extractAll(possibleRoom, botleft);
+                placedRooms.Add(possibleRoom);
             }
             else
             {

@@ -111,7 +111,18 @@ public class Grid
 
 
         // if there are obstructions, recalculate offset so that obstruction is outside.
-        botleft -= mask * (obstruction - botleft + room.size) - mask;
+        Offset change = mask * (obstruction - botleft + room.size) - mask;
+        botleft -= change;
+        int doorIndex = firstNonNull + dir switch
+        {
+            LEFT or RIGHT => change.y,
+            _ => change.x,
+        };
+        if(doorIndex >= roomDoorsAtDir.Count || roomDoorsAtDir[doorIndex] == null)
+        {
+            Debug.Log("[CanFit] no available doorway at furthest possible point.");
+            return false;
+        }
 
         // check botleft again. return early if there are no obstructions
         valid = true;
@@ -247,7 +258,7 @@ public class Grid
 
         Cell currentCell = cellsByGrid[currentOff];
         Cell dirCell = cellsByGrid[dirOff];
-        if(currentCell.room == dirCell.room)
+        if(currentCell == dirCell)
             return false;
 
         bool valid = dir switch

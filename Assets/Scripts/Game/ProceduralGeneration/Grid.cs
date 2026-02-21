@@ -51,6 +51,7 @@ public class Grid
             LEFT or RIGHT => new(0,1),
             _ => new(1,0),
         };
+        Offset otherMask = new(mask.y, mask.x);
 
         List<Doorway> roomDoorsAtDir = dir switch
         {
@@ -66,7 +67,7 @@ public class Grid
         // botleft = offset + mask * room.size - mask;
         botleft = dir switch
         {
-            LEFT or DOWN => offset + mask * room.size - mask,
+            LEFT or DOWN => offset + otherMask * room.size - otherMask,
             _ => offset,
         };
 

@@ -31,6 +31,7 @@ public class ShopManager : Singleton<ShopManager>
 
     [Header("Upgrade Tab Refs")]
     [SerializeField] private Transform abilityLayoutGroup;
+    [SerializeField] private List<Transform> abilitySlots;
 
     [SerializeField] private Transform upgradeLayoutGroup;
 
@@ -126,15 +127,22 @@ public class ShopManager : Singleton<ShopManager>
 
     public void UpdateShopAbilities()
     {
-        for (int i = 0; i < abilityLayoutGroup.childCount; i++)
+        for (int i = 0; i < abilitySlots.Count; i++)
         {
-            Destroy(abilityLayoutGroup.GetChild(i).gameObject);
+            for (int j = 0; j < abilitySlots[i].childCount; j++)
+            {
+                Destroy(abilitySlots[i].GetChild(j).gameObject);
+            }
         }
 
+        int index = 0;
         foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
         {
-            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilityLayoutGroup);
+            if (ability is Dash) continue;
+            if (index >= abilitySlots.Count) break;
+            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilitySlots[index]);
             shopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
+            index++;
         }
     }
 

@@ -3,15 +3,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ShopAbility : MonoBehaviour, IPointerEnterHandler
+public class ShopAbility : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler
 {
+    public static ShopAbility SelectedAbility;
+
     [SerializeField] Ability ability;
     [SerializeField] int abilityLevel;
 
     // Editor refs
     [SerializeField] Image abilityImage;
-    [SerializeField] TextMeshProUGUI abilityName;
-    [SerializeField] TextMeshProUGUI abilityCharge;
 
     public void Init(Ability ability, int level)
     {
@@ -19,8 +19,11 @@ public class ShopAbility : MonoBehaviour, IPointerEnterHandler
         abilityLevel = level;
 
         abilityImage.sprite = ability.Icon;
-        abilityName.text = $"{ability.Name} (Lvl. {level})";
-        abilityCharge.text = ability.UsesCharges ? ability.MaxCharges.ToString() : "";
+    }
+
+    private void Update()
+    {
+        abilityImage.color = this == SelectedAbility ? Color.gray : Color.white;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -30,5 +33,12 @@ public class ShopAbility : MonoBehaviour, IPointerEnterHandler
         string description = ability.AllLevels[abilityLevel].Description;
 
         ShopManager.Instance.ShowTooltipInfo(icon, header, description);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (SelectedAbility == null) SelectedAbility = this;
+        else if (SelectedAbility == this) SelectedAbility = null;
+        // else rebind to
     }
 }

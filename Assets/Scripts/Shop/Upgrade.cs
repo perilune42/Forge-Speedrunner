@@ -18,6 +18,27 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private TMP_Text ChargeText;
 
     private int cost => ability.AllLevels[levelToUpgrade].Cost;
+    private bool HasEnoughMoney => ShopManager.Instance.Money - cost >= 0;
+    private bool CanBuy => !IsBought && HasEnoughMoney;
+
+    private void Update()
+    {
+        // TODO - optimize
+        if (CanBuy)
+        {
+            UpgradeImage.color = Color.white;
+            NameText.color = Color.white;
+            CostText.color = Color.white;
+            ChargeText.color = Color.white;
+        }
+        else
+        {
+            UpgradeImage.color = Color.gray;
+            NameText.color = Color.lightGray;
+            CostText.color = Color.lightGray;
+            ChargeText.color = Color.lightGray;
+        }
+    }
 
     public void BuyUpgrade()
     {
@@ -25,7 +46,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         {
             Debug.Log($"Already bought {ability.Name}");
         }
-        else if (ShopManager.Instance.Money - cost < 0)
+        else if (!HasEnoughMoney)
         {
             Debug.Log($"Missing {cost - ShopManager.Instance.Money} money");
         }
@@ -59,13 +80,19 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
         // Set UI elements
         UpgradeImage.sprite = ability.Icon;
-        NameText.text = $"{ability.Name} {level}";
+        NameText.text = $"{ability.Name} (Lvl. {level})";
         CostText.text = $"${cost}";
         ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ShopManager.Instance.ShowUpgradeInfo(ability, levelToUpgrade);
+        Sprite icon = ability.Icon;
+        string header;
+        if (levelToUpgrade > 0) header = $"{ability.Name} (Lvl. {levelToUpgrade - 1} -> {levelToUpgrade})";
+        else header = $"{ability.name} (Lvl. 0)";
+        string description = ability.AllLevels[levelToUpgrade].Description;
+
+        ShopManager.Instance.ShowTooltipInfo(icon, header, description);
     }
 }

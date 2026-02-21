@@ -33,9 +33,10 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private Transform abilityLayoutGroup;
 
     [SerializeField] private Transform upgradeLayoutGroup;
-    [SerializeField] private Image upgradeInfoIcon;
-    [SerializeField] private TMP_Text upgradeInfoNameText;
-    [SerializeField] private TMP_Text upgradeInfoDescriptionText;
+
+    [SerializeField] private Image tooltipInfoIcon;
+    [SerializeField] private TMP_Text tooltipInfoNameText;
+    [SerializeField] private TMP_Text tooltipInfoDescriptionText;
 
     [Header("Continue Tab Refs")]
 
@@ -137,11 +138,11 @@ public class ShopManager : Singleton<ShopManager>
         }
     }
 
-    public void ShowUpgradeInfo(Ability ability, int level)
+    public void ShowTooltipInfo(Sprite icon, string header, string description)
     {
-        upgradeInfoIcon.sprite = ability.Icon;
-        upgradeInfoNameText.text = $"{ability.Name} {level}";
-        upgradeInfoDescriptionText.text = ability.AllLevels[level].Description;
+        tooltipInfoIcon.sprite = icon;
+        tooltipInfoNameText.text = header;
+        tooltipInfoDescriptionText.text = description;
     }
 
     public void CloseShop()

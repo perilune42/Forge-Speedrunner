@@ -26,25 +26,23 @@ public static class DirMethods
     }
     public static List<Doorway> matchingDir(in Direction dir, in Room r)
     {
-        if(dir == LEFT)
-            return r.doorwaysLeft;
-        if(dir == RIGHT)
-            return r.doorwaysRight;
-        if(dir == UP)
-            return r.doorwaysUp;
-        // if(dir == DOWN)
-        return r.doorwaysDown;
+        return dir switch
+        {
+            LEFT => r.doorwaysLeft,
+            RIGHT => r.doorwaysRight,
+            UP => r.doorwaysUp,
+            _ => r.doorwaysDown,
+        };
 
     }
     public static Direction opposite(in Direction dir)
     {
-        if(dir == LEFT)
-            return RIGHT;
-        if(dir == RIGHT)
-            return LEFT;
-        if(dir == UP)
-            return DOWN;
-        // if(dir == DOWN)
-        return UP;
+        return dir switch
+        {
+            LEFT => RIGHT,
+            RIGHT => LEFT,
+            UP => DOWN,
+            _ => UP,
+        };
     }
 }

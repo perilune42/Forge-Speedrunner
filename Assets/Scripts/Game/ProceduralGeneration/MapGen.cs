@@ -26,7 +26,7 @@ public class MapGen : MonoBehaviour
 
         PathCreator pc = new PathFactoryBuilder()
             .WithStartRoom(start)
-            .GenerateWith(new RandomChoice(roomPrefabs), pathSize)
+            .GenerateWith(new MainPath(roomPrefabs), pathSize)
             .Finalize();
 
         pc.PassPrefab = this.PassPrefab;

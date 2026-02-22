@@ -20,6 +20,22 @@ public class GenStack
     {
         return dirs.Count > 0;
     }
+    public (Direction, Offset) PopWith(IChoiceStrategy strategy)
+    {
+        // desired values
+        int ind = strategy.SelectIndex(in dirs, in offsets);
+        Direction dir = dirs[ind];
+        Offset offset = offsets[ind];
+
+        // remove selected element (swap-remove array style)
+        dirs[ind] = dirs[dirs.Count-1];
+        offsets[ind] = offsets[offsets.Count-1];
+        offsets.RemoveAt(offsets.Count-1);
+        dirs.RemoveAt(dirs.Count-1);
+
+        return (dir, offset);
+    }
+
     public (Direction, Offset) PopRandom()
     {
         // desired values
@@ -46,7 +62,7 @@ public class GenStack
         for(int i = 0; i < roomDoors.Count; i++)
         {
             Doorway door = roomDoors[i];
-            if(door == null) continue;
+            if(door == null || door.Entrance) continue;
 
             Offset newOffset = startingOffset;
             if(facingDir == LEFT || facingDir == RIGHT)

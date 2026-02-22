@@ -32,7 +32,7 @@ public class PathFactoryBuilder
         finish = room;
         return this;
     }
-    public PathFactoryBuilder GenerateWith(IRoomChoiceStrategy strategy, int pathLength)
+    public PathFactoryBuilder GenerateWith(IChoiceStrategy strategy, int pathLength)
     {
         // spots that were rejected by strategy
         GenStack rejectedStack = new();
@@ -45,7 +45,7 @@ public class PathFactoryBuilder
             Debug.Log($"[GenerateWith] step {i+1}");
             grid.LogEntries();
             stack.LogEntries();
-            (dir, off) = stack.PopRandom();
+            (dir, off) = stack.PopWith(strategy);
             Debug.Log($"[GenerateWith] dir: {dir}, off: {off}");
             Room possibleRoom = strategy.FindRoom(dir, off, in placedRooms);
             if(possibleRoom == null)

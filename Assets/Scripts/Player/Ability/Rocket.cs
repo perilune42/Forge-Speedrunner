@@ -6,13 +6,16 @@ public class Rocket : Ability
     private int curDuration;
     private float curSteering;
     private float speed;
-    [SerializeField] private float minSpeed, maxSpeed, acceleration, steering, launchSteering, launchSteeringUpgraded, steeringLoss;
+    [SerializeField] private float minSpeed, maxSpeed, acceleration, steering, launchSteering, launchSteeringUpgraded, steeringLoss, boostSpeed;
     private Vector2 inertia;
     private bool launched;
     private float angle;
     private bool shouldCancel = false;
     [SerializeField] private GameObject rocketVisualPrefab;
     private GameObject rocketVisual;
+    private bool canBoost;
+    private bool usedBoost;
+
     public override void Start()
     {
         base.Start();
@@ -43,7 +46,7 @@ public class Rocket : Ability
                 else if (curDuration < windupDuration) 
                 {
                     speed += acceleration;
-                    if (speed > maxSpeed) speed = maxSpeed;
+                    if (speed > maxSpeed && !usedBoost) speed = maxSpeed;
                     curSteering *= steeringLoss;
                     if (CurrentLevel >= 2 && curSteering < launchSteeringUpgraded) curSteering = launchSteeringUpgraded;
                     inertia *= 0.9f;
@@ -61,7 +64,8 @@ public class Rocket : Ability
             }
         }
         else if (shouldCancel) CancelAbility();
-        else if (inputButton.HasPressed) UseAbility();
+        
+        if (inputButton.HasPressed) UseAbility();
     }
 
     private void Launch()
@@ -74,6 +78,7 @@ public class Rocket : Ability
 
     private void HandleSteering()
     {
+        if (usedBoost) return;
         float steerSpeed = curSteering;
         if (steerSpeed < 0) return;
         angle -= PInput.Instance.MoveVector.x * steerSpeed;
@@ -82,13 +87,41 @@ public class Rocket : Ability
 
     public override bool CanUseAbility()
     {
+        if (CurrentLevel >= 2 && canBoost) return true;
         if (PlayerMovement.SpecialState != SpecialState.Normal) return false;
         return base.CanUseAbility();
+    }
+
+    private void Boost()
+    {
+        Launch();
+        speed = boostSpeed;
+        curSteering = 0;
+        canBoost = false;
+        usedBoost = true;
     }
 
     public override bool UseAbility()
     {
         if (!CanUseAbility()) return false;
+
+        if (CurrentLevel >= 2)
+        {
+            Debug.Log(canBoost);
+            if (canBoost)
+            {  
+                Boost();
+                Debug.Log("Tried to boost");
+                return true;
+            }
+            else 
+            {
+                canBoost = true;
+                inputButton.ConsumeBuffer();
+                usedBoost = false;
+            }
+        }
+
         if (rocketVisual != null) Destroy(rocketVisual);
         curDuration = 0;
         PlayerMovement.SpecialState = SpecialState.Rocket;
@@ -99,13 +132,14 @@ public class Rocket : Ability
         launched = false;
         rocketVisual = Instantiate(rocketVisualPrefab, Player.Instance.Sprite.transform);
         shouldCancel = true;
-        return base.UseAbility();
+        base.UseAbility();
+        return false;
+        
     }
 
     private void CancelAbility()
     {
         if (PlayerMovement.SpecialState == SpecialState.Teleport) return;
-        Debug.Log("cancelled " + PlayerMovement.SpecialState);
         PlayerMovement.SpecialState = SpecialState.Normal;
         rocketVisual.transform.SetParent(null, true);
         DynamicEntity de = rocketVisual.GetComponent<DynamicEntity>();
@@ -117,5 +151,9 @@ public class Rocket : Ability
         launched = false;
         stopParticleAction?.Invoke();
         shouldCancel = false;
+        curCooldown = cooldown;
+        canBoost = false;
     }
+
+    
 } 

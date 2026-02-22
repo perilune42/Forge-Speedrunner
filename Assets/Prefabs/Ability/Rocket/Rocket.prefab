@@ -47,16 +47,22 @@ MonoBehaviour:
   Name: Rocket
   Icon: {fileID: 21300000, guid: 9fb9934563483d43bbf98df48efaf053, type: 3}
   AllLevels:
-  - Description: I like cheese
+  - Description: Attaches a rocket to your back. The rocket launches you really fast
+      after winding up for a short period.
+    Cost: 9
+  - Description: You can steer the rocket after launching.
     Cost: 5
-  - Description: I like cheese
-    Cost: 5
-  ID: 0
-  CurrentLevel: 0
+  - Description: During flight, you can use the ability again to boost for amazing
+      speed, at the cost of your steering.
+    Cost: 12
+  ID: 7
+  CurrentLevel: 2
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  cooldown: 2400
+  StartUnlocked: 1
+  BindingDisplayString: 
+  cooldown: 180
   info: {fileID: 0}
   duration: 90
   windupDuration: 60
@@ -67,4 +73,5 @@ MonoBehaviour:
   launchSteering: 0.1
   launchSteeringUpgraded: 3
   steeringLoss: 0.97
+  boostSpeed: 80
   rocketVisualPrefab: {fileID: 651319860193007108, guid: faa3d73c33be3c148bbfc143ae65223f, type: 3}

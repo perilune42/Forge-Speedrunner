@@ -59,11 +59,12 @@ MonoBehaviour:
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  StartUnlocked: 1
+  StartUnlocked: 0
   BindingDisplayString: 
   cooldown: 240
   info: {fileID: 0}
   platformPrefab: {fileID: 5014027431977854887, guid: 535a5eead339b1af0a1ca8a0a8ef60eb, type: 3}
+  platform: {fileID: 0}
   platformSpawnOffset: {x: 0, y: -1.25, z: 0}
   platformDuration: 120
   platformSprites:

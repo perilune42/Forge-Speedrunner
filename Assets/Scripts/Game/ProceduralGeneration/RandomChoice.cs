@@ -20,11 +20,13 @@ public class RandomChoice : IChoiceStrategy
     {
         if(RoomPrefabs.Count <= 0)
             return null;
-        // this kind of sucks...
-        for(int i = 0; i < 100; i++) // prevent infinite iteration
+
+        // sane random!
+        List<int> inds = Enumerable.Range(0, RoomPrefabs.Count).ToList();
+        inds.Shuffle();
+
+        foreach(int ind in inds)
         {
-            int numRooms = RoomPrefabs.Count;
-            int ind = Random.Range(0, numRooms);
             Room current = RoomPrefabs[ind];
             if(placedRooms.Contains(current))
             {
@@ -40,7 +42,7 @@ public class RandomChoice : IChoiceStrategy
                 return current;
             }
         }
-        Debug.Log("Incredibly rare, could not find a door. TODO: find a sane solution.");
+        Debug.Log("[FindRoom] Could not find a door. There might not be any that fit!");
         return null;
     }
 }

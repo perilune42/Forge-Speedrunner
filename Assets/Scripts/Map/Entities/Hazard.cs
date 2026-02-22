@@ -7,7 +7,7 @@ public class Hazard : Entity
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        if (playerInside && !RoomManager.Instance.TransitionOngoing)
+        if (!Player.Instance.Movement.IsInvulnerable && playerInside && !RoomManager.Instance.TransitionOngoing)
         {
             var dist = Hitbox.Distance(Player.Instance.Movement.Hurtbox);
             // stupid hack to bypass contact offset making hurtbox bigger

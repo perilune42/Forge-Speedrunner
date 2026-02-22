@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.UI.Image;
 
 public enum SpecialState
 {
@@ -48,7 +50,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     public bool CanClimb = true;
 
     public bool CanJumpOverride;
-    
+    public bool IsInvulnerable = false;
 
     public SpecialState SpecialState { get => specialState; 
         set {
@@ -114,6 +116,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         hangTime = false;
         retainedSpeed = 0;
         Velocity = Vector2.zero;
+        IsInvulnerable = false;
     }
 
 
@@ -389,7 +392,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     public bool CanJump(bool canOverride = true)
     {
         return (canOverride && CanJumpOverride) || (
-            (State == BodyState.OnGround || coyoteFrames > 0)
+            !inHazard && (State == BodyState.OnGround || coyoteFrames > 0)
             && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash)
             );
     }

@@ -64,7 +64,7 @@ public class DynamicEntity : MonoBehaviour
     [SerializeField] protected LayerMask interactLayer;
 
     private List<Entity> collidingEntities = new();
-
+    protected bool inHazard = false;
 
     public const float CONTACT_OFFSET = 0.005f; // The gap between this body and a surface after a collision
     protected const float COLLISION_CHECK_DISTANCE = 0.1f; // how far away you have to be from a ceiling or the ground to be considered "colliding" with it
@@ -106,7 +106,14 @@ public class DynamicEntity : MonoBehaviour
     {
         if (State == BodyState.Override) return;
         if (State != BodyState.InAir || !GravityEnabled) return;
-        Velocity.y = Mathf.Max(Velocity.y - Gravity * GravityMultiplier.Get() * fdt, -TerminalVelocity); // Cap the velocity
+        if (GravityMultiplier.Get() > 0)
+        {
+            Velocity.y = Mathf.Max(Velocity.y - Gravity * GravityMultiplier.Get() * fdt, -TerminalVelocity); // Cap the velocity
+        }
+        else
+        {
+            Velocity.y = Mathf.Min(Velocity.y - Gravity * GravityMultiplier.Get() * fdt, TerminalVelocity);
+        }
     }
 
     protected virtual void CheckGrounded()
@@ -171,6 +178,7 @@ public class DynamicEntity : MonoBehaviour
     public virtual void ApplyMovement(Vector2 move)
     {
         bool doesCollide = CollisionsEnabled && (State != BodyState.Override);
+        inHazard = false;
 
         collisionHits.Clear();
         if (Mathf.Approximately(move.magnitude, 0f)) return; // This avoids weird imprecision errors
@@ -242,7 +250,10 @@ public class DynamicEntity : MonoBehaviour
                 {
                     if (!collidingEntities.Contains(hitEntity))
                     {
-                        
+                        if (hitEntity.GetComponent<Hazard>() != null)
+                        {
+                            inHazard = true;
+                        }
                         collidingEntities.Add(hitEntity);
                         var prevMove = move;
                         hitEntity.OnCollide(this, hit.normal);

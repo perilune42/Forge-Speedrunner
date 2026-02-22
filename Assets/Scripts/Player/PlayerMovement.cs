@@ -416,6 +416,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
             if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash && SpecialState != SpecialState.WallClimb) return false;
             if (!CanClimb) return false;
         }
+        if (HazardOnLedge(dir)) return false;
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 0.5f * PlayerHeight);
         Vector2 size = new(PlayerWidth, wallLatch ? PlayerHeight * 1.1f : PlayerHeight);
         RaycastHit2D[] hits = new RaycastHit2D[8];

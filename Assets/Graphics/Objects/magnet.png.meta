@@ -438,22 +438,22 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      magnet_0: -1875508804
-      magnet_1: -1849871945
-      magnet_10: -1154783686
-      magnet_11: -877112782
-      magnet_12: -871009220
-      magnet_13: 1955194575
-      magnet_14: -542190635
-      magnet_15: -646031462
-      magnet_2: 164626344
-      magnet_3: -1017040327
-      magnet_4: -1978686606
-      magnet_5: -3632620
-      magnet_6: 1023974278
-      magnet_7: 1052028305
-      magnet_8: 1000520988
-      magnet_9: -1419714722
+      magnet_0: 909950362
+      magnet_1: 1142417261
+      magnet_10: -2105339734
+      magnet_11: -1616930707
+      magnet_12: 1841312890
+      magnet_13: 565978029
+      magnet_14: -851995566
+      magnet_15: -1370103711
+      magnet_2: -308363208
+      magnet_3: 632054325
+      magnet_4: 1186696952
+      magnet_5: 2135304820
+      magnet_6: 2116275330
+      magnet_7: -2048705412
+      magnet_8: -1416762729
+      magnet_9: 827300654
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

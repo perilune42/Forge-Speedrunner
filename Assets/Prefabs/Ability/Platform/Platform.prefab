@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6708788084497623868
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6966168107609527037}
+  - component: {fileID: 2682955069748743838}
+  m_Layer: 0
+  m_Name: Platform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6966168107609527037
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6708788084497623868}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2682955069748743838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6708788084497623868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d14e2bbc3f81d96984a62b69c9684fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Platform
+  Name: Crumbling Platform
+  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
+  AllLevels:
+  - Description: Summons a platform beneath you that lasts a few seconds
+    Cost: 7
+  - Description: The platform extends horizontally to keep up with you!
+    Cost: 7
+  - Description: While you're on the platform, your dash has increased horizontal
+      speed.
+    Cost: 8
+  ID: 3
+  CurrentLevel: 2
+  CurCharges: 0
+  MaxCharges: 0
+  UsesCharges: 0
+  StartUnlocked: 1
+  BindingDisplayString: 
+  cooldown: 240
+  info: {fileID: 0}
+  platformPrefab: {fileID: 5014027431977854887, guid: 535a5eead339b1af0a1ca8a0a8ef60eb, type: 3}
+  platformSpawnOffset: {x: 0, y: -1.25, z: 0}
+  platformDuration: 120
+  platformSprites:
+  - {fileID: -489656981, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
+  - {fileID: 1139202709, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
+  - {fileID: -1734205342, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
+  - {fileID: -118662454, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
+  tileWidth: 3
+  dashVelocityMulti: 2

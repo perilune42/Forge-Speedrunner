@@ -2,7 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class GroundSlam : Ability
+public class GroundSlam : Ability, IStatSource
 {
     [SerializeField] private float initialVelocity;
     private int rampUpTime;
@@ -18,16 +18,25 @@ public class GroundSlam : Ability
 
     private Vector2 preservedVelocity;
 
+    private bool slammingUpwards;
 
     public override void Start()
     {
         base.Start();
         PlayerMovement.onGround += () =>
         {
-            if (PlayerMovement.SpecialState == SpecialState.GroundSlam
-                /* or the ground slam is level 2 and player recently dashed*/) OnGround();
+            if (PlayerMovement.SpecialState == SpecialState.GroundSlam) OnGround();
+        };
+        PlayerMovement.onGroundTop += () =>
+        {
+            if (slammingUpwards && PlayerMovement.SpecialState == SpecialState.GroundSlam) OnGround();
         };
         rampUpVelocityDefault = rampUpVelocity;
+    }
+
+    public override void OnReset()
+    {
+        base.OnReset();
     }
 
     protected override void FixedUpdate()
@@ -47,8 +56,16 @@ public class GroundSlam : Ability
             // If we are currently dashing, then don't apply slam velocity down yet
             if (PlayerMovement.SpecialState == SpecialState.GroundSlam)
             {
-                PlayerMovement.Velocity += Vector2.down * rampUpVelocity;
-                if (rampUpTime >= timeBeforeAcceleration && PlayerMovement.Velocity.y > -initialVelocity) rampUpVelocity += rampUpAcceleration;
+                PlayerMovement.Velocity += GetSlamDir() * rampUpVelocity;
+                if (GetSlamDir().y > 0)
+                {
+                    if (rampUpTime >= timeBeforeAcceleration && PlayerMovement.Velocity.y > -initialVelocity) rampUpVelocity += rampUpAcceleration;
+
+                }
+                else
+                {
+                    if (rampUpTime >= timeBeforeAcceleration && PlayerMovement.Velocity.y < initialVelocity) rampUpVelocity += rampUpAcceleration;
+                }
             }
         }
         if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
@@ -58,13 +75,13 @@ public class GroundSlam : Ability
     public bool DashInterrupt()
     {
         // if groundslam is level 1 and we are groundslamming, we cannot dash
-        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && CurrentLevel == 1)
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && CurrentLevel < 1)
         {
             return false;
         }
         // check if we are currently groundslamming and groundSlam is level 2
         // if so, we set the flag of wasSlammingBeforeDash to true
-        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && CurrentLevel >= 2)
+        if (PlayerMovement.SpecialState == SpecialState.GroundSlam && CurrentLevel >= 1)
         {
             wasSlammingBeforeDash = true;
             preservedVelocity = Player.Instance.Movement.Velocity;
@@ -86,13 +103,20 @@ public class GroundSlam : Ability
 
     public override bool UseAbility()
     {
+        if (CurrentLevel >= 2 && PInput.Instance.MoveVector.y > 0)
+        {
+            slammingUpwards = true;
+            PlayerMovement.GravityMultiplier.Multipliers[this] = -1;
+        }
+
         if (PlayerMovement.SpecialState == SpecialState.Dash) AbilityManager.Instance.GetAbility<Dash>().CancelDash();
-        PlayerMovement.Velocity = Vector2.down * initialVelocity;
+        PlayerMovement.Velocity = GetSlamDir() * initialVelocity;
         PlayerMovement.SpecialState = SpecialState.GroundSlam;
         terminalVelocityDefault = PlayerMovement.TerminalVelocity;
         PlayerMovement.TerminalVelocity = terminalVelocitySlam;
         rampUpVelocity = rampUpVelocityDefault;
         rampUpTime = 0;
+
         base.UseAbility();
         stopParticleAction += PlayerVFXTrail.PlayParticle(Color.purple);
         return true;
@@ -111,8 +135,14 @@ public class GroundSlam : Ability
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion + minimumSpeedGain);
         PlayerMovement.SpecialState = SpecialState.Normal;
         PlayerMovement.TerminalVelocity = terminalVelocityDefault;
+        slammingUpwards = false;
+        PlayerMovement.GravityMultiplier.Multipliers[this] = 1;
         stopParticleAction?.Invoke();
     }
 
+    private Vector2 GetSlamDir()
+    {
+        return slammingUpwards ? Vector2.up : Vector2.down;
+    }
 
 }

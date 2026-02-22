@@ -284,8 +284,11 @@ public class Grapple : Ability, IStatSource
         curCooldown = pullCooldown;
         Player.Instance.Movement.Velocity.y = verticalBoost;
 
-        // if (level 2...)
-        charging = true;
+        if (CurrentLevel >= 2)
+        {
+            charging = true;
+        }
+        
     }
 
     public void Abort()

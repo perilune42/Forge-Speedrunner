@@ -52,14 +52,14 @@ MonoBehaviour:
   - Description: I like cheese
     Cost: 5
   ID: 0
-  CurrentLevel: 0
+  CurrentLevel: 2
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
   StartUnlocked: 1
+  BindingDisplayString: 
   cooldown: 40
   info: {fileID: 0}
   dashDuration: 11
   dashVelocity: 15
-  CanDiagonalDash: 1
   enableVFX: 1

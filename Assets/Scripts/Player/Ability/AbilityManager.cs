@@ -95,7 +95,7 @@ public class AbilityManager : Singleton<AbilityManager>
         }
         else
         {
-            ability.CurrentLevel = 0;
+            ability.CurrentLevel = GameRegistry.Instance.Abilities[index].CurrentLevel;
         }
         /*
         if (ability.ID != 0 && (allAbilitiesAreCharged || ability.Data.UsesCharges))

@@ -188,7 +188,7 @@ public class ShopManager : Singleton<ShopManager>
 
     private void GainReward()
     {
-        int moneyGained = (int)(Timer.previousTargetTime - Timer.previousSpeedrunTime);
+        int moneyGained = Game.Instance.GetRunReward();
         moneyGainedText.text = moneyGained + "";
         Money += moneyGained;
         UpdateMoney();

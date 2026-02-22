@@ -70,7 +70,7 @@ public class Grapple : Ability, IStatSource
             PlayerMovement.Velocity = direction * pullSpeed * (1 + chargeTime * chargePerTick);
             if (forcePullTimer == 0)
             {
-                if (PInput.Instance.Jump.HasPressed)
+                if (CurrentLevel >= 1 && PInput.Instance.Jump.HasPressed)
                 {
                     PInput.Instance.Jump.ConsumeBuffer();
                     LaunchPlayer(true);

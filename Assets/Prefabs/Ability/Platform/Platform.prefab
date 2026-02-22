@@ -49,9 +49,12 @@ MonoBehaviour:
   AllLevels:
   - Description: Summons a platform beneath you that lasts a few seconds
     Cost: 7
-  - Description: IDK
+  - Description: The platform extends horizontally to keep up with you!
     Cost: 7
-  ID: 0
+  - Description: While you're on the platform, your dash has increased horizontal
+      speed.
+    Cost: 8
+  ID: 3
   CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
@@ -68,3 +71,4 @@ MonoBehaviour:
   - {fileID: 1139202709, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
   - {fileID: -1734205342, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
   - {fileID: -118662454, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
+  tileWidth: 3

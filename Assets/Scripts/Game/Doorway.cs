@@ -4,6 +4,7 @@ public class Doorway : MonoBehaviour
 {
     [HideInInspector] public Room enclosingRoom;
     public Passage passage;
+    public bool Entrance;
 
     private bool suppressTransition = false;
 

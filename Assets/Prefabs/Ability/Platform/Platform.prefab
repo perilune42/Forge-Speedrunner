@@ -55,7 +55,7 @@ MonoBehaviour:
       speed.
     Cost: 8
   ID: 3
-  CurrentLevel: 0
+  CurrentLevel: 2
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
@@ -72,3 +72,4 @@ MonoBehaviour:
   - {fileID: -1734205342, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
   - {fileID: -118662454, guid: 556fae44123b27586ae2c4e124f93430, type: 3}
   tileWidth: 3
+  dashVelocityMulti: 2

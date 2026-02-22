@@ -61,5 +61,5 @@ MonoBehaviour:
   cooldown: 40
   info: {fileID: 0}
   dashDuration: 11
-  dashVelocity: 15
+  dashVelocityDefault: 15
   enableVFX: 1

@@ -2,10 +2,10 @@ using NUnit.Framework;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Platform : Ability
+public class Platform : Ability, IStatSource
 {
     [SerializeField] private GameObject platformPrefab;
-    private GameObject platform;
+    [HideInInspector] public GameObject platform;
     private SpriteRenderer platformRenderer;
     private BoxCollider2D platformCollider;
     [SerializeField] private Vector3 platformSpawnOffset;
@@ -13,10 +13,12 @@ public class Platform : Ability
     private int curPlatformDuation;
     [SerializeField] private Sprite[] platformSprites;
     private int spriteInterval;
-
+    
     [SerializeField] private float tileWidth;
     private float leftPointer;
     private float rightPointer;
+
+    public float dashVelocityMulti;
 
     public override void Start()
     {
@@ -82,6 +84,12 @@ public class Platform : Ability
         base.OnReset();
     }
 
+    public bool IsPlayerTouchingPlatform()
+    {
+        if (platform == null) return false;
+        RaycastHit2D boxCast = Physics2D.BoxCast(PlayerMovement.transform.position, PlayerMovement.SurfaceCollider.bounds.size, 0f, Vector2.down, 0.1f);
+        return boxCast.collider == platformCollider;
+    }
 
     private void DestroyPlatform()
     {

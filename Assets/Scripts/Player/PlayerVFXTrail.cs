@@ -12,23 +12,16 @@ public class PlayerVFXTrail : MonoBehaviour
     [SerializeField] private SpriteRenderer playerSpriteRenderer;
     [SerializeField] private List<Material> particleMaterials;
     [SerializeField] private PlayerMovement playerMovement;
-    private Texture2D whitePlayerTexture; // player texture but with only white pixels
+    [SerializeField] private float particleDuration;
+
+    private Dictionary<string, Texture2D> whitePlayerTextures; // player texture but with only white pixels
 
     private void Awake()
     {
         if (playerSpriteRenderer == null) playerSpriteRenderer = Player.Instance.Sprite;
         if (playerMovement == null) playerMovement = Player.Instance.Movement;
-        whitePlayerTexture = new Texture2D(playerSpriteRenderer.sprite.texture.width,
-            playerSpriteRenderer.sprite.texture.height);
-        Color[] pixels = playerSpriteRenderer.sprite.texture.GetPixels();
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            Color col = pixels[i];
-            if (Mathf.Approximately(col.a, 0)) continue;
-            pixels[i] = Color.white;
-        }
-        whitePlayerTexture.SetPixels(pixels);
-        whitePlayerTexture.Apply();
+        whitePlayerTextures = new();
+        
     }
 
     public Action PlayParticle(Color color)
@@ -52,20 +45,38 @@ public class PlayerVFXTrail : MonoBehaviour
     {
         if (particleObj == null) return;
         particleObj.GetComponent<ParticleSystem>().Stop();
-        StartCoroutine(DestroyParticle(1f, particleObj));
+        StartCoroutine(DestroyParticle(particleDuration, particleObj));
         particleObj = null;
     }
 
     public void UpdateSprite()
     {
         Rect rect = playerSpriteRenderer.sprite.textureRect;
+        string name = playerSpriteRenderer.sprite.texture.name;
+        if (!whitePlayerTextures.ContainsKey(name)) whitePlayerTextures[name] = AddWhitePlayerTexture();
         Texture2D tex = new Texture2D((int)rect.width, (int)rect.height);
-        tex.SetPixels(whitePlayerTexture.GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
+        tex.SetPixels(whitePlayerTextures[name].GetPixels((int)rect.xMin, (int)rect.yMin, (int)rect.width, (int)rect.height, 0));
         tex.Apply();
         particleMaterials[0] = new Material(source: particleMaterials[0]);
         particleMaterials[0].mainTexture = tex;
         particleRenderer.SetMaterials(particleMaterials);
         particleRenderer.flip = Vector3.right * (playerMovement.FacingDir.x < 0 ? 1 : 0);
+    }
+
+    private Texture2D AddWhitePlayerTexture()
+    {
+        Texture2D whitePlayerTexture = new Texture2D(playerSpriteRenderer.sprite.texture.width,
+            playerSpriteRenderer.sprite.texture.height);
+        Color[] pixels = playerSpriteRenderer.sprite.texture.GetPixels();
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            Color col = pixels[i];
+            if (Mathf.Approximately(col.a, 0)) continue;
+            pixels[i] = Color.white;
+        }
+        whitePlayerTexture.SetPixels(pixels);
+        whitePlayerTexture.Apply();
+        return whitePlayerTexture;
     }
 
     private void UpdateColor(Color color)

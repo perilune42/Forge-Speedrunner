@@ -99,6 +99,7 @@ public class Rocket : Ability
         curSteering = 0;
         canBoost = false;
         usedBoost = true;
+        curDuration = windupDuration;
     }
 
     public override bool UseAbility()
@@ -133,6 +134,7 @@ public class Rocket : Ability
         rocketVisual = Instantiate(rocketVisualPrefab, Player.Instance.Sprite.transform);
         shouldCancel = true;
         base.UseAbility();
+        curCooldown = 0;
         return false;
         
     }
@@ -154,6 +156,8 @@ public class Rocket : Ability
         curCooldown = cooldown;
         canBoost = false;
     }
+
+    
 
     
 } 

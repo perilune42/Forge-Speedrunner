@@ -62,7 +62,7 @@ MonoBehaviour:
   UsesCharges: 0
   StartUnlocked: 1
   BindingDisplayString: 
-  cooldown: 180
+  cooldown: 2400
   info: {fileID: 0}
   duration: 90
   windupDuration: 60
@@ -73,5 +73,5 @@ MonoBehaviour:
   launchSteering: 0.1
   launchSteeringUpgraded: 3
   steeringLoss: 0.97
-  boostSpeed: 80
+  boostSpeed: 55
   rocketVisualPrefab: {fileID: 651319860193007108, guid: faa3d73c33be3c148bbfc143ae65223f, type: 3}

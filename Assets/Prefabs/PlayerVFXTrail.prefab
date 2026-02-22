@@ -50,6 +50,7 @@ MonoBehaviour:
   particleMaterials:
   - {fileID: 2100000, guid: 4550756f927bab8e3acec5716c8b24e0, type: 2}
   playerMovement: {fileID: 0}
+  particleDuration: 1
 --- !u!1 &7532973413504993920
 GameObject:
   m_ObjectHideFlags: 0

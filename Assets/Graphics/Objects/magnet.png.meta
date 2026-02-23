@@ -109,6 +109,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -438,22 +451,22 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      magnet_0: -1851946697
-      magnet_1: 291525251
-      magnet_10: 1794507422
-      magnet_11: -1590034224
-      magnet_12: 1843656049
-      magnet_13: 1340951196
-      magnet_14: 611148110
-      magnet_15: -1222447621
-      magnet_2: 1094074698
-      magnet_3: 2124017530
-      magnet_4: -56066829
-      magnet_5: 558942916
-      magnet_6: 1450024754
-      magnet_7: -1260588855
-      magnet_8: 399612461
-      magnet_9: 2028113024
+      magnet_0: 1506735358
+      magnet_1: -936847999
+      magnet_10: 708508989
+      magnet_11: -2119613027
+      magnet_12: -1324327597
+      magnet_13: -1278866088
+      magnet_14: -2137483089
+      magnet_15: -595689804
+      magnet_2: -242601369
+      magnet_3: -810456791
+      magnet_4: 1340007472
+      magnet_5: -2112036345
+      magnet_6: 386320503
+      magnet_7: -718444788
+      magnet_8: 1681676467
+      magnet_9: -1067696471
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

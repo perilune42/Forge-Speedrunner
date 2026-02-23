@@ -1,6 +1,8 @@
-using NUnit.Framework;
+using System;
 using Unity.Mathematics;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
 
 public class Platform : Ability, IStatSource
 {
@@ -18,6 +20,8 @@ public class Platform : Ability, IStatSource
     private float leftPointer;
     private float rightPointer;
 
+    private ParticleSystem particle;
+
     public float dashVelocityMulti;
 
     public override void Start()
@@ -32,24 +36,30 @@ public class Platform : Ability, IStatSource
         base.FixedUpdate();
         if (platform != null)
         {
-            curPlatformDuation--;
-            if (curPlatformDuation % spriteInterval == 0) 
+            
+            if (curPlatformDuation == 0) StartCoroutine(DestroyPlatform());
+            else
             {
-                platformRenderer.sprite = platformSprites[Mathf.Max(0, platformSprites.Length - (curPlatformDuation / spriteInterval))];
-            }
-            if (curPlatformDuation <= 0) DestroyPlatform();
-
-            if (CurrentLevel >= 1)
-            {
-                if (PlayerMovement.transform.position.x < leftPointer)
+                curPlatformDuation--;
+                if (curPlatformDuation % spriteInterval == 0) 
                 {
-                    ShiftPlatform(-1);
+                    int index = platformSprites.Length - (curPlatformDuation / spriteInterval);
+                    index = Mathf.Clamp(index, 0, platformSprites.Length - 1);
+                    platformRenderer.sprite = platformSprites[index];
                 }
-                else if (PlayerMovement.transform.position.x > rightPointer)
+                if (CurrentLevel >= 1)
                 {
-                    ShiftPlatform(1);
+                    if (PlayerMovement.transform.position.x < leftPointer)
+                    {
+                        ShiftPlatform(-1);
+                    }
+                    else if (PlayerMovement.transform.position.x > rightPointer)
+                    {
+                        ShiftPlatform(1);
+                    }
                 }
-            }
+            } 
+            
         }
         if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
     }
@@ -74,6 +84,7 @@ public class Platform : Ability, IStatSource
             curPlatformDuation = platformDuration;
             platformRenderer = platform.GetComponent<SpriteRenderer>();
             platformCollider = platform.GetComponent<BoxCollider2D>();
+            particle = platform.GetComponentInChildren<ParticleSystem>();
             return base.UseAbility(); 
         }
     }
@@ -87,29 +98,44 @@ public class Platform : Ability, IStatSource
     public bool IsPlayerTouchingPlatform()
     {
         if (platform == null) return false;
-        RaycastHit2D boxCast = Physics2D.BoxCast(PlayerMovement.transform.position, PlayerMovement.SurfaceCollider.bounds.size, 0f, Vector2.down, 0.1f);
-        return boxCast.collider == platformCollider;
+        List<RaycastHit2D> results = new();
+        Physics2D.BoxCast(PlayerMovement.transform.position, PlayerMovement.SurfaceCollider.bounds.size, 0f, Vector2.down, ContactFilter2D.noFilter, results, 0.1f);
+        foreach (RaycastHit2D raycastHit2D in results)
+        {
+            if (raycastHit2D.collider == platformCollider) return true;
+        }
+        return false;
     }
 
-    private void DestroyPlatform()
+    private IEnumerator DestroyPlatform()
     {
         if (platform == null)
         {
             Debug.LogError("Tried to destroy platform while platform is null");
-            return;
+            yield break;
         }
-        Debug.Log("destroyed platform");
+        platformCollider.enabled = false;
+        platformRenderer.enabled = false;
+        yield return new WaitForSeconds(1f);
         Destroy(platform);
     }
 
     private void ShiftPlatform(int direction)
     {
-        Debug.Log("Shifting platform");
-        if (direction == -1) leftPointer -= tileWidth;   
-        else if (direction == 1) rightPointer += tileWidth;
+        if (direction == -1) 
+        {
+            particle.transform.position = new Vector3(leftPointer, particle.transform.position.y, 0);
+            leftPointer -= tileWidth;  
+        }
+        else if (direction == 1) 
+        {
+            particle.transform.position = new Vector3(rightPointer, particle.transform.position.y, 0);
+            rightPointer += tileWidth;
+        }
         else return;
         platformRenderer.size += Vector2.right * tileWidth;
         platform.transform.position += Vector3.right * (tileWidth * direction / 2);
         platformCollider.size += Vector2.right * tileWidth;
+        particle.Play();
     }
 }

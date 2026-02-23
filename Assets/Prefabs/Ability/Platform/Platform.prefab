@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Platform
   Name: Crumbling Platform
-  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
+  Icon: {fileID: 21300000, guid: dfbb3e782b1c232238de123b20cd4f75, type: 3}
   AllLevels:
-  - Description: Summons a platform beneath you that lasts a few seconds
+  - Description: Summons a temporary platform beneath you.
     Cost: 7
   - Description: The platform extends horizontally to keep up with you!
     Cost: 7
@@ -64,6 +64,7 @@ MonoBehaviour:
   cooldown: 240
   info: {fileID: 0}
   platformPrefab: {fileID: 5014027431977854887, guid: 535a5eead339b1af0a1ca8a0a8ef60eb, type: 3}
+  platform: {fileID: 0}
   platformSpawnOffset: {x: 0, y: -1.25, z: 0}
   platformDuration: 120
   platformSprites:

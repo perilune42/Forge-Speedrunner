@@ -12,7 +12,15 @@ public class PlayerAnimator : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Util.SetLocalScaleX(gameObject, playerMovement.FacingDir == Vector2.left ? 1 : -1);
+        if (playerMovement.SpecialState == SpecialState.WallLatch)
+        {
+            Util.SetLocalScaleX(gameObject, AbilityManager.Instance.GetAbility<WallLatch>().latchedDirection == Vector2.right ? 1 : -1);
+        }
+        else
+        {
+            Util.SetLocalScaleX(gameObject, playerMovement.FacingDir == Vector2.left ? 1 : -1);
+        }
+            
     }
 
     private void Update()
@@ -21,9 +29,13 @@ public class PlayerAnimator : MonoBehaviour
         {
             anim.Play("PlayerDash");
         }
-        else if (playerMovement.SpecialState == SpecialState.WallClimb)
+        else if (playerMovement.SpecialState == SpecialState.WallClimb || playerMovement.SpecialState == SpecialState.LedgeClimb)
         {
             anim.Play("PlayerClimb");
+        }
+        else if (playerMovement.SpecialState == SpecialState.WallLatch)
+        {
+            anim.Play("PlayerHang");
         }
         else if (playerMovement.State == BodyState.InAir)
         {

@@ -368,8 +368,12 @@ public class DynamicEntity : MonoBehaviour
 
     public bool IsTouching(Vector2 dir)
     {
-        var hit = CustomBoxCast((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size * 0.99f, 0f, dir, 1f, collisionLayer);
-        return hit && hit.distance <= COLLISION_CHECK_DISTANCE;
+        var hits = CustomBoxCastAll((Vector2)transform.position + SurfaceCollider.offset, SurfaceCollider.bounds.size * 0.99f, 0f, dir, 1f, collisionLayer);
+        foreach (var hit in hits)
+        {
+            if (hit && hit.distance <= COLLISION_CHECK_DISTANCE) return true;
+        }
+        return false;
     }
     public virtual void Unlock()
     {

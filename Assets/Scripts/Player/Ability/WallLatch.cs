@@ -8,9 +8,17 @@ public class WallLatch : Ability
 
     PlayerMovement pm => Player.Instance.Movement;
 
-    Vector2 latchedDirection = Vector2.zero;
+    [HideInInspector] public Vector2 latchedDirection = Vector2.zero;
     [SerializeField] float inwardBoost = 6f, outwardBoost = 9f;
     [SerializeField] float verticalSpeed = 14f;
+
+    [SerializeField] int maxChargeTime = 60;
+    [SerializeField] float maxChargeBoost = 2;
+
+    int currentCharge;
+    bool isCharging;
+
+    [SerializeField] ParticleSystem attachParticles, chargeParticles, jumpParticlesPrefab;
 
     protected override bool CanRecharge()
     {
@@ -33,6 +41,15 @@ public class WallLatch : Ability
         };
     }
 
+    public override void OnReset()
+    {
+        base.OnReset();
+        currentCharge = 0;
+        latchedDirection = Vector2.zero;
+        isCharging = false;
+        chargeParticles.Stop();
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -40,10 +57,36 @@ public class WallLatch : Ability
         {
             UseAbility();
         }
-        if (PInput.Instance.Jump.HasPressed && latchedDirection != Vector2.zero)
+        if (CurrentLevel >= 2)
         {
-            LatchJump();
+            if (PInput.Instance.Jump.HasPressed && latchedDirection != Vector2.zero)
+            {
+                isCharging = true;
+                chargeParticles.Play();
+                PInput.Instance.Jump.ConsumeBuffer();
+            }
+            if (isCharging && latchedDirection != Vector2.zero)
+            {
+                if (PInput.Instance.Jump.IsPressing)
+                {
+                    currentCharge++;
+                }
+                if (PInput.Instance.Jump.StoppedPressing || currentCharge >= maxChargeTime)
+                {
+                    LatchJump();
+                }
+
+            }
+            
         }
+        else
+        {
+            if (PInput.Instance.Jump.HasPressed && latchedDirection != Vector2.zero)
+            {
+                LatchJump();
+            }
+        }
+
     }
 
 
@@ -74,28 +117,34 @@ public class WallLatch : Ability
         }
         pm.Locked = true;
         latchedDirection = dir;
+        attachParticles.Play();
         pm.onGround?.Invoke();
     }
 
     private void LatchJump()
     {
         bool instantRecharge = false;
-        if (pm.CanWallClimb(latchedDirection, true))
+        if (CurrentLevel >= 1 && pm.CanWallClimb(latchedDirection, true))
         {
             instantRecharge = true;
         }
         pm.Jump();
-        pm.Velocity.y = verticalSpeed;
+
+        float chargeMult = Mathf.Lerp(1, maxChargeBoost, (float)currentCharge / maxChargeTime);
+        pm.Velocity.y = verticalSpeed * chargeMult;
         if (pm.FacingDir == latchedDirection)
         {
-            pm.Velocity.x = -pm.FacingDir.x * inwardBoost;
+            pm.Velocity.x = -pm.FacingDir.x * inwardBoost * chargeMult;
             Debug.Log(pm.Velocity.x);
         }
         else
         {
             
-            pm.Velocity.x = pm.FacingDir.x * outwardBoost;
+            pm.Velocity.x = pm.FacingDir.x * outwardBoost * chargeMult;
         }
+        var p = Instantiate(jumpParticlesPrefab);
+        p.transform.position = transform.position;
+        p.Play();
         CancelLatch();
         if (instantRecharge) Recharge();
     }
@@ -108,6 +157,8 @@ public class WallLatch : Ability
         }
         pm.Locked = false;
         latchedDirection = Vector2.zero;
+        currentCharge = 0;
+        chargeParticles.Stop();
     }
 
     public override bool CanUseAbility()

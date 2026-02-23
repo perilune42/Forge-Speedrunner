@@ -75,7 +75,7 @@ MonoBehaviour:
   shatterParticle: {fileID: 4306868182974682692, guid: 8a2078565c677538095b8d435a8a95a8, type: 3}
   cooldownDecrease: 5
   gravityMult: 0.3
-  walkSpeedMult: 2
+  walkSpeedMult: 1.6
 --- !u!114 &4513589065662898494
 MonoBehaviour:
   m_ObjectHideFlags: 0

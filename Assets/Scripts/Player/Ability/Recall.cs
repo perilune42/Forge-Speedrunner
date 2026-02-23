@@ -141,4 +141,10 @@ public class Recall : Ability, IStatSource
         colors.saturation.Override(saturation * intensity);
     }
 
+    public override void OnReset()
+    {
+        base.OnReset();
+        if (clone != null) CancelTeleport();
+    }
+
 }

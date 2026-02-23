@@ -422,10 +422,10 @@ public class PlayerMovement : DynamicEntity, IStatSource
         if (HazardOnLedge(dir)) return false;
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 0.5f * PlayerHeight);
         Vector2 size = new(PlayerWidth, wallLatch ? PlayerHeight * 1.1f : PlayerHeight);
-        RaycastHit2D[] hits = new RaycastHit2D[8];
-        ContactFilter2D contactFilter = new ContactFilter2D();
-        contactFilter.SetLayerMask(collisionLayer);
-        int hitCount = Physics2D.BoxCast(origin, size, 0f, dir, contactFilter, hits, COLLISION_CHECK_DISTANCE * 2);
+        var hits = CustomBoxCastAll(origin, size, 0f, dir, COLLISION_CHECK_DISTANCE * 2, collisionLayer);
+        int hitCount = hits.Count();
+
+
         for (int i = 0; i < hitCount; i++)
         {
             RaycastHit2D wallHit = hits[i];

@@ -29,7 +29,7 @@ public class PlayerAnimator : MonoBehaviour
         {
             anim.Play("PlayerDash");
         }
-        else if (playerMovement.SpecialState == SpecialState.WallClimb)
+        else if (playerMovement.SpecialState == SpecialState.WallClimb || playerMovement.SpecialState == SpecialState.LedgeClimb)
         {
             anim.Play("PlayerClimb");
         }

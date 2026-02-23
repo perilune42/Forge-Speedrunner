@@ -12,7 +12,6 @@ public class Timer : Singleton<Timer>
 
     // Public static variables for speedrun timing
     public const float SPEEDRUN_TIME_SHRINKER = 0.95f;
-    public const float MAX_TIME = 600f; // Max speedrun time (seconds) in the beggining of a new game
     public static float targetSpeedrunTime = -1f; // Variable to hold max speedrun time
     public static float previousSpeedrunTime;
     public static float previousTargetTime;
@@ -53,7 +52,7 @@ public class Timer : Singleton<Timer>
         speedrunTime = 0.0f;
         if (targetSpeedrunTime == -1f)
         {
-            targetSpeedrunTime = MAX_TIME;
+            targetSpeedrunTime = Game.Instance.initialGoalTime;
         }
         else
         {
@@ -65,7 +64,7 @@ public class Timer : Singleton<Timer>
     {
         previousSpeedrunTime = speedrunTime;
         previousTargetTime = targetSpeedrunTime;
-        targetSpeedrunTime = previousSpeedrunTime * SPEEDRUN_TIME_SHRINKER;
+        targetSpeedrunTime = previousTargetTime * Game.Instance.GoalTimeScale;
     }
 
 

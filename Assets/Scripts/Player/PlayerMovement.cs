@@ -1,17 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.UI.Image;
 
 public enum SpecialState
 {
-    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch, Rocket
+    Normal, Dash, LedgeClimb, GroundSlam, WallClimb, Zipline, WallLatch, Rocket, Teleport, Chronoshift
 }
 
 public class PlayerMovement : DynamicEntity, IStatSource
 {
+    public Collider2D Hurtbox;
+
 
     public MovementParams MovementParams;
     public Action onGround;
@@ -45,7 +50,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     public bool CanClimb = true;
 
     public bool CanJumpOverride;
-    
+    public bool IsInvulnerable = false;
 
     public SpecialState SpecialState { get => specialState; 
         set {
@@ -111,6 +116,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         hangTime = false;
         retainedSpeed = 0;
         Velocity = Vector2.zero;
+        IsInvulnerable = false;
     }
 
 
@@ -386,7 +392,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     public bool CanJump(bool canOverride = true)
     {
         return (canOverride && CanJumpOverride) || (
-            (State == BodyState.OnGround || coyoteFrames > 0)
+            !inHazard && (State == BodyState.OnGround || coyoteFrames > 0)
             && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash)
             );
     }
@@ -400,7 +406,10 @@ public class PlayerMovement : DynamicEntity, IStatSource
     {
         if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash 
             && SpecialState != SpecialState.WallClimb && SpecialState != SpecialState.LedgeClimb) return false;
-        return CanClimb && IsTouching(dir) && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) && GetLedgeHeight(dir) > 0;
+        return CanClimb && IsTouching(dir) 
+            && GetLedgeHeight(dir) < (ledgeClimbHeight + LedgeClimbBonus) 
+            && GetLedgeHeight(dir) > 0
+            && !HazardOnLedge(dir);
     }
 
     public bool CanWallClimb(Vector2 dir, bool wallLatch = false)
@@ -410,12 +419,13 @@ public class PlayerMovement : DynamicEntity, IStatSource
             if (SpecialState != SpecialState.Normal && SpecialState != SpecialState.Dash && SpecialState != SpecialState.WallClimb) return false;
             if (!CanClimb) return false;
         }
+        if (HazardOnLedge(dir)) return false;
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 0.5f * PlayerHeight);
         Vector2 size = new(PlayerWidth, wallLatch ? PlayerHeight * 1.1f : PlayerHeight);
-        RaycastHit2D[] hits = new RaycastHit2D[8];
-        ContactFilter2D contactFilter = new ContactFilter2D();
-        contactFilter.SetLayerMask(collisionLayer);
-        int hitCount = Physics2D.BoxCast(origin, size, 0f, dir, contactFilter, hits, COLLISION_CHECK_DISTANCE * 2);
+        var hits = CustomBoxCastAll(origin, size, 0f, dir, COLLISION_CHECK_DISTANCE * 2, collisionLayer);
+        int hitCount = hits.Count();
+
+
         for (int i = 0; i < hitCount; i++)
         {
             RaycastHit2D wallHit = hits[i];
@@ -499,6 +509,21 @@ public class PlayerMovement : DynamicEntity, IStatSource
         // how much the ledge is above the player's foot
         float ledgeHeight = PlayerHeight - groundHit.distance;
         return ledgeHeight;
+    }
+
+    private bool HazardOnLedge(Vector2 dir)
+    {
+        // start a boxcast upwards and to either the left and right of the player, pointing downwards
+        Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight - PlayerHeight * 0.45f);
+        Vector2 origin = (Vector2)transform.position + offset;
+        Vector2 size = new(PlayerWidth - Physics2D.defaultContactOffset * 4, PlayerHeight * 0.1f);
+        var hitEntites = CustomBoxCastAll(origin, size, 0f, Vector2.down, PlayerHeight * 4, interactLayer);
+
+        if (hitEntites.Where(e => e.collider != null && e.collider.GetComponent<Hazard>() != null).Count() > 0)
+        {
+            return true;
+        }
+        return false;
     }
 
 

@@ -11,12 +11,7 @@ public class GameRegistry : Singleton<GameRegistry>
     public GameObject[] RoomPrefabs;
     public GameObject StartRoom;
     public GameObject FinishRoom;
-
-    private void OnValidate()
-    {
-        Debug.Log("here i am\n");
-        Awake();
-    }
+    public Chronoshift Chronoshift;
 
     public override void Awake()
     {

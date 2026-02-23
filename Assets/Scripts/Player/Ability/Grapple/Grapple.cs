@@ -70,7 +70,7 @@ public class Grapple : Ability, IStatSource
             PlayerMovement.Velocity = direction * pullSpeed * (1 + chargeTime * chargePerTick);
             if (forcePullTimer == 0)
             {
-                if (PInput.Instance.Jump.HasPressed)
+                if (CurrentLevel >= 1 && PInput.Instance.Jump.HasPressed)
                 {
                     PInput.Instance.Jump.ConsumeBuffer();
                     LaunchPlayer(true);
@@ -135,7 +135,7 @@ public class Grapple : Ability, IStatSource
         {
             Vector2 launchdir = GetThrowDir();
             foreach (var entityHit in PlayerMovement.CustomBoxCastAll((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
-                            new Vector2(1.4f, 1.4f) - Vector2.one * 0.1f, 0f,
+                            new Vector2(1.2f, 1.2f) - Vector2.one * 0.1f, 0f,
                             launchdir, GetExpectedRange(), LayerMask.GetMask("Entity")))
             {
                 if (entityHit.collider.GetComponent<Drone>() != null)
@@ -147,7 +147,7 @@ public class Grapple : Ability, IStatSource
             }
 
             var hit = PlayerMovement.CustomBoxCast((Vector2)PlayerMovement.transform.position + Vector2.up * throwOffset,
-                                        new Vector2(1.4f, 1.4f), 0f,
+                                        new Vector2(1.2f, 1.2f), 0f,
                                         launchdir, GetExpectedRange(), LayerMask.GetMask("Solid"));
             if (hit)
             {
@@ -284,8 +284,11 @@ public class Grapple : Ability, IStatSource
         curCooldown = pullCooldown;
         Player.Instance.Movement.Velocity.y = verticalBoost;
 
-        // if (level 2...)
-        charging = true;
+        if (CurrentLevel >= 2)
+        {
+            charging = true;
+        }
+        
     }
 
     public void Abort()

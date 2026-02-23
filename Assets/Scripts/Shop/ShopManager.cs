@@ -16,7 +16,7 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private Canvas screen;
 
     [Header("Prefabs")]
-    [SerializeField] private GameObject upgradePrefab;
+    [SerializeField] private GameObject upgradePrefab, toolPrefab;
     [SerializeField] private GameObject shopAbilityPrefab;
 
     [Header("Nav Panel Refs")]
@@ -31,11 +31,14 @@ public class ShopManager : Singleton<ShopManager>
 
     [Header("Upgrade Tab Refs")]
     [SerializeField] private Transform abilityLayoutGroup;
+    [SerializeField] private Transform toolsLayoutGroup;
+    [SerializeField] private List<Transform> abilitySlots;
 
     [SerializeField] private Transform upgradeLayoutGroup;
-    [SerializeField] private Image upgradeInfoIcon;
-    [SerializeField] private TMP_Text upgradeInfoNameText;
-    [SerializeField] private TMP_Text upgradeInfoDescriptionText;
+
+    [SerializeField] private Image tooltipInfoIcon;
+    [SerializeField] private TMP_Text tooltipInfoNameText;
+    [SerializeField] private TMP_Text tooltipInfoDescriptionText;
 
     [Header("Continue Tab Refs")]
 
@@ -90,6 +93,10 @@ public class ShopManager : Singleton<ShopManager>
         {
             Destroy(upgradeLayoutGroup.GetChild(i).gameObject);
         }
+        for (int i = 0; i < toolsLayoutGroup.childCount; i++)
+        {
+            Destroy(toolsLayoutGroup.GetChild(i).gameObject);
+        }
 
         var currentAbilities = AbilityManager.Instance.PlayerAbilities;
 
@@ -121,27 +128,40 @@ public class ShopManager : Singleton<ShopManager>
             newUpgrade.GetComponent<Upgrade>().Init(possibleAbility, levelToUpgrade, useCharges);
             count++;
         }
+
+        Chronoshift chronoshift = GameRegistry.Instance.Chronoshift;
+        GameObject chronoshiftUpgrade = Instantiate(toolPrefab, toolsLayoutGroup);
+        chronoshiftUpgrade.GetComponent<Upgrade>().Init(chronoshift, 0, true);
     }
 
     public void UpdateShopAbilities()
     {
-        for (int i = 0; i < abilityLayoutGroup.childCount; i++)
+        for (int i = 0; i < abilitySlots.Count; i++)
         {
-            Destroy(abilityLayoutGroup.GetChild(i).gameObject);
+            for (int j = 0; j < abilitySlots[i].childCount; j++)
+            {
+                Destroy(abilitySlots[i].GetChild(j).gameObject);
+            }
         }
 
+
+
+        int index = 0;
         foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
         {
-            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilityLayoutGroup);
+            if (ability is Dash) continue;
+            if (index >= abilitySlots.Count) break;
+            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilitySlots[index]);
             shopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
+            index++;
         }
     }
 
-    public void ShowUpgradeInfo(Ability ability, int level)
+    public void ShowTooltipInfo(Sprite icon, string header, string description)
     {
-        upgradeInfoIcon.sprite = ability.Icon;
-        upgradeInfoNameText.text = $"{ability.Name} {level}";
-        upgradeInfoDescriptionText.text = ability.AllLevels[level].Description;
+        tooltipInfoIcon.sprite = icon;
+        tooltipInfoNameText.text = header;
+        tooltipInfoDescriptionText.text = description;
     }
 
     public void CloseShop()
@@ -168,7 +188,7 @@ public class ShopManager : Singleton<ShopManager>
 
     private void GainReward()
     {
-        int moneyGained = (int)(Timer.previousTargetTime - Timer.previousSpeedrunTime);
+        int moneyGained = Game.Instance.GetRunReward();
         moneyGainedText.text = moneyGained + "";
         Money += moneyGained;
         UpdateMoney();

@@ -1,20 +1,44 @@
-using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ShopAbility : MonoBehaviour
+public class ShopAbility : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler
 {
-    public Ability associatedAbility;
+    public static ShopAbility SelectedAbility;
+
+    [SerializeField] Ability ability;
+    [SerializeField] int abilityLevel;
+
+    // Editor refs
     [SerializeField] Image abilityImage;
-    [SerializeField] TextMeshProUGUI abilityName;
-    [SerializeField] TextMeshProUGUI abilityCharge;
 
     public void Init(Ability ability, int level)
     {
-        AbilityLevel levelInfo = ability.AllLevels[level];
+        this.ability = ability;
+        abilityLevel = level;
+
         abilityImage.sprite = ability.Icon;
-        abilityName.text = $"{ability.Name} {level}";
-        abilityCharge.text = ability.MaxCharges.ToString();
+    }
+
+    private void Update()
+    {
+        abilityImage.color = this == SelectedAbility ? Color.gray : Color.white;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Sprite icon = ability.Icon;
+        string header = $"{ability.Name} (Lvl. {abilityLevel})";
+        string description = ability.AllLevels[abilityLevel].Description;
+
+        ShopManager.Instance.ShowTooltipInfo(icon, header, description);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (SelectedAbility == null) SelectedAbility = this;
+        else if (SelectedAbility == this) SelectedAbility = null;
+        // else rebind to
     }
 }

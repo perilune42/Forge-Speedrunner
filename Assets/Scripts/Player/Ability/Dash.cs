@@ -10,8 +10,9 @@ public class Dash : Ability, IStatSource
     private bool dashing;
     [SerializeField] private int dashDuration;
     private int curDashDuration;
-    [SerializeField] private float dashVelocity;
-    public bool CanDiagonalDash; // set to false, when you upgrade, it becomes true
+    private Stat dashVelocity;
+    [SerializeField] private float dashVelocityDefault;
+
     private Vector2 dashVelocityVec;
    
     //private Vector2 moveSpeedSnapshot;
@@ -22,6 +23,7 @@ public class Dash : Ability, IStatSource
     protected override void Awake()
     {
         base.Awake();
+        dashVelocity = new Stat(dashVelocityDefault);
     }
 
     public override void OnReset()
@@ -51,6 +53,7 @@ public class Dash : Ability, IStatSource
         canDash = true;
     }
 
+    private bool CanDiagonalDash => CurrentLevel >= 1;
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -117,7 +120,6 @@ public class Dash : Ability, IStatSource
     {
         if (!CanUseAbility()) return false;
 
-        // thanh new part
         // Grabs the slam instance and check if we are currently groundslamming
         GroundSlam slam = AbilityManager.Instance.GetAbility<GroundSlam>();
         bool interrupted = false;
@@ -130,7 +132,17 @@ public class Dash : Ability, IStatSource
                 return false;
             }
         }
-        // thanh new part
+
+        if (AbilityManager.Instance.TryGetAbility<Platform>(out Platform platformAbility))
+        {
+            if (platformAbility.CurrentLevel >= 2)
+            {
+                // TODO: if player is touching platform
+                if (platformAbility.IsPlayerTouchingPlatform())
+                    dashVelocity.Multipliers[platformAbility] = platformAbility.dashVelocityMulti;
+                else dashVelocity.Multipliers.Remove(platformAbility);
+            }
+        }
 
         PInput.Instance.Dash.ConsumeBuffer();
         // dash overrides forcemove
@@ -147,17 +159,41 @@ public class Dash : Ability, IStatSource
             dashVec.x = PlayerMovement.FacingDir.x;
         }
         if (!CanDiagonalDash) dashVec.y = 0;
-        else if (dashVec.x == 0) return false; 
+        else if (dashVec.x == 0) return false;
+
+        // level 2 dash preserves speed
+        float finalDashSpeed;
+        if (CurrentLevel >= 2)
+        {
+            float horzVel = Player.Instance.Movement.Velocity.x;
+            if (Util.SignOr0(horzVel) == Util.SignOr0(dashVec.x))
+            {
+                if (dashVec.y != 0)
+                {
+                    finalDashSpeed = Mathf.Max(dashVelocity.Get(), Mathf.Abs(horzVel) / Mathf.Cos(Mathf.Deg2Rad * diagDashAngle));
+                }
+                else
+                {
+                    finalDashSpeed = Mathf.Max(dashVelocity.Get(), Mathf.Abs(horzVel));
+                }
+            }
+            else finalDashSpeed = dashVelocity.Get();
+
+        }
+        else
+        {
+            finalDashSpeed = dashVelocity.Get();
+        }
 
         if (dashVec.x != 0 && dashVec.y != 0) // is diagonal dash 
         {
             dashVelocityVec = new Vector2(Util.SignOr0(dashVec.x) * Mathf.Cos(Mathf.Deg2Rad * diagDashAngle),
                                           Util.SignOr0(dashVec.y) * Mathf.Sin(Mathf.Deg2Rad * diagDashAngle)) 
-                                         * dashVelocity;
+                                         * finalDashSpeed;
         }
         else
         {
-            dashVelocityVec = dashVec.normalized * dashVelocity;
+            dashVelocityVec = dashVec.normalized * finalDashSpeed;
         }
         canDash = false;
         curCooldown = cooldown;

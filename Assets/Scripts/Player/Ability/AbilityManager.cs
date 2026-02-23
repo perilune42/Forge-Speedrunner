@@ -16,16 +16,18 @@ public class AbilityManager : Singleton<AbilityManager>
 
 
     public GameObject AbilityInfoPrefab;
-    public GameObject AbilityInfoParent;
+    public GameObject AbilityInfoParent, ChronoshiftInfoParent;
     [SerializeField] private GameObject player;
     public PlayerMovement playerMovement;
     public Dictionary<int, Ability> PlayerAbilities;
+
+    public int ChronoshiftCharges;
     
     public override void Awake()
     {
         base.Awake();
         PlayerAbilities = new();
-
+        ChronoshiftInfoParent = GameObject.FindWithTag("CHRONOSHIFT_INFO_PARENT"); // jank because I can't push direct changes to the World scene
         if (shopDebugMode)
         {
             Destroy(gameObject);
@@ -39,11 +41,13 @@ public class AbilityManager : Singleton<AbilityManager>
     
     private void OnGUI()
     {
+        GUILayout.BeginArea(new Rect(100, 0, 100, 100));
         if (GUILayout.Button("Go to shop"))
         {
             // SceneManager.LoadScene("Shop");
             Game.Instance.GoToShop(true);
         }
+        GUILayout.EndArea();
     }
 
 
@@ -57,21 +61,28 @@ public class AbilityManager : Singleton<AbilityManager>
         int count = 0;
         foreach (Ability presetAbility in GameRegistry.Instance.Abilities)
         {
-            if (presetAbility.StartUnlocked)
+            if (presetAbility.StartUnlocked || giveAllAbilities)
             {
-                if (count >= 4)
+                if (count >= 4 && !(presetAbility is Chronoshift && ChronoshiftCharges > 0))
                 {
                     Debug.LogWarning($"Ability {presetAbility.Name} not given");
                 }
                 else
                 {
-                    GivePlayerAbility(presetAbility.ID);
+                    if (presetAbility is Chronoshift) GiveChronoshift();
+                    else GivePlayerAbility(presetAbility.ID);
                     if (presetAbility.ID != 0) count++;
                 }
 
             }
         }
-}
+    }
+
+    public void GiveChronoshift()
+    {
+        Ability ability = Instantiate(GameRegistry.Instance.Chronoshift, player.transform);
+        ability.ID = -1;
+    }
     
     public void GivePlayerAbility(int index)
     {
@@ -84,7 +95,7 @@ public class AbilityManager : Singleton<AbilityManager>
         }
         else
         {
-            ability.CurrentLevel = 0;
+            ability.CurrentLevel = GameRegistry.Instance.Abilities[index].CurrentLevel;
         }
         /*
         if (ability.ID != 0 && (allAbilitiesAreCharged || ability.Data.UsesCharges))

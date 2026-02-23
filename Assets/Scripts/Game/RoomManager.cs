@@ -43,7 +43,9 @@ public class RoomManager : Singleton<RoomManager>
     public Transform StartingSpawn;
 
     [SerializeField] bool overrideStartingRoom;
-    bool transitionOngoing = false;
+    public bool TransitionOngoing = false;
+
+    [SerializeField] bool allRoomsDiscovered = false;   
 
     public Vector2 RespawnPosition { get => respawnPosition; set { 
             respawnPosition = value;
@@ -69,7 +71,16 @@ public class RoomManager : Singleton<RoomManager>
         originalRoom = findActiveRoom(AllRooms);
         SpawnAtStart();
 
+        // Set room to visited
+        originalRoom.visited = true;
 
+        if (allRoomsDiscovered)
+        {
+            foreach (var room in AllRooms)
+            {
+                room.visited = true;
+            }
+        }
 
 
         foreach (Passage pass in AllPassages)
@@ -80,6 +91,7 @@ public class RoomManager : Singleton<RoomManager>
             }
             pass.door1.passage = pass;
             pass.door2.passage = pass;
+            if (allRoomsDiscovered) pass.visited = true;
         }
         
     }
@@ -197,6 +209,11 @@ public class RoomManager : Singleton<RoomManager>
         previousDoorway = door2;
         activeRoom = door2.enclosingRoom;
 
+        // set room to visited
+        door1.enclosingRoom.visited = true;
+        activeRoom.visited = true;
+        door1.passage.visited = true;
+        door2.passage.visited = true;
 
         StartCoroutine(GoThroughDoorway(door2, DeterminePreservedVelocity(dir), dir));
     }
@@ -251,9 +268,8 @@ public class RoomManager : Singleton<RoomManager>
 
     private IEnumerator GoThroughDoorway(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
-        if (!transitionOngoing)
+        if (!TransitionOngoing)
         {
-            transitionOngoing = true;
             // calculate new player position
             Vector2 newPlayerPos = (Vector2)door2.transform.position;
             if (door2.IsHorizontal())
@@ -268,14 +284,14 @@ public class RoomManager : Singleton<RoomManager>
             respawnIsSet = false;
             yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
             door2.EnableTransition();
-            transitionOngoing = false;
         }
 
     }
 
-    private IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
         Debug.Log("start room transition");
+        TransitionOngoing = true;
         AbilityManager.Instance.ResetAbilites();
         FadeToBlack.Instance.FadeIn();
         if (dir == Vector2.up)
@@ -303,6 +319,7 @@ public class RoomManager : Singleton<RoomManager>
         {
             yield return new WaitForFixedUpdate();
         }
+        TransitionOngoing = false;
         Debug.Log("end room transition");
     }
 
@@ -311,7 +328,7 @@ public class RoomManager : Singleton<RoomManager>
         PlayerMovement pm = Player.Instance.Movement;
         PInput.Instance.EnableControls = false;
         pm.EndJump(true);
-        pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
+        if (pm.SpecialState != SpecialState.Chronoshift) pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
 
         if (dir.y == 0)
         {
@@ -326,7 +343,7 @@ public class RoomManager : Singleton<RoomManager>
         // suppress target trigger to avoid transitioning back
         pm.transform.position = position;
         pm.Locked = false;
-        pm.SpecialState = SpecialState.Normal;
+        if (pm.SpecialState != SpecialState.Chronoshift) pm.SpecialState = SpecialState.Normal;
         const float minTransitionSpeed = 0;
 
         // give some minimum velocity entering the room

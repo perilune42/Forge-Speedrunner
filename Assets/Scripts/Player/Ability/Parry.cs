@@ -9,6 +9,7 @@ public class Parry : Ability
     [SerializeField] int hitstopFrames, parryPrimedFrames, minHitstopFrames;
     private int hitstopRemaining, parryPrimedRemaining, leniencyFramesRemaining;
     private float storedSpeed;
+    private Vector2 storedVelocity;
 
     [SerializeField] ParticleSystem shockwaveParticles;
 
@@ -20,6 +21,8 @@ public class Parry : Ability
     [SerializeField] float baseReflectSpeed = 6;
     [SerializeField] float speedMultiplier = 1f;
 
+    [SerializeField] float minVerticalBoost;
+
     public override void Start()
     {
         base.Start();
@@ -28,6 +31,7 @@ public class Parry : Ability
         {
             surfaceDir = dir;
             storedSpeed = Vector2.Dot(pm.PreCollisionVelocity, dir);
+            storedVelocity = pm.PreCollisionVelocity;
             if (parryPrimedRemaining > 0)
             {
                 StartParry(dir);
@@ -46,6 +50,7 @@ public class Parry : Ability
         parryPrimedRemaining = 0;
         leniencyFramesRemaining = 0;
         storedSpeed = 0;
+        storedVelocity = Vector2.zero;
         circle.enabled = false;
     }
 
@@ -104,6 +109,10 @@ public class Parry : Ability
         parryPrimedRemaining = parryPrimedFrames;
         stopParticleAction += PlayerVFXTrail.PlayParticle(Color.white);
         pm.CanClimb = false;
+        if (CurrentLevel >= 2)
+        {
+            pm.IsInvulnerable = true;
+        }
     }
 
     private void StartParry(Vector2 hitSurfaceDir)
@@ -125,13 +134,25 @@ public class Parry : Ability
 
     private void ReleaseParry()
     {
-        Vector2 inputDir = PInput.Instance.MoveVector.normalized;
-        pm.Locked = false;
-        pm.Velocity = inputDir * (storedSpeed * speedMultiplier + baseReflectSpeed);
-        if (Vector2.Dot(inputDir, -surfaceDir) <= 0)
+        Vector2 inputDir = Util.NormalizePerAxis(PInput.Instance.MoveVector);
+
+        Vector2 perpendicularDir = Vector2.zero;
+        if (CurrentLevel >= 1)
         {
-            pm.Velocity += -surfaceDir * baseReflectSpeed;
-        } 
+            perpendicularDir = inputDir * new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x));
+        }
+        
+
+
+        pm.Locked = false;
+        pm.Velocity = -surfaceDir * (storedSpeed * speedMultiplier + (surfaceDir.y == 0 ? baseReflectSpeed : 0));
+        pm.Velocity += perpendicularDir * storedSpeed * 0.5f * speedMultiplier;
+        pm.Velocity += new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x)) * storedVelocity;
+        if (surfaceDir.y == 0 && perpendicularDir != Vector2.down)
+        {
+            pm.Velocity += Vector2.up * minVerticalBoost;
+        }
+
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
         hitstopRemaining = 0;
         circle.enabled = false;
@@ -141,6 +162,7 @@ public class Parry : Ability
         StartCoroutine(Util.FDelayedCall(3, () =>
         {
             pm.CanClimb = true;
+            pm.IsInvulnerable = false;
         }));
 
         var p = Instantiate(shockwaveParticles);

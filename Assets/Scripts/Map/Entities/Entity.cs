@@ -40,6 +40,7 @@ public abstract class Entity : MonoBehaviour
     // normal = player pointing to entity surface
     public virtual void OnCollide(DynamicEntity de, Vector2 normal) { }
 
+
     // entity hitbox can also be used a trigger in a pinch
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {

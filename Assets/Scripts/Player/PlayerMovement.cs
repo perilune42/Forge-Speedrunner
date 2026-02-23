@@ -516,7 +516,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         // start a boxcast upwards and to either the left and right of the player, pointing downwards
         Vector2 offset = SurfaceCollider.offset + new Vector2(PlayerWidth * (dir.x), PlayerHeight - PlayerHeight * 0.45f);
         Vector2 origin = (Vector2)transform.position + offset;
-        Vector2 size = new(PlayerWidth, PlayerHeight * 0.1f);
+        Vector2 size = new(PlayerWidth - Physics2D.defaultContactOffset * 4, PlayerHeight * 0.1f);
         var hitEntites = CustomBoxCastAll(origin, size, 0f, Vector2.down, PlayerHeight * 4, interactLayer);
 
         if (hitEntites.Where(e => e.collider != null && e.collider.GetComponent<Hazard>() != null).Count() > 0)

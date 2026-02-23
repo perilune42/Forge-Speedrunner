@@ -80,7 +80,7 @@ public class WallLatch : Ability
     private void LatchJump()
     {
         bool instantRecharge = false;
-        if (pm.CanWallClimb(latchedDirection, true))
+        if (CurrentLevel >= 1 && pm.CanWallClimb(latchedDirection, true))
         {
             instantRecharge = true;
         }

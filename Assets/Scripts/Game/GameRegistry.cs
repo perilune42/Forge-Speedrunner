@@ -6,6 +6,11 @@ using UnityEngine;
 public class GameRegistry : Singleton<GameRegistry>
 {
     public Ability[] Abilities;
+
+    // NOTE: make sure RoomPrefabs does not include StartRoom!
+    public GameObject[] RoomPrefabs;
+    public GameObject StartRoom;
+    public GameObject FinishRoom;
     public Chronoshift Chronoshift;
 
     public override void Awake()
@@ -16,7 +21,6 @@ public class GameRegistry : Singleton<GameRegistry>
             Ability ability = Abilities[i];
             ability.ID = i;
         }
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
     }
-
 }

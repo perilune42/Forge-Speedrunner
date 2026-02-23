@@ -1,15 +1,43 @@
 using UnityEngine;
+using static DoorwayType;
+
+public enum DoorwayType
+{
+    ENTRANCE,
+    EXIT,
+    BOTH
+}
 
 public class Doorway : MonoBehaviour
 {
     [HideInInspector] public Room enclosingRoom;
-    [HideInInspector] public Passage passage;
+    public Passage passage;
+    public DoorwayType Type;
 
     private bool suppressTransition = false;
 
     private void Awake()
     {
         enclosingRoom = GetComponentInParent<Room>();
+    }
+
+    public bool IsEntrance()
+    {
+        return Type switch
+        {
+            ENTRANCE => true,
+            BOTH => true,
+            _ => false,
+        };
+    }
+    public bool IsExit()
+    {
+        return Type switch
+        {
+            EXIT => true,
+            BOTH => true,
+            _ => false,
+        };
     }
 
     void Start()

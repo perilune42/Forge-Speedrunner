@@ -26,7 +26,8 @@ public class RoomManager_Inspector : Editor
             foreach (Passage passage in FindObjectsByType<Passage>(FindObjectsSortMode.None))
             {
                 var pe = passage.GetComponent<PassageEditor>();
-                pe.FinalizePassage();
+                if(pe != null)
+                    pe.FinalizePassage();
             }
             
             EditorUtility.SetDirty(rm);

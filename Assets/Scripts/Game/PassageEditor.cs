@@ -18,7 +18,7 @@ public class PassageEditor_Inspector : Editor
     }
 }
 
-#endif
+
 
 [ExecuteAlways]
 public class PassageEditor : MonoBehaviour
@@ -140,3 +140,4 @@ public class PassageEditor : MonoBehaviour
         }
     }
 }
+#endif

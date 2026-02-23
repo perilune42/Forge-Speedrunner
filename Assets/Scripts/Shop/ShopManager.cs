@@ -169,14 +169,14 @@ public class ShopManager : Singleton<ShopManager>
         screen.gameObject.SetActive(false);
     }
 
-    private void OnGUI()
-    {
-        if (GUILayout.Button("10 more dollar"))
-        {
-            Money += 10;
-            UpdateMoney();
-        }
-    }
+    //private void OnGUI()
+    //{
+    //    // if (GUILayout.Button("10 more dollar"))
+    //    //{
+    //    //    Money += 10;
+    //    //    UpdateMoney();
+    //    //}
+    //}
 
     public void SwitchTab(int tabIdx)
     {

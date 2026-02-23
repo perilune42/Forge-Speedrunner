@@ -21,8 +21,8 @@ public class MainPath : IChoiceStrategy
             Room r = roomPrefabs[i];
             List<Doorway> downs = r.doorwaysDown;
             List<Doorway> rights = r.doorwaysRight;
-            bool hasRight = rights.Any(x => x != null && x.Entrance);
-            bool hasDown = downs.Any(x => x != null && x.Entrance);
+            bool hasRight = rights.Any(x => x != null && x.IsExit());
+            bool hasDown = downs.Any(x => x != null && x.IsExit());
             if(hasRight)
                 RightOnly.Add(r);
             if(hasDown)

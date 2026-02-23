@@ -35,7 +35,7 @@ public class RandomChoice : IChoiceStrategy
             }
             Direction entranceDir = DirMethods.opposite(dir);
             List<Doorway> currentDoors = DirMethods.matchingDir(in entranceDir, in current);
-            bool hasDoorsThisWay = currentDoors.Any(x => x != null && !x.Entrance);
+            bool hasDoorsThisWay = currentDoors.Any(x => x != null && x.IsEntrance());
             if(hasDoorsThisWay)
             {
                 RoomPrefabs.RemoveAt(ind);

@@ -62,7 +62,7 @@ public class GenStack
         for(int i = 0; i < roomDoors.Count; i++)
         {
             Doorway door = roomDoors[i];
-            if(door == null || door.Entrance) continue;
+            if(door == null || door.IsEntrance()) continue;
 
             Offset newOffset = startingOffset;
             if(facingDir == LEFT || facingDir == RIGHT)

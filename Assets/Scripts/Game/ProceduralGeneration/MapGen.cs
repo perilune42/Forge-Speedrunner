@@ -9,16 +9,18 @@ public class MapGen : MonoBehaviour
     public List<Passage> passagesDebug;
     public GameObject PassPrefab; 
     public int pathSize;
-    
+
+    [SerializeField] GameRegistry gameRegistry;
+
     void Awake()
     {
 
     }
     public void CreateMap()
     {
-        Room[] roomPrefabs = Array.ConvertAll(GameRegistry.Instance.RoomPrefabs, x => x.GetComponent<Room>());
-        Room start = GameRegistry.Instance.StartRoom.GetComponent<Room>();
-        Room finish = GameRegistry.Instance.FinishRoom.GetComponent<Room>();
+        Room[] roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
+        Room start = gameRegistry.StartRoom.GetComponent<Room>();
+        Room finish = gameRegistry.FinishRoom.GetComponent<Room>();
         // RandomFromPoint pathGen = new RandomFromPoint(roomPrefabs, start, null); // end is kind of ignored for now
         // List<Cell> path = pathGen.Generate(pathSize);
         // passagesDebug = pathGen.RealizePath();

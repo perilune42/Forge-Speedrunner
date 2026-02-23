@@ -68,6 +68,7 @@ public class PathFactoryBuilder
             {
                 Debug.Log($"[GenerateWith] room fit at coord {botleft}");
                 bool x = grid.InsertRoom(possibleRoom, botleft);
+                // stack.Clear(); 
                 stack.extractAll(possibleRoom, botleft);
                 placedRooms.Add(possibleRoom);
                 numCreated += 1;

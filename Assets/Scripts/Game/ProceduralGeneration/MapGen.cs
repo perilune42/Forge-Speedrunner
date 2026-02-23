@@ -27,14 +27,15 @@ public class MapGen : MonoBehaviour
 
         PathCreator pc = new PathFactoryBuilder()
             .WithStartRoom(start)
-            .GenerateWith(new RandomChoice(roomPrefabs), pathSize)
-            .GenerateWith(new PlaceFinal(finish), 1)
+            .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
+            .WithAlgorithm(new PlaceFinal(finish), 1)
             .Finalize();
 
         pc.PassPrefab = this.PassPrefab;
         pc.RegisterParent(transform);
 
         (createdRooms, passagesDebug) = pc.Create();
+        // Debug.Log("[CreateMap] why create anything? i think we are just fine the way we are...");
 
         Transform AllPassages = transform.GetChild(0);
         foreach(Passage p in passagesDebug)

@@ -160,6 +160,12 @@ public abstract class Ability : MonoBehaviour
         UpdateBindingText(inputButton.GetAction());
     }
 
+    public void ModifyCooldown(int amount)
+    {
+        curCooldown += amount;
+        if (curCooldown < 0) curCooldown = 0;
+    }
+
     [ContextMenu("Reset")]
     public virtual void OnReset() { }
 }

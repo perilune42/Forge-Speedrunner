@@ -75,6 +75,8 @@ public class PlayerMovement : DynamicEntity, IStatSource
     private class ClimbGravityMult : IStatSource { }
     ClimbGravityMult climbGravityMult = new();
 
+    public Stat WalkSpeed;
+
     public VecStat RelativeVelocity = new VecStat(Vector2.zero);
     // apparent velocity of the surface this entity is resting on
     // for the purposes of friction
@@ -82,6 +84,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     protected override void Awake()
     {
         base.Awake();
+        WalkSpeed = new(MovementParams.WalkSpeed);
         OnSpecialStateChange += (newState) =>
         {
             if (newState != SpecialState.WallClimb && newState != SpecialState.LedgeClimb)
@@ -213,7 +216,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     {
         Vector2 apparentVel = Velocity - RelativeVelocity.Get();
         float moveSpeed, moveAccel, friction;
-        moveSpeed = isSprinting ? MovementParams.SprintSpeed : MovementParams.WalkSpeed;
+        moveSpeed = isSprinting ? MovementParams.SprintSpeed * WalkSpeed.GetTotalMult() : WalkSpeed.Get();
 
         if (State == BodyState.OnGround)
         {

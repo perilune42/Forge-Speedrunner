@@ -28,7 +28,6 @@ public class Platform : Ability, IStatSource
     {
         base.Start();
         spriteInterval = platformDuration / platformSprites.Length;
-        Debug.Log(spriteInterval);
     }
 
     protected override void FixedUpdate()

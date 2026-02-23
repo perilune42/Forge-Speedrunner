@@ -36,6 +36,16 @@ public class Stat
         return BaseValue * totalMult + totalOffset;
     }
 
+    public float GetTotalMult()
+    {
+        float totalMult = 1;
+        foreach (var kvp in Multipliers)
+        {   
+            totalMult *= kvp.Value;
+        }
+        return totalMult;
+    }
+
     public void Reset()
     {
         Multipliers.Clear();

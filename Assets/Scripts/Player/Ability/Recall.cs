@@ -24,6 +24,9 @@ public class Recall : Ability, IStatSource
     [SerializeField] private Vector4 darkVector;
     [SerializeField] private float saturation;
     [SerializeField] private GameObject shatterParticle;
+    [SerializeField] private int cooldownDecrease;
+
+    [SerializeField] private float gravityMult, walkSpeedMult;
 
     public override void Start()
     {
@@ -50,6 +53,12 @@ public class Recall : Ability, IStatSource
                 curTeleportSpeed
             );
             curTeleportSpeed *= teleportAcceleration;
+
+            if (CurrentLevel >= 1)
+            {
+                foreach (Ability ability in AbilityManager.Instance.PlayerAbilities.Values)
+                    ability.ModifyCooldown(-cooldownDecrease);
+            }
             if (Vector3.Distance(PlayerMovement.transform.position, clone.transform.position) < 0.1f)
             {
                 Instantiate(shatterParticle, clone.transform.position, Quaternion.identity);
@@ -59,6 +68,7 @@ public class Recall : Ability, IStatSource
         else if (clone != null)
         {
             curTeleportTime--;
+            HandlePostProcessing(1f - (float)curTeleportTime / teleportDelay);
             if (curTeleportTime == 0)
             {
                 Teleport();
@@ -75,6 +85,12 @@ public class Recall : Ability, IStatSource
             PlayerVFXTrail vfx = clone.GetComponentInChildren<PlayerVFXTrail>();
             stopCloneParticleAction += vfx.PlayParticle(Color.white);
             curCooldown = 10;
+
+            if (CurrentLevel >= 2)
+            {
+                PlayerMovement.WalkSpeed.Multipliers[this] = walkSpeedMult;
+                PlayerMovement.GravityMultiplier.Multipliers[this] = gravityMult;
+            }
             return false;
         }
         else
@@ -95,8 +111,7 @@ public class Recall : Ability, IStatSource
             PlayerMovement.SpecialState == SpecialState.Rocket) storedState = PlayerMovement.SpecialState;
         else storedState = SpecialState.Normal;
         PlayerMovement.SpecialState = SpecialState.Teleport;
-        gamma.gamma.Override(darkVector);
-        colors.saturation.Override(saturation);
+        HandlePostProcessing(1f);
         stopParticleAction += PlayerVFXTrail.PlayParticle(Color.white);
         PlayerMovement.SurfaceCollider.enabled = false;
         curTeleportSpeed = teleportSpeed;
@@ -109,11 +124,21 @@ public class Recall : Ability, IStatSource
         PlayerMovement.Velocity = storedVelocity;
         stopCloneParticleAction?.Invoke();
         Destroy(clone);
-        gamma.gamma.Override(new Vector4(1f, 1f, 1f, 0f));
-        colors.saturation.Override(0f);
+        HandlePostProcessing(0f);
         PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
         stopParticleAction?.Invoke();
         PlayerMovement.SurfaceCollider.enabled = true;
+        if (CurrentLevel >= 2)
+        {
+            PlayerMovement.WalkSpeed.Multipliers.Remove(this);
+            PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
+        }
+    }
+
+    private void HandlePostProcessing(float intensity)
+    {
+        gamma.gamma.Override(new Vector4(darkVector.x, darkVector.y, darkVector.z, darkVector.w * intensity));
+        colors.saturation.Override(saturation * intensity);
     }
 
 }

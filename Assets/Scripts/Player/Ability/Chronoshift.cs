@@ -29,6 +29,8 @@ public class Chronoshift : Ability, IStatSource
     private int curKeyframeTime;
     private int keyframeIndex;
 
+    [SerializeField] private int warningTime;
+
 
     public override void Start()
     {
@@ -85,6 +87,11 @@ public class Chronoshift : Ability, IStatSource
         if (PlayerMovement.SpecialState != SpecialState.Chronoshift && clone != null)
         {
             curTeleportTime--;
+
+            if (curTeleportTime < warningTime)
+            {
+                HandlePostProcessing(1f - (float)curTeleportTime / warningTime);
+            }
             if (curTeleportTime == 0)
             {
                 Teleport();
@@ -133,8 +140,7 @@ public class Chronoshift : Ability, IStatSource
         if (clone == null) return;
         PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
         PlayerMovement.SpecialState = SpecialState.Chronoshift;
-        gamma.gamma.Override(darkVector);
-        colors.saturation.Override(saturation);
+        HandlePostProcessing(1f);
         stopParticleAction += PlayerVFXTrail.PlayParticle(Color.white);
         PlayerMovement.SurfaceCollider.enabled = false;
         curTeleportSpeed = teleportSpeed;
@@ -149,8 +155,7 @@ public class Chronoshift : Ability, IStatSource
     {
         stopCloneParticleAction?.Invoke();
         Destroy(clone);
-        gamma.gamma.Override(new Vector4(1f, 1f, 1f, 0f));
-        colors.saturation.Override(0f);
+        HandlePostProcessing(0f);
         PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
         stopParticleAction?.Invoke();
         PlayerMovement.SurfaceCollider.enabled = true;
@@ -161,7 +166,11 @@ public class Chronoshift : Ability, IStatSource
         base.OnReset();
     }
 
-    
+    private void HandlePostProcessing(float intensity)
+    {
+        gamma.gamma.Override(new Vector4(darkVector.x, darkVector.y, darkVector.z, darkVector.w * intensity));
+        colors.saturation.Override(saturation * intensity);
+    }
 }
 
 public struct ChronoshiftKeyframe

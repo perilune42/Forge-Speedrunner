@@ -14,10 +14,12 @@ public class Recall : Ability, IStatSource
     private float curTeleportSpeed;
     private GameObject clone;
     private Vector2 storedVelocity;
+    private Vector2 storedRespawnPos;
     private float storedGravityMult;
     private SpecialState storedState;
     private Action stopCloneParticleAction;
-
+    private Room storedRoom;
+    
     [SerializeField] private Volume volume;
     private LiftGammaGain gamma;
     private ColorAdjustments colors;
@@ -69,7 +71,7 @@ public class Recall : Ability, IStatSource
         {
             curTeleportTime--;
             HandlePostProcessing(1f - (float)curTeleportTime / teleportDelay);
-            if (curTeleportTime == 0)
+            if (curTeleportTime <= 0)
             {
                 Teleport();
             }
@@ -85,7 +87,8 @@ public class Recall : Ability, IStatSource
             PlayerVFXTrail vfx = clone.GetComponentInChildren<PlayerVFXTrail>();
             stopCloneParticleAction += vfx.PlayParticle(Color.white);
             curCooldown = 10;
-
+            storedRespawnPos = RoomManager.Instance.RespawnPosition;
+            storedRoom = RoomManager.Instance.activeRoom;
             if (CurrentLevel >= 2)
             {
                 PlayerMovement.WalkSpeed.Multipliers[this] = walkSpeedMult;
@@ -103,10 +106,11 @@ public class Recall : Ability, IStatSource
 
     private void Teleport()
     {
+        
         if (clone == null) return;
         storedVelocity = PlayerMovement.Velocity;   
         PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
-        if (PlayerMovement.SpecialState == SpecialState.Dash || 
+        if (PlayerMovement.SpecialState == SpecialState.Dash ||
             PlayerMovement.SpecialState == SpecialState.GroundSlam ||
             PlayerMovement.SpecialState == SpecialState.Rocket) storedState = PlayerMovement.SpecialState;
         else storedState = SpecialState.Normal;
@@ -122,10 +126,11 @@ public class Recall : Ability, IStatSource
     {
         PlayerMovement.SpecialState = storedState;
         PlayerMovement.Velocity = storedVelocity;
+        RoomManager.Instance.RespawnPosition = storedRespawnPos;
         stopCloneParticleAction?.Invoke();
         Destroy(clone);
+        clone = null;
         HandlePostProcessing(0f);
-        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
         stopParticleAction?.Invoke();
         PlayerMovement.SurfaceCollider.enabled = true;
         if (CurrentLevel >= 2)
@@ -144,7 +149,7 @@ public class Recall : Ability, IStatSource
     public override void OnReset()
     {
         base.OnReset();
-        if (clone != null) CancelTeleport();
+        if (clone != null && RoomManager.Instance.activeRoom != storedRoom) CancelTeleport();
     }
 
 }

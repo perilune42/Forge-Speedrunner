@@ -10,7 +10,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3261643265813908177, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
       propertyPath: m_Name
-      value: Wire
+      value: Wire0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
+      propertyPath: m_Size.x
+      value: 1.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
+      propertyPath: m_Size.y
+      value: 3.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
+      propertyPath: m_Offset.x
+      value: 1.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
+      propertyPath: m_Offset.y
+      value: 1.4
       objectReference: {fileID: 0}
     - target: {fileID: 9206096283909917273, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
       propertyPath: m_LocalPosition.x

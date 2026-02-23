@@ -14,11 +14,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
       propertyPath: m_Size.x
-      value: 1.85
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
       propertyPath: m_Size.y
-      value: 1.6
+      value: 1.7
       objectReference: {fileID: 0}
     - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
       propertyPath: m_Offset.x
@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7145712912314933212, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
       propertyPath: m_Offset.y
-      value: 0.2
+      value: 0.14999998
       objectReference: {fileID: 0}
     - target: {fileID: 8442748311825271526, guid: 00b6ceac9003cb544b11b07e5c7f5149, type: 3}
       propertyPath: wireID

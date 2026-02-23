@@ -10,6 +10,7 @@ public class GameRegistry : Singleton<GameRegistry>
     // NOTE: make sure RoomPrefabs does not include StartRoom!
     public GameObject[] RoomPrefabs;
     public GameObject StartRoom;
+    public GameObject FinishRoom;
 
     private void OnValidate()
     {
@@ -25,6 +26,6 @@ public class GameRegistry : Singleton<GameRegistry>
             Ability ability = Abilities[i];
             ability.ID = i;
         }
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
     }
 }

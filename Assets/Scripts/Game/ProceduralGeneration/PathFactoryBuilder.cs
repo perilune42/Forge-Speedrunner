@@ -58,6 +58,7 @@ public class PathFactoryBuilder
             Room possibleRoom = strategy.FindRoom(dir, off, in placedRooms);
             if(possibleRoom == null)
             {
+                Debug.Log($"[GenerateWith] rejecting {dir}, {off}, due to strategy.");
                 rejectedStack.PutBack(dir, off);
                 continue;
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Offset = UnityEngine.Vector2Int;
 using System.Linq;
 using System.Collections;
+using static Direction;
 public class PlaceFinal : IChoiceStrategy
 {
     Room FinalRoom;
@@ -12,9 +13,22 @@ public class PlaceFinal : IChoiceStrategy
     }
     public int SelectIndex(in List<Direction> dirs, in List<Offset> offs)
     {
-        int maxInd = 0;
+        int maxInd = -1;
+        // find start
+        for(int i = 0; i < offs.Count; i++)
+            if(dirs[i] == RIGHT)
+            {
+                maxInd = i;
+                break;
+            }
+        if(maxInd < 0)
+            return 0; // HACK: have to ignore this later if it's not good.
+
         for(int i = 1; i < offs.Count; i++)
         {
+            if(dirs[i] != RIGHT)
+                continue;
+
             Offset current = offs[i];
             Offset max = offs[maxInd];
             if(max.x <= current.x && max.y <= current.y)
@@ -24,8 +38,11 @@ public class PlaceFinal : IChoiceStrategy
         }
         return maxInd;
     }
-    public Room FindRoom(Direction _dir, Offset _off, in HashSet<Room> _createdRooms)
+    public Room FindRoom(Direction dir, Offset _off, in HashSet<Room> _createdRooms)
     {
-        return FinalRoom;
+        if(dir == RIGHT)
+            return FinalRoom;
+        else
+            return null;
     }
 }

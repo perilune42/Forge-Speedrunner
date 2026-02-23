@@ -110,4 +110,10 @@ public class GenStack
         }
         Debug.Log(sb.ToString());
     }
+
+    public void Clear()
+    {
+        dirs = new();
+        offsets = new();
+    }
 }

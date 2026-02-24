@@ -17,18 +17,24 @@ public class BufferOption : IChoiceStrategy
         // find the largest offset
         int maxInd = 0;
         for(int i = 1; i < offs.Count; i++)
+        {
             maxInd = OffSize(offs[i]) > OffSize(offs[maxInd]) ? i : maxInd;
+        }
+        Debug.Log($"[SelectIndex] max is {offs[maxInd]}, {OffSize(offs[maxInd])}");
         return maxInd;
     }
     public Room FindRoom(Direction dir, Offset off, in HashSet<Room> placedRooms)
     {
-        if(dir == RIGHT || dir == LEFT) return null;
+        Debug.Log("[BufferOption.FindRoom] begin!");
+        // if(dir == RIGHT || dir == LEFT) return null;
         List<Room> fits = RoomPrefabs.FindAll(x => {
                 List<Doorway> doors = dir switch
                 {
                 UP => x.doorwaysDown,
                 DOWN => x.doorwaysUp,
-                _ => null
+                RIGHT => x.doorwaysLeft,
+                LEFT => x.doorwaysRight,
+                _ => null,
                 };
                 return doors != null && doors.Any(z => z != null);
             });

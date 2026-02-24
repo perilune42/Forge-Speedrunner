@@ -6,7 +6,7 @@ public class MapGen : MonoBehaviour
 {
     public IPathGenerator pathGen;
     public List<Room> createdRooms = new();
-    public List<Passage> passagesDebug;
+    public List<Passage> createdPassages;
     public GameObject PassPrefab; 
     public int pathSize;
     public int pathMin;
@@ -17,7 +17,7 @@ public class MapGen : MonoBehaviour
     {
 
     }
-    public void CreateMap()
+    public (List<Room>, List<Passage>) CreateMap()
     {
         Room[] roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
         Room start = gameRegistry.StartRoom.GetComponent<Room>();
@@ -41,14 +41,17 @@ public class MapGen : MonoBehaviour
         pc.PassPrefab = this.PassPrefab;
         pc.RegisterParent(transform);
 
-        (createdRooms, passagesDebug) = pc.Create();
+        (createdRooms, createdPassages) = pc.Create();
         // Debug.Log("[CreateMap] why create anything? i think we are just fine the way we are...");
 
         Transform AllPassages = transform.GetChild(0);
-        foreach(Passage p in passagesDebug)
+        foreach(Passage p in createdPassages)
         {
             p.gameObject.transform.SetParent(AllPassages);
         }
+
+        return (createdRooms, createdPassages);
+
 
         // foreach(Cell c in path)
         // {
@@ -68,11 +71,11 @@ public class MapGen : MonoBehaviour
         {
             DestroyImmediate(r.gameObject);
         }
-        foreach(Passage p in passagesDebug)
+        foreach(Passage p in createdPassages)
         {
             DestroyImmediate(p.gameObject);
         }
         createdRooms = new();
-        passagesDebug = new();
+        createdPassages = new();
     }
 }

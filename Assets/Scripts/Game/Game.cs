@@ -19,13 +19,22 @@ public class Game : Singleton<Game> {
     public bool OverrideStartingRoom;
     public MapGen Generator;
 
+    [SerializeField] private RoomManager roomManagerRef;
+
     public override void Awake()
     {
         base.Awake();
-        if (MainMenu.GenerateNewMap)
+        //if (MainMenu.GenerateNewMap)
+        if (true)
         {
             OverrideStartingRoom = false;
-            Generator.CreateMap();
+            var (rooms, passages) = Generator.CreateMap();
+
+            roomManagerRef.AllPassages = passages.ToArray();
+            roomManagerRef.FinalizeRooms();
+
+            roomManagerRef.StartingRoom = rooms[0];
+            roomManagerRef.StartingSpawn = roomManagerRef.StartingRoom.GetComponent<SpawnRoom>().SpawnPoint;
         }
     }
 

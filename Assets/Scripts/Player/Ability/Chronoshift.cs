@@ -76,7 +76,6 @@ public class Chronoshift : Ability, IStatSource
                         StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero, Vector2.zero));
                         RoomManager.Instance.activeRoom = curKeyframe.room;
                     }
-                    RoomManager.Instance.RespawnPosition = curKeyframe.respawnPosition;
                     Timer.speedrunTime = curKeyframe.time;
                 }
             }
@@ -109,8 +108,7 @@ public class Chronoshift : Ability, IStatSource
                 ChronoshiftKeyframe kf = new ChronoshiftKeyframe(
                     PlayerMovement.transform.position, 
                     Timer.speedrunTime, 
-                    RoomManager.Instance.activeRoom,
-                    RoomManager.Instance.RespawnPosition);
+                    RoomManager.Instance.activeRoom);
                 keyframes.Insert(0, kf);
                 curKeyframeTime = keyframeInterval;
             }
@@ -187,12 +185,10 @@ public struct ChronoshiftKeyframe
     public Vector3 position;
     public float time;
     public Room room;
-    public Vector3 respawnPosition;
-    public ChronoshiftKeyframe(Vector3 position, float time, Room room, Vector3 respawnPosition)
+    public ChronoshiftKeyframe(Vector3 position, float time, Room room)
     {
         this.position = position;
         this.time = time;
         this.room = room;
-        this.respawnPosition = respawnPosition;
     }
 }

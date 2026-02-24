@@ -42,7 +42,6 @@ public class Timer : Singleton<Timer>
 
         if (speedrunTime >= targetSpeedrunTime) 
         {
-            Debug.Log("Time exceeded!");
             // EndGame();
         }
     }
@@ -64,7 +63,7 @@ public class Timer : Singleton<Timer>
     {
         previousSpeedrunTime = speedrunTime;
         previousTargetTime = targetSpeedrunTime;
-        targetSpeedrunTime = previousTargetTime * Game.Instance.GoalTimeScale;
+        targetSpeedrunTime = Game.Instance.GetNewGoal();
     }
 
 

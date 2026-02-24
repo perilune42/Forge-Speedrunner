@@ -3,18 +3,19 @@ using UnityEditor;
 using UnityEngine;
 
 public class Game : Singleton<Game> {
-    public int CurrentRound = 1;
+    public int CurrentRound;
     public bool IsPracticeMode = false;
 
     [Header("Progression Modifiers")]
-    public float initialGoalTime = 300f;
-    public float GoalTimeScale = 0.8f;  // next goaltime = prev goal * GTS, round to nearest 5
-    public float RewardMultiplier = 50f;  // reward = (goal/runtime - 1) * RM
-    public float RewardFalloffPoint = 1.5f; // if goal/runtime > RFP, apply RFM to remaining time
-    public float RewardHardcap = 2.5f;
-    public float RewardFalloffMultiplier = 10f;
-    public float MinReward = 10f;
-    public float RewardMultPerRound = 1.15f;
+    public float initialGoalTime;
+    public float GoalTimeScale;  // next goaltime = prev goal * GTS, round to nearest 5
+    public float PBTimeScale; // if pb * pbtimescale < next goaltime, use the pb time instead
+    public float RewardMultiplier;  // bonus reward = (goal/runtime - 1) * RM
+    public float RewardDecay; // bonus reward = (bonus reward) ^ decay
+    public float MinReward; // base added to bonus reward
+    public float RewardHardcap; // total amount cannot exceed this much
+    public float RewardThreshold; // must be under target time by this much to receive reward
+    public float RewardMultPerRound;
 
     public void FinishRound()
     {
@@ -89,27 +90,30 @@ public class Game : Singleton<Game> {
     {
         float reward = MinReward;
         float factor = Timer.previousTargetTime / Timer.previousSpeedrunTime;
-        if (factor <= RewardFalloffPoint)
-        {
-            reward += (factor - 1) * RewardMultiplier;
-        }
-        else if (factor <= RewardHardcap)
-        {
-            Debug.Log($"Reward: {(RewardFalloffPoint - 1) * RewardMultiplier} | {(factor - RewardFalloffPoint) * RewardFalloffMultiplier}");
-            reward += (RewardFalloffPoint - 1) * RewardMultiplier + (factor - RewardFalloffPoint) * RewardFalloffMultiplier;
-        }
-        else
-        {
-            reward += (RewardFalloffPoint - 1) * RewardMultiplier + (RewardHardcap - RewardFalloffPoint) * RewardFalloffMultiplier;
-        }
+        float bonus = Mathf.Pow((factor - 2 + RewardThreshold) * RewardMultiplier, RewardDecay);
+        if (bonus < 0) bonus = 0;
+        reward += bonus;
         reward *= Mathf.Pow(RewardMultPerRound, CurrentRound - 1);
-        return Mathf.RoundToInt(reward);
+        return Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward));
+    }
+
+    public void TestGetRunReward()
+    {
+        float reward = MinReward;
+        float factor = Timer.targetSpeedrunTime * RewardThreshold / Timer.speedrunTime;
+        float bonus = Mathf.Pow(Mathf.Max(0, (factor - 1)) * RewardMultiplier, RewardDecay);
+        Debug.Log(bonus);
+        reward += bonus;
+        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound);
+        Debug.Log(reward);
     }
 
     public float GetNewGoal()
     {
         // todo: slight adaptive scaling
-        return Timer.previousTargetTime * GoalTimeScale;
+        float pbTime = Timer.previousSpeedrunTime * PBTimeScale;
+        float baseTime = Timer.previousTargetTime * GoalTimeScale;
+        return Mathf.Min(baseTime, pbTime);
     }
 }
 
@@ -126,6 +130,11 @@ public class Game_Inspector : Editor
         if (Application.isPlaying && GUILayout.Button("Add 30 Seconds"))
         {
             Timer.speedrunTime += 30f;
+        }
+
+        if (Application.isPlaying && GUILayout.Button("Sim rewards"))
+        {
+            Game.Instance.TestGetRunReward();
         }
     }
 }

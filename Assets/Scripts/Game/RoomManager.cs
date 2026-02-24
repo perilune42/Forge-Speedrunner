@@ -42,7 +42,6 @@ public class RoomManager : Singleton<RoomManager>
     public Room StartingRoom;
     public Transform StartingSpawn;
 
-    [SerializeField] bool overrideStartingRoom;
     public bool TransitionOngoing = false;
 
     [SerializeField] bool allRoomsDiscovered = false;   
@@ -98,7 +97,7 @@ public class RoomManager : Singleton<RoomManager>
 
     public void SpawnAtStart()
     {
-        if (overrideStartingRoom)
+        if (Game.Instance.OverrideStartingRoom)
         {
             activeRoom = originalRoom;
             RespawnPosition = originalPosition;

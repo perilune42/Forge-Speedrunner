@@ -17,6 +17,18 @@ public class Game : Singleton<Game> {
     public float RewardThreshold; // must be under target time by this much to receive reward
     public float RewardMultPerRound;
 
+    public bool OverrideStartingRoom;
+
+    public override void Awake()
+    {
+        base.Awake();
+        if (MainMenu.GenerateNewMap)
+        {
+            OverrideStartingRoom = false;
+        }
+    }
+
+
     public void FinishRound()
     {
         Timer.RecordTime();

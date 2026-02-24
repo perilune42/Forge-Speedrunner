@@ -119,6 +119,6 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         else header = $"{ability.name} (Lvl. 1)";
         string description = ability.AllLevels[levelToUpgrade].Description;
 
-        ShopManager.Instance.ShowTooltipInfo(icon, header, description);
+         ShopManager.Instance.ShowTooltipInfo(ability, levelToUpgrade, true);
     }
 }

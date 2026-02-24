@@ -4398,7 +4398,6 @@ MonoBehaviour:
   AllPassages: []
   StartingRoom: {fileID: 4560143865749233382}
   StartingSpawn: {fileID: 8602448710125572585}
-  overrideStartingRoom: 0
   TransitionOngoing: 0
   allRoomsDiscovered: 0
 --- !u!1 &3242626036644856726

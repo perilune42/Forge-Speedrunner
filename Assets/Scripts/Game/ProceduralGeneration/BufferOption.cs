@@ -34,7 +34,7 @@ public class BufferOption : IChoiceStrategy
 
         return 0;
     }
-    public Room FindRoom(Direction dir, Offset off, in HashSet<Room> placedRooms)
+    public Room FindRoom(Direction dir, Offset off, Grid grid, in HashSet<Room> placedRooms)
     {
         Debug.Log("[BufferOption.FindRoom] begin!");
         // if(dir == RIGHT || dir == LEFT) return null;

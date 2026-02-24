@@ -42,7 +42,7 @@ public class Timer : Singleton<Timer>
 
         if (speedrunTime >= targetSpeedrunTime) 
         {
-            // EndGame();
+            Game.Instance.EndGame();
         }
     }
 

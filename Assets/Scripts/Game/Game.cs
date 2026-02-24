@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Game : Singleton<Game> {
     public int CurrentRound;
@@ -20,8 +19,6 @@ public class Game : Singleton<Game> {
 
     public bool OverrideStartingRoom;
 
-    public GameObject GameEndUI;
-    [SerializeField] private UnityEngine.UI.Button mainMenuButton, playAgainButton;
 
     public override void Awake()
     {
@@ -32,28 +29,32 @@ public class Game : Singleton<Game> {
         }
     }
 
+    void Start()
+    {
+        StartGame();
+    }
+
     public void EndGame()
     {
-        RoomManager.Instance.gameObject.SetActive(false);
+        //RoomManager.Instance.gameObject.SetActive(false);
         Player.Instance.gameObject.SetActive(false);
-
         Timer.Instance.Pause(true);
-        GameEndUI.SetActive(true);
-        mainMenuButton.onClick.AddListener(() =>
-        {
-            SceneManager.LoadScene("MainMenu");
-        });
-        mainMenuButton.onClick.AddListener(() =>
-        {
-            SceneManager.LoadScene("World"); // TODO: change this if we ever stop using world scene
-        });
+        GameplayUI.Instance.GameEndUI.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        //RoomManager.Instance.gameObject.SetActive(true);
+        Player.Instance.gameObject.SetActive(true);
+        Timer.Instance.Pause(false);
+        Timer.targetSpeedrunTime = initialGoalTime;
     }
 
     public void FinishRound()
     {
+        GoToShop(true);
         Timer.RecordTime();
         CurrentRound++;
-        GoToShop(true);
     }
 
     public void GoToShop(bool newRound)
@@ -128,16 +129,7 @@ public class Game : Singleton<Game> {
         return Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward));
     }
 
-    public void TestGetRunReward()
-    {
-        float reward = MinReward;
-        float factor = Timer.targetSpeedrunTime * RewardThreshold / Timer.speedrunTime;
-        float bonus = Mathf.Pow(Mathf.Max(0, factor - 1) * RewardMultiplier, RewardDecay);
-        Debug.Log(bonus);
-        reward += bonus;
-        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound);
-        Debug.Log(Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward)));
-    }
+    
 
     public float GetNewGoal()
     {
@@ -160,11 +152,6 @@ public class Game_Inspector : Editor
         if (Application.isPlaying && GUILayout.Button("Add 30 Seconds"))
         {
             Timer.speedrunTime += 30f;
-        }
-
-        if (Application.isPlaying && GUILayout.Button("Sim rewards"))
-        {
-            Game.Instance.TestGetRunReward();
         }
     }
 }

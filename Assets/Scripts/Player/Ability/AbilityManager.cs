@@ -21,7 +21,7 @@ public class AbilityManager : Singleton<AbilityManager>
     public PlayerMovement playerMovement;
     public Dictionary<int, Ability> PlayerAbilities;
 
-    public int ChronoshiftCharges;
+    [HideInInspector] public int ChronoshiftCharges, TotalChronoshiftCharges;
     
     public override void Awake()
     {
@@ -38,7 +38,13 @@ public class AbilityManager : Singleton<AbilityManager>
             GivePlayerAbilities();
         }
     }
-    
+
+    void Start()
+    {
+        TotalChronoshiftCharges = 0;
+        ChronoshiftCharges = 0;
+    }
+
     //private void OnGUI()
     //{
     //    GUILayout.BeginArea(new Rect(100, 0, 100, 100));

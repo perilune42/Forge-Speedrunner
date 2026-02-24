@@ -36,9 +36,14 @@ public class Chronoshift : Ability, IStatSource
     public override void Start()
     {
         base.Start();
-        MaxCharges = AbilityManager.Instance.ChronoshiftCharges;
         if (volume.profile.TryGet<LiftGammaGain>(out LiftGammaGain gammaProfile)) gamma = gammaProfile;
         if (volume.profile.TryGet<ColorAdjustments>(out ColorAdjustments colorsProfile)) colors = colorsProfile;
+    }
+
+    void OnEnable()
+    {
+        
+        MaxCharges = AbilityManager.Instance.ChronoshiftCharges;
     }
 
     protected override void FixedUpdate()

@@ -17,15 +17,18 @@ public class Game : Singleton<Game> {
     public float RewardMultPerRound = 1.15f;
 
     public bool OverrideStartingRoom;
+    [SerializeField] bool enableRandomMap = true;
+    public bool AllRoomsDiscovered = false;
     public MapGen Generator;
 
     [SerializeField] private RoomManager roomManagerRef;
+    
 
     public override void Awake()
     {
         base.Awake();
         //if (MainMenu.GenerateNewMap)
-        if (true)
+        if (enableRandomMap)
         {
             OverrideStartingRoom = false;
             var (rooms, passages) = Generator.CreateMap();

@@ -45,7 +45,8 @@ public class RoomManager : Singleton<RoomManager>
 
     public bool TransitionOngoing = false;
 
-    [SerializeField] bool allRoomsDiscovered = false;   
+    
+    
 
     public Vector2 RespawnPosition { get => respawnPosition; set { 
             respawnPosition = value;
@@ -74,7 +75,7 @@ public class RoomManager : Singleton<RoomManager>
         // Set room to visited
         originalRoom.visited = true;
 
-        if (allRoomsDiscovered)
+        if (Game.Instance.AllRoomsDiscovered)
         {
             foreach (var room in AllRooms)
             {
@@ -93,7 +94,7 @@ public class RoomManager : Singleton<RoomManager>
 
             pass.door1.passage = pass;
             pass.door2.passage = pass;
-            if (allRoomsDiscovered) pass.visited = true;
+            if (Game.Instance.AllRoomsDiscovered) pass.visited = true;
         }
         
     }

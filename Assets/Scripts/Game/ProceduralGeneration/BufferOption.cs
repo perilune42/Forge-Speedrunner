@@ -12,21 +12,33 @@ public class BufferOption : IChoiceStrategy
         RoomPrefabs = prefabs.ToList()
             .FindAll(x => x != null && x.size.x == 1 && x.size.y == 1 && x.doorwaysRight.Any(y => y != null));
     }
-    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs)
+    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs, in Grid grid)
     {
-        // find the largest offset
-        int maxInd = 0;
-        for(int i = 1; i < offs.Count; i++)
+        // find the last room's rightmost offset of door
+        Cell c = grid.uniqueCells[grid.uniqueCells.Count-1];
+        Room r = c.room;
+        Offset botleft = c.offset;
+        Offset yof = new(0,1);
+        Offset xof = new(1,0);
+        List<Offset> all = new();
+        for(int i = 0; i < room.size.y; i++)
         {
-            maxInd = OffSize(offs[i]) > OffSize(offs[maxInd]) ? i : maxInd;
+            Offset check = botleft + xof * room.size.y + yof * i;
+            if(r.doorwaysRight[i] != null)
+                all.Add(check);
         }
-        Debug.Log($"[SelectIndex] max is {offs[maxInd]}, {OffSize(offs[maxInd])}");
-        return maxInd;
+
+        for(int i = 0; i < offs.Count; i++)
+            if(all.Contains(offs[i]))
+                return i;
+
+        return 0;
     }
     public Room FindRoom(Direction dir, Offset off, in HashSet<Room> placedRooms)
     {
         Debug.Log("[BufferOption.FindRoom] begin!");
         // if(dir == RIGHT || dir == LEFT) return null;
+
         List<Room> fits = RoomPrefabs.FindAll(x => {
                 List<Doorway> doors = dir switch
                 {

@@ -1,45 +1,115 @@
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 
 public class Game : Singleton<Game> {
-    public int CurrentRound = 1;
+    public int CurrentRound;
     public bool IsPracticeMode = false;
 
     [Header("Progression Modifiers")]
-    public float initialGoalTime = 300f;
-    public float GoalTimeScale = 0.8f;  // next goaltime = prev goal * GTS, round to nearest 5
-    public float RewardMultiplier = 50f;  // reward = (goal/runtime - 1) * RM
-    public float RewardFalloffPoint = 1.5f; // if goal/runtime > RFP, apply RFM to remaining time
-    public float RewardHardcap = 2.5f;
-    public float RewardFalloffMultiplier = 10f;
-    public float MinReward = 10f;
-    public float RewardMultPerRound = 1.15f;
+    public float initialGoalTime;
+    public float GoalTimeScale;  // next goaltime = prev goal * GTS, round to nearest 5
+    public float PBTimeScale; // if pb * pbtimescale < next goaltime, use the pb time instead
+    public float RewardMultiplier;  // bonus reward = (goal/runtime - 1) * RM
+    public float RewardDecay; // bonus reward = (bonus reward) ^ decay
+    public float MinReward; // base added to bonus reward
+    public float RewardHardcap; // total amount cannot exceed this much
+    public float RewardThreshold; // must be under target time by this much to receive reward
+    public float RewardMultPerRound;
 
     public bool OverrideStartingRoom;
+    [SerializeField] bool enableRandomMap = true;
+    public bool AllRoomsDiscovered = false;
+    public MapGen Generator;
+
+    [SerializeField] private RoomManager roomManagerRef;
+    
+
+
+    public List<ChronoshiftKeyframe> ChronoshiftKeyframes;
+    [SerializeField] private int keyframeInterval;
+    private int nextKeyframeTime = 0;
+    private Vector3 startPos;
+    private float startTime;
 
     public override void Awake()
     {
         base.Awake();
-        if (MainMenu.GenerateNewMap)
+        //if (MainMenu.GenerateNewMap)
+        if (enableRandomMap)
         {
             OverrideStartingRoom = false;
+            var (rooms, passages) = Generator.CreateMap();
+
+            roomManagerRef.AllPassages = passages.ToArray();
+            roomManagerRef.FinalizeRooms();
+
+            roomManagerRef.StartingRoom = rooms[0];
+            roomManagerRef.StartingSpawn = roomManagerRef.StartingRoom.GetComponent<SpawnRoom>().SpawnPoint;
         }
     }
 
+    void Start()
+    {
+        StartGame();
+        ChronoshiftKeyframes = new();
+        nextKeyframeTime = keyframeInterval;
+        startPos = Player.Instance.Movement.transform.position;
+    }
+
+    void FixedUpdate()
+    {
+        nextKeyframeTime--;
+        if (nextKeyframeTime <= 0)
+        {
+            ChronoshiftKeyframe kf = new ChronoshiftKeyframe(
+                    Player.Instance.Movement.transform.position, 
+                    Timer.speedrunTime, 
+                    RoomManager.Instance.activeRoom);
+                ChronoshiftKeyframes.Insert(0, kf);
+                nextKeyframeTime = keyframeInterval;
+        }
+    }
+
+    public void EndGame()
+    {
+        //RoomManager.Instance.gameObject.SetActive(false);
+        Player.Instance.gameObject.SetActive(false);
+        Timer.Instance.Pause(true);
+        GameplayUI.Instance.GameEndUI.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        //RoomManager.Instance.gameObject.SetActive(true);
+        Player.Instance.gameObject.SetActive(true);
+        Timer.Instance.Pause(false);
+        Timer.targetSpeedrunTime = initialGoalTime;
+    }
 
     public void FinishRound()
     {
+        StartCoroutine(FinishRoundCoroutine());
+    }
+
+    private IEnumerator FinishRoundCoroutine()
+    {
+        startTime = Timer.speedrunTime;
+        AbilityManager.Instance.GetAbility<Chronoshift>().Teleport(ChronoshiftKeyframes, startPos);
+        yield return new WaitUntil(() => Player.Instance.Movement.SpecialState != SpecialState.Chronoshift);
+        Timer.speedrunTime = startTime;
         Timer.RecordTime();
-        CurrentRound++;
         GoToShop(true);
+        CurrentRound++;
     }
 
     public void GoToShop(bool newRound)
     {
         ShopManager.Instance.LoadShop(newRound);
         // deactivate all the stuff in the world
-        RoomManager.Instance.gameObject.SetActive(false);
+        //RoomManager.Instance.gameObject.SetActive(false);
         Player.Instance.gameObject.SetActive(false);
 
         // stop the count
@@ -50,7 +120,7 @@ public class Game : Singleton<Game> {
     {
         ShopManager.Instance.CloseShop();
         // reset rooms and player
-        RoomManager.Instance.gameObject.SetActive(true);
+        //RoomManager.Instance.gameObject.SetActive(true);
         RoomManager.Instance.ResetAllEntities();
         Player.Instance.gameObject.SetActive(true);
 
@@ -100,28 +170,20 @@ public class Game : Singleton<Game> {
     public int GetRunReward()
     {
         float reward = MinReward;
-        float factor = Timer.previousTargetTime / Timer.previousSpeedrunTime;
-        if (factor <= RewardFalloffPoint)
-        {
-            reward += (factor - 1) * RewardMultiplier;
-        }
-        else if (factor <= RewardHardcap)
-        {
-            Debug.Log($"Reward: {(RewardFalloffPoint - 1) * RewardMultiplier} | {(factor - RewardFalloffPoint) * RewardFalloffMultiplier}");
-            reward += (RewardFalloffPoint - 1) * RewardMultiplier + (factor - RewardFalloffPoint) * RewardFalloffMultiplier;
-        }
-        else
-        {
-            reward += (RewardFalloffPoint - 1) * RewardMultiplier + (RewardHardcap - RewardFalloffPoint) * RewardFalloffMultiplier;
-        }
-        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound - 1);
-        return Mathf.RoundToInt(reward);
+        float factor = Timer.previousTargetTime * RewardThreshold / Timer.previousSpeedrunTime;
+        float bonus = Mathf.Pow(Mathf.Max(0, factor - 1) * RewardMultiplier, RewardDecay);
+        reward += bonus;
+        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound);
+        return Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward));
     }
+
+    
 
     public float GetNewGoal()
     {
-        // todo: slight adaptive scaling
-        return Timer.previousTargetTime * GoalTimeScale;
+        float pbTime = Timer.previousSpeedrunTime * PBTimeScale;
+        float baseTime = Timer.previousTargetTime * GoalTimeScale;
+        return Mathf.Min(baseTime, pbTime);
     }
 }
 

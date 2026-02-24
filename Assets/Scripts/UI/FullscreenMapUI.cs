@@ -29,7 +29,11 @@ public class FullscreenMapUI : MonoBehaviour
     [SerializeField] private bool negativePosRooms = false; // Are there rooms on the left side of the starting room too?
     [SerializeField] private Object roomImage;
     [SerializeField] private Object youAreHereImage;
-    [SerializeField] private Object passageImage; // size 2x2
+    [SerializeField] private Object passageImage;
+
+    [SerializeField] private Image startPrefab;
+    [SerializeField] private Image finishPrefab;
+
     [SerializeField] [Range(0.1f, 1)] private float sizeMult = 1;
 
     bool initialized = false;
@@ -139,12 +143,30 @@ public class FullscreenMapUI : MonoBehaviour
             roomRect.transform.SetParent(roomContainer, true);
             roomRects[room] = roomRect;
 
+            if (room.GetComponent<SpawnRoom>() != null)
+            {
+                GameObject startPin = Instantiate(startPrefab, roomRect).GameObject();
+                //startPin.GetComponent<RectTransform>().sizeDelta =
+                //    new Vector2(relativeSize.x / (width * room.size.x) * youAreHereSize.x,
+                //    relativeSize.y / (height * room.size.y) * youAreHereSize.y);
+                startPin.transform.SetParent(roomContainer, true);
+            }
+            if (room.GetComponent<FinishRoom>() != null)
+            {
+                GameObject finishPin = Instantiate(finishPrefab, roomRect).GameObject();
+                //finishPin.GetComponent<RectTransform>().sizeDelta =
+                //    new Vector2(relativeSize.x / (width * room.size.x) * youAreHereSize.x,
+                //    relativeSize.y / (height * room.size.y) * youAreHereSize.y);
+                finishPin.transform.SetParent(roomContainer, true);
+            }
+
+
             if (!shopMode && roomManager.activeRoom == room)
             {
                 GameObject youAreHere = Instantiate(youAreHereImage, roomRect).GameObject();
-                youAreHere.GetComponent<RectTransform>().sizeDelta = 
-                    new Vector2(relativeSize.x/(width*room.size.x) * youAreHereSize.x, 
-                    relativeSize.y/(height*room.size.y) * youAreHereSize.y);
+                //youAreHere.GetComponent<RectTransform>().sizeDelta = 
+                    //new Vector2(relativeSize.x/(width*room.size.x) * youAreHereSize.x, 
+                    //relativeSize.y/(height*room.size.y) * youAreHereSize.y);
                 youAreHere.transform.SetParent(roomContainer, true);
             }
             foreach (Doorway door in GetDoors(room))
@@ -242,10 +264,16 @@ public class FullscreenMapUI : MonoBehaviour
     private bool toggleMap(bool toggle) {
         if (toggle) {
             GetComponent<Canvas>().enabled = true;
+            roomContainer.gameObject.SetActive(true);
+            passageContainer.gameObject.SetActive(true);
+            spawnSelectorContainer.gameObject.SetActive(true);
             showingMap = true;
             return true;
         } else {
             GetComponent<Canvas>().enabled = false;
+            roomContainer.gameObject.SetActive(false);
+            passageContainer.gameObject.SetActive(false);
+            spawnSelectorContainer.gameObject.SetActive(false);
             showingMap = false;
             return false;
         }

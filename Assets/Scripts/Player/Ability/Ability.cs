@@ -59,6 +59,7 @@ public abstract class Ability : MonoBehaviour
             info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
                 AbilityManager.Instance.ChronoshiftInfoParent.transform).GetComponent<AbilityInfo>();
             info.SetAbility(this);
+            info.gameObject.SetActive(false);
             SetInputButton(PInput.Instance.Chronoshift);
         }
         else

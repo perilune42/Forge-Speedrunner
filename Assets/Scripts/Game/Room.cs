@@ -45,7 +45,7 @@ public class Room : MonoBehaviour
 
     private void Awake()
     {
-        foreach (var entity in entitiesContainer.GetComponentsInChildren<Entity>())
+        foreach (var entity in GetComponentsInChildren<Entity>())
         {
             Entities.Add(entity);
         }

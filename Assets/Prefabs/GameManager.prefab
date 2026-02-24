@@ -45,21 +45,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9f02083de034b941a8cf5bf7ec09358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game
-  currState: 0
-  money: 0
-  moneyText: {fileID: 0}
-  up1: {fileID: 0}
-  up2: {fileID: 0}
-  up3: {fileID: 0}
-  upCost1: 0
-  upCost2: 0
-  upCost3: 0
-  upBought1: 0
-  upBought2: 0
-  upBought3: 0
-  upText1: {fileID: 0}
-  upText2: {fileID: 0}
-  upText3: {fileID: 0}
+  CurrentRound: 0
+  IsPracticeMode: 0
+  initialGoalTime: 300
+  GoalTimeScale: 0.8
+  PBTimeScale: 0.9
+  RewardMultiplier: 70
+  RewardDecay: 0.85
+  MinReward: 8
+  RewardHardcap: 100
+  RewardThreshold: 0.97
+  RewardMultPerRound: 1.15
+  OverrideStartingRoom: 0
+  enableRandomMap: 1
+  AllRoomsDiscovered: 0
+  Generator: {fileID: 0}
+  roomManagerRef: {fileID: 0}
+  keyframeInterval: 60
 --- !u!114 &2865041078514351360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,3 +74,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 500379e4e640b524a9c47ea0a222b0a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Timer
+  currState: 0
+  timer: {fileID: 0}

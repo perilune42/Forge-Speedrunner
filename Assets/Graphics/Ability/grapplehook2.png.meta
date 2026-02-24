@@ -451,14 +451,14 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      grapplehook2_0: -1229007930
-      grapplehook2_1: -1217906574
-      grapplehook2_2: 2066782857
-      grapplehook2_3: -147384169
-      grapplehook2_4: 1451298489
-      grapplehook2_5: 1913110012
-      grapplehook2_6: 932499435
-      grapplehook2_7: 1939636658
+      grapplehook2_0: -1758515382
+      grapplehook2_1: 770408407
+      grapplehook2_2: -355866879
+      grapplehook2_3: 788867763
+      grapplehook2_4: 1858385881
+      grapplehook2_5: -63737592
+      grapplehook2_6: 2039935512
+      grapplehook2_7: 806959448
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

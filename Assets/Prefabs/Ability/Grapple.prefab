@@ -54,11 +54,11 @@ MonoBehaviour:
   - Description: I like cheese
     Cost: 5
   ID: 1
-  CurrentLevel: 1
+  CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  StartUnlocked: 1
+  StartUnlocked: 0
   BindingDisplayString: 
   cooldown: 240
   info: {fileID: 0}

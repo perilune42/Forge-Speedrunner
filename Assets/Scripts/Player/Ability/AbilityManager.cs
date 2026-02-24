@@ -21,8 +21,8 @@ public class AbilityManager : Singleton<AbilityManager>
     public PlayerMovement playerMovement;
     public Dictionary<int, Ability> PlayerAbilities;
 
-    public int ChronoshiftCharges;
-    
+    [HideInInspector] public int ChronoshiftCharges, TotalChronoshiftCharges;
+    private Chronoshift chronoshift;
     public override void Awake()
     {
         base.Awake();
@@ -38,7 +38,14 @@ public class AbilityManager : Singleton<AbilityManager>
             GivePlayerAbilities();
         }
     }
-    
+
+    void Start()
+    {
+        TotalChronoshiftCharges = 0;
+        ChronoshiftCharges = 0;
+        GiveChronoshift();
+    }
+
     //private void OnGUI()
     //{
     //    GUILayout.BeginArea(new Rect(100, 0, 100, 100));
@@ -82,6 +89,7 @@ public class AbilityManager : Singleton<AbilityManager>
     {
         Ability ability = Instantiate(GameRegistry.Instance.Chronoshift, player.transform);
         ability.ID = -1;
+        chronoshift = ability as Chronoshift;
     }
     
     public void GivePlayerAbility(int index)
@@ -110,6 +118,8 @@ public class AbilityManager : Singleton<AbilityManager>
 
     public T GetAbility<T>() where T : Ability
     {
+        if (typeof(T) == typeof(Chronoshift)) return chronoshift as T;
+        
         foreach (Ability ability in PlayerAbilities.Values)
         {
             if  (ability.GetType() == typeof(T)) return ability as T;

@@ -1,19 +1,29 @@
 using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // UI during actual gameplay
-public class GameplayUI : MonoBehaviour
+public class GameplayUI : Singleton<GameplayUI>
 {
     [SerializeField] TMP_Text currTimeText, targetTimeText, speedText;
 
     [SerializeField] GameObject practiceModeIndicator;
 
-    public static GameplayUI Instance;
+    public GameObject GameEndUI;
+    public UnityEngine.UI.Button MainMenuButton, PlayAgainButton;
 
-    private void Awake()
+    public override void Awake()
     {
-        Instance = this;
+        base.Awake();
+        MainMenuButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene("MainMenu");
+        });
+        PlayAgainButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene("World"); // TODO: change this if we ever stop using world scene
+        });
     }
 
     private void Update()

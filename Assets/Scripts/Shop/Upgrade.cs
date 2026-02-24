@@ -72,21 +72,26 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
             CostText.text = "Bought";
             IsBought = true;
 
+            if (ability is Chronoshift) 
+            {
+                // if (AbilityManager.Instance.TotalChronoshiftCharges == 0) AbilityManager.Instance.GiveChronoshift();
+                AbilityManager.Instance.ChronoshiftCharges++;
+                AbilityManager.Instance.TotalChronoshiftCharges++;
+                return;
+            }
+
             bool abilityExists = AbilityManager.Instance.PlayerAbilities.TryGetValue(ability.ID, out var existingAbility);
             if (abilityExists)
             {
-                if (existingAbility is not Chronoshift)
-                {
-                    existingAbility.CurrentLevel++;
-                    existingAbility.UsesCharges = usesCharges;
-                }
+                existingAbility.CurrentLevel++;
+                existingAbility.UsesCharges = usesCharges;
             }
             else
             {
-                if (ability is Chronoshift) AbilityManager.Instance.GiveChronoshift();
-                else AbilityManager.Instance.GivePlayerAbility(ability.ID);
+                AbilityManager.Instance.GivePlayerAbility(ability.ID);
             }
-            if (ability is Chronoshift) AbilityManager.Instance.ChronoshiftCharges++;
+
+            
             ShopManager.Instance.UpdateShopAbilities();
         }
     }
@@ -107,6 +112,13 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ShopManager.Instance.ShowTooltipInfo(ability, levelToUpgrade, true);
+        Sprite icon = ability.Icon;
+        string header;
+        if (isTool) header = ability.Name;
+        else if (levelToUpgrade > 0) header = $"{ability.Name} (Lvl. {levelToUpgrade} -> {levelToUpgrade + 1})";
+        else header = $"{ability.name} (Lvl. 1)";
+        string description = ability.AllLevels[levelToUpgrade].Description;
+
+         ShopManager.Instance.ShowTooltipInfo(ability, levelToUpgrade, true);
     }
 }

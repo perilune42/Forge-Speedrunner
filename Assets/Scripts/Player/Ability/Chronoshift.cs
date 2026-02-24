@@ -31,14 +31,21 @@ public class Chronoshift : Ability, IStatSource
     private int keyframeIndex;
 
     [SerializeField] private int warningTime;
-
+    
+    public List<ActivatableEntity> EntitiesToReset;
+    public bool CanTeleport => clone != null;
 
     public override void Start()
     {
         base.Start();
-        MaxCharges = AbilityManager.Instance.ChronoshiftCharges;
         if (volume.profile.TryGet<LiftGammaGain>(out LiftGammaGain gammaProfile)) gamma = gammaProfile;
         if (volume.profile.TryGet<ColorAdjustments>(out ColorAdjustments colorsProfile)) colors = colorsProfile;
+    }
+
+    void OnEnable()
+    {
+        if (AbilityManager.Instance.ChronoshiftCharges > 0) info.gameObject.SetActive(true);
+        MaxCharges = AbilityManager.Instance.ChronoshiftCharges;
     }
 
     protected override void FixedUpdate()
@@ -71,7 +78,6 @@ public class Chronoshift : Ability, IStatSource
                         StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero, Vector2.zero));
                         RoomManager.Instance.activeRoom = curKeyframe.room;
                     }
-                    RoomManager.Instance.RespawnPosition = curKeyframe.respawnPosition;
                     Timer.speedrunTime = curKeyframe.time;
                 }
             }
@@ -104,8 +110,7 @@ public class Chronoshift : Ability, IStatSource
                 ChronoshiftKeyframe kf = new ChronoshiftKeyframe(
                     PlayerMovement.transform.position, 
                     Timer.speedrunTime, 
-                    RoomManager.Instance.activeRoom,
-                    RoomManager.Instance.RespawnPosition);
+                    RoomManager.Instance.activeRoom);
                 keyframes.Insert(0, kf);
                 curKeyframeTime = keyframeInterval;
             }
@@ -123,8 +128,10 @@ public class Chronoshift : Ability, IStatSource
             stopCloneParticleAction += vfx.PlayParticle(Color.white);
             curCooldown = 10;
             
-                keyframes = new();
-                curKeyframeTime = 0;
+            keyframes = new();
+            curKeyframeTime = 0;
+
+            EntitiesToReset = new();
             
             return false;
         }
@@ -148,9 +155,20 @@ public class Chronoshift : Ability, IStatSource
         curTeleportSpeed = teleportSpeed;
         PlayerMovement.Velocity = Vector2.zero;
 
-        
+        Debug.Log(EntitiesToReset.Count);
+        foreach(ActivatableEntity e in EntitiesToReset) e.ResetEntity();
+
         curKeyframe = keyframes[0];
         keyframeIndex = 0;
+    }
+
+    public void Teleport(List<ChronoshiftKeyframe> keyframes, Vector3 endPos)
+    {
+        clone = Instantiate(clonePrefab, endPos, Quaternion.identity);
+        PlayerVFXTrail vfx = clone.GetComponentInChildren<PlayerVFXTrail>();
+        stopCloneParticleAction += vfx.PlayParticle(Color.white);
+        this.keyframes = keyframes;
+        Teleport();
     }
 
     private void CancelTeleport()
@@ -182,12 +200,10 @@ public struct ChronoshiftKeyframe
     public Vector3 position;
     public float time;
     public Room room;
-    public Vector3 respawnPosition;
-    public ChronoshiftKeyframe(Vector3 position, float time, Room room, Vector3 respawnPosition)
+    public ChronoshiftKeyframe(Vector3 position, float time, Room room)
     {
         this.position = position;
         this.time = time;
         this.room = room;
-        this.respawnPosition = respawnPosition;
     }
 }

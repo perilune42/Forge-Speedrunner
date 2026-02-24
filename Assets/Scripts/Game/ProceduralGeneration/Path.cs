@@ -137,6 +137,7 @@ public class PathCreator
         foreach(Connection conn in Connections)
         {
             numNeighbors[conn.Source.offset] += 1;
+            numNeighbors[conn.Sink.offset] += 1;
         }
         foreach(int num in numNeighbors.Values)
             if(num > 2)

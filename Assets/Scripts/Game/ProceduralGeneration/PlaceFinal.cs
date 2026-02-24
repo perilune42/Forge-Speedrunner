@@ -24,21 +24,21 @@ public class PlaceFinal : IChoiceStrategy
         Offset xof = new(1,0);
         for(int i = 0; i < r.size.y; i++)
         {
-            Offset rightCheck = botleft + i * yof + xof * room.size.x;
+            Offset rightCheck = botleft + i * yof + xof * r.size.x;
             Offset leftCheck = botleft + i * yof;
             if(r.doorwaysRight[i] != null)
-                allRoomOffsets.add(rightCheck);
+                allRoomOffsets.Add(rightCheck);
             if(r.doorwaysLeft[i] != null)
-                allRoomOffsets.add(leftCheck);
+                allRoomOffsets.Add(leftCheck);
         }
         for(int i = 0; i < r.size.x; i++)
         {
-            Offset upCheck = botleft + i * xof + yof * room.size.y;
+            Offset upCheck = botleft + i * xof + yof * r.size.y;
             Offset downCheck = botleft + i * xof;
             if(r.doorwaysUp[i] != null)
-                allRoomOffsets.add(upCheck);
+                allRoomOffsets.Add(upCheck);
             if(r.doorwaysDown[i] != null)
-                allRoomOffsets.add(downCheck);
+                allRoomOffsets.Add(downCheck);
         }
         for(int i = 0; i < offs.Count; i++)
         {

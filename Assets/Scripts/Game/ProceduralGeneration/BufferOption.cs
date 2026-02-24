@@ -21,9 +21,9 @@ public class BufferOption : IChoiceStrategy
         Offset yof = new(0,1);
         Offset xof = new(1,0);
         List<Offset> all = new();
-        for(int i = 0; i < room.size.y; i++)
+        for(int i = 0; i < r.size.y; i++)
         {
-            Offset check = botleft + xof * room.size.y + yof * i;
+            Offset check = botleft + xof * r.size.y + yof * i;
             if(r.doorwaysRight[i] != null)
                 all.Add(check);
         }

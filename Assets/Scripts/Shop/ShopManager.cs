@@ -42,6 +42,9 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private TMP_Text tooltipInfoNameText;
     [SerializeField] private TMP_Text tooltipInfoDescriptionText;
 
+    [SerializeField] private Transform tooltipInfoDescriptionParent;
+    [SerializeField] private TMP_Text tooltipInfoDescriptionPrefab;
+
     [Header("Continue Tab Refs")]
 
     private const float chargeChance = 0f;
@@ -175,6 +178,46 @@ public class ShopManager : Singleton<ShopManager>
         tooltipInfoIcon.sprite = icon;
         tooltipInfoNameText.text = header;
         tooltipInfoDescriptionText.text = description;
+    }
+
+    public void ShowTooltipInfo(Ability ability, int level, bool isUpgrade)
+    {
+        tooltipInfoIcon.sprite = ability.Icon;
+        if (isUpgrade)
+        {
+            tooltipInfoNameText.text = $"{ability.Name} (Lvl. {level} -> {level + 1})";
+        }
+        else
+        {
+            tooltipInfoNameText.text = $"{ability.Name} (Lvl. {level+1})";
+        }
+
+        for (int i = 0; i < tooltipInfoDescriptionParent.childCount; i++)
+        {
+            Destroy(tooltipInfoDescriptionParent.GetChild(i).gameObject);
+        }
+
+        for (int i = 0; i < ability.AllLevels.Length; i++)
+        {
+            AbilityLevel abilityLevelDesc = ability.AllLevels[i];
+            TMP_Text txt = Instantiate(tooltipInfoDescriptionPrefab, tooltipInfoDescriptionParent);
+            txt.text = $"Lvl. {i+1}: {abilityLevelDesc.Description}";
+
+            if (!isUpgrade)
+            {
+                if (i <= level) txt.color = Color.lightGreen;
+                else txt.color = Color.gray8;
+            }
+            else
+            {
+                if (i < level) txt.color = Color.lightGreen;
+                else if (i == level) txt.color = Color.green;
+                else txt.color = Color.gray8;
+            }
+            
+        }
+        
+        
     }
 
     public void CloseShop()

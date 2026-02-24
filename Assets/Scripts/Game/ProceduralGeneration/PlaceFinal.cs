@@ -13,63 +13,25 @@ public class PlaceFinal : IChoiceStrategy
     }
     public int SelectIndex(in List<Direction> dirs, in List<Offset> offs, in Grid grid)
     {
-
-        Cell lastCell = grid.uniqueCells[grid.uniqueCells.Count-1];
-        Offset botleft = lastCell.offset;
-        Offset size = lastCell.room.size;
-        Offset rightOutside = botleft - new Offset(1,1);
-        Room r = lastCell.room;
-        List<Offset> allRoomOffsets = new();
+        // find the last room's rightmost offset of door
+        Cell c = grid.uniqueCells[grid.uniqueCells.Count-1];
+        Room r = c.room;
+        Offset botleft = c.offset;
         Offset yof = new(0,1);
         Offset xof = new(1,0);
+        List<Offset> all = new();
         for(int i = 0; i < r.size.y; i++)
         {
-            Offset rightCheck = botleft + i * yof + xof * r.size.x;
-            Offset leftCheck = botleft + i * yof;
+            Offset check = botleft + xof * r.size.y + yof * i;
             if(r.doorwaysRight[i] != null)
-                allRoomOffsets.Add(rightCheck);
-            if(r.doorwaysLeft[i] != null)
-                allRoomOffsets.Add(leftCheck);
+                all.Add(check);
         }
-        for(int i = 0; i < r.size.x; i++)
-        {
-            Offset upCheck = botleft + i * xof + yof * r.size.y;
-            Offset downCheck = botleft + i * xof;
-            if(r.doorwaysUp[i] != null)
-                allRoomOffsets.Add(upCheck);
-            if(r.doorwaysDown[i] != null)
-                allRoomOffsets.Add(downCheck);
-        }
+
         for(int i = 0; i < offs.Count; i++)
-        {
-            if(allRoomOffsets.Contains(offs[i]))
+            if(all.Contains(offs[i]))
                 return i;
-        }
-        return 0; // HACK: this needs to be -1 and be handled
-        // int maxInd = -1;
-        // // find start
-        // for(int i = 0; i < offs.Count; i++)
-        //     if(dirs[i] == RIGHT)
-        //     {
-        //         maxInd = i;
-        //         break;
-        //     }
-        // if(maxInd < 0)
-        //     return 0; // HACK: have to ignore this later if it's not good.
 
-        // for(int i = 1; i < offs.Count; i++)
-        // {
-        //     if(dirs[i] != RIGHT)
-        //         continue;
-
-        //     Offset current = offs[i];
-        //     Offset max = offs[maxInd];
-        //     if(max.x <= current.x && max.y <= current.y)
-        //         maxInd = i;
-        //     else if(current.x >= max.x)
-        //         maxInd = i;
-        // }
-        // return maxInd;
+        return 0;
     }
     public Room FindRoom(Direction dir, Offset _off, Grid grid, in HashSet<Room> _createdRooms)
     {

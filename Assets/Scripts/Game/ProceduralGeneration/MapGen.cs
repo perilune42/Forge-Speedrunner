@@ -28,15 +28,31 @@ public class MapGen : MonoBehaviour
         // Debug.Log($"here we are. size: {path.Count}");
         // PathCreator pc = pathGen.Generate(pathSize);
 
-        PathCreator pc = new PathFactoryBuilder()
+        // PathCreator pc = new PathFactoryBuilder()
+        //     .WithStartRoom(start)
+        //     .WithMin(pathMin)
+        //     .OnePath()
+        //     // .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
+        //     .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
+        //     .WithAlgorithm(new BufferOption(roomPrefabs), 1)
+        //     .WithAlgorithm(new PlaceFinal(finish), 1)
+        //     .Finalize();
+
+        Debug.Log("[MapGen] Up to random choice:");
+        PathFactoryBuilder bld = new PathFactoryBuilder()
             .WithStartRoom(start)
             .WithMin(pathMin)
             .OnePath()
-            // .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
-            .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
-            .WithAlgorithm(new BufferOption(roomPrefabs), 1)
-            .WithAlgorithm(new PlaceFinal(finish), 1)
-            .Finalize();
+            .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize);
+
+        Debug.Log("[MapGen] Buffer option:");
+        bld = bld.WithAlgorithm(new BufferOption(roomPrefabs), 1);
+
+        Debug.Log("[MapGen] Place final:");
+        bld = bld.WithAlgorithm(new PlaceFinal(finish), 1);
+
+
+        PathCreator pc = bld.Finalize();
 
         pc.PassPrefab = this.PassPrefab;
         pc.RegisterParent(transform);

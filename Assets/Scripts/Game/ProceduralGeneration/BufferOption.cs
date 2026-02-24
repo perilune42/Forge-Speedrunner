@@ -10,7 +10,7 @@ public class BufferOption : IChoiceStrategy
     public BufferOption(Room[] prefabs)
     {
         RoomPrefabs = prefabs.ToList()
-            .FindAll(x => x != null && x.size.x == 1 && x.size.y == 1 && x.doorwaysRight.Any(y => y != null));
+            .FindAll(x => x != null && x.size.x == 1 && x.size.y == 1 && x.doorwaysRight.Any(y => y != null && y.IsExit()));
     }
     public int SelectIndex(in List<Direction> dirs, in List<Offset> offs, in Grid grid)
     {

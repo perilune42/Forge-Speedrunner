@@ -74,6 +74,8 @@ public class MapGen : MonoBehaviour
         }
         PathCreator pc; Status fail;
         (pc, fail) = FailedRunsDebug[ind];
+        pc.PassPrefab = this.PassPrefab;
+        pc.RegisterParent(transform);
         (createdRooms, createdPassages) = pc.Create();
         Debug.Log($"Fail type: {fail}");
     }
@@ -112,7 +114,7 @@ public class MapGen : MonoBehaviour
         bld = bld.WithAlgorithm(new PlaceFinal(finish), 1);
 
 
-        PathCreator pc = bld.Finalize();
+        PathCreator pc = bld.FinalizeUntilCorrect();
 
         pc.PassPrefab = this.PassPrefab;
         pc.RegisterParent(transform);

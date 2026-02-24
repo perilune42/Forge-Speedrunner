@@ -133,4 +133,16 @@ public class PathFactoryBuilder
 
         return maxGrid.ProduceCreator();
     }
+    public PathCreator FinalizeUntilCorrect()
+    {
+        PathCreator pc = null;
+        int i = 1;
+        do
+        {
+            Debug.Log($"Finalize call {i++}");
+            pc = Finalize();
+        } while(pc.Validate(finish, min) != Status.ALL_CLEAR);
+        Debug.Log($"Created correct result after {i} tries.");
+        return pc;
+    }
 }

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : Singleton<Game> {
     public int CurrentRound;
@@ -19,6 +20,9 @@ public class Game : Singleton<Game> {
 
     public bool OverrideStartingRoom;
 
+    public GameObject GameEndUI;
+    [SerializeField] private UnityEngine.UI.Button mainMenuButton, playAgainButton;
+
     public override void Awake()
     {
         base.Awake();
@@ -28,6 +32,22 @@ public class Game : Singleton<Game> {
         }
     }
 
+    public void EndGame()
+    {
+        RoomManager.Instance.gameObject.SetActive(false);
+        Player.Instance.gameObject.SetActive(false);
+
+        Timer.Instance.Pause(true);
+        GameEndUI.SetActive(true);
+        mainMenuButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene("MainMenu");
+        });
+        mainMenuButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene("World"); // TODO: change this if we ever stop using world scene
+        });
+    }
 
     public void FinishRound()
     {
@@ -101,11 +121,10 @@ public class Game : Singleton<Game> {
     public int GetRunReward()
     {
         float reward = MinReward;
-        float factor = Timer.previousTargetTime / Timer.previousSpeedrunTime;
-        float bonus = Mathf.Pow((factor - 2 + RewardThreshold) * RewardMultiplier, RewardDecay);
-        if (bonus < 0) bonus = 0;
+        float factor = Timer.targetSpeedrunTime * RewardThreshold / Timer.speedrunTime;
+        float bonus = Mathf.Pow(Mathf.Max(0, factor - 1) * RewardMultiplier, RewardDecay);
         reward += bonus;
-        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound - 1);
+        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound);
         return Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward));
     }
 
@@ -113,16 +132,15 @@ public class Game : Singleton<Game> {
     {
         float reward = MinReward;
         float factor = Timer.targetSpeedrunTime * RewardThreshold / Timer.speedrunTime;
-        float bonus = Mathf.Pow(Mathf.Max(0, (factor - 1)) * RewardMultiplier, RewardDecay);
+        float bonus = Mathf.Pow(Mathf.Max(0, factor - 1) * RewardMultiplier, RewardDecay);
         Debug.Log(bonus);
         reward += bonus;
         reward *= Mathf.Pow(RewardMultPerRound, CurrentRound);
-        Debug.Log(reward);
+        Debug.Log(Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward)));
     }
 
     public float GetNewGoal()
     {
-        // todo: slight adaptive scaling
         float pbTime = Timer.previousSpeedrunTime * PBTimeScale;
         float baseTime = Timer.previousTargetTime * GoalTimeScale;
         return Mathf.Min(baseTime, pbTime);

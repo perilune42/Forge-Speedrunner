@@ -43,6 +43,7 @@ public class AbilityManager : Singleton<AbilityManager>
     {
         TotalChronoshiftCharges = 0;
         ChronoshiftCharges = 0;
+        GiveChronoshift();
     }
 
     //private void OnGUI()

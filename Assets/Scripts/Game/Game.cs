@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
@@ -30,6 +31,8 @@ public class Game : Singleton<Game> {
     public List<ChronoshiftKeyframe> ChronoshiftKeyframes;
     [SerializeField] private int keyframeInterval;
     private int nextKeyframeTime = 0;
+    private Vector3 startPos;
+    private float startTime;
 
     public override void Awake()
     {
@@ -51,12 +54,23 @@ public class Game : Singleton<Game> {
     void Start()
     {
         StartGame();
+        ChronoshiftKeyframes = new();
         nextKeyframeTime = keyframeInterval;
+        startPos = Player.Instance.Movement.transform.position;
     }
 
     void FixedUpdate()
     {
-        
+        nextKeyframeTime--;
+        if (nextKeyframeTime <= 0)
+        {
+            ChronoshiftKeyframe kf = new ChronoshiftKeyframe(
+                    Player.Instance.Movement.transform.position, 
+                    Timer.speedrunTime, 
+                    RoomManager.Instance.activeRoom);
+                ChronoshiftKeyframes.Insert(0, kf);
+                nextKeyframeTime = keyframeInterval;
+        }
     }
 
     public void EndGame()
@@ -77,8 +91,17 @@ public class Game : Singleton<Game> {
 
     public void FinishRound()
     {
-        GoToShop(true);
+        StartCoroutine(FinishRoundCoroutine());
+    }
+
+    private IEnumerator FinishRoundCoroutine()
+    {
+        startTime = Timer.speedrunTime;
+        AbilityManager.Instance.GetAbility<Chronoshift>().Teleport(ChronoshiftKeyframes, startPos);
+        yield return new WaitUntil(() => Player.Instance.Movement.SpecialState != SpecialState.Chronoshift);
+        Timer.speedrunTime = startTime;
         Timer.RecordTime();
+        GoToShop(true);
         CurrentRound++;
     }
 
@@ -147,7 +170,7 @@ public class Game : Singleton<Game> {
     public int GetRunReward()
     {
         float reward = MinReward;
-        float factor = Timer.targetSpeedrunTime * RewardThreshold / Timer.speedrunTime;
+        float factor = Timer.previousTargetTime * RewardThreshold / Timer.previousSpeedrunTime;
         float bonus = Mathf.Pow(Mathf.Max(0, factor - 1) * RewardMultiplier, RewardDecay);
         reward += bonus;
         reward *= Mathf.Pow(RewardMultPerRound, CurrentRound);

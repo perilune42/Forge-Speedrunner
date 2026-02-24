@@ -60,10 +60,6 @@ public class ShopManager : Singleton<ShopManager>
 
     }
 
-    void Start()
-    {
-        
-    }
 
     // pulls up the shop screen with the most updated information
     public void LoadShop(bool newRound)

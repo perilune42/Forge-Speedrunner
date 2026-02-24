@@ -44,7 +44,7 @@ public class Chronoshift : Ability, IStatSource
 
     void OnEnable()
     {
-        
+        if (AbilityManager.Instance.ChronoshiftCharges > 0) info.gameObject.SetActive(true);
         MaxCharges = AbilityManager.Instance.ChronoshiftCharges;
     }
 

@@ -74,7 +74,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
             if (ability is Chronoshift) 
             {
-                if (AbilityManager.Instance.TotalChronoshiftCharges == 0) AbilityManager.Instance.GiveChronoshift();
+                // if (AbilityManager.Instance.TotalChronoshiftCharges == 0) AbilityManager.Instance.GiveChronoshift();
                 AbilityManager.Instance.ChronoshiftCharges++;
                 AbilityManager.Instance.TotalChronoshiftCharges++;
                 return;

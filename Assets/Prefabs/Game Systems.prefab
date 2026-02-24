@@ -384,6 +384,14 @@ PrefabInstance:
       propertyPath: timer
       value: 
       objectReference: {fileID: 6531896146149155853}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: initialGoalTime
+      value: 900
+      objectReference: {fileID: 0}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: AllRoomsDiscovered
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8720639791676307369, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 75.90641

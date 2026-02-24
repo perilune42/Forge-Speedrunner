@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -33,6 +34,7 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private Transform abilityLayoutGroup;
     [SerializeField] private Transform toolsLayoutGroup;
     [SerializeField] private List<Transform> abilitySlots;
+    [SerializeField] private Transform dashAbilitySlot;
 
     [SerializeField] private Transform upgradeLayoutGroup;
 
@@ -99,8 +101,14 @@ public class ShopManager : Singleton<ShopManager>
         }
 
         var currentAbilities = AbilityManager.Instance.PlayerAbilities;
+        List<Ability> abilityChoices;
+        if (currentAbilities.Count >= 5)
+        {
+            // if full, only choose from existing abilities
+            abilityChoices = GameRegistry.Instance.Abilities.Where(a => currentAbilities.ContainsKey(a.ID)).ToList();
+        }
+        else abilityChoices = GameRegistry.Instance.Abilities.Shuffled();
 
-        List<Ability> abilityChoices = GameRegistry.Instance.Abilities.Shuffled();
 
         int count = 0, idx = 0;
         while (count < shopOffers && idx < abilityChoices.Count)
@@ -149,7 +157,12 @@ public class ShopManager : Singleton<ShopManager>
         int index = 0;
         foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
         {
-            if (ability is Dash) continue;
+            if (ability is Dash)
+            {
+                GameObject dashShopAbility = Instantiate(shopAbilityPrefab, dashAbilitySlot);
+                dashShopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
+                continue;
+            }
             if (index >= abilitySlots.Count) break;
             GameObject shopAbility = Instantiate(shopAbilityPrefab, abilitySlots[index]);
             shopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);

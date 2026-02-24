@@ -53,15 +53,18 @@ MonoBehaviour:
     Cost: 5
   - Description: I like cheese
     Cost: 5
+  - Description: I like cheese
+    Cost: 5
   ID: 8
-  CurrentLevel: 3
+  CurrentLevel: 2
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  StartUnlocked: 1
+  StartUnlocked: 0
   BindingDisplayString: 
   cooldown: 60
   info: {fileID: 0}
+  latchedDirection: {x: 0, y: 0}
   inwardBoost: 9
   outwardBoost: 13
   verticalSpeed: 16

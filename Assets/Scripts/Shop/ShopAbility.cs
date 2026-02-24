@@ -29,7 +29,7 @@ public class ShopAbility : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
     public void OnPointerEnter(PointerEventData eventData)
     {
         Sprite icon = ability.Icon;
-        string header = $"{ability.Name} (Lvl. {abilityLevel})";
+        string header = $"{ability.Name} (Lvl. {abilityLevel+1})";
         string description = ability.AllLevels[abilityLevel].Description;
 
         ShopManager.Instance.ShowTooltipInfo(icon, header, description);

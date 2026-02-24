@@ -56,12 +56,12 @@ MonoBehaviour:
   - Description: On activation, gain increased movement speed and lower gravity.
       These stats are lost when you teleport.
     Cost: 8
-  ID: 4
+  ID: 5
   CurrentLevel: 2
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  StartUnlocked: 1
+  StartUnlocked: 0
   BindingDisplayString: 
   cooldown: 900
   info: {fileID: 0}

@@ -31,7 +31,9 @@ public class Chronoshift : Ability, IStatSource
     private int keyframeIndex;
 
     [SerializeField] private int warningTime;
-
+    
+    public List<ActivatableEntity> EntitiesToReset;
+    public bool CanTeleport => clone != null;
 
     public override void Start()
     {
@@ -126,8 +128,10 @@ public class Chronoshift : Ability, IStatSource
             stopCloneParticleAction += vfx.PlayParticle(Color.white);
             curCooldown = 10;
             
-                keyframes = new();
-                curKeyframeTime = 0;
+            keyframes = new();
+            curKeyframeTime = 0;
+
+            EntitiesToReset = new();
             
             return false;
         }
@@ -151,9 +155,20 @@ public class Chronoshift : Ability, IStatSource
         curTeleportSpeed = teleportSpeed;
         PlayerMovement.Velocity = Vector2.zero;
 
-        
+        Debug.Log(EntitiesToReset.Count);
+        foreach(ActivatableEntity e in EntitiesToReset) e.ResetEntity();
+
         curKeyframe = keyframes[0];
         keyframeIndex = 0;
+    }
+
+    public void Teleport(List<ChronoshiftKeyframe> keyframes, Vector3 endPos)
+    {
+        clone = Instantiate(clonePrefab, endPos, Quaternion.identity);
+        PlayerVFXTrail vfx = clone.GetComponentInChildren<PlayerVFXTrail>();
+        stopCloneParticleAction += vfx.PlayParticle(Color.white);
+        this.keyframes = keyframes;
+        Teleport();
     }
 
     private void CancelTeleport()

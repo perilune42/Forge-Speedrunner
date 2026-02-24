@@ -11,6 +11,7 @@ public class EntityActivatorHook : ActivatableEntity
 
     public override void OnActivate()
     {
+        base.OnActivate();
         HookedEntity.enabled = true;
     }
 

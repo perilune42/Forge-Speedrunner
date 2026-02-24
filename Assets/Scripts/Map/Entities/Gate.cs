@@ -21,6 +21,7 @@ public class Gate : ActivatableEntity
     public override void OnActivate()
     {
         if (isActivated) return;
+        base.OnActivate();
         isActivated = true;
         isMoving = true;
 

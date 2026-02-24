@@ -21,6 +21,7 @@ public class SpeedGate : ActivatableEntity
     }
     public override void OnActivate()
     {
+        base.OnActivate();
         Break();
     }
     // the reverse of OnActivate

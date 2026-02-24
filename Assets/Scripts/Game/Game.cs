@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -20,6 +21,10 @@ public class Game : Singleton<Game> {
     public bool OverrideStartingRoom;
 
 
+    public List<ChronoshiftKeyframe> ChronoshiftKeyframes;
+    [SerializeField] private int keyframeInterval;
+    private int nextKeyframeTime = 0;
+
     public override void Awake()
     {
         base.Awake();
@@ -32,6 +37,12 @@ public class Game : Singleton<Game> {
     void Start()
     {
         StartGame();
+        nextKeyframeTime = keyframeInterval;
+    }
+
+    void FixedUpdate()
+    {
+        
     }
 
     public void EndGame()
@@ -61,7 +72,7 @@ public class Game : Singleton<Game> {
     {
         ShopManager.Instance.LoadShop(newRound);
         // deactivate all the stuff in the world
-        RoomManager.Instance.gameObject.SetActive(false);
+        //RoomManager.Instance.gameObject.SetActive(false);
         Player.Instance.gameObject.SetActive(false);
 
         // stop the count
@@ -72,7 +83,7 @@ public class Game : Singleton<Game> {
     {
         ShopManager.Instance.CloseShop();
         // reset rooms and player
-        RoomManager.Instance.gameObject.SetActive(true);
+        //RoomManager.Instance.gameObject.SetActive(true);
         RoomManager.Instance.ResetAllEntities();
         Player.Instance.gameObject.SetActive(true);
 

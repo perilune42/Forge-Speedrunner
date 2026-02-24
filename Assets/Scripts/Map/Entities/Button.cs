@@ -52,7 +52,7 @@ public class Button : ActivatableEntity
 
     public override void OnActivate()
     {
-        return;
+        base.OnActivate();
     }
 
     public override void ResetEntity()

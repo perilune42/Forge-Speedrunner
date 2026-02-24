@@ -389,7 +389,9 @@ public class RoomManager : Singleton<RoomManager>
 
         foreach (Room room in AllRooms)
         {
+#if UNITY_EDITOR
             Undo.RecordObject(room.transform, "Grid-align rooms");
+#endif
 
             Vector3 roomPos = room.transform.position;
             roomPos.x = room.gridPosition.x * BaseWidth * 1.2f;
@@ -401,12 +403,14 @@ public class RoomManager : Singleton<RoomManager>
                 e.OnValidate();
             }
         }
+#if UNITY_EDITOR
         foreach (Passage passage in FindObjectsByType<Passage>(FindObjectsSortMode.None))
         {
             var pe = passage.GetComponent<PassageEditor>();
             if (pe != null)
                 pe.FinalizePassage();
         }
+#endif
 
     }
 

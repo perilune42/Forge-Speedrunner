@@ -40,6 +40,7 @@ public class PlaceFinal : IChoiceStrategy
     }
     public Room FindRoom(Direction dir, Offset _off, in HashSet<Room> _createdRooms)
     {
+        Debug.Log("[PlaceFinal.FindRoom] here's the end!");
         if(dir == RIGHT)
             return FinalRoom;
         else

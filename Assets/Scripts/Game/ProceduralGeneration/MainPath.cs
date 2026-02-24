@@ -8,28 +8,29 @@ using static Direction;
 
 public class MainPath : IChoiceStrategy
 {
-    List<Room> RightOnly;
+    List<Room> LeftOnly;
     List<Room> DownOnly;
     Offset current;
     public MainPath(Room[] roomPrefabs)
     {
-        RightOnly = new();
+        LeftOnly = new();
         DownOnly = new();
-        current = new(Int32.MinValue, Int32.MaxValue);
+        current = new(Int32.MinValue, Int32.MinValue);
         for(int i = 0; i < roomPrefabs.Length; i++)
         {
             Room r = roomPrefabs[i];
             List<Doorway> downs = r.doorwaysDown;
-            List<Doorway> rights = r.doorwaysRight;
-            bool hasRight = rights.Any(x => x != null && x.IsExit());
-            bool hasDown = downs.Any(x => x != null && x.IsExit());
-            if(hasRight)
-                RightOnly.Add(r);
+            List<Doorway> lefts = r.doorwaysLeft;
+            bool hasLeft = lefts.Any(x => x != null && x.IsEntrance());
+            bool hasDown = downs.Any(x => x != null && x.IsEntrance());
+            if(hasLeft)
+                LeftOnly.Add(r);
             if(hasDown)
                 DownOnly.Add(r);
         }
-        RightOnly.Shuffle();
+        LeftOnly.Shuffle();
         DownOnly.Shuffle();
+        Debug.Log($"[MainPath.Constructor] have {LeftOnly.Count} rooms with left openings and {DownOnly.Count} rooms with down openings.");
     }
 
     public int SelectIndex(in List<Direction> dirs, in List<Offset> offs)
@@ -53,15 +54,17 @@ public class MainPath : IChoiceStrategy
     {
         // if(off.y > current.y || off.x < current.x)
         //     return null;
+        //
+        Debug.Log($"[MainPath.FindRoom] looking at {dir}, {off}.");
 
-        if(dir == LEFT || dir == UP)
+        if(dir == LEFT || dir == DOWN)
             return null;
 
         List<Room> firstList; List<Room> secondList;
         int ind = UnityEngine.Random.Range(0, 2);
         (firstList, secondList) = ind == 1
-            ? (RightOnly, DownOnly)
-            : (DownOnly, RightOnly);
+            ? (LeftOnly, DownOnly)
+            : (DownOnly, LeftOnly);
 
         if(firstList.Count <= 0 && secondList.Count <= 0)
             return null;
@@ -71,7 +74,7 @@ public class MainPath : IChoiceStrategy
         for(int i = 0; i < firstList.Count; i++)
         {
             Room r = firstList[i];
-            if(off.y - r.size.y > current.y || off.x < current.x)
+            if(off.y < current.y || off.x < current.x || placedRooms.Contains(r))
                 continue;
             List<Doorway> doors = DirMethods.matchingDir(opposite, r);
             if(doors.Any(x => x != null))
@@ -84,7 +87,7 @@ public class MainPath : IChoiceStrategy
         for(int i = 0; i < secondList.Count; i++)
         {
             Room r = secondList[i];
-            if(off.y - r.size.y > current.y || off.x < current.x)
+            if(off.y < current.y || off.x < current.x)
                 continue;
             List<Doorway> doors = DirMethods.matchingDir(opposite, r);
             if(doors.Any(x => x != null))

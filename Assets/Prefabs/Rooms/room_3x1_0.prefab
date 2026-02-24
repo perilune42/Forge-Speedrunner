@@ -2538,7 +2538,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -892841866, guid: a3058c2f9f930e849b3889460f527cc8, type: 3}
+  m_Sprite: {fileID: -344614536, guid: a3058c2f9f930e849b3889460f527cc8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4577,6 +4577,10 @@ PrefabInstance:
     - target: {fileID: 24073935531169170, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
       propertyPath: m_Name
       value: room_3x1_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494245552063157672, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
+      propertyPath: Type
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2573734050967329908, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
       propertyPath: m_Size.x
@@ -77108,11 +77112,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7293095405027152141, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 32.000015
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 8659609106050339610, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 32.000015
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 9005955553080816133, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
       propertyPath: gridPosition.x

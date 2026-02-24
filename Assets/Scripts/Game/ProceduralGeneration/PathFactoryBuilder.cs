@@ -8,25 +8,37 @@ using static Direction;
 
 public class PathFactoryBuilder
 {
-    private GenStack stack;
-    private Grid grid;
     private Room start;
     private Room finish;
-    private List<(IChoiceStrategy, int)> actions;
+    private List<(IChoiceStrategy, int, bool)> actions;
+    private int min;
+    private bool onePath;
     public PathFactoryBuilder()
     {
         // TODO: initialize stack with strategy pattern class to pick doorway
-        stack = new();
-        grid = new();
         actions = new();
         start = null;
         finish = null;
+        onePath = false;
+    }
+    public PathFactoryBuilder WithMin(int min)
+    {
+        this.min = min;
+        return this;
+    }
+    public PathFactoryBuilder OnePath()
+    {
+        onePath = true;
+        return this;
+    }
+    public PathFactoryBuilder ManyPath()
+    {
+        onePath = false;
+        return this;
     }
     public PathFactoryBuilder WithStartRoom(Room room)
     {
         start = room;
-        stack.extractAll(room, new Offset(0,0));
-        grid.InsertRoom(room, new Offset(0,0));
         return this;
     }
     public PathFactoryBuilder WithFinishRoom(Room room)
@@ -36,10 +48,10 @@ public class PathFactoryBuilder
     }
     public PathFactoryBuilder WithAlgorithm(IChoiceStrategy strategy, int pathLength)
     {
-        actions.Add((strategy, pathLength));
+        actions.Add((strategy, pathLength, onePath));
         return this;
     }
-    private int GenerateWith(IChoiceStrategy strategy, int pathLength, HashSet<Room> placedRooms)
+    private int GenerateWith(IChoiceStrategy strategy, bool shouldCannibalize, GenStack stack, Grid grid, int pathLength, HashSet<Room> placedRooms)
     {
         // spots that were rejected by strategy
         GenStack rejectedStack = new();
@@ -58,6 +70,7 @@ public class PathFactoryBuilder
             Room possibleRoom = strategy.FindRoom(dir, off, in placedRooms);
             if(possibleRoom == null)
             {
+                Debug.Log($"[GenerateWith] rejecting {dir}, {off}, due to strategy.");
                 rejectedStack.PutBack(dir, off);
                 continue;
             }
@@ -68,7 +81,8 @@ public class PathFactoryBuilder
             {
                 Debug.Log($"[GenerateWith] room fit at coord {botleft}");
                 bool x = grid.InsertRoom(possibleRoom, botleft);
-                // stack.Clear(); 
+                if(shouldCannibalize)
+                    rejectedStack.Cannibalize(stack);
                 stack.extractAll(possibleRoom, botleft);
                 placedRooms.Add(possibleRoom);
                 numCreated += 1;
@@ -86,22 +100,36 @@ public class PathFactoryBuilder
 
     public PathCreator Finalize()
     {
-        int numSteps = 1;
-        foreach((IChoiceStrategy strategy, int pathSize) in actions)
+        int numTries = 1;
+
+        Grid maxGrid = new();
+
+        for(int j = 0; maxGrid.uniqueCells.Count < min && j < 5; j++)
         {
-            Debug.Log($"[Finalize] Algorithm {numSteps++}");
-            HashSet<Room> placedRooms = new();
-            int genSize = 0;
-            int cnt = 1;
-            int i;
-            do
+            Debug.Log($"[Finalize] Try {numTries++}:");
+            int numSteps = 1;
+            GenStack stack = new();
+            Grid grid = new();
+            stack.extractAll(start, new Offset(0,0));
+            grid.InsertRoom(start, new Offset(0,0));
+            foreach((IChoiceStrategy strategy, int pathSize, bool actionOnePath) in actions)
             {
-                Debug.Log($"[Finalize] algorithm run {cnt++}");
-                i = GenerateWith(strategy, pathSize-genSize, placedRooms);
-                genSize += i;
-            } while (i > 0 && genSize < pathSize);
+                Debug.Log($"[Finalize] Algorithm {numSteps++}");
+                HashSet<Room> placedRooms = new();
+                int genSize = 0;
+                int cnt = 1;
+                int i;
+                do
+                {
+                    Debug.Log($"[Finalize] algorithm run {cnt++}");
+                    i = GenerateWith(strategy, actionOnePath, stack, grid, pathSize-genSize, placedRooms);
+                    genSize += i;
+                } while (i > 0 && genSize < pathSize);
+            }
+            if(maxGrid.uniqueCells.Count < grid.uniqueCells.Count)
+                maxGrid = grid;
         }
 
-        return grid.ProduceCreator();
+        return maxGrid.ProduceCreator();
     }
 }

@@ -107,12 +107,6 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Sprite icon = ability.Icon;
-        string header;
-        if (levelToUpgrade > 0) header = $"{ability.Name} (Lvl. {levelToUpgrade} -> {levelToUpgrade + 1})";
-        else header = $"{ability.name} (Lvl. 1)";
-        string description = ability.AllLevels[levelToUpgrade].Description;
-
-        ShopManager.Instance.ShowTooltipInfo(icon, header, description);
+        ShopManager.Instance.ShowTooltipInfo(ability, levelToUpgrade, true);
     }
 }

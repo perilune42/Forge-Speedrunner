@@ -147,7 +147,7 @@ MonoBehaviour:
   - Description: I like cheese
     Cost: 5
   ID: 4
-  CurrentLevel: 1
+  CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0

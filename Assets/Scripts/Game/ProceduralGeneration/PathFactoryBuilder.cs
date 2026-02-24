@@ -8,25 +8,25 @@ using static Direction;
 
 public class PathFactoryBuilder
 {
-    private GenStack stack;
-    private Grid grid;
     private Room start;
     private Room finish;
     private List<(IChoiceStrategy, int)> actions;
+    private int min;
     public PathFactoryBuilder()
     {
         // TODO: initialize stack with strategy pattern class to pick doorway
-        stack = new();
-        grid = new();
         actions = new();
         start = null;
         finish = null;
     }
+    public PathFactoryBuilder WithMin(int min)
+    {
+        this.min = min;
+        return this;
+    }
     public PathFactoryBuilder WithStartRoom(Room room)
     {
         start = room;
-        stack.extractAll(room, new Offset(0,0));
-        grid.InsertRoom(room, new Offset(0,0));
         return this;
     }
     public PathFactoryBuilder WithFinishRoom(Room room)
@@ -39,7 +39,7 @@ public class PathFactoryBuilder
         actions.Add((strategy, pathLength));
         return this;
     }
-    private int GenerateWith(IChoiceStrategy strategy, int pathLength, HashSet<Room> placedRooms)
+    private int GenerateWith(IChoiceStrategy strategy, GenStack stack, Grid grid, int pathLength, HashSet<Room> placedRooms)
     {
         // spots that were rejected by strategy
         GenStack rejectedStack = new();
@@ -87,22 +87,36 @@ public class PathFactoryBuilder
 
     public PathCreator Finalize()
     {
-        int numSteps = 1;
-        foreach((IChoiceStrategy strategy, int pathSize) in actions)
+        int numTries = 1;
+
+        Grid maxGrid = new();
+
+        for(int j = 0; maxGrid.uniqueCells.Count < min && j < 5; j++)
         {
-            Debug.Log($"[Finalize] Algorithm {numSteps++}");
-            HashSet<Room> placedRooms = new();
-            int genSize = 0;
-            int cnt = 1;
-            int i;
-            do
+            Debug.Log($"[Finalize] Try {numTries++}:");
+            int numSteps = 1;
+            GenStack stack = new();
+            Grid grid = new();
+            stack.extractAll(start, new Offset(0,0));
+            grid.InsertRoom(start, new Offset(0,0));
+            foreach((IChoiceStrategy strategy, int pathSize) in actions)
             {
-                Debug.Log($"[Finalize] algorithm run {cnt++}");
-                i = GenerateWith(strategy, pathSize-genSize, placedRooms);
-                genSize += i;
-            } while (i > 0 && genSize < pathSize);
+                Debug.Log($"[Finalize] Algorithm {numSteps++}");
+                HashSet<Room> placedRooms = new();
+                int genSize = 0;
+                int cnt = 1;
+                int i;
+                do
+                {
+                    Debug.Log($"[Finalize] algorithm run {cnt++}");
+                    i = GenerateWith(strategy, stack, grid, pathSize-genSize, placedRooms);
+                    genSize += i;
+                } while (i > 0 && genSize < pathSize);
+            }
+            if(maxGrid.uniqueCells.Count < grid.uniqueCells.Count)
+                maxGrid = grid;
         }
 
-        return grid.ProduceCreator();
+        return maxGrid.ProduceCreator();
     }
 }

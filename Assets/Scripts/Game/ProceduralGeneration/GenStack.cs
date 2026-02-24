@@ -69,7 +69,7 @@ public class GenStack
                 newOffset.x += i;
 
             newOffset = DirMethods.calcOffset(newOffset, facingDir);
-            if(door == null || door.IsEntrance())
+            if(door == null || (door.IsEntrance() && !door.IsExit()))
             {
                 string errmsg = door == null ? "door null" : "door is entrance";
                 Debug.Log($"[extractFrom] ignoring {facingDir}, {newOffset}: {errmsg}");

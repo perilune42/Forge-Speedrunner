@@ -87,7 +87,7 @@ public class MainPath : IChoiceStrategy
         for(int i = 0; i < secondList.Count; i++)
         {
             Room r = secondList[i];
-            if(off.y - r.size.y < current.y || off.x < current.x)
+            if(off.y < current.y || off.x < current.x)
                 continue;
             List<Doorway> doors = DirMethods.matchingDir(opposite, r);
             if(doors.Any(x => x != null))

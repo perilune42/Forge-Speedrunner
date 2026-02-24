@@ -6,18 +6,18 @@ using static Direction;
 /* Construct path once the rooms actually exist.
  * This replaces List<Cell> as a return type in IPathGenerator
  */
+public struct Connection
+{
+    public Cell Source;
+    public Cell Sink;
+    public int SourceInd;
+    public int SinkInd;
+    public Direction ConnectionDir;
+}
 public class PathCreator
 {
-    internal struct Connection
-    {
-        public Cell Source;
-        public Cell Sink;
-        public int SourceInd;
-        public int SinkInd;
-        public Direction ConnectionDir;
-    }
-    private List<Cell> Cells;
-    private List<Connection> Connections;
+    public List<Cell> Cells;
+    public List<Connection> Connections;
     private Transform roomParent;
     public GameObject PassPrefab;
 

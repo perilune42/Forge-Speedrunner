@@ -2,6 +2,13 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
+public enum FailType
+{
+    NO_FIN,
+    UNDER_MIN,
+    DEAD_ENDS,
+}
+
 public class MapGen : MonoBehaviour
 {
     public IPathGenerator pathGen;
@@ -10,12 +17,69 @@ public class MapGen : MonoBehaviour
     public GameObject PassPrefab; 
     public int pathSize;
     public int pathMin;
+    public List<(PathCreator, FailType)> FailedRunsDebug = new();
+    public int NumFails = 0;
+    public int CheckThis=0;
 
     [SerializeField] GameRegistry gameRegistry;
 
     void Awake()
     {
 
+    }
+    public void Test()
+    {
+        // test for placing final room
+        FailedRunsDebug = new();
+        Room[] roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
+        Room start = gameRegistry.StartRoom.GetComponent<Room>();
+        Room finish = gameRegistry.FinishRoom.GetComponent<Room>();
+        for(int i = 0; i < 100; i++)
+        {
+            Debug.Log($"[TEST] test {i}:");
+            PathCreator pc = new PathFactoryBuilder()
+                .WithStartRoom(start)
+                .WithMin(pathMin)
+                .OnePath()
+                // .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
+                .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
+                .WithAlgorithm(new BufferOption(roomPrefabs), 1)
+                .WithAlgorithm(new PlaceFinal(finish), 1)
+                .Finalize();
+            Room r = pc.Cells[pc.Cells.Count-1].room;
+            if(r != finish)
+                FailedRunsDebug.Add((pc, FailType.NO_FIN));
+            if(pc.Cells.Count < pathMin)
+                FailedRunsDebug.Add((pc, FailType.UNDER_MIN));
+
+            Dictionary<Vector2Int, int> numNeighbors = new();
+            foreach(Cell c in pc.Cells)
+                numNeighbors.Add(c.offset, 0);
+
+            foreach(Connection conn in pc.Connections)
+            {
+                numNeighbors[conn.Source.offset] += 1;
+            }
+            foreach(int num in numNeighbors.Values)
+                if(num > 2)
+                {
+                    FailedRunsDebug.Add((pc, FailType.DEAD_ENDS));
+                    break;
+                }
+        }
+        NumFails = FailedRunsDebug.Count;
+    }
+    public void CreateFailedTest(int ind)
+    {
+        if(ind < 0 || ind >= FailedRunsDebug.Count)
+        {
+            Debug.Log("Can't create this one! out of bounds.");
+            return;
+        }
+        PathCreator pc; FailType fail;
+        (pc, fail) = FailedRunsDebug[ind];
+        (createdRooms, createdPassages) = pc.Create();
+        Debug.Log($"Fail type: {fail}");
     }
     public (List<Room>, List<Passage>) CreateMap()
     {

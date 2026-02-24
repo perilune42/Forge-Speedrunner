@@ -57,7 +57,7 @@ MonoBehaviour:
       These stats are lost when you teleport.
     Cost: 8
   ID: 5
-  CurrentLevel: 2
+  CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0

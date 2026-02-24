@@ -55,11 +55,11 @@ MonoBehaviour:
       speed.
     Cost: 8
   ID: 3
-  CurrentLevel: 2
+  CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  StartUnlocked: 1
+  StartUnlocked: 0
   BindingDisplayString: 
   cooldown: 1500
   info: {fileID: 0}

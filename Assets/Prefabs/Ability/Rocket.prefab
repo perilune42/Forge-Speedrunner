@@ -56,7 +56,7 @@ MonoBehaviour:
       speed, at the cost of your steering.
     Cost: 12
   ID: 7
-  CurrentLevel: 2
+  CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0

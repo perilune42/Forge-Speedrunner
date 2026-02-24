@@ -62,8 +62,6 @@ public class GenStack
         for(int i = 0; i < roomDoors.Count; i++)
         {
             Doorway door = roomDoors[i];
-            if(door == null || door.IsEntrance()) continue;
-
             Offset newOffset = startingOffset;
             if(facingDir == LEFT || facingDir == RIGHT)
                 newOffset.y += i;
@@ -71,6 +69,13 @@ public class GenStack
                 newOffset.x += i;
 
             newOffset = DirMethods.calcOffset(newOffset, facingDir);
+            if(door == null || (door.IsEntrance() && !door.IsExit()))
+            {
+                string errmsg = door == null ? "door null" : "door is entrance";
+                Debug.Log($"[extractFrom] ignoring {facingDir}, {newOffset}: {errmsg}");
+                continue;
+            }
+            Debug.Log($"[extractFrom] taking {facingDir}, {newOffset}.");
 
             dirs.Add(facingDir);
             offsets.Add(newOffset);

@@ -1,10 +1,11 @@
-using UnityEngine;
+using NUnit.Framework.Constraints;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework.Constraints;
-using Unity.VisualScripting;
 using Unity.Cinemachine;
-using System.Collections;
+using Unity.VisualScripting;
+using UnityEditor;
+using UnityEngine;
 
 public class RoomManager : Singleton<RoomManager>
 {
@@ -44,7 +45,8 @@ public class RoomManager : Singleton<RoomManager>
 
     public bool TransitionOngoing = false;
 
-    [SerializeField] bool allRoomsDiscovered = false;   
+    
+    
 
     public Vector2 RespawnPosition { get => respawnPosition; set { 
             respawnPosition = value;
@@ -73,7 +75,7 @@ public class RoomManager : Singleton<RoomManager>
         // Set room to visited
         originalRoom.visited = true;
 
-        if (allRoomsDiscovered)
+        if (Game.Instance.AllRoomsDiscovered)
         {
             foreach (var room in AllRooms)
             {
@@ -88,9 +90,11 @@ public class RoomManager : Singleton<RoomManager>
             {
                 Debug.LogError($"Passage: {pass.name} is invalid!");
             }
+
+
             pass.door1.passage = pass;
             pass.door2.passage = pass;
-            if (allRoomsDiscovered) pass.visited = true;
+            if (Game.Instance.AllRoomsDiscovered) pass.visited = true;
         }
         
     }
@@ -377,6 +381,33 @@ public class RoomManager : Singleton<RoomManager>
         Vector2 relPos = new (unscaledRelPos.x / (room.size.x * BaseWidth),
                               unscaledRelPos.y / (room.size.y * BaseHeight));
         return relPos;
+    }
+
+    public void FinalizeRooms()
+    {
+        AllRooms = FindObjectsByType<Room>(FindObjectsSortMode.InstanceID).ToList();
+
+        foreach (Room room in AllRooms)
+        {
+            Undo.RecordObject(room.transform, "Grid-align rooms");
+
+            Vector3 roomPos = room.transform.position;
+            roomPos.x = room.gridPosition.x * BaseWidth * 1.2f;
+            roomPos.y = room.gridPosition.y * BaseHeight * 1.2f;
+            room.transform.position = roomPos;
+
+            foreach (var e in room.Entities)
+            {
+                e.OnValidate();
+            }
+        }
+        foreach (Passage passage in FindObjectsByType<Passage>(FindObjectsSortMode.None))
+        {
+            var pe = passage.GetComponent<PassageEditor>();
+            if (pe != null)
+                pe.FinalizePassage();
+        }
+
     }
 
 }

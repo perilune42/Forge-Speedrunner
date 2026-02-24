@@ -3162,6 +3162,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: room_1x1_1
       objectReference: {fileID: 0}
+    - target: {fileID: 6731073641933293876, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: Type
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7227156499082401750, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Size.x
       value: 98
@@ -43621,6 +43625,10 @@ PrefabInstance:
     - target: {fileID: 8657098958764206884, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Tiles.Array.data[9].second.m_TileObjectToInstantiateIndex
       value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 8723151164228887288, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: Type
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

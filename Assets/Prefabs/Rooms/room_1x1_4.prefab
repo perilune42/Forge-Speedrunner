@@ -710,7 +710,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1928248093444279697, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 64.50003
+      value: 64.5
       objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: 'doorwaysUp.Array.data[0]'
@@ -743,6 +743,10 @@ PrefabInstance:
     - target: {fileID: 6612986043427267266, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Name
       value: room_1x1_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6731073641933293876, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: Type
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7227156499082401750, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Size.x

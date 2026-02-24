@@ -19,6 +19,12 @@ public class Game : Singleton<Game> {
     public float RewardMultPerRound;
 
     public bool OverrideStartingRoom;
+    [SerializeField] bool enableRandomMap = true;
+    public bool AllRoomsDiscovered = false;
+    public MapGen Generator;
+
+    [SerializeField] private RoomManager roomManagerRef;
+    
 
 
     public List<ChronoshiftKeyframe> ChronoshiftKeyframes;
@@ -28,9 +34,17 @@ public class Game : Singleton<Game> {
     public override void Awake()
     {
         base.Awake();
-        if (MainMenu.GenerateNewMap)
+        //if (MainMenu.GenerateNewMap)
+        if (enableRandomMap)
         {
             OverrideStartingRoom = false;
+            var (rooms, passages) = Generator.CreateMap();
+
+            roomManagerRef.AllPassages = passages.ToArray();
+            roomManagerRef.FinalizeRooms();
+
+            roomManagerRef.StartingRoom = rooms[0];
+            roomManagerRef.StartingSpawn = roomManagerRef.StartingRoom.GetComponent<SpawnRoom>().SpawnPoint;
         }
     }
 

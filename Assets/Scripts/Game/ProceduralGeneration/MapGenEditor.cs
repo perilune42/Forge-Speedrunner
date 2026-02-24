@@ -17,11 +17,6 @@ public class MapGenEditor_Inspector : Editor
         {
             mg.DeleteMap();
         }
-        else if(GUILayout.Button("DEBUG: awake the registry"))
-        {
-            Debug.Log("awaken!");
-            GameRegistry.Instance.Awake();
-        }
     }
 }
 #endif

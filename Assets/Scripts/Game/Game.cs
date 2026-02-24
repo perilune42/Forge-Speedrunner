@@ -16,6 +16,18 @@ public class Game : Singleton<Game> {
     public float MinReward = 10f;
     public float RewardMultPerRound = 1.15f;
 
+    public bool OverrideStartingRoom;
+
+    public override void Awake()
+    {
+        base.Awake();
+        if (MainMenu.GenerateNewMap)
+        {
+            OverrideStartingRoom = false;
+        }
+    }
+
+
     public void FinishRound()
     {
         Timer.RecordTime();

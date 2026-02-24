@@ -20,25 +20,37 @@ public class MapGen : MonoBehaviour
     {
 
     }
-    public void Test()
+    private PathFactoryBuilder defaultBuilder()
     {
-        // test for placing final room
-        FailedRunsDebug = new();
         Room[] roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
         Room start = gameRegistry.StartRoom.GetComponent<Room>();
         Room finish = gameRegistry.FinishRoom.GetComponent<Room>();
-        for(int i = 0; i < 100; i++)
-        {
-            Debug.Log($"[TEST] test {i}:");
-            PathCreator pc = new PathFactoryBuilder()
+        return new PathFactoryBuilder()
                 .WithStartRoom(start)
                 .WithMin(pathMin)
                 .OnePath()
                 // .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
                 .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
                 .WithAlgorithm(new BufferOption(roomPrefabs), 1)
-                .WithAlgorithm(new PlaceFinal(finish), 1)
-                .Finalize();
+                .WithAlgorithm(new PlaceFinal(finish), 1);
+
+    }
+    private PathCreator runAlg()
+    {
+        return defaultBuilder().Finalize();
+    }
+    private PathCreator runUntilCorrect()
+    {
+        return defaultBuilder().FinalizeUntilCorrect();
+    }
+    public void Test()
+    {
+        // test for placing final room
+        FailedRunsDebug = new();
+        for(int i = 0; i < 100; i++)
+        {
+            Debug.Log($"[TEST] test {i}:");
+            PathCreator pc = runAlg();
             Status pcStatus = pc.Validate(finish, pathMin);
             if(pcStatus != Status.ALL_CLEAR)
                 FailedRunsDebug.Add((pc, pcStatus));
@@ -100,24 +112,7 @@ public class MapGen : MonoBehaviour
         //     .WithAlgorithm(new PlaceFinal(finish), 1)
         //     .Finalize();
 
-        Debug.Log("[MapGen] Up to random choice:");
-        PathFactoryBuilder bld = new PathFactoryBuilder()
-            .WithStartRoom(start)
-            .WithMin(pathMin)
-            .OnePath()
-            .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize);
-
-        Debug.Log("[MapGen] Buffer option:");
-        bld = bld.WithAlgorithm(new BufferOption(roomPrefabs), 1);
-
-        Debug.Log("[MapGen] Place final:");
-        bld = bld.WithAlgorithm(new PlaceFinal(finish), 1);
-
-
-        PathCreator pc = bld.FinalizeUntilCorrect();
-
-        pc.PassPrefab = this.PassPrefab;
-        pc.RegisterParent(transform);
+        pc = runUntilCorrect();
 
         (createdRooms, createdPassages) = pc.Create();
         // Debug.Log("[CreateMap] why create anything? i think we are just fine the way we are...");

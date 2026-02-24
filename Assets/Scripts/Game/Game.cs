@@ -17,6 +17,7 @@ public class Game : Singleton<Game> {
     public float RewardMultPerRound = 1.15f;
 
     public bool OverrideStartingRoom;
+    public MapGen Generator;
 
     public override void Awake()
     {
@@ -24,6 +25,7 @@ public class Game : Singleton<Game> {
         if (MainMenu.GenerateNewMap)
         {
             OverrideStartingRoom = false;
+            Generator.CreateMap();
         }
     }
 

@@ -9,6 +9,7 @@ public class MapGen : MonoBehaviour
     public List<Passage> passagesDebug;
     public GameObject PassPrefab; 
     public int pathSize;
+    public int pathMin;
 
     [SerializeField] GameRegistry gameRegistry;
 
@@ -29,7 +30,9 @@ public class MapGen : MonoBehaviour
 
         PathCreator pc = new PathFactoryBuilder()
             .WithStartRoom(start)
-            .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
+            .WithMin(pathMin)
+            .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
+            .WithAlgorithm(new BufferOption(roomPrefabs), 1)
             .WithAlgorithm(new PlaceFinal(finish), 1)
             .Finalize();
 

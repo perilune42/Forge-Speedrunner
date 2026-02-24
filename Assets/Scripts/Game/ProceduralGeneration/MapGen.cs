@@ -2,13 +2,6 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public enum FailType
-{
-    NO_FIN,
-    UNDER_MIN,
-    DEAD_ENDS,
-}
-
 public class MapGen : MonoBehaviour
 {
     public IPathGenerator pathGen;
@@ -17,7 +10,7 @@ public class MapGen : MonoBehaviour
     public GameObject PassPrefab; 
     public int pathSize;
     public int pathMin;
-    public List<(PathCreator, FailType)> FailedRunsDebug = new();
+    public List<(PathCreator, Status)> FailedRunsDebug = new();
     public int NumFails = 0;
     public int CheckThis=0;
 
@@ -46,26 +39,29 @@ public class MapGen : MonoBehaviour
                 .WithAlgorithm(new BufferOption(roomPrefabs), 1)
                 .WithAlgorithm(new PlaceFinal(finish), 1)
                 .Finalize();
-            Room r = pc.Cells[pc.Cells.Count-1].room;
-            if(r != finish)
-                FailedRunsDebug.Add((pc, FailType.NO_FIN));
-            if(pc.Cells.Count < pathMin)
-                FailedRunsDebug.Add((pc, FailType.UNDER_MIN));
+            Status pcStatus = pc.Validate(finish, pathMin);
+            if(pcStatus != Status.ALL_CLEAR)
+                FailedRunsDebug.Add((pc, pcStatus));
+            // Room r = pc.Cells[pc.Cells.Count-1].room;
+            // if(r != finish)
+            //     FailedRunsDebug.Add((pc, FailType.NO_FIN));
+            // if(pc.Cells.Count < pathMin)
+            //     FailedRunsDebug.Add((pc, FailType.UNDER_MIN));
 
-            Dictionary<Vector2Int, int> numNeighbors = new();
-            foreach(Cell c in pc.Cells)
-                numNeighbors.Add(c.offset, 0);
+            // Dictionary<Vector2Int, int> numNeighbors = new();
+            // foreach(Cell c in pc.Cells)
+            //     numNeighbors.Add(c.offset, 0);
 
-            foreach(Connection conn in pc.Connections)
-            {
-                numNeighbors[conn.Source.offset] += 1;
-            }
-            foreach(int num in numNeighbors.Values)
-                if(num > 2)
-                {
-                    FailedRunsDebug.Add((pc, FailType.DEAD_ENDS));
-                    break;
-                }
+            // foreach(Connection conn in pc.Connections)
+            // {
+            //     numNeighbors[conn.Source.offset] += 1;
+            // }
+            // foreach(int num in numNeighbors.Values)
+            //     if(num > 2)
+            //     {
+            //         FailedRunsDebug.Add((pc, FailType.DEAD_ENDS));
+            //         break;
+            //     }
         }
         NumFails = FailedRunsDebug.Count;
     }
@@ -76,7 +72,7 @@ public class MapGen : MonoBehaviour
             Debug.Log("Can't create this one! out of bounds.");
             return;
         }
-        PathCreator pc; FailType fail;
+        PathCreator pc; Status fail;
         (pc, fail) = FailedRunsDebug[ind];
         (createdRooms, createdPassages) = pc.Create();
         Debug.Log($"Fail type: {fail}");

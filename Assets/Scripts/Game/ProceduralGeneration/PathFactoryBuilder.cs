@@ -103,6 +103,7 @@ public class PathFactoryBuilder
         int numTries = 1;
 
         Grid maxGrid = new();
+        PathCreator pc = null;
 
         for(int j = 0; maxGrid.uniqueCells.Count < min && j < 5; j++)
         {

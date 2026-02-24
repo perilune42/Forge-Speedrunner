@@ -14,6 +14,13 @@ public struct Connection
     public int SinkInd;
     public Direction ConnectionDir;
 }
+public enum Status
+{
+    NO_FIN,
+    UNDER_MIN,
+    DEAD_ENDS,
+    ALL_CLEAR,
+}
 public class PathCreator
 {
     public List<Cell> Cells;
@@ -114,5 +121,26 @@ public class PathCreator
             roomsTemp.Add(r);
 
         return (roomsTemp, passages);
+    }
+    public Status Validate(Room finishRoom, int pathMin)
+    {
+        Room r = Cells[Cells.Count-1].room;
+        if(r != finishRoom)
+            return Status.NO_FIN;
+        if(Cells.Count < pathMin)
+            return Status.UNDER_MIN;
+
+        Dictionary<Vector2Int, int> numNeighbors = new();
+        foreach(Cell c in Cells)
+            numNeighbors.Add(c.offset, 0);
+
+        foreach(Connection conn in Connections)
+        {
+            numNeighbors[conn.Source.offset] += 1;
+        }
+        foreach(int num in numNeighbors.Values)
+            if(num > 2)
+                return Status.DEAD_ENDS;
+        return Status.ALL_CLEAR;
     }
 }

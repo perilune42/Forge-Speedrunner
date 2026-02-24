@@ -451,21 +451,21 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      grapplehook_0: 784352075
-      grapplehook_1: -1667812053
-      grapplehook_10: -1376805623
-      grapplehook_11: 2004590518
-      grapplehook_12: 2035741108
-      grapplehook_13: -1919656135
-      grapplehook_14: 1787827579
-      grapplehook_2: 1760886797
-      grapplehook_3: -809222042
-      grapplehook_4: -282031222
-      grapplehook_5: 2028244880
-      grapplehook_6: 1526862284
-      grapplehook_7: 224735294
-      grapplehook_8: 414513701
-      grapplehook_9: -1655103633
+      grapplehook_0: -955572458
+      grapplehook_1: -2059249294
+      grapplehook_10: 6804891
+      grapplehook_11: 1541828826
+      grapplehook_12: 898278880
+      grapplehook_13: -1806537287
+      grapplehook_14: -240644473
+      grapplehook_2: 1957377412
+      grapplehook_3: -1902369069
+      grapplehook_4: -1235493420
+      grapplehook_5: -1476649710
+      grapplehook_6: 1771168723
+      grapplehook_7: -1298122017
+      grapplehook_8: -1681758214
+      grapplehook_9: 1844913328
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -15,6 +15,7 @@ public class Chronoshift : Ability, IStatSource
     private float curTeleportSpeed;
     private GameObject clone;
     private Action stopCloneParticleAction;
+    private Vector2 storedRespawnPos;
 
     [SerializeField] private Volume volume;
     private LiftGammaGain gamma;
@@ -92,7 +93,7 @@ public class Chronoshift : Ability, IStatSource
             {
                 HandlePostProcessing(1f - (float)curTeleportTime / warningTime);
             }
-            if (curTeleportTime == 0)
+            if (curTeleportTime <= 0)
             {
                 Teleport();
             }
@@ -140,6 +141,7 @@ public class Chronoshift : Ability, IStatSource
         if (clone == null) return;
         PlayerMovement.GravityMultiplier.Multipliers[this] = 0f;
         PlayerMovement.SpecialState = SpecialState.Chronoshift;
+        storedRespawnPos = RoomManager.Instance.RespawnPosition;
         HandlePostProcessing(1f);
         stopParticleAction += PlayerVFXTrail.PlayParticle(Color.white);
         PlayerMovement.SurfaceCollider.enabled = false;
@@ -154,7 +156,9 @@ public class Chronoshift : Ability, IStatSource
     private void CancelTeleport()
     {
         stopCloneParticleAction?.Invoke();
+        RoomManager.Instance.RespawnPosition = storedRespawnPos;
         Destroy(clone);
+        clone = null;
         HandlePostProcessing(0f);
         PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
         stopParticleAction?.Invoke();

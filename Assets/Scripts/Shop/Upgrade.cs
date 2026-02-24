@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+
 public class Upgrade : MonoBehaviour, IPointerEnterHandler
 {
     public bool IsBought;
@@ -11,7 +12,8 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     private Ability ability;
     private int levelToUpgrade;
     private bool usesCharges;
-    
+
+    [SerializeField] private UnityEngine.UI.Button button;
     [SerializeField] private Image UpgradeImage;
     [SerializeField] private TMP_Text NameText;
     [SerializeField] private TMP_Text CostText;
@@ -20,16 +22,23 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     private int cost => ability.AllLevels[levelToUpgrade].Cost;
     private bool HasEnoughMoney => ShopManager.Instance.Money - cost >= 0;
     private bool CanBuy => !IsBought && HasEnoughMoney;
+    
+
 
     private void Update()
     {
+        // can only buy if you already have the ability, or can fit a new one
+        bool canFitAbility = isTool || AbilityManager.Instance.PlayerAbilities.ContainsKey(ability.ID)
+                             || AbilityManager.Instance.PlayerAbilities.Count < 5;
+
         // TODO - optimize
-        if (CanBuy)
+        if (CanBuy && canFitAbility)
         {
             UpgradeImage.color = Color.white;
             if (!isTool) NameText.color = Color.white;
             CostText.color = Color.white;
             if (!isTool) ChargeText.color = Color.white;
+            button.interactable = true;
         }
         else
         {
@@ -37,6 +46,12 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
             if (!isTool) NameText.color = Color.lightGray;
             CostText.color = Color.lightGray;
             if (!isTool) ChargeText.color = Color.lightGray;
+            button.interactable = false;
+        }
+
+        if (!canFitAbility)
+        {
+            CostText.text = "FULL";
         }
     }
 
@@ -85,7 +100,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
         // Set UI elements
         UpgradeImage.sprite = ability.Icon;
-        if (!isTool) NameText.text = $"{ability.Name} (Lvl. {level})";
+        if (!isTool) NameText.text = $"{ability.Name} (Lvl. {level+1})";
         CostText.text = $"${cost}";
         if (!isTool) ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
     }
@@ -94,8 +109,8 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     {
         Sprite icon = ability.Icon;
         string header;
-        if (levelToUpgrade > 0) header = $"{ability.Name} (Lvl. {levelToUpgrade - 1} -> {levelToUpgrade})";
-        else header = $"{ability.name} (Lvl. 0)";
+        if (levelToUpgrade > 0) header = $"{ability.Name} (Lvl. {levelToUpgrade} -> {levelToUpgrade + 1})";
+        else header = $"{ability.name} (Lvl. 1)";
         string description = ability.AllLevels[levelToUpgrade].Description;
 
         ShopManager.Instance.ShowTooltipInfo(icon, header, description);

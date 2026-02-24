@@ -53,6 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Upgrade
   IsBought: 0
+  button: {fileID: 8363788472246593245}
   UpgradeImage: {fileID: 1193673274505713157}
   NameText: {fileID: 0}
   CostText: {fileID: 3569693922922687777}

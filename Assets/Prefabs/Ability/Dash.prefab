@@ -51,6 +51,8 @@ MonoBehaviour:
     Cost: 0
   - Description: I like cheese
     Cost: 5
+  - Description: I like cheese
+    Cost: 5
   ID: 0
   CurrentLevel: 2
   CurCharges: 0

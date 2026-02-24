@@ -180,9 +180,7 @@ public class FullscreenMapUI : MonoBehaviour
                     GameObject passageObj = Instantiate(passageImage, transform).GameObject();
                     RectTransform passageRect = passageObj.GetComponent<RectTransform>();
                     passageRect.localPosition = relPos;
-                    passageRect.sizeDelta = 
-                        new Vector2(relativeSize.x/(width*room.size.x) * passageSize.x, 
-                        relativeSize.y/(height*room.size.y) * passageSize.y);
+                    passageRect.sizeDelta = passageSize;
                     if (dir == Vector2.down)
                     {
                         passageRect.Rotate(0, 0, 90f); 

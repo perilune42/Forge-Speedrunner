@@ -134,7 +134,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 50
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!1 &7273054404556120701
 GameObject:
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FullscreenMapUI
   shopMode: 0
-  passageSize: {x: 20, y: 10}
+  passageSize: {x: 45, y: 24}
   roomSizeMinus: {x: 8, y: 8}
   youAreHereSize: {x: 8, y: 8}
   negativePosRooms: 0

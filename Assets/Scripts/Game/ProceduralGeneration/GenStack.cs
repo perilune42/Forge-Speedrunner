@@ -20,10 +20,10 @@ public class GenStack
     {
         return dirs.Count > 0;
     }
-    public (Direction, Offset) PopWith(IChoiceStrategy strategy)
+    public (Direction, Offset) PopWith(IChoiceStrategy strategy, Grid grid)
     {
         // desired values
-        int ind = strategy.SelectIndex(in dirs, in offsets);
+        int ind = strategy.SelectIndex(in dirs, in offsets, in grid);
         Direction dir = dirs[ind];
         Offset offset = offsets[ind];
 

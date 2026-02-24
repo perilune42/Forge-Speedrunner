@@ -65,9 +65,9 @@ public class PathFactoryBuilder
             Debug.Log($"[GenerateWith] step {i+1}");
             grid.LogEntries();
             stack.LogEntries();
-            (dir, off) = stack.PopWith(strategy);
+            (dir, off) = stack.PopWith(strategy, grid);
             Debug.Log($"[GenerateWith] dir: {dir}, off: {off}");
-            Room possibleRoom = strategy.FindRoom(dir, off, in placedRooms);
+            Room possibleRoom = strategy.FindRoom(dir, off, grid, in placedRooms);
             if(possibleRoom == null)
             {
                 Debug.Log($"[GenerateWith] rejecting {dir}, {off}, due to strategy.");

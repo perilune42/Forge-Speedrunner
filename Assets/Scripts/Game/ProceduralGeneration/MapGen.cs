@@ -31,7 +31,9 @@ public class MapGen : MonoBehaviour
         PathCreator pc = new PathFactoryBuilder()
             .WithStartRoom(start)
             .WithMin(pathMin)
-            .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
+            .OnePath()
+            // .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
+            .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
             .WithAlgorithm(new BufferOption(roomPrefabs), 1)
             .WithAlgorithm(new PlaceFinal(finish), 1)
             .Finalize();

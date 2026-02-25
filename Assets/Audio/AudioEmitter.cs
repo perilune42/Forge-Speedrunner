@@ -12,7 +12,8 @@ public class AudioEmitter : MonoBehaviour
 
         foreach (var emitter in GetComponents<StudioEventEmitter>())
         {
-            emitters.Add(emitter.EventReference.Path, emitter);
+            string path = getPath(emitter.EventReference.Guid);
+            emitters.Add(path, emitter);
         }
     }
 
@@ -26,5 +27,18 @@ public class AudioEmitter : MonoBehaviour
     {
         if (emitters.TryGetValue(eventPath, out var emitter))
             emitter.Stop();
+    }
+
+    public static string getPath(FMOD.GUID guid)
+    {
+        string path = string.Empty;
+
+        //FMOD.Studio.System sys;
+        //FMOD.Studio.System.create(out sys);
+        //sys.lookupPath(guid, out path);
+
+        RuntimeManager.StudioSystem.lookupPath(guid, out path);
+
+        return path;
     }
 }

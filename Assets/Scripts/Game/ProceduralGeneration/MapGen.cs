@@ -7,41 +7,54 @@ public class MapGen : MonoBehaviour
     public IPathGenerator pathGen;
     public List<Room> createdRooms = new();
     public List<Passage> createdPassages;
-    public GameObject PassPrefab; 
+    public GameObject PassPrefab;
     public int pathSize;
     public int pathMin;
     public List<(PathCreator, Status)> FailedRunsDebug = new();
     public int NumFails = 0;
     public int CheckThis=0;
+    private Room[] roomPrefabs;
+    private Room start;
+    private Room finish;
 
     [SerializeField] GameRegistry gameRegistry;
 
+    private void OnValidate()
+    {
+        roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
+        start = gameRegistry.StartRoom.GetComponent<Room>();
+        finish = gameRegistry.FinishRoom.GetComponent<Room>();
+    }
+
     void Awake()
     {
-
+        OnValidate();
     }
     private PathFactoryBuilder defaultBuilder()
     {
-        Room[] roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
-        Room start = gameRegistry.StartRoom.GetComponent<Room>();
-        Room finish = gameRegistry.FinishRoom.GetComponent<Room>();
         return new PathFactoryBuilder()
                 .WithStartRoom(start)
                 .WithMin(pathMin)
                 .OnePath()
-                // .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
-                .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
+                .WithAlgorithm(new MainPathReal(roomPrefabs), pathSize)
+                // .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
                 .WithAlgorithm(new BufferOption(roomPrefabs), 1)
                 .WithAlgorithm(new PlaceFinal(finish), 1);
 
     }
     private PathCreator runAlg()
     {
-        return defaultBuilder().Finalize();
+        PathCreator pc = defaultBuilder().Finalize();
+        pc.PassPrefab = this.PassPrefab;
+        pc.RegisterParent(transform);
+        return pc;
     }
     private PathCreator runUntilCorrect()
     {
-        return defaultBuilder().FinalizeUntilCorrect();
+        PathCreator pc = defaultBuilder().FinalizeUntilCorrect();
+        pc.PassPrefab = this.PassPrefab;
+        pc.RegisterParent(transform);
+        return pc;
     }
     public void Test()
     {
@@ -66,8 +79,6 @@ public class MapGen : MonoBehaviour
         }
         PathCreator pc; Status fail;
         (pc, fail) = FailedRunsDebug[ind];
-        pc.PassPrefab = this.PassPrefab;
-        pc.RegisterParent(transform);
         (createdRooms, createdPassages) = pc.Create();
         Debug.Log($"Fail type: {fail}");
     }
@@ -77,7 +88,18 @@ public class MapGen : MonoBehaviour
         Room start = gameRegistry.StartRoom.GetComponent<Room>();
         Room finish = gameRegistry.FinishRoom.GetComponent<Room>();
 
-        pc = runUntilCorrect();
+        // inlined code from FinalizeUntilComplete(). Working here, not working in PathFactoryBuilder.
+        PathCreator pc = null;
+        int i = 1;
+        Status pcStatus;
+        do
+        {
+            Debug.Log($"[CreateMap] Finalize call {i++}");
+            pc = runAlg();
+            pcStatus = pc.Validate(finish, pathMin);
+            Debug.Log($"status: {pcStatus}");
+        } while(pcStatus != Status.ALL_CLEAR && i < 100);
+        Debug.Log($"Created result of status {pcStatus} after {i} tries.");
 
         (createdRooms, createdPassages) = pc.Create();
 

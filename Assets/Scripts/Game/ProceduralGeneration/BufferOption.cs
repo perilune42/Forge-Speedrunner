@@ -20,18 +20,14 @@ public class BufferOption : IChoiceStrategy
         Offset botleft = c.offset;
         Offset yof = new(0,1);
         Offset xof = new(1,0);
-        List<Offset> all = new();
-        for(int i = 0; i < r.size.y; i++)
+        List<Offset> all = allPossibleEntriesFor(botleft, r);
+        all.Shuffle();
+        foreach(Offset o in all)
         {
-            Offset check = botleft + xof * r.size.y + yof * i;
-            if(r.doorwaysRight[i] != null)
-                all.Add(check);
+            int ind = offs.IndexOf(o);
+            if(ind > -1)
+                return ind;
         }
-
-        for(int i = 0; i < offs.Count; i++)
-            if(all.Contains(offs[i]))
-                return i;
-
         return 0;
     }
     public Room FindRoom(Direction dir, Offset off, Grid grid, in HashSet<Room> placedRooms)
@@ -54,12 +50,40 @@ public class BufferOption : IChoiceStrategy
             return null;
         foreach(Room r in fits)
             if(!placedRooms.Contains(r))
+            {
+                placedRooms.Add(r);
                 return r;
+            }
         return fits[0];
     }
     private int OffSize(Offset x)
     {
         Offset xx = x * x;
         return xx.x + xx.y;
+    }
+    private List<Offset> allPossibleEntriesFor(Offset botleft, Room r)
+    {
+        List<Offset> all = new();
+        Offset yof = new(0,1);
+        Offset xof = new(1,0);
+        for(int i = 0; i < r.size.y; i++)
+        {
+            Offset checkRight = botleft + xof * r.size.x + yof * i;
+            Offset checkLeft = botleft + yof * i - xof;
+            if(r.doorwaysRight[i] != null)
+                all.Add(checkRight);
+            if(r.doorwaysLeft[i] != null)
+                all.Add(checkLeft);
+        }
+        for(int i = 0; i < r.size.x; i++)
+        {
+            Offset checkUp = botleft + yof * r.size.y + xof * i;
+            Offset checkDown = botleft + xof * i - yof;
+            if(r.doorwaysUp[i] != null)
+                all.Add(checkUp);
+            if(r.doorwaysDown[i] != null)
+                all.Add(checkDown);
+        }
+        return all;
     }
 }

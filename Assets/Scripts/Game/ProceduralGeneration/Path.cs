@@ -124,9 +124,21 @@ public class PathCreator
     }
     public Status Validate(Room finishRoom, int pathMin)
     {
-        Room r = Cells[Cells.Count-1].room;
-        if(r != finishRoom)
-            return Status.NO_FIN;
+        // Room r = Cells[Cells.Count-1].room;
+        // if(r != finishRoom)
+        //     return Status.NO_FIN;
+        bool hasFin = false;
+        for(int i = 0; i < Cells.Count; i++)
+        {
+            Cell c = Cells[i];
+            if(c.room == finishRoom)
+            {
+                hasFin = true;
+                break;
+            }
+        }
+        if(!hasFin) return Status.NO_FIN;
+
         if(Cells.Count < pathMin)
             return Status.UNDER_MIN;
 

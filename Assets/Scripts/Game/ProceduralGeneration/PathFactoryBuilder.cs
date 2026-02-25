@@ -66,6 +66,11 @@ public class PathFactoryBuilder
             grid.LogEntries();
             stack.LogEntries();
             (dir, off) = stack.PopWith(strategy, grid);
+            if(dir == null) // dir and off will be null together
+            {
+                Debug.Log($"[GenerateWith] stack has nothing this strategy wants? then we stop here.");
+                break;
+            }
             Debug.Log($"[GenerateWith] dir: {dir}, off: {off}");
             Room possibleRoom = strategy.FindRoom(dir, off, grid, in placedRooms);
             if(possibleRoom == null)
@@ -100,49 +105,30 @@ public class PathFactoryBuilder
 
     public PathCreator Finalize()
     {
-        int numTries = 1;
 
         Grid maxGrid = new();
         PathCreator pc = null;
 
-        for(int j = 0; maxGrid.uniqueCells.Count < min && j < 5; j++)
+        int numSteps = 1;
+        GenStack stack = new();
+        Grid grid = new();
+        stack.extractAll(start, new Offset(0,0));
+        grid.InsertRoom(start, new Offset(0,0));
+        foreach((IChoiceStrategy strategy, int pathSize, bool actionOnePath) in actions)
         {
-            Debug.Log($"[Finalize] Try {numTries++}:");
-            int numSteps = 1;
-            GenStack stack = new();
-            Grid grid = new();
-            stack.extractAll(start, new Offset(0,0));
-            grid.InsertRoom(start, new Offset(0,0));
-            foreach((IChoiceStrategy strategy, int pathSize, bool actionOnePath) in actions)
+            Debug.Log($"[Finalize] Algorithm {numSteps++}");
+            HashSet<Room> placedRooms = new();
+            int genSize = 0;
+            int cnt = 1;
+            int i;
+            do
             {
-                Debug.Log($"[Finalize] Algorithm {numSteps++}");
-                HashSet<Room> placedRooms = new();
-                int genSize = 0;
-                int cnt = 1;
-                int i;
-                do
-                {
-                    Debug.Log($"[Finalize] algorithm run {cnt++}");
-                    i = GenerateWith(strategy, actionOnePath, stack, grid, pathSize-genSize, placedRooms);
-                    genSize += i;
-                } while (i > 0 && genSize < pathSize);
-            }
-            if(maxGrid.uniqueCells.Count < grid.uniqueCells.Count)
-                maxGrid = grid;
+                Debug.Log($"[Finalize] algorithm run {cnt++}");
+                i = GenerateWith(strategy, actionOnePath, stack, grid, pathSize-genSize, placedRooms);
+                genSize += i;
+            } while (i > 0 && genSize < pathSize);
         }
 
-        return maxGrid.ProduceCreator();
-    }
-    public PathCreator FinalizeUntilCorrect()
-    {
-        PathCreator pc = null;
-        int i = 1;
-        do
-        {
-            Debug.Log($"Finalize call {i++}");
-            pc = Finalize();
-        } while(pc.Validate(finish, min) != Status.ALL_CLEAR);
-        Debug.Log($"Created correct result after {i} tries.");
-        return pc;
+        return grid.ProduceCreator();
     }
 }

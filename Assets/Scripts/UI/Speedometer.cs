@@ -14,7 +14,7 @@ public class Speedometer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float mg = Player.Instance.Movement.Velocity.magnitude;
+        float mg = Mathf.Abs(Player.Instance.Movement.Velocity.x);
         float target = mg * angleMulti;
         //target = Mathf.Pow(target, angleExponent);
         target = Mathf.Pow(target, angleExponent);

@@ -318,4 +318,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AbilitySlot
   inputName: 
+  actionRef: {fileID: 0}
   bindingText: {fileID: 7674141525132631862}

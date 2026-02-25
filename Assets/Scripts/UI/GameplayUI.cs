@@ -26,6 +26,7 @@ public class GameplayUI : Singleton<GameplayUI>
     // Pause and Play methods for Pause Button UI element
     public void Pause()
     {
+        Debug.Log("paused game");
         Timer.Instance.Pause(true);
     }
 

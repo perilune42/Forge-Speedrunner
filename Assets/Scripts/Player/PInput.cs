@@ -96,13 +96,6 @@ public class PInput : Singleton<PInput>
             HasPressed = false;
         }
 
-        public string GetBindingDisplayString(int index)
-        {
-            string s = action.GetBindingDisplayString(index);
-            
-            return Util.FixControlString(s, action, index);
-        }
-
         public InputAction GetAction()
         {
             return action;

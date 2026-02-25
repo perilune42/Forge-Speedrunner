@@ -29,10 +29,10 @@ public class Settings : MonoBehaviour
     {
         foreach (GameObject button in buttons) Destroy(button);
         buttons.Clear();
-        foreach (KeyValuePair<InputAction, string> kv in KeybindManager.Instance.bindingStrings)
+        foreach (KeyValuePair<InputBinding, string> kv in KeybindManager.Instance.bindingStrings)
         {
             KeybindButton kb = Instantiate(keybindButton, keybindButtonParent.transform).GetComponent<KeybindButton>();
-            kb.inputAction = kv.Key;
+            kb.InputBinding = kv.Key; 
             buttons.Add(kb.gameObject);
         }
     }

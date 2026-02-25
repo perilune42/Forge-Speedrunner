@@ -6,18 +6,25 @@ using static Direction;
 /* Construct path once the rooms actually exist.
  * This replaces List<Cell> as a return type in IPathGenerator
  */
+public struct Connection
+{
+    public Cell Source;
+    public Cell Sink;
+    public int SourceInd;
+    public int SinkInd;
+    public Direction ConnectionDir;
+}
+public enum Status
+{
+    NO_FIN,
+    UNDER_MIN,
+    DEAD_ENDS,
+    ALL_CLEAR,
+}
 public class PathCreator
 {
-    internal struct Connection
-    {
-        public Cell Source;
-        public Cell Sink;
-        public int SourceInd;
-        public int SinkInd;
-        public Direction ConnectionDir;
-    }
-    private List<Cell> Cells;
-    private List<Connection> Connections;
+    public List<Cell> Cells;
+    public List<Connection> Connections;
     private Transform roomParent;
     public GameObject PassPrefab;
 
@@ -114,5 +121,39 @@ public class PathCreator
             roomsTemp.Add(r);
 
         return (roomsTemp, passages);
+    }
+    public Status Validate(Room finishRoom, int pathMin)
+    {
+        // Room r = Cells[Cells.Count-1].room;
+        // if(r != finishRoom)
+        //     return Status.NO_FIN;
+        bool hasFin = false;
+        for(int i = 0; i < Cells.Count; i++)
+        {
+            Cell c = Cells[i];
+            if(c.room == finishRoom)
+            {
+                hasFin = true;
+                break;
+            }
+        }
+        if(!hasFin) return Status.NO_FIN;
+
+        if(Cells.Count < pathMin)
+            return Status.UNDER_MIN;
+
+        Dictionary<Vector2Int, int> numNeighbors = new();
+        foreach(Cell c in Cells)
+            numNeighbors.Add(c.offset, 0);
+
+        foreach(Connection conn in Connections)
+        {
+            numNeighbors[conn.Source.offset] += 1;
+            numNeighbors[conn.Sink.offset] += 1;
+        }
+        foreach(int num in numNeighbors.Values)
+            if(num > 2)
+                return Status.DEAD_ENDS;
+        return Status.ALL_CLEAR;
     }
 }

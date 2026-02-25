@@ -7,42 +7,94 @@ public class MapGen : MonoBehaviour
     public IPathGenerator pathGen;
     public List<Room> createdRooms = new();
     public List<Passage> createdPassages;
-    public GameObject PassPrefab; 
+    public GameObject PassPrefab;
     public int pathSize;
     public int pathMin;
+    public List<(PathCreator, Status)> FailedRunsDebug = new();
+    public int NumFails = 0;
+    public int CheckThis=0;
+    private Room[] roomPrefabs;
+    private Room start;
+    private Room finish;
 
     [SerializeField] GameRegistry gameRegistry;
 
+    private void OnValidate()
+    {
+        roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
+        start = gameRegistry.StartRoom.GetComponent<Room>();
+        finish = gameRegistry.FinishRoom.GetComponent<Room>();
+    }
+
     void Awake()
     {
+        OnValidate();
+    }
+    private PathFactoryBuilder defaultBuilder()
+    {
+        return new PathFactoryBuilder()
+                .WithStartRoom(start)
+                .WithMin(pathMin)
+                .OnePath()
+                .WithAlgorithm(new MainPathReal(roomPrefabs), pathSize)
+                // .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
+                .WithAlgorithm(new BufferOption(roomPrefabs), 1)
+                .WithAlgorithm(new PlaceFinal(finish), 1);
 
+    }
+    private PathCreator runAlg()
+    {
+        PathCreator pc = defaultBuilder().Finalize();
+        pc.PassPrefab = this.PassPrefab;
+        pc.RegisterParent(transform);
+        return pc;
+    }
+    public void Test()
+    {
+        // test for placing final room
+        FailedRunsDebug = new();
+        for(int i = 0; i < 100; i++)
+        {
+            Debug.Log($"[TEST] test {i}:");
+            PathCreator pc = runAlg();
+            Status pcStatus = pc.Validate(finish, pathMin);
+            if(pcStatus != Status.ALL_CLEAR)
+                FailedRunsDebug.Add((pc, pcStatus));
+        }
+        NumFails = FailedRunsDebug.Count;
+    }
+    public void CreateFailedTest(int ind)
+    {
+        if(ind < 0 || ind >= FailedRunsDebug.Count)
+        {
+            Debug.Log("Can't create this one! out of bounds.");
+            return;
+        }
+        PathCreator pc; Status fail;
+        (pc, fail) = FailedRunsDebug[ind];
+        (createdRooms, createdPassages) = pc.Create();
+        Debug.Log($"Fail type: {fail}");
     }
     public (List<Room>, List<Passage>) CreateMap()
     {
         Room[] roomPrefabs = Array.ConvertAll(gameRegistry.RoomPrefabs, x => x.GetComponent<Room>());
         Room start = gameRegistry.StartRoom.GetComponent<Room>();
         Room finish = gameRegistry.FinishRoom.GetComponent<Room>();
-        // RandomFromPoint pathGen = new RandomFromPoint(roomPrefabs, start, null); // end is kind of ignored for now
-        // List<Cell> path = pathGen.Generate(pathSize);
-        // passagesDebug = pathGen.RealizePath();
-        // Debug.Log($"here we are. size: {path.Count}");
-        // PathCreator pc = pathGen.Generate(pathSize);
 
-        PathCreator pc = new PathFactoryBuilder()
-            .WithStartRoom(start)
-            .WithMin(pathMin)
-            .OnePath()
-            // .WithAlgorithm(new MainPath(roomPrefabs), pathSize)
-            .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
-            .WithAlgorithm(new BufferOption(roomPrefabs), 1)
-            .WithAlgorithm(new PlaceFinal(finish), 1)
-            .Finalize();
-
-        pc.PassPrefab = this.PassPrefab;
-        pc.RegisterParent(transform);
+        // inlined code from FinalizeUntilComplete(). Working here, not working in PathFactoryBuilder.
+        PathCreator pc = null;
+        int i = 1;
+        Status pcStatus;
+        do
+        {
+            Debug.Log($"[CreateMap] Finalize call {i++}");
+            pc = runAlg();
+            pcStatus = pc.Validate(finish, pathMin);
+            Debug.Log($"status: {pcStatus}");
+        } while(pcStatus != Status.ALL_CLEAR && i < 100);
+        Debug.Log($"Created result of status {pcStatus} after {i} tries.");
 
         (createdRooms, createdPassages) = pc.Create();
-        // Debug.Log("[CreateMap] why create anything? i think we are just fine the way we are...");
 
         Transform AllPassages = transform.GetChild(0);
         foreach(Passage p in createdPassages)
@@ -51,19 +103,6 @@ public class MapGen : MonoBehaviour
         }
 
         return (createdRooms, createdPassages);
-
-
-        // foreach(Cell c in path)
-        // {
-        //     Vector3 screenPosition = new(c.offset.x, c.offset.y, 0F);
-        //     screenPosition *= 100F;
-        //     Room room = c.room;
-
-        //     Room realRoom = (Room)Instantiate(room, screenPosition, Quaternion.identity);
-        //     createdRooms.Add(realRoom);
-        //     realRoom.gridPosition = c.offset;
-        //     realRoom.transform.SetParent(transform);
-        // }
     }
     public void DeleteMap()
     {

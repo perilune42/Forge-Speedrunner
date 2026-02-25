@@ -11,12 +11,12 @@ public class RandomChoice : IChoiceStrategy
         this.RoomPrefabs = roomPrefabs.ToList();
     }
 
-    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs)
+    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs, in Grid grid)
     {
         return Random.Range(0, dirs.Count);
     }
 
-    public Room FindRoom(Direction dir, Offset off, in HashSet<Room> placedRooms)
+    public Room FindRoom(Direction dir, Offset off, Grid grid, in HashSet<Room> placedRooms)
     {
         if(RoomPrefabs.Count <= 0)
             return null;

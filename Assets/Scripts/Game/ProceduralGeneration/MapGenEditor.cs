@@ -17,6 +17,12 @@ public class MapGenEditor_Inspector : Editor
         {
             mg.DeleteMap();
         }
+        else if(GUILayout.Button("Test the algorithm"))
+        {
+            mg.Test();
+        }
+        else if(GUILayout.Button("See a failed test"))
+            mg.CreateFailedTest(mg.CheckThis);
     }
 }
 #endif

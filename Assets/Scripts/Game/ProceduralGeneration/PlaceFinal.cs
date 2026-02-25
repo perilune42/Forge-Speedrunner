@@ -11,39 +11,31 @@ public class PlaceFinal : IChoiceStrategy
     {
         FinalRoom = final;
     }
-    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs)
+    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs, in Grid grid)
     {
-        int maxInd = -1;
-        // find start
-        for(int i = 0; i < offs.Count; i++)
-            if(dirs[i] == RIGHT)
-            {
-                maxInd = i;
-                break;
-            }
-        if(maxInd < 0)
-            return 0; // HACK: have to ignore this later if it's not good.
-
-        for(int i = 1; i < offs.Count; i++)
+        // find the last room's rightmost offset of door
+        Cell c = grid.uniqueCells[grid.uniqueCells.Count-1];
+        Room r = c.room;
+        Offset botleft = c.offset;
+        Offset yof = new(0,1);
+        Offset xof = new(1,0);
+        List<Offset> all = new();
+        for(int i = 0; i < r.size.y; i++)
         {
-            if(dirs[i] != RIGHT)
-                continue;
-
-            Offset current = offs[i];
-            Offset max = offs[maxInd];
-            if(max.x <= current.x && max.y <= current.y)
-                maxInd = i;
-            else if(current.x >= max.x)
-                maxInd = i;
+            Offset check = botleft + xof * r.size.y + yof * i;
+            if(r.doorwaysRight[i] != null)
+                all.Add(check);
         }
-        return maxInd;
+
+        for(int i = 0; i < offs.Count; i++)
+            if(all.Contains(offs[i]))
+                return i;
+
+        return 0;
     }
-    public Room FindRoom(Direction dir, Offset _off, in HashSet<Room> _createdRooms)
+    public Room FindRoom(Direction dir, Offset _off, Grid grid, in HashSet<Room> _createdRooms)
     {
         Debug.Log("[PlaceFinal.FindRoom] here's the end!");
-        if(dir == RIGHT)
-            return FinalRoom;
-        else
-            return null;
+        return FinalRoom;
     }
 }

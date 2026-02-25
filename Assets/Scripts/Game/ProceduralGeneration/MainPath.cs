@@ -33,7 +33,7 @@ public class MainPath : IChoiceStrategy
         Debug.Log($"[MainPath.Constructor] have {LeftOnly.Count} rooms with left openings and {DownOnly.Count} rooms with down openings.");
     }
 
-    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs)
+    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs, in Grid grid)
     {
         return UnityEngine.Random.Range(0, dirs.Count);
 
@@ -50,7 +50,7 @@ public class MainPath : IChoiceStrategy
         // }
     }
 
-    public Room FindRoom(Direction dir, Offset off, in HashSet<Room> placedRooms)
+    public Room FindRoom(Direction dir, Offset off, Grid grid, in HashSet<Room> placedRooms)
     {
         // if(off.y > current.y || off.x < current.x)
         //     return null;

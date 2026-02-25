@@ -5,26 +5,36 @@ using UnityEngine.InputSystem;
 
 public class AbilitySlot : MonoBehaviour, IPointerDownHandler
 {
-    [SerializeField] string inputName;  // scuffed
-
+    // Whoever wrote this code, talked shit on my code
+    // That was really hurtful, whoever that was
+    [SerializeField] string inputName; // jank because InputActionReference is bugged on our version of the InputSystem
+    // If we ever update the packages, we can use InputActionReferences instead
+    private InputAction inputAction;
     [SerializeField] public TMP_Text bindingText;
 
     private void Awake()
     {
         KeybindManager.Instance.OnInputChange += UpdateKeybinds;
+        foreach (var action in InputSystem.ListEnabledActions())
+        {
+            if (action.name == inputName)
+            {
+                inputAction = action;
+            }
+        }
+    }
+
+    void OnEnable()
+    {
         UpdateKeybinds();
     }
 
     private void UpdateKeybinds()
     {
-        // wtf is this
-        foreach (var action in InputSystem.ListEnabledActions())
-        {
-            if (action.name == inputName)
-            {
-                bindingText.text = KeybindManager.Instance.bindingStrings[action];
-            }
-        }
+
+        bindingText.text = KeybindManager.Instance.bindingStrings[
+            KeybindManager.Instance.GetBindingFromAction(inputAction)];
+        
     }
 
     public void OnPointerDown(PointerEventData eventData)

@@ -5,14 +5,17 @@ using UnityEngine.InputSystem;
 
 public class KeybindButton : MonoBehaviour
 {
-    [HideInInspector] public InputAction inputAction;
+    private InputAction inputAction;
+    [HideInInspector] public InputBinding InputBinding;
     [HideInInspector] public int index;
     public TMP_Text nameText;
     public TMP_Text bindText;
     void Start()
     {
-        nameText.text = inputAction.name + " " + inputAction.bindings[index].name;
-        bindText.text = Util.FixControlString(inputAction.GetBindingDisplayString(index), inputAction, index);
+        inputAction = KeybindManager.Instance.bindingsToActions[InputBinding]; // could also be done using the input path strings, but this is easier
+        index = KeybindManager.Instance.GetIndexOfBinding(InputBinding, inputAction);
+        nameText.text = inputAction.name + " " + InputBinding.name;
+        bindText.text = Util.FixControlString(InputBinding.ToDisplayString(), InputBinding);
         
     }
 
@@ -25,13 +28,16 @@ public class KeybindButton : MonoBehaviour
             operation =>
             {
                 Debug.Log($"Rebound {inputAction} to {operation.selectedControl}");
-                string bindingString = Util.FixControlString(inputAction.GetBindingDisplayString(index), inputAction, index);
+                InputBinding = inputAction.bindings[index]; // needed or else it has the wrong binding for some reason
+                string bindingString = Util.FixControlString(InputBinding.ToDisplayString(), InputBinding);
                 bindText.text = bindingString;
-                KeybindManager.Instance.bindingStrings[inputAction] = bindingString;
+                KeybindManager.Instance.bindingStrings[InputBinding] = bindingString;
                 foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
                 {
-                    ability.UpdateBindingText(inputAction);
+                    ability.UpdateBindingText();
                 }
+                AbilityManager.Instance.GetAbility<Chronoshift>().UpdateBindingText();
+                
                 inputAction.Enable();
                 operation.Dispose();
             });

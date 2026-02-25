@@ -77,7 +77,7 @@ public abstract class Ability : MonoBehaviour
             }
         }
         
-        UpdateBindingText(inputButton.GetAction());
+        UpdateBindingText();
     }
 
     protected virtual void FixedUpdate()
@@ -148,18 +148,11 @@ public abstract class Ability : MonoBehaviour
     {
         inputButton = button;
     }
-
-    public void UpdateBindingText(InputAction action)
-    {
-        if (inputButton.GetAction().Equals(action))
-        {
-            BindingDisplayString = KeybindManager.Instance.bindingStrings[action];
-        }
-    }
-
+    
     public void UpdateBindingText()
     {
-        UpdateBindingText(inputButton.GetAction());
+        InputBinding binding = KeybindManager.Instance.GetBindingFromAction(inputButton.GetAction());
+        BindingDisplayString = KeybindManager.Instance.bindingStrings[binding];
     }
 
     public void ModifyCooldown(int amount)

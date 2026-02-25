@@ -11,19 +11,10 @@ public class GameplayUI : Singleton<GameplayUI>
     [SerializeField] GameObject practiceModeIndicator;
 
     public GameObject GameEndUI;
-    public UnityEngine.UI.Button MainMenuButton, PlayAgainButton;
 
     public override void Awake()
     {
         base.Awake();
-        MainMenuButton.onClick.AddListener(() =>
-        {
-            SceneManager.LoadScene("MainMenu");
-        });
-        PlayAgainButton.onClick.AddListener(() =>
-        {
-            SceneManager.LoadScene("World"); // TODO: change this if we ever stop using world scene
-        });
     }
 
     private void Update()
@@ -35,18 +26,13 @@ public class GameplayUI : Singleton<GameplayUI>
     // Pause and Play methods for Pause Button UI element
     public void Pause()
     {
-        if (Game.Instance != null)
-        {
-            Timer.Instance.Pause(true);
-        }
+        Debug.Log("paused game");
+        Timer.Instance.Pause(true);
     }
 
     public void Play()
     {
-        if (Game.Instance != null)
-        {
-            Timer.Instance.Pause(false);
-        }
+        Timer.Instance.Pause(false);
     }
 
     public void OpenShop()
@@ -57,5 +43,22 @@ public class GameplayUI : Singleton<GameplayUI>
     public void TogglePracticeMode(bool toggle)
     {
         practiceModeIndicator.SetActive(toggle);
+    }
+
+    public void QuitToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ResetRoom()
+    {
+        Debug.Log("reset room");
+        Play();
+        RoomManager.Instance.ReEnterRoom();
     }
 }

@@ -26,6 +26,13 @@ public class PlayerAudio : MonoBehaviour
         climbing.Update();
     }
 
+    private void OnDestroy()
+    {
+        walking.Destroy();
+        fast.Destroy();
+        climbing.Destroy();
+    }
+
 
 }
 
@@ -58,5 +65,10 @@ public class AudioCondition
             isActive = false;
             emitter.Stop(eventPath);
         }
+    }
+
+    public void Destroy()
+    {
+        emitter.Stop(eventPath);
     }
 }

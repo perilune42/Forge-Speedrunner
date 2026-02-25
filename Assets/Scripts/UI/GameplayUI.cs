@@ -30,7 +30,6 @@ public class GameplayUI : Singleton<GameplayUI>
     {
         currTimeText.text = Util.SecondsToTime(Timer.speedrunTime);
         targetTimeText.text = Util.SecondsToTime(Timer.targetSpeedrunTime);
-        speedText.text = Player.Instance.Movement.Velocity.ToString();
     }
 
     // Pause and Play methods for Pause Button UI element

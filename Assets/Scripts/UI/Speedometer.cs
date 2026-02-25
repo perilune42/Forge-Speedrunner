@@ -10,16 +10,17 @@ public class Speedometer : MonoBehaviour
     [SerializeField] private float angleMulti, angleExponent;   
     [SerializeField] private float lerpValue;
     [SerializeField] private TMP_Text text;
+    private float angle;
 
     private void FixedUpdate()
     {
-        float angle = arrow.transform.eulerAngles.z;
-        float target = Mathf.Abs(Player.Instance.Movement.Velocity.x * angleMulti);
+        float mg = Player.Instance.Movement.Velocity.magnitude;
+        float target = mg * angleMulti;
         //target = Mathf.Pow(target, angleExponent);
-        target = Mathf.Clamp(target, minAngle, maxAngle);
         target = Mathf.Pow(target, angleExponent);
+        target = Mathf.Clamp(target, minAngle, maxAngle);
         angle = Mathf.Lerp(angle, target, lerpValue);
-        arrow.transform.eulerAngles = angle * Vector3.forward;
-        text.SetText("{0:1}", Mathf.Abs(Player.Instance.Movement.Velocity.x));
+        arrow.transform.eulerAngles = (90f - angle) * Vector3.forward;
+        text.SetText("{0:1}", mg);
     }
 }

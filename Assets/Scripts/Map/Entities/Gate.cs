@@ -14,7 +14,7 @@ public class Gate : ActivatableEntity
     protected override void Awake()
     {
         base.Awake();
-        endPos = transform.localPosition + EndPoint.localPosition; // child will move in world space with parent
+        endPos = transform.localPosition + (EndPoint.position - transform.position); // child will move in world space with parent
         startPos = transform.localPosition;
 
     }

@@ -168,6 +168,7 @@ public class Chronoshift : Ability, IStatSource
         PlayerVFXTrail vfx = clone.GetComponentInChildren<PlayerVFXTrail>();
         stopCloneParticleAction += vfx.PlayParticle(Color.white);
         this.keyframes = keyframes;
+        this.keyframes.Add(new ChronoshiftKeyframe(clone.transform.position, 0, RoomManager.Instance.StartingRoom));
         Teleport();
     }
 

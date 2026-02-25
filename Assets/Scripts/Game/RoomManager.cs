@@ -248,6 +248,7 @@ public class RoomManager : Singleton<RoomManager>
 
         if (previousDoorway == null)
         {
+            StartCoroutine(RoomTransition(activeRoom, originalPosition, Vector2.zero, Vector2.zero));
             return;
         }
 

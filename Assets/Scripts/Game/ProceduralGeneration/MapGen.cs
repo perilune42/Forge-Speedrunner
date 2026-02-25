@@ -49,13 +49,6 @@ public class MapGen : MonoBehaviour
         pc.RegisterParent(transform);
         return pc;
     }
-    private PathCreator runUntilCorrect()
-    {
-        PathCreator pc = defaultBuilder().FinalizeUntilCorrect();
-        pc.PassPrefab = this.PassPrefab;
-        pc.RegisterParent(transform);
-        return pc;
-    }
     public void Test()
     {
         // test for placing final room

@@ -87,6 +87,7 @@ public class Game : Singleton<Game> {
         Player.Instance.gameObject.SetActive(true);
         Timer.Instance.Pause(false);
         Timer.targetSpeedrunTime = initialGoalTime;
+        CurrentRound = 1;
     }
 
     public void FinishRound()

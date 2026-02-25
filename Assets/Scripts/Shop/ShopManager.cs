@@ -287,9 +287,9 @@ public class ShopManager : Singleton<ShopManager>
 
     public void UpdateRoundInfo() {
         roundText.text = $"Round {Game.Instance.CurrentRound}";
-        runTimeText.text = $"{Util.SecondsToTime(Timer.previousSpeedrunTime)} / {Util.SecondsToTime(Timer.previousTargetTime)}";
-        prevTargetText.text = $"Prev Target:\n{Util.SecondsToTime(Timer.previousTargetTime)}";
-        newTargetText.text = $"New Target:\n{Util.SecondsToTime(Timer.targetSpeedrunTime)}";
+        runTimeText.text = $"{Util.GetTimeString(Timer.previousSpeedrunTime)} / {Util.GetTimeString(Timer.previousTargetTime)}";
+        prevTargetText.text = $"Prev Target:\n{Util.GetTimeString(Timer.previousTargetTime)}";
+        newTargetText.text = $"New Target:\n{Util.GetTimeString(Timer.targetSpeedrunTime)}";
     }
 
     // BUTTON REFS

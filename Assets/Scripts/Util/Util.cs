@@ -136,38 +136,12 @@ public static class Util
         return new Vector2(SignOr0(vec.x), SignOr0(vec.y));
     }
 
-    public static string SecondsToTime(float time)
+    public static string GetTimeString(float timeSeconds)
     {
-        // private String secondsToTime(float time)
-        {
-            string toReturn = "";
-            int seconds = (int)(time % 60);
-            int minutes = (int)(time / 60);
+        int minutes = (int)(timeSeconds / 60f);
+        float seconds = timeSeconds % 60f;
 
-            if (minutes < 10)
-            {
-                toReturn += "0";
-                toReturn += minutes;
-            }
-            else
-            {
-                toReturn += minutes;
-            }
-
-            toReturn += ":";
-
-            if (seconds < 10)
-            {
-                toReturn += "0";
-                toReturn += seconds;
-            }
-            else
-            {
-                toReturn += seconds;
-            }
-
-            return toReturn;
-        }
+        return $"{minutes:00}:{seconds:00.000}";
     }
 
     public static Vector2 PDir2Vec(PDir pDir)

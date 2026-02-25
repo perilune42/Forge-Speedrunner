@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 // UI during actual gameplay
 public class GameplayUI : Singleton<GameplayUI>
 {
-    [SerializeField] TMP_Text currTimeText, targetTimeText, speedText;
+    [SerializeField] TMP_Text currTimeText, targetTimeText, speedText, currRoundText;
 
     [SerializeField] GameObject practiceModeIndicator;
 
@@ -19,8 +19,9 @@ public class GameplayUI : Singleton<GameplayUI>
 
     private void Update()
     {
-        currTimeText.text = Util.SecondsToTime(Timer.speedrunTime);
-        targetTimeText.text = Util.SecondsToTime(Timer.targetSpeedrunTime);
+        currTimeText.text = Util.GetTimeString(Timer.speedrunTime);
+        targetTimeText.text = Util.GetTimeString(Timer.targetSpeedrunTime);
+        currRoundText.text = Game.Instance.CurrentRound.ToString();
     }
 
     // Pause and Play methods for Pause Button UI element

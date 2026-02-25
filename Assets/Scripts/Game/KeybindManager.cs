@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -7,7 +8,9 @@ using UnityEngine.InputSystem;
 public class KeybindManager : Singleton<KeybindManager>
 {
     public Dictionary<InputAction, string> bindingStrings = new Dictionary<InputAction, string>();
-    
+
+    public Action OnInputChange;
+
     public override void Awake()
     {
         base.Awake();
@@ -24,6 +27,7 @@ public class KeybindManager : Singleton<KeybindManager>
                     if (device is Gamepad) LoadKeybindStrings(false);
                     break;
             }
+            
         };
     }
     
@@ -37,8 +41,10 @@ public class KeybindManager : Singleton<KeybindManager>
                 if (action.actionMap.name != "Player") continue;
                 string bindingString = Util.FixControlString(action.GetBindingDisplayString(i), action, i);
                 bindingStrings[action] = bindingString;
+                // Debug.Log(action.name);
             }
         }
+        OnInputChange?.Invoke();
     }
 
     private bool IsValidPath(string path, bool gamepad)

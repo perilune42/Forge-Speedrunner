@@ -97,6 +97,11 @@ GameObject:
   - component: {fileID: 4240225090842580133}
   - component: {fileID: 8967055831812217446}
   - component: {fileID: 8802784991924013848}
+  - component: {fileID: 3707445616073714785}
+  - component: {fileID: 2575928824583254869}
+  - component: {fileID: 8523586095332997635}
+  - component: {fileID: 1511936826063087680}
+  - component: {fileID: 7577485656957798594}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -217,14 +222,15 @@ MonoBehaviour:
   MaxJumpFrames: 16
   jumpFrames: 0
   wallCoyoteFrames: 0
+  FastSpeed: 25
   CanClimb: 1
   CanJumpOverride: 0
+  IsInvulnerable: 0
   specialState: 0
-  audioClips:
-  - {fileID: 8300000, guid: 687972cb5f36f7643a21bcad2d1f6d61, type: 3}
-  - {fileID: 8300000, guid: c9c44d333a55425409dab20af40943db, type: 3}
   PreCollisionVelocity: {x: 0, y: 0}
   LedgeClimbBonus: 0
+  WalkSpeed:
+    BaseValue: 0
   RelativeVelocity:
     BaseValue: {x: 0, y: 0}
 --- !u!114 &8967055831812217446
@@ -242,6 +248,7 @@ MonoBehaviour:
   Movement: {fileID: 4240225090842580133}
   VFXTrail: {fileID: 1275065312203968865}
   Sprite: {fileID: 8508415282646126948}
+  Audio: {fileID: 3707445616073714785}
 --- !u!50 &8802784991924013848
 Rigidbody2D:
   serializedVersion: 5
@@ -269,6 +276,123 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &3707445616073714785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796375298968567207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dee018c30996e13459e46aaf70aef482, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudio
+--- !u!114 &2575928824583254869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796375298968567207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fac6dd940bcb1d498c8c7bb85a80db4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioEmitter
+--- !u!114 &8523586095332997635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796375298968567207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 20939842
+      Data2: 1094543502
+      Data3: -1762721384
+      Data4: -1791197995
+    Path: event:/Walk Loop
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &1511936826063087680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796375298968567207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -722780771
+      Data2: 1240967659
+      Data3: -858491226
+      Data4: 651952132
+    Path: event:/Wind Loop
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &7577485656957798594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796375298968567207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -567171726
+      Data2: 1112450241
+      Data3: -1206108528
+      Data4: -870748392
+    Path: event:/Climbing Loop
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &5127986345467680502
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,7 +519,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpeedTrail
   playerMovement: {fileID: 4240225090842580133}
   particle: {fileID: 582565954439835531}
-  minSpeedThresold: 25
   baseStrength: 0.5
   speedScaling: 12
 --- !u!198 &582565954439835531

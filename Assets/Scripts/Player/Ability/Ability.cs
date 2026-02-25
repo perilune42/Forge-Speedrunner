@@ -31,7 +31,7 @@ public abstract class Ability : MonoBehaviour
 
     [Header("===========")]
 
-    [SerializeField] protected int cooldown;
+    [SerializeField] public int cooldown;
     protected int curCooldown;
 
     protected PlayerMovement PlayerMovement => Player.Instance.Movement;

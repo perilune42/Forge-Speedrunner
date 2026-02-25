@@ -33,17 +33,21 @@ public class ShopManager : Singleton<ShopManager>
     [Header("Upgrade Tab Refs")]
     [SerializeField] private Transform abilityLayoutGroup;
     [SerializeField] private Transform toolsLayoutGroup;
-    [SerializeField] private List<Transform> abilitySlots;
-    [SerializeField] private Transform dashAbilitySlot;
+    [SerializeField] private List<AbilitySlot> abilitySlots;
+    [SerializeField] private AbilitySlot dashAbilitySlot;
 
     [SerializeField] private Transform upgradeLayoutGroup;
 
     [SerializeField] private Image tooltipInfoIcon;
     [SerializeField] private TMP_Text tooltipInfoNameText;
     [SerializeField] private TMP_Text tooltipInfoDescriptionText;
+    [SerializeField] private TMP_Text tooltipInfoCooldownText;
 
     [SerializeField] private Transform tooltipInfoDescriptionParent;
     [SerializeField] private TMP_Text tooltipInfoDescriptionPrefab;
+
+    [SerializeField] private UnityEngine.UI.Button rerollButton;
+    [SerializeField] private TMP_Text rerollCostText;
 
     [Header("Continue Tab Refs")]
 
@@ -60,6 +64,10 @@ public class ShopManager : Singleton<ShopManager>
 
     }
 
+    public int baseRerollCost = 10;
+    public float MultiplierPerReroll = 2f;
+    private int currRerollCost;
+
 
     // pulls up the shop screen with the most updated information
     public void LoadShop(bool newRound)
@@ -68,6 +76,8 @@ public class ShopManager : Singleton<ShopManager>
 
         if (newRound)
         {
+            currRerollCost = baseRerollCost;
+            rerollCostText.text = $"<${currRerollCost}>";
             GainReward();
             RestockShop();
         }
@@ -86,6 +96,9 @@ public class ShopManager : Singleton<ShopManager>
 
         goingToPracticeMode = false;
         selectSpawnText.enabled = false;
+
+        ClearTooltipInfo();
+
     }
 
     public void RestockShop()
@@ -104,7 +117,7 @@ public class ShopManager : Singleton<ShopManager>
         if (currentAbilities.Count >= 5)
         {
             // if full, only choose from existing abilities
-            abilityChoices = GameRegistry.Instance.Abilities.Where(a => currentAbilities.ContainsKey(a.ID)).ToList();
+            abilityChoices = GameRegistry.Instance.Abilities.Where(a => currentAbilities.ContainsKey(a.ID)).ToList().Shuffled();
         }
         else abilityChoices = GameRegistry.Instance.Abilities.Shuffled();
 
@@ -141,13 +154,27 @@ public class ShopManager : Singleton<ShopManager>
         chronoshiftUpgrade.GetComponent<Upgrade>().Init(chronoshift, 0, true);
     }
 
+    public void RerollShop()
+    {
+        Money -= currRerollCost;
+        currRerollCost = Mathf.RoundToInt(currRerollCost * MultiplierPerReroll);
+        RestockShop();
+        rerollCostText.text = $"<${currRerollCost}>";
+        UpdateMoney();
+    }
+
     public void UpdateShopAbilities()
     {
         for (int i = 0; i < abilitySlots.Count; i++)
         {
-            for (int j = 0; j < abilitySlots[i].childCount; j++)
+            AbilitySlot slot = abilitySlots[i];
+            for (int j = 0; j < slot.transform.childCount; j++)
             {
-                Destroy(abilitySlots[i].GetChild(j).gameObject);
+                Transform child = slot.transform.GetChild(j);
+                if (child != slot.bindingText.transform)
+                {
+                    Destroy(child.gameObject);
+                }
             }
         }
 
@@ -158,26 +185,30 @@ public class ShopManager : Singleton<ShopManager>
         {
             if (ability is Dash)
             {
-                GameObject dashShopAbility = Instantiate(shopAbilityPrefab, dashAbilitySlot);
+                GameObject dashShopAbility = Instantiate(shopAbilityPrefab, dashAbilitySlot.transform);
                 dashShopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
                 continue;
             }
             if (index >= abilitySlots.Count) break;
-            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilitySlots[index]);
+            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilitySlots[index].transform);
             shopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
             index++;
         }
     }
 
-    public void ShowTooltipInfo(Sprite icon, string header, string description)
+    private void ClearTooltipInfo()
     {
-        tooltipInfoIcon.sprite = icon;
-        tooltipInfoNameText.text = header;
-        tooltipInfoDescriptionText.text = description;
+        tooltipInfoIcon.enabled = false;
+        tooltipInfoNameText.text = "";
+        tooltipInfoCooldownText.text = "";
+        for (int i = 0; i < tooltipInfoDescriptionParent.childCount; i++)
+        {
+            Destroy(tooltipInfoDescriptionParent.GetChild(i).gameObject);
+        }
     }
-
     public void ShowTooltipInfo(Ability ability, int level, bool isUpgrade)
     {
+        tooltipInfoIcon.enabled = true;
         tooltipInfoIcon.sprite = ability.Icon;
         if (isUpgrade)
         {
@@ -187,6 +218,8 @@ public class ShopManager : Singleton<ShopManager>
         {
             tooltipInfoNameText.text = $"{ability.Name} (Lvl. {level+1})";
         }
+
+        tooltipInfoCooldownText.text = $"Cooldown: {(ability.cooldown / 60f):F1}s";
 
         for (int i = 0; i < tooltipInfoDescriptionParent.childCount; i++)
         {
@@ -249,6 +282,7 @@ public class ShopManager : Singleton<ShopManager>
     public void UpdateMoney()
     {
         moneyText.text = $"${Money}";
+        rerollButton.interactable = Money >= currRerollCost;
     }
 
     public void UpdateRoundInfo() {

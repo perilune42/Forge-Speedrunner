@@ -14,8 +14,8 @@ public class Gate : ActivatableEntity
     protected override void Awake()
     {
         base.Awake();
-        endPos = EndPoint.position; // child will move in world space with parent
-        startPos = this.transform.position;
+        endPos = transform.localPosition + EndPoint.localPosition; // child will move in world space with parent
+        startPos = transform.localPosition;
 
     }
     public override void OnActivate()
@@ -30,7 +30,7 @@ public class Gate : ActivatableEntity
     {
         isActivated = false; 
         isMoving = false;
-        this.transform.position = startPos;
+        this.transform.localPosition = startPos;
     }
 
     protected override void FixedUpdate()
@@ -39,11 +39,11 @@ public class Gate : ActivatableEntity
         {
             // fix end node in world space
             float dist = MoveSpeed * Time.fixedDeltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, endPos, dist);
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, endPos, dist);
             if (Vector2.Distance(transform.position, endPos) < dist)
             {
                 isMoving = false;
-                transform.position = endPos;
+                transform.localPosition = endPos;
             }
         }
     }

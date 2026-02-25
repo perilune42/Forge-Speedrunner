@@ -1,5 +1,6 @@
 
 
+using FMODUnity;
 using UnityEngine;
 
 public class Drone : Entity
@@ -88,6 +89,9 @@ public class Drone : Entity
         canJumpNow = false;
         sr.color = Color.white * 0.5f;
         jumpParticles.Play();
+
+        RuntimeManager.PlayOneShotAttached("event:/Drone Jumped on", gameObject);
+
         return true;
     }
     private void Recharge()

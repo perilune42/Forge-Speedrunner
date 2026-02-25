@@ -17,6 +17,13 @@ public class Drone : Entity
     private bool canJumpNow = false;
 
     [SerializeField] ParticleSystem jumpParticles;
+    Animator animator;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        animator = GetComponent<Animator>();
+    }
 
     protected override void FixedUpdate()
     {
@@ -37,6 +44,19 @@ public class Drone : Entity
                 TryConsume();
             }
         } 
+
+        if (active && canJumpNow)
+        {
+            animator.Play("DroneActive");
+        }
+        else if (active)
+        {
+            animator.Play("DroneIdle");
+        }
+        else
+        {
+            animator.Play("DroneInactive");
+        }
     }
 
     protected override void OnTriggerEnter2D(Collider2D collision)
@@ -62,7 +82,7 @@ public class Drone : Entity
         {
             canJumpNow = true;
         }
-        indicatorSr.enabled = true;
+        
     }
 
     public override void OnPlayerExit()
@@ -87,7 +107,7 @@ public class Drone : Entity
 
         rechargeTimer = RechargeDuration;
         canJumpNow = false;
-        sr.color = Color.white * 0.5f;
+        sr.color = Color.white * 0.8f;
         jumpParticles.Play();
 
         RuntimeManager.PlayOneShotAttached("event:/Drone Jumped on", gameObject);

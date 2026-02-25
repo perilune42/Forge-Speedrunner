@@ -66292,6 +66292,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magnet
       objectReference: {fileID: 0}
+    - target: {fileID: 1073610669975220284, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
+      propertyPath: m_Size.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1073610669975220284, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
+      propertyPath: m_Size.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4776960669041274326, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: beamRange
       value: 75

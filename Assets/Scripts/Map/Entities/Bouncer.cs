@@ -1,3 +1,4 @@
+using FMODUnity;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +25,9 @@ public class Bouncer : Entity
     public override void OnCollide(DynamicEntity de, Vector2 normal)
     {
         base.OnCollide(de, normal);
+
+        if (de is not PlayerMovement) return;
+
         if (currCooldown > 0) return;
         // bool slammed = false;
 
@@ -60,6 +64,6 @@ public class Bouncer : Entity
         animator.Play("BouncerActive");
 
 
-        AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);
+        RuntimeManager.PlayOneShotAttached("event:/Bouncepad", gameObject);
     }
 }

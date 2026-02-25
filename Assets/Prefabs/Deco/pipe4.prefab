@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pipe4
       objectReference: {fileID: 0}
+    - target: {fileID: 8442748311825271526, guid: da392aef3f641254e85da55695794c23, type: 3}
+      propertyPath: SnapDistance
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 8764057513278757455, guid: da392aef3f641254e85da55695794c23, type: 3}
       propertyPath: m_Sprite
       value: 

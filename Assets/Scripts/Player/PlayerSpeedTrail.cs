@@ -5,11 +5,11 @@ public class PlayerSpeedTrail : MonoBehaviour
 {
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private ParticleSystem particle;
-    [SerializeField] private float minSpeedThresold, baseStrength, speedScaling;
+    [SerializeField] private float baseStrength, speedScaling;
 
     private void Update()
     {
-        float strength = Mathf.Abs(playerMovement.Velocity.x) - minSpeedThresold;
+        float strength = Mathf.Abs(playerMovement.Velocity.x) - playerMovement.FastSpeed;
         if (strength < 0 || playerMovement.SpecialState == SpecialState.Rocket) strength = 0;
         strength *= speedScaling;
         var emission = particle.emission;

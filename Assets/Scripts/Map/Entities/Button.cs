@@ -1,3 +1,4 @@
+using FMODUnity;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class Button : ActivatableEntity
     [SerializeField] Sprite unpressedSprite, pressedSprite;
 
     SpriteRenderer sr;
+    bool hasPressed = false;
 
     protected override void Awake()
     {
@@ -47,7 +49,12 @@ public class Button : ActivatableEntity
         {
             entity.OnActivate();
         }
-        sr.sprite = pressedSprite;
+        if (!hasPressed)
+        {
+            sr.sprite = pressedSprite;
+            RuntimeManager.PlayOneShotAttached("event:/Button press", gameObject);
+        }
+        
     }
 
     public override void OnActivate()
@@ -58,5 +65,6 @@ public class Button : ActivatableEntity
     public override void ResetEntity()
     {
         sr.sprite = unpressedSprite;
+        hasPressed = false;
     }
 }

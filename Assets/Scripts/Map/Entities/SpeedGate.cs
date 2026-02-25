@@ -1,3 +1,4 @@
+using FMODUnity;
 using UnityEngine;
 
 public class SpeedGate : ActivatableEntity
@@ -71,6 +72,7 @@ public class SpeedGate : ActivatableEntity
         indicatorSr.enabled = false;
         col.enabled = false;
         breakParticles.Play();
+        RuntimeManager.PlayOneShotAttached("event:/Gate Break", gameObject);
     }
 
     private bool CanBreak(float mult = 1f)

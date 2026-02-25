@@ -169,7 +169,7 @@ public class Parry : Ability
         p.transform.position = transform.position + (Vector3)(Vector2.up * pm.PlayerHeight * 0.5f);
         p.transform.position += new Vector3(surfaceDir.x * pm.PlayerWidth * 0.5f, surfaceDir.y * pm.PlayerHeight * 0.5f);
 
-        p.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, -inputDir));
+        p.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, surfaceDir - perpendicularDir));
         p.Play();
     }
 

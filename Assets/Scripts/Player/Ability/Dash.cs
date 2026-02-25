@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using FMODUnity;
 
 public class Dash : Ability, IStatSource
 {
@@ -209,7 +210,10 @@ public class Dash : Ability, IStatSource
         }
 
 
+
         base.UseAbility();
+
+        RuntimeManager.PlayOneShot("event:/Dash Action");
 
         return true;
     }

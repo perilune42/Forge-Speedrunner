@@ -1,3 +1,4 @@
+using FMODUnity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,6 +45,8 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     private bool isSprinting = false;
 
+    public float FastSpeed = 25;
+
     public float PlayerHeight => ((BoxCollider2D)SurfaceCollider).size.y;
     public float PlayerWidth => ((BoxCollider2D)SurfaceCollider).size.x;
 
@@ -60,7 +63,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     [SerializeField] private SpecialState specialState;
 
-    [SerializeField] private List<AudioClip> audioClips;
 
     [HideInInspector] public Vector2 PreCollisionVelocity;
 
@@ -81,6 +83,11 @@ public class PlayerMovement : DynamicEntity, IStatSource
     // apparent velocity of the surface this entity is resting on
     // for the purposes of friction
 
+
+ 
+    AudioEmitter audioEmitter;
+    public bool IsFast => Velocity.x > FastSpeed;
+
     protected override void Awake()
     {
         base.Awake();
@@ -92,6 +99,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
                 GravityMultiplier.Multipliers[climbGravityMult] = 1f;
             }
         };
+        audioEmitter = GetComponent<AudioEmitter>();
     }
 
     private void Start()
@@ -455,7 +463,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         onJump?.Invoke();
         GravityMultiplier.Multipliers[jumpGravityMult] = MovementParams.JumpGravityMult;
 
-        AudioManager.Instance?.PlaySoundEffect(audioClips[0], transform, 0.5f);
+        RuntimeManager.PlayOneShot("event:/Jump");
     }
 
     private void WallJump(Vector2 wallDir)
@@ -646,8 +654,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
     private void StartSprint()
     {
         isSprinting = true;
-
-        AudioManager.Instance?.PlaySoundEffect(audioClips[1], transform, 0.5f);
     }
 
     private void EndSprint()

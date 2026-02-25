@@ -210,7 +210,7 @@ public class FullscreenMapUI : MonoBehaviour
                     passageObj.transform.SetParent(passageContainer, false);
                 }
                 
-                if (shopMode)
+                if (shopMode && (door.Type == DoorwayType.ENTRANCE || door.Type == DoorwayType.BOTH))
                 {
                     MapSpawnSelector mapSpawnSelector = Instantiate(mapSpawnSelectorPrefab, transform);
                     mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -0.2f * unitX;

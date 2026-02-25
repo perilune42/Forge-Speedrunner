@@ -1,3 +1,4 @@
+using FMODUnity;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
@@ -215,6 +216,7 @@ public class Grapple : Ability, IStatSource
             grappleHand.Velocity += throwDir * HandLaunchSpeed;
             grappleHand.transform.eulerAngles = Vector3.forward * (Mathf.Atan2(throwDir.y, throwDir.x) * Mathf.Rad2Deg);
             grappleState = GrappleState.Launch;
+            RuntimeManager.PlayOneShot("event:/Grapple Hook Launch");
             
         }
         return true;
@@ -288,6 +290,7 @@ public class Grapple : Ability, IStatSource
         {
             charging = true;
         }
+        RuntimeManager.PlayOneShotAttached("event:/Grapple Impact", grappleHand.gameObject);
         
     }
 

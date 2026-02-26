@@ -52,10 +52,10 @@ MonoBehaviour:
       you're in the same room, teleport to the clone. Use again to teleport early.
     Cost: 6
   - Description: While teleporting, your ability cooldowns decrease much faster!
-    Cost: 7
+    Cost: 12
   - Description: On activation, gain increased movement speed and lower gravity.
       These stats are lost when you teleport.
-    Cost: 8
+    Cost: 20
   ID: 5
   CurrentLevel: 0
   CurCharges: 0

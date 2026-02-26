@@ -49,20 +49,21 @@ MonoBehaviour:
   Name: Wall Latch
   Icon: {fileID: 21300000, guid: 31fd9cd180505d24a994fcd4e135a045, type: 3}
   AllLevels:
-  - Description: I like cheese
-    Cost: 5
-  - Description: I like cheese
-    Cost: 5
-  - Description: I like cheese
-    Cost: 5
-  ID: 8
+  - Description: Activate while touching any wall to latch onto it in place. Jump
+      while latched to gain an upwards boost.
+    Cost: 6
+  - Description: Using this ability on climbable walls instantly resets its cooldown.
+    Cost: 8
+  - Description: Hold jump to charge up a much stronger boost.
+    Cost: 20
+  ID: 7
   CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
   StartUnlocked: 0
   BindingDisplayString: 
-  cooldown: 60
+  cooldown: 90
   info: {fileID: 0}
   latchedDirection: {x: 0, y: 0}
   inwardBoost: 9

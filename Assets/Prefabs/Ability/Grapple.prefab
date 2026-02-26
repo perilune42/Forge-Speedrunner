@@ -47,12 +47,14 @@ MonoBehaviour:
   Name: Grapple
   Icon: {fileID: 21300000, guid: 15ee6fa21e5a1f5458c15e5d7fffa128, type: 3}
   AllLevels:
-  - Description: I like cheese
-    Cost: 5
-  - Description: I like cheese
-    Cost: 5
-  - Description: I like cheese
-    Cost: 5
+  - Description: Activate to throw a hook in the direction you are inputting. Hold
+      the button to pull yourself towards the hook.
+    Cost: 12
+  - Description: Press jump while pulling to gain a small boost.
+    Cost: 15
+  - Description: While the hook is attached, charge up a powerful launch by delaying
+      the pull.
+    Cost: 24
   ID: 1
   CurrentLevel: 0
   CurCharges: 0

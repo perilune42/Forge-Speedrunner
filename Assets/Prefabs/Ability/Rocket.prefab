@@ -47,14 +47,14 @@ MonoBehaviour:
   Name: Rocket
   Icon: {fileID: 21300000, guid: 9fb9934563483d43bbf98df48efaf053, type: 3}
   AllLevels:
-  - Description: Attaches a rocket to your back. The rocket launches you really fast
-      after winding up for a short period.
-    Cost: 9
+  - Description: Attaches a rocket to your back and launch at high speed after a
+      short windup period. Use movement inputs to control launch direction.
+    Cost: 15
   - Description: You can steer the rocket after launching.
-    Cost: 5
+    Cost: 10
   - Description: During flight, you can use the ability again to boost for amazing
       speed, at the cost of your steering.
-    Cost: 12
+    Cost: 25
   ID: 7
   CurrentLevel: 0
   CurCharges: 0

@@ -11,6 +11,13 @@ public class SafeZone : Trigger
         
         if (Player.Instance.Movement.State == BodyState.OnGround)
         {
+            var plat = AbilityManager.Instance.GetAbility<Platform>();
+            if (plat != null && plat.IsPlayerTouchingPlatform()) 
+            {
+                return;
+            }
+
+
             List<Collider2D> res = new();
             Physics2D.OverlapCollider(Player.Instance.Movement.Hurtbox, res);
             if (res.Where((c) => c.GetComponent<Hazard>() != null).Count() > 0)

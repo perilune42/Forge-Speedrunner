@@ -10,7 +10,7 @@ public class AbilityInfo : MonoBehaviour
     [HideInInspector] public Ability Ability;
     [SerializeField] private Image icon, mask, flashMask;
     [SerializeField] private TMP_Text chargeText, keybindText;
-
+    [SerializeField] private AbilityLevelUI levelUI;
     
     private void Start()
     {
@@ -40,6 +40,7 @@ public class AbilityInfo : MonoBehaviour
     {
         this.Ability = ability;
         icon.sprite = ability.Icon;
+        if (levelUI != null) levelUI.SetLevel(ability.CurrentLevel);
     }
 
     private void Update()

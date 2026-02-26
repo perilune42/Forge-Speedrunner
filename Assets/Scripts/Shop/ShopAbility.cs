@@ -12,12 +12,15 @@ public class ShopAbility : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
 
     // Editor refs
     [SerializeField] Image abilityImage;
+    [SerializeField] AbilityLevelUI levelUI;
 
     public void Init(Ability ability, int level)
     {
         this.ability = ability;
         abilityLevel = level;
 
+        if (levelUI != null)
+            levelUI.SetLevel(level);
         abilityImage.sprite = ability.Icon;
     }
 

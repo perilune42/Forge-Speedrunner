@@ -18,6 +18,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private TMP_Text NameText;
     [SerializeField] private TMP_Text CostText;
     [SerializeField] private TMP_Text ChargeText;
+    [SerializeField] private AbilityLevelUI levelUI;
     [SerializeField] private bool isTool; // whether this shows up in the Tools group and thus doesn't show its name or charge count
     private int cost => ability.AllLevels[levelToUpgrade].Cost;
     private bool HasEnoughMoney => ShopManager.Instance.Money - cost >= 0;
@@ -108,6 +109,11 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         if (!isTool) NameText.text = $"{ability.Name} (Lvl. {level+1})";
         CostText.text = $"${cost}";
         if (!isTool) ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
+
+        if (!isTool && levelUI != null)
+        {
+            levelUI.SetLevel(level);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

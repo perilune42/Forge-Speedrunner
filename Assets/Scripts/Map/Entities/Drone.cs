@@ -1,6 +1,7 @@
 
 
 using FMODUnity;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Drone : Entity
@@ -63,7 +64,7 @@ public class Drone : Entity
     {
         base.OnTriggerEnter2D(collision);
         GrappleHand gh = collision.GetComponent<GrappleHand>();
-        if (gh != null)
+        if (active && gh != null)
         {
             CaptureGrapple(gh);
         }

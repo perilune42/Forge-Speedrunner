@@ -140,4 +140,9 @@ public class Magnet : Entity
             if (active) Deactivate();
         }
     }
+
+    private void OnDisable()
+    {
+        particle.gameObject.SetActive(false);
+    }
 }

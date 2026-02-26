@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1020859367549838677}
   - component: {fileID: 6164945512325555362}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 2603395020145842131}
   - component: {fileID: 7450780837331419061}
   - component: {fileID: 4039515624984709138}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Game End Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

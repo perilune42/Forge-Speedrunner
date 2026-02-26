@@ -1159,7 +1159,7 @@
     "m_ObjectId": "0e0244ad4bc44611b9c4f07e64b08536",
     "m_Title": "Outline Sample (-1, 1)",
     "m_Position": {
-        "x": -969.0000610351563,
+        "x": -969.0001220703125,
         "y": 2826.000244140625
     }
 }
@@ -2308,7 +2308,7 @@
     "m_ObjectId": "40a6d69c2796463a8fc4ed96b2288f48",
     "m_Title": "Outline Sample (1, 1)",
     "m_Position": {
-        "x": -970.0000610351563,
+        "x": -970.0001220703125,
         "y": 3255.000244140625
     }
 }
@@ -2687,7 +2687,7 @@
     "m_ObjectId": "56284e98ab834f3996cbeb84cc6708f0",
     "m_Title": "Outline Sample (0, 1)",
     "m_Position": {
-        "x": -1006.0000610351563,
+        "x": -1006.0001220703125,
         "y": 608.0
     }
 }
@@ -2698,7 +2698,7 @@
     "m_ObjectId": "584b347d9c924bf38d704d3a7df358a3",
     "m_Title": "Outline Sample (1, -1)",
     "m_Position": {
-        "x": -965.0000610351563,
+        "x": -965.0001220703125,
         "y": 3690.000244140625
     }
 }
@@ -3218,8 +3218,8 @@
     "m_ObjectId": "7509137b3b0a471bb291652a9d6f3a92",
     "m_Title": "Outline Sample (-1, 0)",
     "m_Position": {
-        "x": -1017.0000610351563,
-        "y": 1892.0001220703125
+        "x": -1017.0001220703125,
+        "y": 1892.000244140625
     }
 }
 
@@ -3655,7 +3655,7 @@
     "m_PerRendererData": false,
     "m_customAttributes": [],
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"ca83647036645504c8aebecf16ebf97d\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"09b30e3197c9c8844bd81a2c985d8690\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
@@ -3833,8 +3833,8 @@
     "m_ObjectId": "9952856114b64306bdc796ead66fdb42",
     "m_Title": "Outline Sample (-1, -1)",
     "m_Position": {
-        "x": -951.0000610351563,
-        "y": 2397.0
+        "x": -951.0001220703125,
+        "y": 2397.000244140625
     }
 }
 
@@ -4167,8 +4167,8 @@
     "m_ObjectId": "aad92684c1a44a83831f6aa3229e6737",
     "m_Title": "Outline Sample (1, 0)",
     "m_Position": {
-        "x": -1008.0000610351563,
-        "y": 1025.0
+        "x": -1008.0001220703125,
+        "y": 1025.0001220703125
     }
 }
 
@@ -5321,7 +5321,7 @@
     "m_ObjectId": "f2e9e3eb71564102b61f1230a9b5feba",
     "m_Title": "Outline Sample (0, -1)",
     "m_Position": {
-        "x": -1014.0000610351563,
+        "x": -1014.0001220703125,
         "y": 1461.0001220703125
     }
 }

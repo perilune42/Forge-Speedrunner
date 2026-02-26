@@ -145,8 +145,8 @@ public class Doorway : MonoBehaviour
         if (passage != null)
         {
             GameObject indicator = Instantiate(RoomManager.Instance.EntranceIndicatorPrefab, transform);
-            indicator.transform.eulerAngles = new Vector3(0,0, Vector2.SignedAngle(Vector2.up, GetTransitionDirection()));
-            indicator.transform.position = (Vector2)transform.position + -3 * GetTransitionDirection();
+            indicator.transform.eulerAngles = new Vector3(0,0, Vector2.SignedAngle(Vector2.right, GetTransitionDirection()));
+            indicator.transform.position = (Vector2)transform.position + -4 * GetTransitionDirection();
         }
     }
 }

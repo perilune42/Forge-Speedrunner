@@ -297,15 +297,15 @@ public class RoomManager : Singleton<RoomManager>
         Debug.Log("start room transition");
         TransitionOngoing = true;
         AbilityManager.Instance.ResetAbilites();
-        FadeToBlack.Instance.FadeIn();
         if (dir == Vector2.up)
         {
             Player.Instance.Movement.GravityEnabled = false;
         }
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
+        yield return FadeToBlack.Instance.FadeOut();
+        // for (int i = 0; i < TransitionFadeFrames; i++)
+        // {
+        //     yield return new WaitForFixedUpdate();
+        // }
 
         // logic moved to CameraController
         CameraController.Instance.SnapToRoom(room);
@@ -318,11 +318,11 @@ public class RoomManager : Singleton<RoomManager>
             yield return new WaitForFixedUpdate();
         }
 
-        FadeToBlack.Instance.FadeOut();
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
+        yield return FadeToBlack.Instance.FadeIn();
+        // for (int i = 0; i < TransitionFadeFrames; i++)
+        // {
+        //     yield return new WaitForFixedUpdate();
+        // }
         TransitionOngoing = false;
         Debug.Log("end room transition");
     }

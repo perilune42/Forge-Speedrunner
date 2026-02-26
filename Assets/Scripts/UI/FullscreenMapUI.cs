@@ -46,6 +46,8 @@ public class FullscreenMapUI : MonoBehaviour
 
     private Dictionary<Room, RectTransform> roomRects = new();
 
+    private Vector3 startPinLocation;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -150,6 +152,7 @@ public class FullscreenMapUI : MonoBehaviour
                 //    new Vector2(relativeSize.x / (width * room.size.x) * youAreHereSize.x,
                 //    relativeSize.y / (height * room.size.y) * youAreHereSize.y);
                 startPin.transform.SetParent(roomContainer, true);
+                startPinLocation = startPin.transform.position;
             }
             if (room.GetComponent<FinishRoom>() != null)
             {
@@ -213,7 +216,10 @@ public class FullscreenMapUI : MonoBehaviour
                 if (shopMode && (door.Type == DoorwayType.ENTRANCE || door.Type == DoorwayType.BOTH))
                 {
                     MapSpawnSelector mapSpawnSelector = Instantiate(mapSpawnSelectorPrefab, transform);
-                    mapSpawnSelector.transform.localPosition = relPos + door.GetTransitionDirection() * -0.2f * unitX;
+                    float offsetFactor = 0.3f;
+
+                    mapSpawnSelector.transform.localPosition = relPos + new Vector2(door.GetTransitionDirection().x * -offsetFactor * unitX,
+                                                                                    door.GetTransitionDirection().y * -offsetFactor * unitY);
                     mapSpawnSelector.transform.SetParent(spawnSelectorContainer, true);
                     mapSpawnSelector.LinkToDoorway(door);
                     
@@ -289,9 +295,8 @@ public class FullscreenMapUI : MonoBehaviour
         var roomRect = roomRects[RoomManager.Instance.StartingRoom];
         Vector2 roomRoot = roomRect.transform.position;
         MapSpawnSelector sel = Instantiate(startSpawnSelectorPrefab, transform);
-        var relPos = RoomManager.Instance.GetRelativePosition(RoomManager.Instance.StartingRoom,
-            RoomManager.Instance.StartingSpawn.transform.position);
-        sel.transform.position = roomRoot + new Vector2(roomRect.rect.width * relPos.x, roomRect.rect.height * relPos.y);
+        
         sel.transform.SetParent(spawnSelectorContainer, true);
+        sel.transform.position = startPinLocation;
     }
 }

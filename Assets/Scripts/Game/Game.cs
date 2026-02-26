@@ -103,7 +103,7 @@ public class Game : Singleton<Game> {
         Timer.speedrunTime = startTime;
         Timer.RecordTime();
         GoToShop(true);
-        CurrentRound++;
+        
     }
 
     public void GoToShop(bool newRound)
@@ -148,6 +148,8 @@ public class Game : Singleton<Game> {
         {
             RoomManager.Instance.SpawnAtDoorway(startDoorway);
         }
+
+        if (!practiceMode) CurrentRound++;
     }
 
 
@@ -160,7 +162,7 @@ public class Game : Singleton<Game> {
         else if(Input.GetKeyDown(KeyCode.Z))
             ReturnToPlay(false);
         else if(Input.GetKeyDown(KeyCode.X))
-            GoToShop(true);
+            Game.Instance.FinishRound();
 
         if (IsPracticeMode && Input.GetKeyDown(KeyCode.Return))
         {

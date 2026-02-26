@@ -206,7 +206,6 @@ public class RoomManager : Singleton<RoomManager>
 
         // calculate player velocity
         Vector2 dir = door1.GetTransitionDirection();
-        Vector2 preservedVelocity;
 
 
         // calculate relativePos, which is unavoidable

@@ -163,5 +163,8 @@ public abstract class Ability : MonoBehaviour
     }
 
     [ContextMenu("Reset")]
-    public virtual void OnReset() { }
+    public virtual void OnReset()
+    {
+        stopParticleAction?.Invoke();
+    }
 }

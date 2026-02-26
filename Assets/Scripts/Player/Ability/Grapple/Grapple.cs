@@ -309,6 +309,7 @@ public class Grapple : Ability, IStatSource
         if (grappleHand == null) return;
         Destroy(grappleHand.gameObject);
         grappleState = GrappleState.Idle;
+        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
     }
 
 

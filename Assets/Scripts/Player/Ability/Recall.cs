@@ -136,8 +136,8 @@ public class Recall : Ability, IStatSource
         if (CurrentLevel >= 2)
         {
             PlayerMovement.WalkSpeed.Multipliers.Remove(this);
-            PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
         }
+        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
     }
 
     private void HandlePostProcessing(float intensity)

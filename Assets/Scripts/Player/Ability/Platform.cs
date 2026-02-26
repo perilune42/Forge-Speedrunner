@@ -96,7 +96,7 @@ public class Platform : Ability, IStatSource
 
     public bool IsPlayerTouchingPlatform()
     {
-        if (platform == null) return false;
+        if (platform == null || !platformCollider.enabled) return false;
         List<RaycastHit2D> results = new();
         Physics2D.BoxCast(PlayerMovement.transform.position, PlayerMovement.SurfaceCollider.bounds.size, 0f, Vector2.down, ContactFilter2D.noFilter, results, 0.1f);
         foreach (RaycastHit2D raycastHit2D in results)

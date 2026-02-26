@@ -75,7 +75,6 @@ public class Magnet : Entity
         particle.gameObject.SetActive(false);
         particleActive.gameObject.SetActive(true);
         suckFrames = 0;
-        Debug.Log("activated");
     }
 
     private void Deactivate()
@@ -85,7 +84,6 @@ public class Magnet : Entity
         particleActive.gameObject.SetActive(false);
         curCooldown = cooldown;            
         playerMovement = null;
-        Debug.Log("deactivated, " + suckFrames);
     }
 
     protected override void FixedUpdate()

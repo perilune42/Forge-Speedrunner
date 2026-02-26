@@ -9,7 +9,7 @@ public class PlayerWalkParticles : MonoBehaviour
     private void Update()
     {
         float strength = 1f;
-        if (playerMovement.State != BodyState.OnGround) strength = 0;
+        if (playerMovement.State != BodyState.OnGround || playerMovement.SpecialState != SpecialState.Normal) strength = 0;
         else if (playerMovement.MoveDir.x == 0) strength = 0;
         var emission = particle.emission;
         var minMaxCurve = emission.rateOverDistance;

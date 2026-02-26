@@ -82,8 +82,7 @@ public class Chronoshift : Ability, IStatSource
             
             
             curTeleportSpeed *= teleportAcceleration;
-            if (keyframeIndex == keyframes.Count - 1 &&
-                Vector3.Distance(PlayerMovement.transform.position, clone.transform.position) < 0.1f)
+            if (Vector3.Distance(PlayerMovement.transform.position, clone.transform.position) < 0.1f)
             {
                 Instantiate(shatterParticle, clone.transform.position, Quaternion.identity);
                 CancelTeleport();

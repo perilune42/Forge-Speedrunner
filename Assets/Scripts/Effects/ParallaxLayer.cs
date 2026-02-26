@@ -6,17 +6,19 @@ public class ParallaxLayer : MonoBehaviour
     Transform cameraTransform => Camera.main.transform;
     float spriteWidth;
 
-    [SerializeField] SpriteRenderer baseTile;
+    [SerializeField] SpriteRenderer[] baseTiles;
     [SerializeField] int tilesOnEachSide = 1;
     [SerializeField] float parallaxFactor = 1f;
     [SerializeField] float xSpeed = 0f;
     [SerializeField] SpriteRenderer[] tiles;
     float tileWidth;
     float timeOffset;
+    private int index => Game.Instance.BackgroundIndex;
+    private SpriteRenderer baseTile => baseTiles[index];
 
     private void OnValidate()
     {
-        baseTile.sortingOrder = Layer;
+        foreach (SpriteRenderer tile in baseTiles) tile.sortingOrder = Layer;
         if (Camera.main != null)
         {
             transform.position = (Vector2)Camera.main.transform.position;
@@ -29,6 +31,15 @@ public class ParallaxLayer : MonoBehaviour
         baseTile.sortingOrder = Layer;
         spriteWidth = baseTile.bounds.size.x;
         tileWidth = baseTile.bounds.size.x;
+        InitTiles();
+        Game.Instance.OnLoadShop += () => InitTiles();
+        foreach (SpriteRenderer tile in baseTiles) tile.gameObject.SetActive(false);   
+    }
+
+    public void InitTiles()
+    {
+        baseTile.gameObject.SetActive(true);
+        foreach (SpriteRenderer tile in tiles) Destroy(tile.gameObject);
 
         int total = tilesOnEachSide * 2 + 1;
         tiles = new SpriteRenderer[total];
@@ -39,8 +50,8 @@ public class ParallaxLayer : MonoBehaviour
             t.transform.localPosition = Vector3.right * (i - tilesOnEachSide) * tileWidth;
             tiles[i] = t;
         }
+        baseTile.gameObject.SetActive(false);
 
-        Destroy(baseTile.gameObject);
     }
 
     void LateUpdate()

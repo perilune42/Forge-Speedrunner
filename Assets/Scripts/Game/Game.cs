@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -33,6 +34,9 @@ public class Game : Singleton<Game> {
     private int nextKeyframeTime = 0;
     private Vector3 startPos;
     private float startTime;
+
+    public int BackgroundIndex; // 0 - day, 1 - night, 2 - rain
+    public Action OnLoadShop;
 
     public override void Awake()
     {
@@ -105,7 +109,6 @@ public class Game : Singleton<Game> {
         Timer.RecordTime();
         GoToShop(true);
         ChronoshiftKeyframes.Clear();
-        
     }
 
     public void GoToShop(bool newRound)
@@ -118,6 +121,8 @@ public class Game : Singleton<Game> {
         // stop the count
         Timer.Instance.Pause(true);
         MusicPlayer.Instance.EnterShop();
+        BackgroundIndex = UnityEngine.Random.Range(0, 3);
+        OnLoadShop?.Invoke();
     }
 
     public void ReturnToPlay(bool practiceMode, Doorway startDoorway = null)

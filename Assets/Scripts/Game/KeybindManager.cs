@@ -48,7 +48,6 @@ public class KeybindManager : Singleton<KeybindManager>
                 string bindingString = Util.FixControlString(action.GetBindingDisplayString(i), binding);
                 bindingStrings[binding] = bindingString;
                 bindingsToActions[binding] = action;
-                Debug.Log(binding.name);
             }
         }
         UsingGamepad = gamepad;

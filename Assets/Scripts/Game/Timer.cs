@@ -21,6 +21,7 @@ public class Timer : Singleton<Timer>
     public static bool timeSpeedrun = true;
     
     [SerializeField] private float chromaticAberrationTime; // how much time should be up before effect kicks in
+    [SerializeField] private float chromaticAberrationIntensity;
     [SerializeField] private Volume volume;
     private ChromaticAberration chromaticAberration;
 
@@ -61,7 +62,7 @@ public class Timer : Singleton<Timer>
 
         float timeLeftFrac = speedrunTime / targetSpeedrunTime;
         timeLeftFrac = Mathf.Max(0f, timeLeftFrac - chromaticAberrationTime);
-        chromaticAberration.intensity.Override(timeLeftFrac / (1 - chromaticAberrationTime));
+        chromaticAberration.intensity.Override(timeLeftFrac * chromaticAberrationIntensity / (1 - chromaticAberrationTime));
     }
 
     public override void Awake() {

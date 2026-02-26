@@ -2,6 +2,7 @@ using NUnit.Framework.Constraints;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -52,6 +53,8 @@ public class RoomManager : Singleton<RoomManager>
             respawnPosition = value;
             respawnIsSet = true;
     } }
+
+    public Action RunBetweenStates = null;
 
     public override void Awake()
     {
@@ -301,28 +304,14 @@ public class RoomManager : Singleton<RoomManager>
         {
             Player.Instance.Movement.GravityEnabled = false;
         }
-        yield return FadeToBlack.Instance.FadeOut();
-        // for (int i = 0; i < TransitionFadeFrames; i++)
-        // {
-        //     yield return new WaitForFixedUpdate();
-        // }
 
         // logic moved to CameraController
-        CameraController.Instance.SnapToRoom(room);
-        WarpToPosition(position, preservedVelocity, dir);
+        RunBetweenStates = () => {
+            CameraController.Instance.SnapToRoom(room);
+            WarpToPosition(position, preservedVelocity, dir);
+        };
+        yield return FadeToBlack.Instance.Fade();
         
-
-        // 3 cope frames
-        for (int i = 0; i < 3; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        yield return FadeToBlack.Instance.FadeIn();
-        // for (int i = 0; i < TransitionFadeFrames; i++)
-        // {
-        //     yield return new WaitForFixedUpdate();
-        // }
         TransitionOngoing = false;
         Debug.Log("end room transition");
     }

@@ -224,7 +224,6 @@ public class RoomManager : Singleton<RoomManager>
     // respawn location set by safe zones
     public void Respawn()
     {
-        Player.Instance.IsDead = false;
         Player.Instance.Movement.Locked = true;
         Vector2 pos;
         if (respawnIsSet)
@@ -319,6 +318,7 @@ public class RoomManager : Singleton<RoomManager>
             yield return new WaitForFixedUpdate();
         }
 
+        Player.Instance.IsDead = false;
         FadeToBlack.Instance.FadeOut();
         for (int i = 0; i < TransitionFadeFrames; i++)
         {

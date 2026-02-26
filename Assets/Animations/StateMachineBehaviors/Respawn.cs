@@ -7,7 +7,7 @@ public class Respawn : StateMachineBehaviour
     {
         Player.Instance.IsDead = true;
         Player.Instance.Movement.Locked = true;
-        RuntimeManager.PlayOneShot("event:/Death Sound");
+        RuntimeManager.PlayOneShot("event:/Death Sound Shortened");
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

@@ -88,6 +88,7 @@ public class Game : Singleton<Game> {
         Timer.Instance.Pause(false);
         Timer.targetSpeedrunTime = initialGoalTime;
         CurrentRound = 1;
+        MusicPlayer.Instance.EnterPlay();
     }
 
     public void FinishRound()
@@ -116,6 +117,7 @@ public class Game : Singleton<Game> {
 
         // stop the count
         Timer.Instance.Pause(true);
+        MusicPlayer.Instance.EnterShop();
     }
 
     public void ReturnToPlay(bool practiceMode, Doorway startDoorway = null)
@@ -151,6 +153,7 @@ public class Game : Singleton<Game> {
         }
 
         if (!practiceMode) CurrentRound++;
+        MusicPlayer.Instance.EnterPlay();
     }
 
 

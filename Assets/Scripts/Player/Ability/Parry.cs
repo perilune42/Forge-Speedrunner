@@ -1,4 +1,5 @@
 using DG.Tweening;
+using FMODUnity;
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -129,7 +130,7 @@ public class Parry : Ability
         circle.transform.DOScale(0f, hitstopFrames * Time.fixedDeltaTime).SetEase(Ease.InCubic);
         pm.SpecialState = SpecialState.Normal;
         pm.Locked = true;
-
+        RuntimeManager.PlayOneShot("event:/Parry Sound Stop");
     }
 
     private void ReleaseParry()
@@ -165,12 +166,15 @@ public class Parry : Ability
             pm.IsInvulnerable = false;
         }));
 
+        RuntimeManager.PlayOneShot("event:/Parry Sound Launch");
+
         var p = Instantiate(shockwaveParticles);
         p.transform.position = transform.position + (Vector3)(Vector2.up * pm.PlayerHeight * 0.5f);
         p.transform.position += new Vector3(surfaceDir.x * pm.PlayerWidth * 0.5f, surfaceDir.y * pm.PlayerHeight * 0.5f);
 
         p.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, surfaceDir - perpendicularDir));
         p.Play();
+
     }
 
     public override bool CanUseAbility()

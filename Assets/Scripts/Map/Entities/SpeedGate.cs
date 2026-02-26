@@ -7,13 +7,13 @@ public class SpeedGate : ActivatableEntity
     public override bool IsSolid => !CanBreak(1);
     private Collider2D col;
     [SerializeField] private SpriteRenderer gateSr;
-    [SerializeField] private SpriteRenderer colorSr;
     [SerializeField] private bool isHorizontal;
     [SerializeField] ParticleSystem breakParticles;
 
     public float SpeedRequirement = 20;
 
     Animator animator;
+    [SerializeField] bool isBig;
 
     protected override void Awake()
     {
@@ -31,7 +31,6 @@ public class SpeedGate : ActivatableEntity
     {
         isBroken = false;
         gateSr.enabled = true;
-        colorSr.enabled = true;
         col.enabled = true;
     }
 
@@ -40,18 +39,37 @@ public class SpeedGate : ActivatableEntity
         base.FixedUpdate();
         if (isBroken) return;
 
-        if (CanBreak(1))
+        if (isBig)
         {
-            animator.Play("SpeedGateFast");
-        }
-        else if (CanBreak(0.75f)) 
-        {
-            animator.Play("SpeedGateMed");
+            if (CanBreak(1))
+            {
+                animator.Play("SpeedGate2Fast");
+            }
+            else if (CanBreak(0.75f))
+            {
+                animator.Play("SpeedGate2Med");
+            }
+            else
+            {
+                animator.Play("SpeedGate2Slow");
+            }
         }
         else
         {
-            animator.Play("SpeedGateSlow");
+            if (CanBreak(1))
+            {
+                animator.Play("SpeedGateFast");
+            }
+            else if (CanBreak(0.75f))
+            {
+                animator.Play("SpeedGateMed");
+            }
+            else
+            {
+                animator.Play("SpeedGateSlow");
+            }
         }
+
     }
 
     public override void OnCollide(DynamicEntity de, Vector2 normal)
@@ -70,7 +88,6 @@ public class SpeedGate : ActivatableEntity
     {
         isBroken = true;
         gateSr.enabled = false;
-        colorSr.enabled = false;
         col.enabled = false;
         breakParticles.Play();
         RuntimeManager.PlayOneShotAttached("event:/Gate Break", gameObject);

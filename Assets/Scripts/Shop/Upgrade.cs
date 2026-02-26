@@ -107,7 +107,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         // Set UI elements
         UpgradeImage.sprite = ability.Icon;
         if (!isTool) NameText.text = $"{ability.Name} (Lvl. {level+1})";
-        CostText.text = $"${cost}";
+        CostText.text = $"<sprite name=\"computer_chip\">{cost}";
         if (!isTool) ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
 
         if (!isTool && levelUI != null)

@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -191.40735, y: 0}
-  m_SizeDelta: {x: 217.1853, y: 100}
+  m_SizeDelta: {x: 193, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4389677016964482232
 MonoBehaviour:
@@ -58,6 +58,7 @@ MonoBehaviour:
   NameText: {fileID: 0}
   CostText: {fileID: 3569693922922687777}
   ChargeText: {fileID: 0}
+  levelUI: {fileID: 0}
   isTool: 1
 --- !u!114 &5626778345976209188
 MonoBehaviour:
@@ -245,7 +246,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -50.479614, y: 0}
-  m_SizeDelta: {x: 100.9591, y: 0}
+  m_SizeDelta: {x: 74.2, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2851582958411443003
 CanvasRenderer:
@@ -302,14 +303,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
-  m_fontSizeBase: 36
+  m_fontSize: 20.6
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

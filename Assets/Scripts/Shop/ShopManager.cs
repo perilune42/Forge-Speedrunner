@@ -159,7 +159,6 @@ public class ShopManager : Singleton<ShopManager>
         Money -= currRerollCost;
         currRerollCost = Mathf.RoundToInt(currRerollCost * MultiplierPerReroll);
         RestockShop();
-        rerollCostText.text = $"<${currRerollCost}>";
         UpdateMoney();
     }
 
@@ -282,14 +281,15 @@ public class ShopManager : Singleton<ShopManager>
     public void UpdateMoney()
     {
         moneyText.text = $"<sprite name=\"computer_chip\">{Money}";
+        rerollCostText.text = $"<<sprite name=\"computer_chip\">{currRerollCost}>";
         rerollButton.interactable = Money >= currRerollCost;
     }
 
     public void UpdateRoundInfo() {
-        roundText.text = $"Round {Game.Instance.CurrentRound}";
+        roundText.text = $"{Game.Instance.CurrentRound}";
         runTimeText.text = $"{Util.GetTimeString(Timer.previousSpeedrunTime)} / {Util.GetTimeString(Timer.previousTargetTime)}";
-        prevTargetText.text = $"Prev Target:\n{Util.GetTimeString(Timer.previousTargetTime)}";
-        newTargetText.text = $"New Target:\n{Util.GetTimeString(Timer.targetSpeedrunTime)}";
+        prevTargetText.text = $"{Util.GetTimeString(Timer.previousTargetTime)}";
+        newTargetText.text = $"{Util.GetTimeString(Timer.targetSpeedrunTime)}";
     }
 
     // BUTTON REFS

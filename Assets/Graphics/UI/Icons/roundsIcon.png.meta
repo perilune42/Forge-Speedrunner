@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 7e53998f4daa49d4c80254061a14e3da
+guid: 7c46a1eda34e29b44afd77b0777db992
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 410769686757225529
-    second: genericButton_0
+      213: -864018933807279664
+    second: roundsIcon_0
+  - first:
+      213: -8369376514187578899
+    second: roundsIcon_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +55,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 10
-  spriteBorder: {x: 9, y: 10, z: 9, w: 9}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -121,7 +124,7 @@ TextureImporter:
         width: 30
         height: 30
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -139,7 +142,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []

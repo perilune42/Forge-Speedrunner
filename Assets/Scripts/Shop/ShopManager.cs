@@ -274,14 +274,14 @@ public class ShopManager : Singleton<ShopManager>
     private void GainReward()
     {
         int moneyGained = Game.Instance.GetRunReward();
-        moneyGainedText.text = moneyGained + "";
+        moneyGainedText.text = $"+<sprite name=\"computer_chip\">{moneyGained}";
         Money += moneyGained;
         UpdateMoney();
     }
 
     public void UpdateMoney()
     {
-        moneyText.text = $"${Money}";
+        moneyText.text = $"<sprite name=\"computer_chip\">{Money}";
         rerollButton.interactable = Money >= currRerollCost;
     }
 

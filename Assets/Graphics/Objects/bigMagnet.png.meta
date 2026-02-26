@@ -482,22 +482,22 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      bigMagnet_0: -621957914
-      bigMagnet_1: -1910991498
-      bigMagnet_10: 2023803831
-      bigMagnet_11: 1747021514
-      bigMagnet_12: 1377913492
-      bigMagnet_13: 1917534348
-      bigMagnet_14: -1143611619
-      bigMagnet_15: 90718288
-      bigMagnet_2: -1980060398
-      bigMagnet_3: 708300639
-      bigMagnet_4: 2060111695
-      bigMagnet_5: -678520559
-      bigMagnet_6: -830003967
-      bigMagnet_7: 481097810
-      bigMagnet_8: 1143930353
-      bigMagnet_9: -1670493583
+      bigMagnet_0: 2004765907
+      bigMagnet_1: 2106219475
+      bigMagnet_10: -1526550177
+      bigMagnet_11: 190929150
+      bigMagnet_12: -612667736
+      bigMagnet_13: 1605553886
+      bigMagnet_14: -469586531
+      bigMagnet_15: 2092482952
+      bigMagnet_2: 2142427975
+      bigMagnet_3: -1224251023
+      bigMagnet_4: -539148287
+      bigMagnet_5: -509434060
+      bigMagnet_6: 432007049
+      bigMagnet_7: -526554364
+      bigMagnet_8: 148874952
+      bigMagnet_9: -1852305870
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

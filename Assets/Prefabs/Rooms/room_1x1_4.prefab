@@ -354,6 +354,14 @@ PrefabInstance:
       value: Magnet
       objectReference: {fileID: 0}
     - target: {fileID: 1073610669975220284, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
+      propertyPath: m_Size.x
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1073610669975220284, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
+      propertyPath: m_Size.y
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1073610669975220284, guid: 6def2d110f9dc97418c5bbae86ce5e38, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 8fc72cc17e4be64128e3a38878a15455, type: 3}

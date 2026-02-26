@@ -279,7 +279,7 @@ MonoBehaviour:
   Hitbox: {fileID: 0}
   colorIndicator: {fileID: 8415011770431776973}
   gateSr: {fileID: 1896422654959303597}
-  indicatorSr: {fileID: 8415011770431776973}
+  colorSr: {fileID: 8415011770431776973}
   isHorizontal: 1
   breakParticles: {fileID: 5495644293563264059}
   SpeedRequirement: 19.5

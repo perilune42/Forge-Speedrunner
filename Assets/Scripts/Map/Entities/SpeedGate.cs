@@ -7,6 +7,7 @@ public class SpeedGate : ActivatableEntity
     public override bool IsSolid => !CanBreak(1);
     private Collider2D col;
     [SerializeField] private SpriteRenderer gateSr;
+    [SerializeField] private SpriteRenderer colorSr;
     [SerializeField] private bool isHorizontal;
     [SerializeField] ParticleSystem breakParticles;
 
@@ -30,6 +31,7 @@ public class SpeedGate : ActivatableEntity
     {
         isBroken = false;
         gateSr.enabled = true;
+        colorSr.enabled = true;
         col.enabled = true;
     }
 
@@ -68,6 +70,7 @@ public class SpeedGate : ActivatableEntity
     {
         isBroken = true;
         gateSr.enabled = false;
+        colorSr.enabled = false;
         col.enabled = false;
         breakParticles.Play();
         RuntimeManager.PlayOneShotAttached("event:/Gate Break", gameObject);

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8720639791676307369}
   - component: {fileID: 2675210836383652523}
   - component: {fileID: 2865041078514351360}
+  - component: {fileID: 330812357805038201}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -74,5 +75,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 500379e4e640b524a9c47ea0a222b0a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Timer
+  chromaticAberrationTime: 0.8
+  volume: {fileID: 330812357805038201}
   currState: 0
   timer: {fileID: 0}
+--- !u!114 &330812357805038201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661234957250522255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 1
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 0c5afd2a0bc294edba708bb9c1ed81d6, type: 2}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Game : Singleton<Game> {
     public int CurrentRound;
@@ -26,7 +27,6 @@ public class Game : Singleton<Game> {
 
     [SerializeField] private RoomManager roomManagerRef;
     
-
 
     public List<ChronoshiftKeyframe> ChronoshiftKeyframes;
     [SerializeField] private int keyframeInterval;

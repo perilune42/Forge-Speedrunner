@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 416d43c2ddbbcc4d79be72f86953103a
+guid: 7e53998f4daa49d4c80254061a14e3da
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8205396402389402546
-    second: SpeedometerPlaceholder_0
+      213: 410769686757225529
+    second: genericButton_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:

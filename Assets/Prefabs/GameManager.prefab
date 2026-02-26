@@ -48,18 +48,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game
   CurrentRound: 0
   IsPracticeMode: 0
-  initialGoalTime: 300
+  initialGoalTime: 900
   GoalTimeScale: 0.8
   PBTimeScale: 0.9
   RewardMultiplier: 70
-  RewardDecay: 0.85
+  RewardDecay: 0.7
   MinReward: 8
   RewardHardcap: 100
   RewardThreshold: 0.97
-  RewardMultPerRound: 1.15
+  RewardMultPerRound: 1.2
   OverrideStartingRoom: 0
   enableRandomMap: 1
-  AllRoomsDiscovered: 0
+  AllRoomsDiscovered: 1
   Generator: {fileID: 0}
   roomManagerRef: {fileID: 0}
   keyframeInterval: 60
@@ -76,6 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Timer
   chromaticAberrationTime: 0.8
+  chromaticAberrationIntensity: 0.4
   volume: {fileID: 330812357805038201}
   currState: 0
   timer: {fileID: 0}

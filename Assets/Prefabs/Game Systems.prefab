@@ -381,26 +381,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
-    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
-      propertyPath: timer
-      value: 
-      objectReference: {fileID: 6531896146149155853}
-    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
-      propertyPath: RewardDecay
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
-      propertyPath: initialGoalTime
-      value: 900
-      objectReference: {fileID: 0}
-    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
-      propertyPath: AllRoomsDiscovered
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
-      propertyPath: RewardMultPerRound
-      value: 1.2
-      objectReference: {fileID: 0}
     - target: {fileID: 8720639791676307369, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 75.90641
@@ -451,14 +431,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8720639791676307369, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
   m_PrefabInstance: {fileID: 9036295912724977933}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6531896146149155853 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2865041078514351360, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
-  m_PrefabInstance: {fileID: 9036295912724977933}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 500379e4e640b524a9c47ea0a222b0a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Timer

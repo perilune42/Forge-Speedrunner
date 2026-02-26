@@ -73,8 +73,6 @@ public class Chronoshift : Ability, IStatSource
                     curKeyframe = keyframes[keyframeIndex];
                     if (curKeyframe.room != RoomManager.Instance.activeRoom)
                     {
-                        Debug.Log("Should switch rooms");
-                        Debug.Log(keyframeIndex + " " + curKeyframe.room + " " + RoomManager.Instance.activeRoom);
                         StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero, Vector2.zero));
                         RoomManager.Instance.activeRoom = curKeyframe.room;
                     }
@@ -84,7 +82,8 @@ public class Chronoshift : Ability, IStatSource
             
             
             curTeleportSpeed *= teleportAcceleration;
-            if (Vector3.Distance(PlayerMovement.transform.position, clone.transform.position) < 0.1f)
+            if (keyframeIndex == keyframes.Count - 1 &&
+                Vector3.Distance(PlayerMovement.transform.position, clone.transform.position) < 0.1f)
             {
                 Instantiate(shatterParticle, clone.transform.position, Quaternion.identity);
                 CancelTeleport();

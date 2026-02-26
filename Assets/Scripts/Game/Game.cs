@@ -103,6 +103,7 @@ public class Game : Singleton<Game> {
         Timer.speedrunTime = startTime;
         Timer.RecordTime();
         GoToShop(true);
+        ChronoshiftKeyframes.Clear();
         
     }
 

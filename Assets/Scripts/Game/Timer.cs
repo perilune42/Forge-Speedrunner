@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public enum TimerState
 {
@@ -17,7 +19,19 @@ public class Timer : Singleton<Timer>
     public static float previousTargetTime;
     public static float speedrunTime = 0.0f;
     public static bool timeSpeedrun = true;
+    
+    [SerializeField] private float chromaticAberrationTime; // how much time should be up before effect kicks in
+    [SerializeField] private Volume volume;
+    private ChromaticAberration chromaticAberration;
 
+    public TimerState currState;
+    public Timer timer;
+    void Start()
+    {
+        currState = TimerState.Playing;
+        timer = gameObject.GetComponent<Timer>();
+        if (volume.profile.TryGet<ChromaticAberration>(out ChromaticAberration profile)) chromaticAberration = profile;
+    }
 
     // Pauses timescale if bool passed is true. Sets timescale to 0 so that the game is paused but UI can still be accessed and changed.
     public void Pause(bool pause) {
@@ -44,6 +58,10 @@ public class Timer : Singleton<Timer>
         {
             Game.Instance.EndGame();
         }
+
+        float timeLeftFrac = speedrunTime / targetSpeedrunTime;
+        timeLeftFrac = Mathf.Max(0f, timeLeftFrac - chromaticAberrationTime);
+        chromaticAberration.intensity.Override(timeLeftFrac / (1 - chromaticAberrationTime));
     }
 
     public override void Awake() {
@@ -67,13 +85,7 @@ public class Timer : Singleton<Timer>
     }
 
 
-    public TimerState currState;
-    public Timer timer;
-    void Start()
-    {
-        currState = TimerState.Playing;
-        timer = gameObject.GetComponent<Timer>();
-    }
+    
 
 }
 

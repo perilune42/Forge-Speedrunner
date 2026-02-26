@@ -112,6 +112,7 @@ public abstract class Ability : MonoBehaviour
         if (PlayerMovement.SpecialState == SpecialState.Rocket && this is not Ricochet && this is not Recall && this is not Chronoshift) return false;
         if (PlayerMovement.SpecialState == SpecialState.Teleport || PlayerMovement.SpecialState == SpecialState.Chronoshift) return false;
         if (RoomManager.Instance.TransitionOngoing) return false;
+        if (Player.Instance.IsDead) return false;
         if (UsesCharges)
         {
             if (this is Chronoshift) return AbilityManager.Instance.ChronoshiftCharges > 0;

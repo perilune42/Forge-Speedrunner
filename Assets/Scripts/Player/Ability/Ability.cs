@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 [Serializable]
 public struct AbilityLevel
 {
+    [TextArea]
     public string Description;
     public int Cost;
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Game : Singleton<Game> {
     public int CurrentRound;
@@ -26,7 +27,6 @@ public class Game : Singleton<Game> {
 
     [SerializeField] private RoomManager roomManagerRef;
     
-
 
     public List<ChronoshiftKeyframe> ChronoshiftKeyframes;
     [SerializeField] private int keyframeInterval;
@@ -103,6 +103,7 @@ public class Game : Singleton<Game> {
         Timer.speedrunTime = startTime;
         Timer.RecordTime();
         GoToShop(true);
+        ChronoshiftKeyframes.Clear();
         
     }
 
@@ -176,7 +177,7 @@ public class Game : Singleton<Game> {
         float factor = Timer.previousTargetTime * RewardThreshold / Timer.previousSpeedrunTime;
         float bonus = Mathf.Pow(Mathf.Max(0, factor - 1) * RewardMultiplier, RewardDecay);
         reward += bonus;
-        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound);
+        reward *= Mathf.Pow(RewardMultPerRound, CurrentRound - 1);
         return Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward));
     }
 
@@ -186,7 +187,9 @@ public class Game : Singleton<Game> {
     {
         float pbTime = Timer.previousSpeedrunTime * PBTimeScale;
         float baseTime = Timer.previousTargetTime * GoalTimeScale;
-        return Mathf.Min(baseTime, pbTime);
+        float t = Mathf.Clamp01(CurrentRound / 5f); // at 5 rounds or above, completely determined by PB time
+        float newGoal = Mathf.Lerp(baseTime, Mathf.Min(baseTime,pbTime), t);
+        return Util.RoundToNearest(newGoal, 5);
     }
 }
 

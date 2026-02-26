@@ -75,6 +75,7 @@ public class Magnet : Entity
         particle.gameObject.SetActive(false);
         particleActive.gameObject.SetActive(true);
         suckFrames = 0;
+        Debug.Log("activated");
     }
 
     private void Deactivate()
@@ -84,6 +85,7 @@ public class Magnet : Entity
         particleActive.gameObject.SetActive(false);
         curCooldown = cooldown;            
         playerMovement = null;
+        Debug.Log("deactivated, " + suckFrames);
     }
 
     protected override void FixedUpdate()
@@ -113,6 +115,7 @@ public class Magnet : Entity
 
     public override void OnCollide(DynamicEntity de, Vector2 normal)
     {
+        if (curCooldown > 0) return;
         if (de is PlayerMovement)
         {
             playerMovement = de as PlayerMovement;

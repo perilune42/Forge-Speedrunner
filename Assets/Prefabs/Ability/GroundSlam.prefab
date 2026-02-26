@@ -47,12 +47,14 @@ MonoBehaviour:
   Name: Ground Slam
   Icon: {fileID: 21300000, guid: ce20aa1666105544d97c9c94a479cf21, type: 3}
   AllLevels:
-  - Description: I like cheese
-    Cost: 5
-  - Description: I like cheese
-    Cost: 5
-  - Description: I like cheese
-    Cost: 5
+  - Description: 'Activate to instantly slam downwards. On landing, gain forwards
+      speed based on slam duration. '
+    Cost: 7
+  - Description: 'You can now dash while slamming, and continue the slam when the
+      dash ends. '
+    Cost: 7
+  - Description: You can now slam upwards.
+    Cost: 35
   ID: 2
   CurrentLevel: 0
   CurCharges: 0
@@ -60,7 +62,7 @@ MonoBehaviour:
   UsesCharges: 0
   StartUnlocked: 0
   BindingDisplayString: 
-  cooldown: 120
+  cooldown: 300
   info: {fileID: 0}
   initialVelocity: 12
   timeBeforeAcceleration: 10

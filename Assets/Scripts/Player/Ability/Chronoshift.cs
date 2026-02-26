@@ -73,8 +73,6 @@ public class Chronoshift : Ability, IStatSource
                     curKeyframe = keyframes[keyframeIndex];
                     if (curKeyframe.room != RoomManager.Instance.activeRoom)
                     {
-                        Debug.Log("Should switch rooms");
-                        Debug.Log(keyframeIndex + " " + curKeyframe.room + " " + RoomManager.Instance.activeRoom);
                         StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero, Vector2.zero));
                         RoomManager.Instance.activeRoom = curKeyframe.room;
                     }

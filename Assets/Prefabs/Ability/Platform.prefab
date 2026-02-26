@@ -48,20 +48,20 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: dfbb3e782b1c232238de123b20cd4f75, type: 3}
   AllLevels:
   - Description: Summons a temporary platform beneath you.
-    Cost: 7
-  - Description: The platform extends horizontally to keep up with you!
-    Cost: 7
+    Cost: 10
+  - Description: The platform extends horizontally to keep up with you.
+    Cost: 22
   - Description: While you're on the platform, your dash has increased horizontal
       speed.
-    Cost: 8
-  ID: 3
+    Cost: 35
+  ID: 6
   CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
   StartUnlocked: 0
   BindingDisplayString: 
-  cooldown: 1500
+  cooldown: 900
   info: {fileID: 0}
   platformPrefab: {fileID: 5014027431977854887, guid: 535a5eead339b1af0a1ca8a0a8ef60eb, type: 3}
   platform: {fileID: 0}

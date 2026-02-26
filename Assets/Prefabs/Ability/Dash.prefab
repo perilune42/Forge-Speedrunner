@@ -47,12 +47,13 @@ MonoBehaviour:
   Name: Dash
   Icon: {fileID: 21300000, guid: c59b4faa2ee75474d94098ccc5adcae4, type: 3}
   AllLevels:
-  - Description: I like cheese
+  - Description: Activate to dash forward a short distance. Hold the button to sprint
+      at higher speed.
     Cost: 0
-  - Description: I like cheese
-    Cost: 5
-  - Description: I like cheese
-    Cost: 5
+  - Description: You can now dash in diagonal directions.
+    Cost: 8
+  - Description: Dashing now preserves your original speed.
+    Cost: 20
   ID: 0
   CurrentLevel: 0
   CurCharges: 0

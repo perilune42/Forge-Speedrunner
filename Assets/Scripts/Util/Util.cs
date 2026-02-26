@@ -235,4 +235,10 @@ public static class Util
         }
         return s;
     }
+
+
+    public static float RoundToNearest(float value, int multiple)
+    {
+        return Mathf.Round(value / multiple) * multiple;
+    }
 }

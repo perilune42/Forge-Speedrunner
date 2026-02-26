@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2070766841286507180}
   - component: {fileID: 8293929336739097873}
   - component: {fileID: -2417523876982637640}
+  - component: {fileID: 4983778738943100216}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -176,6 +177,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
   nonRigidbodyVelocity: 0
   attenuationObject: {fileID: 0}
+--- !u!81 &4983778738943100216
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965864452825060634}
+  m_Enabled: 0
 --- !u!1 &2232485716405155783
 GameObject:
   m_ObjectHideFlags: 0

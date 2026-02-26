@@ -53,7 +53,7 @@ public class AudioCondition
 
     public void Update()
     {
-        bool shouldBeActive = condition();
+        bool shouldBeActive = condition() && !Player.Instance.IsDead;
 
         if (!isActive && shouldBeActive)
         {

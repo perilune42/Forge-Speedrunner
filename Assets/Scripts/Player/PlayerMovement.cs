@@ -463,7 +463,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         onJump?.Invoke();
         GravityMultiplier.Multipliers[jumpGravityMult] = MovementParams.JumpGravityMult;
 
-        RuntimeManager.PlayOneShot("event:/Jump");
+        if (!Player.Instance.IsDead) RuntimeManager.PlayOneShot("event:/Jump");
     }
 
     private void WallJump(Vector2 wallDir)

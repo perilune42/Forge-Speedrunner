@@ -224,6 +224,7 @@ public class RoomManager : Singleton<RoomManager>
     // respawn location set by safe zones
     public void Respawn()
     {
+        Player.Instance.IsDead = false;
         Player.Instance.Movement.Locked = true;
         Vector2 pos;
         if (respawnIsSet)

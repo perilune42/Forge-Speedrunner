@@ -13,7 +13,7 @@ public class Hazard : Entity
             // stupid hack to bypass contact offset making hurtbox bigger
             if (dist.distance <= -Physics2D.defaultContactOffset)
             {
-                RoomManager.Instance.Respawn();
+                PlayerAnimator.Instance.DieWithAnimation();
             }
         }
     }

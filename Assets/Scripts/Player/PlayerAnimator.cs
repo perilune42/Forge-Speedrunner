@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerAnimator : MonoBehaviour
+public class PlayerAnimator : Singleton<PlayerAnimator>
 {
     private PlayerMovement playerMovement => Player.Instance.Movement;
     private Animator anim;
@@ -12,6 +12,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (Player.Instance.IsDead) return;
         if (playerMovement.SpecialState == SpecialState.WallLatch)
         {
             Util.SetLocalScaleX(gameObject, AbilityManager.Instance.GetAbility<WallLatch>().latchedDirection == Vector2.right ? 1 : -1);
@@ -25,6 +26,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Update()
     {
+        if (Player.Instance.IsDead) return;
         if (playerMovement.SpecialState == SpecialState.Dash)
         {
             anim.Play("PlayerDash");
@@ -56,5 +58,11 @@ public class PlayerAnimator : MonoBehaviour
         {
             anim.Play("PlayerIdle");
         }
+    }
+
+    public void DieWithAnimation()
+    {
+        anim.Play("PlayerDeath");
+        // Animations/StateMachineBehaviors/Respawn script happens when animation plays
     }
 }

@@ -174,6 +174,7 @@ public class Grapple : Ability, IStatSource
 
     public override bool CanUseAbility()
     {
+        if (Player.Instance.IsDead) return false;
         if (PlayerMovement.SpecialState == SpecialState.GroundSlam &&
             grappleState == GrappleState.Active) return false;
         return (grappleState == GrappleState.Active) || base.CanUseAbility() && (grappleState != GrappleState.Launch);

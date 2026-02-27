@@ -95,7 +95,7 @@ public class Game : Singleton<Game> {
         {
             Timer.targetSpeedrunTime -= 300;
         }
-        else
+        else if (MainMenu.SelectedDifficulty == 0)
         {
             Timer.targetSpeedrunTime += 300;
         }

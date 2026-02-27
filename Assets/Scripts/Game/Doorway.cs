@@ -84,7 +84,7 @@ public class Doorway : MonoBehaviour
     {
         suppressTransition = true;
         // in case the trigger exit wasn't detected
-        StartCoroutine(Util.FDelayedCall(30, () => suppressTransition = false));
+        StartCoroutine(Util.FDelayedCall(60, () => suppressTransition = false));
     }
     public void EnableTransition()
     {

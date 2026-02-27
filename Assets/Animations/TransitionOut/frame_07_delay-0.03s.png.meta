@@ -1,0 +1,270 @@
+fileFormatVersion: 2
+guid: 074c4bdd6c2cfed6ebc44ec4c9e392a1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5910130823343038663
+    second: frame_07_delay-0.03s_0
+  - first:
+      213: 6660543774872618610
+    second: frame_07_delay-0.03s_1
+  - first:
+      213: 6477202932506580543
+    second: frame_07_delay-0.03s_2
+  - first:
+      213: 1494928841328999519
+    second: frame_07_delay-0.03s_3
+  - first:
+      213: 7958314093903378238
+    second: frame_07_delay-0.03s_4
+  - first:
+      213: 8338838705007668649
+    second: frame_07_delay-0.03s_5
+  - first:
+      213: 715245625698758470
+    second: frame_07_delay-0.03s_6
+  - first:
+      213: 6290276035930841951
+    second: frame_07_delay-0.03s_7
+  - first:
+      213: 8087679361730802793
+    second: frame_07_delay-0.03s_8
+  - first:
+      213: -4709941970866728860
+    second: frame_07_delay-0.03s_9
+  - first:
+      213: 7914053259990761307
+    second: frame_07_delay-0.03s_10
+  - first:
+      213: -6032363903385507688
+    second: frame_07_delay-0.03s_11
+  - first:
+      213: 8728968217523084019
+    second: frame_07_delay-0.03s_12
+  - first:
+      213: 642393959452170146
+    second: frame_07_delay-0.03s_13
+  - first:
+      213: 4762486205896973659
+    second: frame_07_delay-0.03s_14
+  - first:
+      213: 1727485226440195004
+    second: frame_07_delay-0.03s_15
+  - first:
+      213: -5076662334422346857
+    second: frame_07_delay-0.03s_16
+  - first:
+      213: 618728847043669207
+    second: frame_07_delay-0.03s_17
+  - first:
+      213: 3974991094646582153
+    second: frame_07_delay-0.03s_18
+  - first:
+      213: 2938771988729849236
+    second: frame_07_delay-0.03s_19
+  - first:
+      213: 6829059864245996252
+    second: frame_07_delay-0.03s_20
+  - first:
+      213: 7183999954263981131
+    second: frame_07_delay-0.03s_21
+  - first:
+      213: 3441031340579905276
+    second: frame_07_delay-0.03s_22
+  - first:
+      213: 4674935587849389726
+    second: frame_07_delay-0.03s_23
+  - first:
+      213: -6036898531164425067
+    second: frame_07_delay-0.03s_24
+  - first:
+      213: -994372086004502429
+    second: frame_07_delay-0.03s_25
+  - first:
+      213: -8751775679430409223
+    second: frame_07_delay-0.03s_26
+  - first:
+      213: -3268199754849186059
+    second: frame_07_delay-0.03s_27
+  - first:
+      213: -8543743071453375222
+    second: frame_07_delay-0.03s_28
+  - first:
+      213: 3315220087815688
+    second: frame_07_delay-0.03s_29
+  - first:
+      213: 2906449833937033707
+    second: frame_07_delay-0.03s_30
+  - first:
+      213: 2945561415663711674
+    second: frame_07_delay-0.03s_31
+  - first:
+      213: -5962069361998399563
+    second: frame_07_delay-0.03s_32
+  - first:
+      213: -1564825800465481321
+    second: frame_07_delay-0.03s_33
+  - first:
+      213: 3641488419354115474
+    second: frame_07_delay-0.03s_34
+  - first:
+      213: 9106605525415983179
+    second: frame_07_delay-0.03s_35
+  - first:
+      213: -684218171846300110
+    second: frame_07_delay-0.03s_36
+  - first:
+      213: 3358238599522784093
+    second: frame_07_delay-0.03s_37
+  - first:
+      213: -5573260487003442466
+    second: frame_07_delay-0.03s_38
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 10
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: DashIcon_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba5c3e4644073b5b0800000000000000
+      internalID: -5353812092960651861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      DashIcon_0: -5353812092960651861
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

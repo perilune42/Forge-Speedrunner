@@ -1,0 +1,249 @@
+fileFormatVersion: 2
+guid: a93693bd6fdabe5968744184b301bc99
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4419320729875892359
+    second: frame_37_delay-0.03s_0
+  - first:
+      213: -6171371272129909429
+    second: frame_37_delay-0.03s_1
+  - first:
+      213: 544118904779987413
+    second: frame_37_delay-0.03s_2
+  - first:
+      213: 1052737106485826585
+    second: frame_37_delay-0.03s_3
+  - first:
+      213: 2216624295790623081
+    second: frame_37_delay-0.03s_4
+  - first:
+      213: 6539078305329524838
+    second: frame_37_delay-0.03s_5
+  - first:
+      213: -2536212296724843197
+    second: frame_37_delay-0.03s_6
+  - first:
+      213: 6945089776297079009
+    second: frame_37_delay-0.03s_7
+  - first:
+      213: 2937212985809298315
+    second: frame_37_delay-0.03s_8
+  - first:
+      213: 7296139356413399516
+    second: frame_37_delay-0.03s_9
+  - first:
+      213: -1426127996801482010
+    second: frame_37_delay-0.03s_10
+  - first:
+      213: -8976132497073524155
+    second: frame_37_delay-0.03s_11
+  - first:
+      213: 6911655310659012728
+    second: frame_37_delay-0.03s_12
+  - first:
+      213: 3889029429337467180
+    second: frame_37_delay-0.03s_13
+  - first:
+      213: 4001915427860899518
+    second: frame_37_delay-0.03s_14
+  - first:
+      213: 2419299129819670525
+    second: frame_37_delay-0.03s_15
+  - first:
+      213: -1807299164502048715
+    second: frame_37_delay-0.03s_16
+  - first:
+      213: 1914939382693215520
+    second: frame_37_delay-0.03s_17
+  - first:
+      213: 1095182801347394817
+    second: frame_37_delay-0.03s_18
+  - first:
+      213: 2247553875704633119
+    second: frame_37_delay-0.03s_19
+  - first:
+      213: -7311087984926900687
+    second: frame_37_delay-0.03s_20
+  - first:
+      213: 5695408050780848054
+    second: frame_37_delay-0.03s_21
+  - first:
+      213: 5981730688794409864
+    second: frame_37_delay-0.03s_22
+  - first:
+      213: -7661830993773098202
+    second: frame_37_delay-0.03s_23
+  - first:
+      213: -8360802551552204299
+    second: frame_37_delay-0.03s_24
+  - first:
+      213: 6986523351145798308
+    second: frame_37_delay-0.03s_25
+  - first:
+      213: 1119120142031718367
+    second: frame_37_delay-0.03s_26
+  - first:
+      213: 1692121665613146773
+    second: frame_37_delay-0.03s_27
+  - first:
+      213: -6305326236410881100
+    second: frame_37_delay-0.03s_28
+  - first:
+      213: 7556262923420504340
+    second: frame_37_delay-0.03s_29
+  - first:
+      213: -3326375426161100695
+    second: frame_37_delay-0.03s_30
+  - first:
+      213: -3572079076385187894
+    second: frame_37_delay-0.03s_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 10
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: DashIcon_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba5c3e4644073b5b0800000000000000
+      internalID: -5353812092960651861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      DashIcon_0: -5353812092960651861
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

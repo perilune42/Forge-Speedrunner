@@ -2,6 +2,7 @@ using NUnit.Framework.Constraints;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -52,6 +53,8 @@ public class RoomManager : Singleton<RoomManager>
             respawnPosition = value;
             respawnIsSet = true;
     } }
+
+    public Action RunBetweenStates = null;
 
     public override void Awake()
     {
@@ -203,7 +206,6 @@ public class RoomManager : Singleton<RoomManager>
 
         // calculate player velocity
         Vector2 dir = door1.GetTransitionDirection();
-        Vector2 preservedVelocity;
 
 
         // calculate relativePos, which is unavoidable
@@ -297,21 +299,23 @@ public class RoomManager : Singleton<RoomManager>
         Debug.Log("start room transition");
         TransitionOngoing = true;
         AbilityManager.Instance.ResetAbilites();
-        FadeToBlack.Instance.FadeIn();
         if (dir == Vector2.up)
         {
             Player.Instance.Movement.GravityEnabled = false;
         }
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
 
         // logic moved to CameraController
-        CameraController.Instance.SnapToRoom(room);
-        WarpToPosition(position, preservedVelocity, dir);
-        
+        RunBetweenStates = () => {
+            CameraController.Instance.SnapToRoom(room);
+            WarpToPosition(position, preservedVelocity, dir);
+        };
+        yield return FadeToBlack.Instance.Fade();
 
+        // for(int i = 0; i < 3; i++)
+        // {
+        //     yield return new WaitForFixedUpdate();
+        // }
+        
         // 3 cope frames
         for (int i = 0; i < 3; i++)
         {
@@ -319,11 +323,6 @@ public class RoomManager : Singleton<RoomManager>
         }
 
         Player.Instance.IsDead = false;
-        FadeToBlack.Instance.FadeOut();
-        for (int i = 0; i < TransitionFadeFrames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
         TransitionOngoing = false;
         Debug.Log("end room transition");
     }

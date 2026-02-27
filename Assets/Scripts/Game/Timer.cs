@@ -68,14 +68,6 @@ public class Timer : Singleton<Timer>
     public override void Awake() {
         base.Awake();
         speedrunTime = 0.0f;
-        if (targetSpeedrunTime == -1f)
-        {
-            targetSpeedrunTime = Game.Instance.initialGoalTime;
-        }
-        else
-        {
-            // targetSpeedrunTime = previousSpeedrunTime * SPEEDRUN_TIME_SHRINKER;
-        }
     }
 
     public static void RecordTime()

@@ -91,6 +91,14 @@ public class Game : Singleton<Game> {
         Player.Instance.gameObject.SetActive(true);
         Timer.Instance.Pause(false);
         Timer.targetSpeedrunTime = initialGoalTime;
+        if (MainMenu.SelectedDifficulty == 2)
+        {
+            Timer.targetSpeedrunTime -= 300;
+        }
+        else
+        {
+            Timer.targetSpeedrunTime += 300;
+        }
         CurrentRound = 1;
         MusicPlayer.Instance.EnterPlay();
     }

@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bg_layer1_0
+      name: DashIcon_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 960
-        height: 540
+        width: 30
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3bb1c14cd5169aac0800000000000000
-      internalID: -3843433751633978445
+      spriteID: ba5c3e4644073b5b0800000000000000
+      internalID: -5353812092960651861
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bg_layer1_0: -3843433751633978445
+      DashIcon_0: -5353812092960651861
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

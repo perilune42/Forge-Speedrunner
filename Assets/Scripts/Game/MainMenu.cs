@@ -11,6 +11,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject mainMenuLayoutGroup;
     [SerializeField] private GameObject startGameLayoutGroup;
 
+    public static int SelectedDifficulty = 0;
+
     private void Awake()
     {
         GenerateNewMap = false;
@@ -27,6 +29,7 @@ public class MainMenu : MonoBehaviour
         // Set initial timer / scaling stuff
 
         GenerateNewMap = true;
+        SelectedDifficulty = difficulty;
         StartCoroutine(LoadSceneAsync());
     }
 

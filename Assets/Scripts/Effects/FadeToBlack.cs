@@ -26,7 +26,7 @@ public class FadeToBlack : Singleton<FadeToBlack>
     public IEnumerator Fade()
     {
         FadeAnimation.Play("FadeOut", 0, 0f);
-        // FadeAnimation.Update(0f);
+        FadeAnimation.Update(0f);
         yield return Listener;
     }
     public IEnumerator Listener => waitFor(FadeAnimation);

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using FMOD;
+using Debug = UnityEngine.Debug;
 
 public class MapGen : MonoBehaviour
 {
@@ -28,10 +30,20 @@ public class MapGen : MonoBehaviour
 
     void Awake()
     {
-        OnValidate();
+        // OnValidate();
+ 
     }
     private PathFactoryBuilder defaultBuilder()
     {
+        Debug.Log($"gr roobprefabs is null: {gameRegistry.RoomPrefabs == null}");
+        var rooms = new List<Room>();
+        foreach (var room in gameRegistry.RoomPrefabs)
+        {
+            rooms.Add(room.GetComponent<Room>());
+        }
+        roomPrefabs = rooms.ToArray();
+        start = gameRegistry.StartRoom.GetComponent<Room>();
+        finish = gameRegistry.FinishRoom.GetComponent<Room>();
         return new PathFactoryBuilder()
                 .WithStartRoom(start)
                 .WithMin(pathMin)

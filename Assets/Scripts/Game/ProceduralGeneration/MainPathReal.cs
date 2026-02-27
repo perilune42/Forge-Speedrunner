@@ -14,10 +14,13 @@ public class MainPathReal : IChoiceStrategy
     {
         LeftOnly = new();
         DownOnly = new();
+        Debug.Log($"room prefab is null: {roomPrefabs == null}");
         for(int i = 0; i < roomPrefabs.Length; i++)
         {
             Room r = roomPrefabs[i];
+            Debug.Log($"room is null: {r == null}");
             List<Doorway> downs = r.doorwaysDown;
+            Debug.Log($"room doorways down is null: {r.doorwaysDown == null}");
             List<Doorway> lefts = r.doorwaysLeft;
             bool hasLeft = lefts.Any(x => x != null && x.IsEntrance());
             bool hasDown = downs.Any(x => x != null && x.IsEntrance());

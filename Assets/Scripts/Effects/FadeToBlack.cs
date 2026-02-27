@@ -19,13 +19,14 @@ public class FadeToBlack : Singleton<FadeToBlack>
     {
         base.Awake();
         img = GetComponent<Image>();
-        img.color = new Vector4(0f,0f,0f,0f);;
+        // img.color = new Vector4(0f,0f,0f,0f);;
+        img.color = new Vector4(0f,0f,0f,1f);;
     }
 
     public IEnumerator Fade()
     {
         FadeAnimation.Play("FadeOut", 0, 0f);
-        FadeAnimation.Update(0f);
+        // FadeAnimation.Update(0f);
         yield return Listener;
     }
     public IEnumerator Listener => waitFor(FadeAnimation);

@@ -3,24 +3,28 @@ using UnityEngine.UI;
 
 public class FadeOutBehaviour : StateMachineBehaviour
 {
+    Image im = null;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Image im = animator.GetComponent<Image>();
+        im = im == null ? animator.GetComponent<Image>() : im;
         im.color = new Vector4(0f,0f,0f,1f);
         // im.transform.rotation = Quaterion.EulerAngles(0f,0f,180f);
         im.transform.eulerAngles = new Vector3(0f,0f,180f);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    // override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    // {
+    //     im = im == null ? animator.GetComponent<Image>() : im;
+    //     im.color = new Vector4(0f,0f,0f,1f);
+    // }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        im = im == null ? animator.GetComponent<Image>() : im;
+        animator.GetComponent<Image>().color = new Vector4(0f,0f,0f,1f);
         // do not run if not transitioning 
         // if (!animator.IsInTransition(layerIndex)) return;
 

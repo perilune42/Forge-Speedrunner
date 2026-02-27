@@ -310,6 +310,11 @@ public class RoomManager : Singleton<RoomManager>
             WarpToPosition(position, preservedVelocity, dir);
         };
         yield return FadeToBlack.Instance.Fade();
+
+        // for(int i = 0; i < 3; i++)
+        // {
+        //     yield return new WaitForFixedUpdate();
+        // }
         
         TransitionOngoing = false;
         Debug.Log("end room transition");

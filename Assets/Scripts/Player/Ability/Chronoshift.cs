@@ -158,6 +158,7 @@ public class Chronoshift : Ability, IStatSource
 
         curKeyframe = keyframes[0];
         keyframeIndex = 0;
+        Timer.timeSpeedrun = false;
     }
 
     public void Teleport(List<ChronoshiftKeyframe> keyframes, Vector3 endPos)
@@ -180,6 +181,7 @@ public class Chronoshift : Ability, IStatSource
         PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
         stopParticleAction?.Invoke();
         PlayerMovement.SurfaceCollider.enabled = true;
+        Timer.timeSpeedrun = true;
     }
 
     public override void OnReset()

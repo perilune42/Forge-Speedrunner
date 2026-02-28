@@ -65,15 +65,18 @@ public class Game : Singleton<Game> {
 
     void FixedUpdate()
     {
-        nextKeyframeTime--;
-        if (nextKeyframeTime <= 0)
+        if (Player.Instance.Movement.SpecialState != SpecialState.Chronoshift)
         {
-            ChronoshiftKeyframe kf = new ChronoshiftKeyframe(
-                    Player.Instance.Movement.transform.position, 
-                    Timer.speedrunTime, 
-                    RoomManager.Instance.activeRoom);
-                ChronoshiftKeyframes.Insert(0, kf);
-                nextKeyframeTime = keyframeInterval;
+            nextKeyframeTime--;
+            if (nextKeyframeTime <= 0)
+            {
+                ChronoshiftKeyframe kf = new ChronoshiftKeyframe(
+                        Player.Instance.Movement.transform.position, 
+                        Timer.speedrunTime, 
+                        RoomManager.Instance.activeRoom);
+                    ChronoshiftKeyframes.Insert(0, kf);
+                    nextKeyframeTime = keyframeInterval;
+            }
         }
     }
 

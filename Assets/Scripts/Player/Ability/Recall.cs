@@ -41,6 +41,7 @@ public class Recall : Ability, IStatSource
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
+        if (RoomManager.Instance.TransitionOngoing) return;
         if (inputButton.HasPressed && CanUseAbility() && GetCooldown() >= 1f) UseAbility();
         if (PlayerMovement.SpecialState == SpecialState.Teleport)
         {

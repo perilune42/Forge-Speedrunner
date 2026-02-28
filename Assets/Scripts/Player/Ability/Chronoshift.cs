@@ -97,7 +97,7 @@ public class Chronoshift : Ability, IStatSource
             {
                 HandlePostProcessing(1f - (float)curTeleportTime / warningTime);
             }
-            if (curTeleportTime <= 0)
+            if (curTeleportTime <= 0 && !RoomManager.Instance.TransitionOngoing)
             {
                 Teleport();
             }

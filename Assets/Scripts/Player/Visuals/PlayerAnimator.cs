@@ -62,6 +62,8 @@ public class PlayerAnimator : Singleton<PlayerAnimator>
 
     public void DieWithAnimation()
     {
+        if (Player.Instance.IsDead) return;
+        
         anim.Play("PlayerDeath");
         // Animations/StateMachineBehaviors/Respawn script happens when animation plays
     }

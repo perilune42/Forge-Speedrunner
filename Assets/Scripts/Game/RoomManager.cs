@@ -226,11 +226,8 @@ public class RoomManager : Singleton<RoomManager>
     // respawn location set by safe zones
     public void Respawn()
     {
-        Player.Instance.Movement.Locked = true;
-        Vector2 pos;
         if (respawnIsSet)
         {
-            pos = RespawnPosition;
             StartCoroutine(RoomTransition(activeRoom, RespawnPosition, Vector2.zero, Vector2.zero));
         }
         else if (previousDoorway != null)
@@ -274,7 +271,7 @@ public class RoomManager : Singleton<RoomManager>
 
     private IEnumerator GoThroughDoorway(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
     {
-        if (!TransitionOngoing)
+        //if (!TransitionOngoing)
         {
             // calculate new player position
             Vector2 newPlayerPos = (Vector2)door2.transform.position;
@@ -296,41 +293,27 @@ public class RoomManager : Singleton<RoomManager>
 
     public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
     {
-        Debug.Log("start room transition");
         TransitionOngoing = true;
+        PInput.Instance.EnableControls = false;
+        yield return FadeToBlack.Instance.FadeOut();
+
+        Player.Instance.IsDead = false;
         AbilityManager.Instance.ResetAbilites();
         if (dir == Vector2.up)
         {
             Player.Instance.Movement.GravityEnabled = false;
         }
+        CameraController.Instance.SnapToRoom(room);
+        WarpToPosition(position, preservedVelocity, dir);
 
-        // logic moved to CameraController
-        RunBetweenStates = () => {
-            CameraController.Instance.SnapToRoom(room);
-            WarpToPosition(position, preservedVelocity, dir);
-        };
-        yield return FadeToBlack.Instance.Fade();
-
-        // for(int i = 0; i < 3; i++)
-        // {
-        //     yield return new WaitForFixedUpdate();
-        // }
-        
-        // 3 cope frames
-        for (int i = 0; i < 3; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        Player.Instance.IsDead = false;
+        PInput.Instance.EnableControls = true;
         TransitionOngoing = false;
-        Debug.Log("end room transition");
+        yield return FadeToBlack.Instance.FadeIn();
     }
 
     public void WarpToPosition(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
     {
         PlayerMovement pm = Player.Instance.Movement;
-        PInput.Instance.EnableControls = false;
         pm.EndJump(true);
         if (pm.SpecialState != SpecialState.Chronoshift) pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
 
@@ -369,7 +352,8 @@ public class RoomManager : Singleton<RoomManager>
         }
         StartCoroutine(Util.FDelayedCall(lockDuration, () =>
         {
-            PInput.Instance.EnableControls = true;
+            // Don't let player move early unless you fix issue with room transitions
+            //PInput.Instance.EnableControls = true;
             PInput.Instance.MoveInputOverrride = Vector2.zero;
             pm.GravityEnabled = true;
         }));

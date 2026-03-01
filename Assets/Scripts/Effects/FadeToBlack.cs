@@ -5,29 +5,37 @@ using System.Collections;
 
 public class FadeToBlack : Singleton<FadeToBlack>
 {
-    Image img;
-    [SerializeField] Animator FadeAnimation;
-    private readonly int endState = Animator.StringToHash("Over");
-    private bool isOver(Animator anim)
-        => anim.GetCurrentAnimatorStateInfo(0).IsName("Over");
-    private IEnumerator waitFor(Animator anim)
+    [SerializeField] Animator anim;
+
+    private void Start()
     {
-        while(!isOver(anim))
-            yield return null;
-    }
-    public override void Awake()
-    {
-        base.Awake();
-        img = GetComponent<Image>();
-        // img.color = new Vector4(0f,0f,0f,0f);;
-        img.color = new Vector4(0f,0f,0f,1f);;
+        anim = GetComponent<Animator>();
     }
 
-    public IEnumerator Fade()
+    public IEnumerator FadeOut()
     {
-        FadeAnimation.Play("FadeOut", 0, 0f);
-        FadeAnimation.Update(0f);
-        yield return Listener;
+        anim.Play("FadeOutTransition");
+
+        // Takes at least a frame for state to actually change
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        while (anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        {
+            yield return null;
+        }
     }
-    public IEnumerator Listener => waitFor(FadeAnimation);
+
+    public IEnumerator FadeIn()
+    {
+        anim.Play("FadeInTransition");
+
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        while (anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        {
+            yield return null;
+        }
+    }
 }

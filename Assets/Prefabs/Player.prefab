@@ -250,6 +250,7 @@ MonoBehaviour:
   VFXTrail: {fileID: 1275065312203968865}
   Sprite: {fileID: 8508415282646126948}
   Audio: {fileID: 3707445616073714785}
+  IsDead: 0
 --- !u!50 &8802784991924013848
 Rigidbody2D:
   serializedVersion: 5
@@ -10189,6 +10190,7 @@ GameObject:
   - component: {fileID: 8508415282646126948}
   - component: {fileID: 1559158758032781668}
   - component: {fileID: 9022499811492421957}
+  - component: {fileID: 6430223961703128091}
   m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
@@ -10304,6 +10306,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6430223961703128091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7409791945281072943}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26af7e507ec8764f91e77ef973c6328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOutline
+  defaultMat: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  outlineMat: {fileID: 2100000, guid: fade3ec7e21ee694a8edf8fcf64c6785, type: 2}
+  FlashDuration: 5
 --- !u!1001 &6149485385082619339
 PrefabInstance:
   m_ObjectHideFlags: 0

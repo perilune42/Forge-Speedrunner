@@ -110,7 +110,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -184,7 +184,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1965864452825060634}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!1 &2232485716405155783
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,7 +390,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   Cam: {fileID: 8308772575406028692}
   CinemachineCam: {fileID: 6513534852654443328}
-  CameraBounds: {fileID: 0}
+  CameraBounds: {fileID: 7133008913918198279}
 --- !u!1 &6851330819165627367
 GameObject:
   m_ObjectHideFlags: 0

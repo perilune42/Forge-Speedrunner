@@ -4985,6 +4985,8 @@ GameObject:
   - component: {fileID: 7840750390193503643}
   - component: {fileID: 1073610669975220284}
   - component: {fileID: 4776960669041274326}
+  - component: {fileID: 3401650138766374318}
+  - component: {fileID: 2277609880857831017}
   m_Layer: 0
   m_Name: Magnet
   m_TagString: Untagged
@@ -5094,6 +5096,49 @@ MonoBehaviour:
   particleActive: {fileID: 1948195338674557685}
   particleSpeed: 5
   maxSuckFrames: 120
+--- !u!114 &3401650138766374318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735961780240898082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fac6dd940bcb1d498c8c7bb85a80db4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioEmitter
+--- !u!114 &2277609880857831017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735961780240898082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 954426837
+      Data2: 1181567513
+      Data3: 455290811
+      Data4: 459215448
+    Path: event:/Magnet Loop
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &8088683832164265118
 GameObject:
   m_ObjectHideFlags: 0

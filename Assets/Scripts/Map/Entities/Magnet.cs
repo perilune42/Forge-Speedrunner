@@ -21,7 +21,9 @@ public class Magnet : Entity
     private int suckFrames;
     [SerializeField] private int maxSuckFrames;
     private bool active;
-    
+
+    AudioEmitter audioEmitter;
+
     private void Start()
     {
         magnetBeam.transform.localScale = new Vector3(beamRange, beamWidth, 0);
@@ -33,11 +35,15 @@ public class Magnet : Entity
         bigBeamColl.edgeRadius = 1f;
         Hitbox = coll;
 
+
+
     
         InitializeParticles(particle, particleSpeed);
         InitializeParticles(particleActive, particleSpeed * 2f);
         particle.gameObject.SetActive(true);
         particleActive.gameObject.SetActive(false);
+
+        audioEmitter = GetComponent<AudioEmitter>();
     }
 
 
@@ -75,6 +81,7 @@ public class Magnet : Entity
         particle.gameObject.SetActive(false);
         particleActive.gameObject.SetActive(true);
         suckFrames = 0;
+        audioEmitter.Play("event:/Magnet Loop");
     }
 
     private void Deactivate()
@@ -84,6 +91,7 @@ public class Magnet : Entity
         particleActive.gameObject.SetActive(false);
         curCooldown = cooldown;            
         playerMovement = null;
+        audioEmitter.Stop("event:/Magnet Loop");
     }
 
     protected override void FixedUpdate()
@@ -141,6 +149,7 @@ public class Magnet : Entity
 
     private void OnDisable()
     {
+        if (active) Deactivate();
         particle.gameObject.SetActive(false);
     }
 }

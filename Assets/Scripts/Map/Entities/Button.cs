@@ -53,6 +53,7 @@ public class Button : ActivatableEntity
         {
             sr.sprite = pressedSprite;
             RuntimeManager.PlayOneShotAttached("event:/Button press", gameObject);
+            hasPressed = true;
         }
         
     }

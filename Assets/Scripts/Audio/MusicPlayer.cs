@@ -6,9 +6,11 @@ public class MusicPlayer : Singleton<MusicPlayer>
 
     public override void Awake()
     {
+
         emitter = GetComponent<StudioEventEmitter>();
         if (Instance == null) emitter.Play();
         base.Awake();
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
         
         RuntimeManager.GetBus("bus:/Music").setVolume(0.15f);

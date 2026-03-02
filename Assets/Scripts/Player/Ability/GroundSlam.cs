@@ -1,3 +1,4 @@
+using FMODUnity;
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -138,6 +139,7 @@ public class GroundSlam : Ability, IStatSource
         slammingUpwards = false;
         PlayerMovement.GravityMultiplier.Multipliers[this] = 1;
         stopParticleAction?.Invoke();
+        RuntimeManager.PlayOneShotAttached("event:/Ground Slam", PlayerMovement.gameObject);
     }
 
     private Vector2 GetSlamDir()

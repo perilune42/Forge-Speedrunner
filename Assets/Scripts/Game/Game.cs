@@ -90,8 +90,6 @@ public class Game : Singleton<Game> {
     public void StartGame()
     {
         //RoomManager.Instance.gameObject.SetActive(true);
-        Player.Instance.gameObject.SetActive(true);
-        Timer.Instance.Pause(false);
         Timer.targetSpeedrunTime = initialGoalTime;
         if (MainMenu.SelectedDifficulty == 2)
         {
@@ -102,8 +100,7 @@ public class Game : Singleton<Game> {
             Timer.targetSpeedrunTime += 300;
         }
         CurrentRound = 1;
-        MusicPlayer.Instance.EnterPlay();
-        GameplayUI.Instance.UpdateAbilityInfo();
+        ReturnToPlay(false);
     }
 
     public void FinishRound()
@@ -136,6 +133,10 @@ public class Game : Singleton<Game> {
         OnLoadShop?.Invoke();
     }
 
+    public void StartNewRound()
+    {
+        CurrentRound++;
+    }
     public void ReturnToPlay(bool practiceMode, Doorway startDoorway = null)
     {
         ShopManager.Instance.CloseShop();
@@ -167,8 +168,6 @@ public class Game : Singleton<Game> {
         {
             RoomManager.Instance.SpawnAtDoorway(startDoorway);
         }
-
-        if (!practiceMode) CurrentRound++;
         MusicPlayer.Instance.EnterPlay();
         GameplayUI.Instance.UpdateAbilityInfo();
     }
@@ -180,9 +179,7 @@ public class Game : Singleton<Game> {
         RoomManager rm = RoomManager.Instance;
         if(Input.GetKeyDown(KeyCode.R))
             rm.ReEnterRoom();
-        else if(Input.GetKeyDown(KeyCode.Z))
-            ReturnToPlay(false);
-        else if(Input.GetKeyDown(KeyCode.X))
+        if(Input.GetKeyDown(KeyCode.X))
             Game.Instance.FinishRound();
 
         if (IsPracticeMode && Input.GetKeyDown(KeyCode.Return))

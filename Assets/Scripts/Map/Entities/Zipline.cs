@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Zipline : Entity, IInteractable
 {
-    [SerializeField] Transform node;
+    [SerializeField] Transform start, node;
     [SerializeField] InteractionTrigger ziplineTrigger;
 
     public override bool IsSolid => false;
@@ -48,6 +48,12 @@ public class Zipline : Entity, IInteractable
     [ContextMenu("Set Line Positions")]
     private void SetLinePositions()
     {
+
+        Vector2 vecToNode = (node.transform.position - transform.position).normalized;
+        float startAngle = Vector2.SignedAngle(Vector2.right, vecToNode);
+        start.eulerAngles = new(0, 0, startAngle);
+        node.eulerAngles = new(0, 0, startAngle + 180);
+
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, node.position);
     }

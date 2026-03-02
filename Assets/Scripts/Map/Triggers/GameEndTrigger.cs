@@ -3,17 +3,27 @@ using UnityEngine.SceneManagement;
 
 public class GameEndTrigger : Trigger 
 {
+    [SerializeField] bool returnToMenu = false;
+
     public override void OnPlayerEnter()
     {
         base.OnPlayerEnter();
-        if (!Game.Instance.IsPracticeMode)
+        if (returnToMenu)
         {
-            Game.Instance.FinishRound();
+            SceneManager.LoadScene("MainMenu");
         }
         else
         {
-            Game.Instance.GoToShop(false);
+            if (!Game.Instance.IsPracticeMode)
+            {
+                Game.Instance.FinishRound();
+            }
+            else
+            {
+                Game.Instance.GoToShop(false);
+            }
         }
+
     }
 
 }

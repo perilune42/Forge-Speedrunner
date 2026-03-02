@@ -21,9 +21,7 @@ public class Game : Singleton<Game> {
     public float RewardThreshold; // must be under target time by this much to receive reward
     public float RewardMultPerRound;
 
-    public bool OverrideStartingRoom;
-    [SerializeField] bool enableRandomMap = true;
-    public bool AllRoomsDiscovered = false;
+
     public MapGen Generator;
 
     [SerializeField] private RoomManager roomManagerRef;
@@ -37,6 +35,13 @@ public class Game : Singleton<Game> {
 
     public int BackgroundIndex; // 0 - day, 1 - night, 2 - rain
     public Action OnLoadShop;
+
+    [Header("Debug Options")]
+    public bool OverrideStartingRoom;
+    [SerializeField] bool enableRandomMap = true;
+    public bool AllRoomsDiscovered = false;
+    [SerializeField] bool enableDebugControls = false;
+
 
     public override void Awake()
     {
@@ -179,7 +184,7 @@ public class Game : Singleton<Game> {
         RoomManager rm = RoomManager.Instance;
         if(Input.GetKeyDown(KeyCode.R))
             rm.ReEnterRoom();
-        if(Input.GetKeyDown(KeyCode.X))
+        if(enableDebugControls && Input.GetKeyDown(KeyCode.X))
             Game.Instance.FinishRound();
 
         if (IsPracticeMode && Input.GetKeyDown(KeyCode.Return))

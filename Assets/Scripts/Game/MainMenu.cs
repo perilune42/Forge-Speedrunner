@@ -44,6 +44,11 @@ public class MainMenu : MonoBehaviour
         // Credits
     }
 
+    public void StartTutorial()
+    {
+        SceneManager.LoadSceneAsync("Tutorial");
+    }
+
     public void QuitGame()
     {
         Application.Quit();

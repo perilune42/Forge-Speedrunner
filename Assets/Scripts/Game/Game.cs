@@ -57,7 +57,6 @@ public class Game : Singleton<Game> {
 
     void Start()
     {
-        StartGame();
         ChronoshiftKeyframes = new();
         nextKeyframeTime = keyframeInterval;
         startPos = Player.Instance.Movement.transform.position;
@@ -104,6 +103,7 @@ public class Game : Singleton<Game> {
         }
         CurrentRound = 1;
         MusicPlayer.Instance.EnterPlay();
+        GameplayUI.Instance.UpdateAbilityInfo();
     }
 
     public void FinishRound()
@@ -170,6 +170,7 @@ public class Game : Singleton<Game> {
 
         if (!practiceMode) CurrentRound++;
         MusicPlayer.Instance.EnterPlay();
+        GameplayUI.Instance.UpdateAbilityInfo();
     }
 
 

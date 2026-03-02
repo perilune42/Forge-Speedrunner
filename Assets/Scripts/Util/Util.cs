@@ -241,4 +241,12 @@ public static class Util
     {
         return Mathf.Round(value / multiple) * multiple;
     }
+
+    public static void DestoryAllChildren(Transform t)
+    {
+        for (int i = 0; i < t.childCount; i++)
+        {
+            GameObject.Destroy(t.GetChild(i).gameObject);
+        }
+    }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -15,11 +16,7 @@ public class AbilityInfo : MonoBehaviour
     private void Start()
     {
         // icon.sprite = Ability.Data.Icon;
-        Ability.onRecharged += () =>
-        {
-            flashMask.color = Color.white;
-            flashMask.DOColor(Color.clear, 0.5f);
-        };
+        
         
         InputSystem.onDeviceChange += (device, change) =>
         {
@@ -41,6 +38,7 @@ public class AbilityInfo : MonoBehaviour
         this.Ability = ability;
         icon.sprite = ability.Icon;
         if (levelUI != null) levelUI.SetLevel(ability.CurrentLevel);
+        Ability.onRecharged += RechargeFlash;
     }
 
     private void Update()
@@ -52,6 +50,18 @@ public class AbilityInfo : MonoBehaviour
         if (Ability is Chronoshift) chargeText.text = $"{AbilityManager.Instance.ChronoshiftCharges}/{Ability.MaxCharges}";
         else chargeText.text = Ability.UsesCharges ? $"{Ability.CurCharges}/{Ability.MaxCharges}" : "";
         keybindText.SetText(Ability.BindingDisplayString);
+    }
+
+    private void RechargeFlash()
+    {
+        flashMask.color = Color.white;
+        flashMask.DOColor(Color.clear, 0.5f);
+    }
+
+    private void OnDestroy()
+    {
+        flashMask.DOKill();
+        Ability.onRecharged -= RechargeFlash;
     }
 
 

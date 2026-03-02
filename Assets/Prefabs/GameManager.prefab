@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2675210836383652523}
   - component: {fileID: 2865041078514351360}
   - component: {fileID: 330812357805038201}
+  - component: {fileID: 8020292835357973223}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -63,6 +64,7 @@ MonoBehaviour:
   Generator: {fileID: 0}
   roomManagerRef: {fileID: 0}
   keyframeInterval: 60
+  BackgroundIndex: 0
 --- !u!114 &2865041078514351360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,3 +99,15 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 0c5afd2a0bc294edba708bb9c1ed81d6, type: 2}
+--- !u!114 &8020292835357973223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661234957250522255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc29742bc632bf940b427f9b5e30cb23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Initializer

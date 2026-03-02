@@ -1273,6 +1273,9 @@ MonoBehaviour:
   speedText: {fileID: 0}
   currRoundText: {fileID: 928966111525523804}
   practiceModeIndicator: {fileID: 7491646013597055129}
+  abilityInfoParent: {fileID: 7643230051904650237}
+  chronoshiftInfoParent: {fileID: 7087052140589144669}
+  abilityInfoPrefab: {fileID: 7128878131020619819, guid: 36ebc7ac753a4c97087b1c7e23fb865d, type: 3}
   GameEndUI: {fileID: 5354520584044353495}
 --- !u!1 &2268588124589040308
 GameObject:

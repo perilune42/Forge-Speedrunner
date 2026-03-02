@@ -10,6 +10,9 @@ public class GameplayUI : Singleton<GameplayUI>
 
     [SerializeField] GameObject practiceModeIndicator;
 
+    [SerializeField] Transform abilityInfoParent, chronoshiftInfoParent;
+    [SerializeField] AbilityInfo abilityInfoPrefab;
+
     public GameObject GameEndUI;
 
     public override void Awake()
@@ -23,6 +26,24 @@ public class GameplayUI : Singleton<GameplayUI>
         targetTimeText.text = Util.GetTimeString(Timer.targetSpeedrunTime);
         currRoundText.text = Game.Instance.CurrentRound.ToString();
     }
+
+    public void UpdateAbilityInfo()
+    {
+        Util.DestoryAllChildren(abilityInfoParent);
+        // change to use slot system later
+        foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
+        {
+            AbilityInfo abilityInfo = Instantiate(abilityInfoPrefab, abilityInfoParent);
+            abilityInfo.SetAbility(ability);
+        }
+
+        Util.DestoryAllChildren(chronoshiftInfoParent);
+
+        AbilityInfo chronoshiftInfo = Instantiate(abilityInfoPrefab, chronoshiftInfoParent);
+        chronoshiftInfo.SetAbility(AbilityManager.Instance.chronoshift);
+        chronoshiftInfo.gameObject.SetActive(AbilityManager.Instance.ChronoshiftCharges > 0);
+    }
+
 
     // Pause and Play methods for Pause Button UI element
     public void Pause()

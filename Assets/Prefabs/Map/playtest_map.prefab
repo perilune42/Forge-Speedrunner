@@ -12967,6 +12967,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1024556430938697344}
     m_Modifications:
+    - target: {fileID: 213628327548982514, guid: 1443104a20a34924a8295ccdb719292e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.12879245
+      objectReference: {fileID: 0}
     - target: {fileID: 1005819273926033840, guid: 1443104a20a34924a8295ccdb719292e, type: 3}
       propertyPath: m_Name
       value: room_1x3_0
@@ -16130,6 +16134,10 @@ PrefabInstance:
     - target: {fileID: 6008891847354188813, guid: 1443104a20a34924a8295ccdb719292e, type: 3}
       propertyPath: m_Positions.Array.data[1].y
       value: 34.475204
+      objectReference: {fileID: 0}
+    - target: {fileID: 6430422469600413797, guid: 1443104a20a34924a8295ccdb719292e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.1287924
       objectReference: {fileID: 0}
     - target: {fileID: 8168246100887774759, guid: 1443104a20a34924a8295ccdb719292e, type: 3}
       propertyPath: gridPosition.x

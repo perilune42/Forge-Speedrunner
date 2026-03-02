@@ -6,15 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class AbilityManager : Singleton<AbilityManager>
 {
-    [Header("=== DEBUG OPTIONS ===")]
-    // USED FOR SHOP TESTING ONLY, SELF DESTRUCTS ON ABILITY ASSIGNMENT
-    [SerializeField] bool shopDebugMode = false;
-
-    // More debug options
-    [SerializeField] bool giveAllAbilities = false;
-    [SerializeField] bool allAbilitiesAreCharged = false;
-
-
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent, ChronoshiftInfoParent;
     [SerializeField] private GameObject player;
@@ -22,21 +13,14 @@ public class AbilityManager : Singleton<AbilityManager>
     public Dictionary<int, Ability> PlayerAbilities;
 
     [HideInInspector] public int ChronoshiftCharges, TotalChronoshiftCharges;
-    private Chronoshift chronoshift;
+    public Chronoshift chronoshift;
     public override void Awake()
     {
         base.Awake();
         PlayerAbilities = new();
         ChronoshiftInfoParent = GameObject.FindWithTag("CHRONOSHIFT_INFO_PARENT"); // jank because I can't push direct changes to the World scene
-        if (shopDebugMode)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        else
-        {
-            GivePlayerAbilities();
-        }
+        GivePlayerAbilities();
+
     }
 
     void Start()
@@ -68,7 +52,7 @@ public class AbilityManager : Singleton<AbilityManager>
         int count = 0;
         foreach (Ability presetAbility in GameRegistry.Instance.Abilities)
         {
-            if (presetAbility.StartUnlocked || giveAllAbilities)
+            if (presetAbility.StartUnlocked)
             {
                 if (count >= 4 && !(presetAbility is Chronoshift && ChronoshiftCharges > 0))
                 {
@@ -97,14 +81,7 @@ public class AbilityManager : Singleton<AbilityManager>
         Ability ability = Instantiate(GameRegistry.Instance.Abilities[index], player.transform);
         PlayerAbilities[index] = ability;
         ability.ID = index;
-        if (giveAllAbilities)
-        {
-            ability.CurrentLevel = ability.AllLevels.Length - 1;
-        }
-        else
-        {
-            ability.CurrentLevel = GameRegistry.Instance.Abilities[index].CurrentLevel;
-        }
+        ability.CurrentLevel = GameRegistry.Instance.Abilities[index].CurrentLevel;
         /*
         if (ability.ID != 0 && (allAbilitiesAreCharged || ability.Data.UsesCharges))
         {

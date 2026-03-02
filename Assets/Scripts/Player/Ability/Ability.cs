@@ -53,21 +53,13 @@ public abstract class Ability : MonoBehaviour
 
     public virtual void Start()
     {
-        if (AbilityManager.Instance.AbilityInfoParent == null) return;
-        
+        // ability info handling moved to GameplayUI
         if (this is Chronoshift)
         {
-            info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
-                AbilityManager.Instance.ChronoshiftInfoParent.transform).GetComponent<AbilityInfo>();
-            info.SetAbility(this);
-            info.gameObject.SetActive(false);
             SetInputButton(PInput.Instance.Chronoshift);
         }
         else
         {
-            info = Instantiate(AbilityManager.Instance.AbilityInfoPrefab, 
-            AbilityManager.Instance.AbilityInfoParent.transform).GetComponent<AbilityInfo>();
-            info.SetAbility(this);
             if (this is Dash)
             {
                 SetInputButton(PInput.Instance.Dash);
@@ -77,9 +69,10 @@ public abstract class Ability : MonoBehaviour
                 SetInputButton(PInput.Instance.AddAbilityInputButton());
             }
         }
-        
+
         UpdateBindingText();
     }
+
 
     protected virtual void FixedUpdate()
     {

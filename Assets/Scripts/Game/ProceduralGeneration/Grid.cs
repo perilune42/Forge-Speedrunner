@@ -167,9 +167,13 @@ public class Grid
         }
 
         // get cells, and make sure they are not the same
-        Cell currentCell = cellsByGrid.Get(currentOff);
-        Cell dirCell = cellsByGrid.Get(dirOff);
-        if(currentCell == dirCell) return false;
+        Cell currentCell; Cell dirCell;
+        if(!cellsByGrid.TryGetValue(currentOff, out currentCell))
+            return false;
+        if(!cellsByGrid.TryGetValue(dirOff, out dirCell))
+            return false;
+        if(currentCell == dirCell)
+            return false;
 
         // check if there's an opening here
         Direction oppositeDir = DirMethods.opposite(dir);

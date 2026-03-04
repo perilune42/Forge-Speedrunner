@@ -24,6 +24,7 @@ public class Grid
     }
     // NOTE: i end up not really using Cell "properly" here.
     private Dictionary<Vector2Int, Openings> grid;
+    private DoorwayGrid doorwayGrid;
     private LowLevelGrid<Cell> cellsByGrid;
     // private Dictionary<Vector2Int, Cell> cellsByGrid;
     public List<Cell> uniqueCells;
@@ -33,6 +34,7 @@ public class Grid
         grid = new();
         uniqueCells = new();
         cellsByGrid = new();
+        doorwayGrid = new();
     }
 
     /* Given a ROOM, an entry point at OFFSET, and an entry direction DIR, fit the room. 

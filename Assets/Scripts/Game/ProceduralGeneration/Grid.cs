@@ -46,8 +46,6 @@ public class Grid
      */
     public bool CanFit(Room room, Offset offset, Direction dir, out Offset botleft)
     {
-        // initial constants important for calculations
-        // functional match on enum is fun
         Debug.Log($"[CanFit] fitting room at {offset}, size {room.size}.");
         Offset mask = dir switch
         {
@@ -65,7 +63,6 @@ public class Grid
             _ => throw new Exception("this is not going to happen"),
         };
 
-
         // find bottom left where offset refers to the first element of the doorway list
         // botleft = offset + mask * room.size - mask;
         botleft = dir switch
@@ -76,7 +73,6 @@ public class Grid
 
         // subtract from bottom left the difference from first element to first non-null element
         int firstNonNull = -1;
-        // for(; firstNonNull < roomDoorsAtDir roomDoorsAtDir[firstNonNull] == null; firstNonNull++);
         for(int i = 0; i < roomDoorsAtDir.Count; i++)
         {
             if(roomDoorsAtDir[i] != null)
@@ -94,29 +90,17 @@ public class Grid
         }
         botleft -= mask * firstNonNull;
 
-        // check if there are no obstructions from offset to offset+room.size
-        // return early if there are none
-        Offset obstruction = botleft;
-        bool valid = true;
-        for(int i = 0; valid && i < room.size.x; i++)
-            for(int j = 0; valid && j < room.size.y; j++)
-        {
-            obstruction = botleft + new Offset(i,j);
-            valid = !grid.ContainsKey(obstruction);
-        }
-        if(valid) return true;
-        Debug.Log($"[CanFit] obstruction at {obstruction}");
+        // first obstruction check
+        Offset obstruction;
+        bool hasObstruction = cellsByGrid.FirstInRange(botleft, room.size, out obstruction);
+        if(!hasObstruction)
+            return true;
 
-        if(obstruction == botleft)
-        {
-            Debug.Log($"[CanFit] obstruction on top of destination. No point in trying.");
-            return false;
-        }
-
-
-        // if there are obstructions, recalculate offset so that obstruction is outside.
+        // change botleft to be right below obstruction
         Offset change = mask * (obstruction - botleft + room.size) - mask;
         botleft -= change;
+
+        // make sure there is still a door here
         int doorIndex = firstNonNull + dir switch
         {
             LEFT or RIGHT => change.y,
@@ -128,17 +112,15 @@ public class Grid
             return false;
         }
 
-        // check botleft again. return early if there are no obstructions
-        valid = true;
-        for(int i = 0; valid && i < room.size.x; i++)
-            for(int j = 0; valid && j < room.size.y; j++)
+        // final check
+        hasObstruction = cellsByGrid.FirstInRange(botleft, room.size, out obstruction);
+        if(hasObstruction)
         {
-            obstruction = botleft + new Offset(i,j);
-            valid = !grid.ContainsKey(obstruction);
+            Debug.Log($"Final obstruction at {obstruction}.");
+            return false;
         }
-        Debug.Log($"[CanFit] obstruction again at {obstruction}. valid: {valid}.");
-
-        return valid;
+        Debug.Log($"[CanFit] No further obstructions.");
+        return true;
     }
 
     /* Place the ROOM at the OFFSET inside the internal grid. return TRUE if success.

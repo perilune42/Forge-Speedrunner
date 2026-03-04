@@ -123,33 +123,6 @@ public class Grid
         return true;
     }
 
-    /* Place the ROOM at the OFFSET inside the internal grid. return TRUE if success.
-     * This will update internal state.
-     * room = room to insert at point.
-     * offset = bottom left of room.
-     */
-    private void OpenAt(Offset offset, Direction dir)
-    {
-        Openings opens;
-        bool success = grid.TryGetValue(offset, out opens);
-        Debug.Log($"[OpenAt] Opening ({offset}), direction {dir}");
-        if(success)
-        {
-            if(dir == LEFT)
-                opens.left = true;
-            else if(dir == RIGHT)
-                opens.right = true;
-            else if(dir == UP)
-                opens.up = true;
-            else // dir == DOWN
-                opens.down = true;
-            grid[offset] = opens;
-        }
-        else
-            Debug.Log($"[OpenAt] Called on a nonexistent grid cell! {offset}.");
-
-    }
-
     public PathCreator ProduceCreator()
     {
         PathCreator pc = new(uniqueCells);

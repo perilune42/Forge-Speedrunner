@@ -24,7 +24,8 @@ public class Grid
     }
     // NOTE: i end up not really using Cell "properly" here.
     private Dictionary<Vector2Int, Openings> grid;
-    private Dictionary<Vector2Int, Cell> cellsByGrid;
+    private LowLevelGrid<Cell> cellsByGrid;
+    // private Dictionary<Vector2Int, Cell> cellsByGrid;
     public List<Cell> uniqueCells;
 
     public Grid()
@@ -184,8 +185,8 @@ public class Grid
         {
             Debug.Log($"[InsertRoom] insert ({i},{j})");
             grid.Add(new(i,j), closedEverywhere);
-            cellsByGrid.Add(new(i,j), roomCell);
         }
+        cellsByGrid.InsertRange(roomCell, offset, room.size);
 
         // left walls
         Offset xMask = new(1,0);
@@ -257,8 +258,8 @@ public class Grid
         if(!grid.TryGetValue(currentOff, out currOpens)) // early end if not found (this one should not happen)
             return false;
 
-        Cell currentCell = cellsByGrid[currentOff];
-        Cell dirCell = cellsByGrid[dirOff];
+        Cell currentCell = cellsByGrid.Get(currentOff);
+        Cell dirCell = cellsByGrid.Get(dirOff);
         if(currentCell == dirCell)
             return false;
 

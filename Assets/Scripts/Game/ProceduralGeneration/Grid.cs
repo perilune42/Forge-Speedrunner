@@ -8,30 +8,13 @@ using Offset = UnityEngine.Vector2Int;
 using static Direction;
 public class Grid
 {
-    internal struct Openings
-    {
-        public bool up;
-        public bool down;
-        public bool left;
-        public bool right;
-        public Openings(bool up, bool down, bool left, bool right)
-        {
-            this.up = up;
-            this.down = down;
-            this.left = left;
-            this.right = right;
-        }
-    }
     // NOTE: i end up not really using Cell "properly" here.
-    private Dictionary<Vector2Int, Openings> grid;
     private DoorwayGrid doorwayGrid;
     private LowLevelGrid<Cell> cellsByGrid;
-    // private Dictionary<Vector2Int, Cell> cellsByGrid;
     public List<Cell> uniqueCells;
 
     public Grid()
     {
-        grid = new();
         uniqueCells = new();
         cellsByGrid = new();
         doorwayGrid = new();
@@ -149,13 +132,13 @@ public class Grid
             allOffsets.RemoveAt(allOffsets.Count-1);
 
             // process in all directions
-            TryStep2(current, UP, pc, exists);
-            TryStep2(current, DOWN, pc, exists);
-            TryStep2(current, LEFT, pc, exists);
-            TryStep2(current, RIGHT, pc, exists);
+            TryStep(current, UP, pc, exists);
+            TryStep(current, DOWN, pc, exists);
+            TryStep(current, LEFT, pc, exists);
+            TryStep(current, RIGHT, pc, exists);
         }
     }
-    private bool TryStep2(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
+    private bool TryStep(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
     {
         Offset dirOff = DirMethods.calcOffset(currentOff, dir);
 
@@ -197,77 +180,9 @@ public class Grid
         exists.Add((dirOff, DirMethods.opposite(dir)));
         return true;
     }
-    // only useful in above function WriteConnections
-    private bool TryStep(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
-    {
-        // direction data
-        Offset dirOff = DirMethods.calcOffset(currentOff, dir);
-
-        // do not build duplicate connections
-        if(exists.Contains((currentOff, dir)))
-        {
-            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: duplicate");
-            return false;
-        }
-
-
-        Openings dirOpens;
-        if(!grid.TryGetValue(dirOff, out dirOpens)) // early end if not found
-        {
-            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: {dirOff} is empty");
-            return false;
-        }
-
-        Openings currOpens;
-        if(!grid.TryGetValue(currentOff, out currOpens)) // early end if not found (this one should not happen)
-            return false;
-
-        Cell currentCell = cellsByGrid.Get(currentOff);
-        Cell dirCell = cellsByGrid.Get(dirOff);
-        if(currentCell == dirCell)
-            return false;
-
-        bool valid = dir switch
-        {
-            DOWN => (dirOpens.up && currOpens.down),
-            UP => (dirOpens.down && currOpens.up),
-            LEFT => (dirOpens.right && currOpens.left),
-            RIGHT => (dirOpens.left && currOpens.right),
-            _ => false,
-        };
-
-        if(!valid)
-        {
-            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: no possible opening");
-            return false;
-        }
-
-        Offset relativeCurrOff = currentOff - currentCell.offset;
-        Offset relativeDirOff = dirOff - dirCell.offset;
-
-        int currentIndex; int dirIndex;
-        (currentIndex, dirIndex) = dir switch
-        {
-            LEFT or RIGHT => (relativeCurrOff.y, relativeDirOff.y),
-            _ => (relativeCurrOff.x, relativeDirOff.x),
-        };
-
-        Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: Connection!");
-        // Debug.Log($"For current ({currentCell.room}), dir ({dirCell.room}): \n currentIndex: {currentIndex}, dirIndex: {dirIndex}\n relativeCurrOff: {relativeCurrOff}, relativeDirOff: {relativeDirOff}\n currentOff: {currentOff}, dirOff: {dirOff}\n currentCell.offset: {currentCell.offset}, dirCell.offset: {dirCell.offset}\ndirection: {dir}");
-
-        pc.AddConnection(currentCell, dirCell, currentIndex, dirIndex, dir);
-        exists.Add((dirOff, DirMethods.opposite(dir)));
-        return true;
-    }
 
     public void LogEntries()
     {
         doorwayGrid.LogEntries();
-        // StringBuilder sb = new("[Grid.LogEntries] Grid contains keys:");
-        // foreach(Offset x in grid.Keys)
-        // {
-        //     sb.Append($"({x.x},{x.y}) ");
-        // }
-        // Debug.Log(sb.ToString());
     }
 }

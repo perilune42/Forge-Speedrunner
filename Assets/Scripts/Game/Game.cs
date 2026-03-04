@@ -155,6 +155,8 @@ public class Game : Singleton<Game> {
         Timer.Instance.Pause(false);
 
 
+        // disable ending the game when exceeding time
+        Timer.endWhenOutOfTime = !practiceMode;
 
         AbilityManager.Instance.ResetAbilites();
         AbilityManager.Instance.RechargeAbilities();

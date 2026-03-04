@@ -19,6 +19,7 @@ public class Timer : Singleton<Timer>
     public static float previousTargetTime;
     public static float speedrunTime = 0.0f;
     public static bool timeSpeedrun = true;
+    public static bool endWhenOutOfTime = true;
     
     [SerializeField] private float chromaticAberrationTime; // how much time should be up before effect kicks in
     [SerializeField] private float chromaticAberrationIntensity;
@@ -55,14 +56,17 @@ public class Timer : Singleton<Timer>
             speedrunTime += Time.fixedDeltaTime;
         }
 
-        if (speedrunTime >= targetSpeedrunTime) 
+        if (endWhenOutOfTime && speedrunTime >= targetSpeedrunTime)
         {
             Game.Instance.EndGame();
         }
 
-        float timeLeftFrac = speedrunTime / targetSpeedrunTime;
-        timeLeftFrac = Mathf.Max(0f, timeLeftFrac - chromaticAberrationTime);
-        chromaticAberration.intensity.Override(timeLeftFrac * chromaticAberrationIntensity / (1 - chromaticAberrationTime));
+        if(endWhenOutOfTime)
+        {
+            float timeLeftFrac = speedrunTime / targetSpeedrunTime;
+            timeLeftFrac = Mathf.Max(0f, timeLeftFrac - chromaticAberrationTime);
+            chromaticAberration.intensity.Override(timeLeftFrac * chromaticAberrationIntensity / (1 - chromaticAberrationTime));
+        }
     }
 
     public override void Awake() {

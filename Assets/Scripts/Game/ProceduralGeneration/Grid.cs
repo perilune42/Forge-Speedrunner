@@ -177,51 +177,16 @@ public class Grid
 
     public bool InsertRoom(Room room, Offset offset)
     {
-        Openings closedEverywhere = new Openings(false,false,false,false);
-
-        // insert all elements
         Cell roomCell = new Cell(room, offset);
         uniqueCells.Add(roomCell); // also log the unique cell
-        for(int i = offset.x; i < offset.x + room.size.x; i++)
-            for(int j = offset.y; j < offset.y + room.size.y; j++)
-        {
-            Debug.Log($"[InsertRoom] insert ({i},{j})");
-            grid.Add(new(i,j), closedEverywhere);
-        }
+        doorwayGrid.InsertRoom(room, offset);
         cellsByGrid.InsertRange(roomCell, offset, room.size);
-
-        // left walls
-        Offset xMask = new(1,0);
-        Offset yMask = new(0,1);
-        Offset leftStart = offset;
-        Offset downStart = offset;
-        Offset rightStart = offset + xMask * room.size.x - xMask;
-        Offset upStart = offset + yMask * room.size.y - yMask;
-        for(int i = 0; i < room.size.y; i++)
-        {
-            if(room.doorwaysLeft[i] != null)
-                OpenAt(leftStart, LEFT);
-            if(room.doorwaysRight[i] != null)
-                OpenAt(rightStart, RIGHT);
-            leftStart += yMask;
-            rightStart += yMask;
-        }
-        for(int i = 0; i < room.size.x; i++)
-        {
-            if(room.doorwaysUp[i] != null)
-                OpenAt(upStart, UP);
-            if(room.doorwaysDown[i] != null)
-                OpenAt(downStart, DOWN);
-            upStart += xMask;
-            downStart += xMask;
-        }
-
         return true;
     }
     public void WriteConnections(PathCreator pc)
     {
         HashSet<(Offset, Direction)> exists = new();
-        List<Offset> allOffsets = grid.Keys.ToList();
+        List<Offset> allOffsets = uniqueCells.Select(x => x.offset).ToList();
         while(allOffsets.Count > 0)
         {
             // dequeue
@@ -229,11 +194,49 @@ public class Grid
             allOffsets.RemoveAt(allOffsets.Count-1);
 
             // process in all directions
-            TryStep(current, UP, pc, exists);
-            TryStep(current, DOWN, pc, exists);
-            TryStep(current, LEFT, pc, exists);
-            TryStep(current, RIGHT, pc, exists);
+            TryStep2(current, UP, pc, exists);
+            TryStep2(current, DOWN, pc, exists);
+            TryStep2(current, LEFT, pc, exists);
+            TryStep2(current, RIGHT, pc, exists);
         }
+    }
+    private bool TryStep2(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
+    {
+        Offset dirOff = DirMethods.calcOffset(currentOff, dir);
+
+        // do not build duplicate connections
+        if(exists.Contains((currentOff, dir)))
+        {
+            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: duplicate");
+            return false;
+        }
+
+        // get cells, and make sure they are not the same
+        Cell currentCell = cellsByGrid.Get(currentOff);
+        Cell dirCell = cellsByGrid.Get(dirOff);
+        if(currentCell == dirCell) return false;
+
+        // check if there's an opening here
+        Direction oppositeDir = DirMethods.opposite(dir);
+        bool valid = doorwayGrid.Get(currentOff, dir) && doorwayGrid.Get(dirOff, oppositeDir);
+        if(!valid) return false;
+
+        // indices into the relevant doorway list
+        int currentIndex; int dirIndex;
+        if(dir == LEFT || dir == RIGHT)
+        {
+            currentIndex = currentOff.y - currentCell.offset.y;
+            dirIndex = dirOff.y - dirCell.offset.y;
+        }
+        else
+        {
+            currentIndex = currentOff.x - currentCell.offset.x;
+            dirIndex = dirOff.x - dirCell.offset.x;
+        }
+
+        pc.AddConnection(currentCell, dirCell, currentIndex, dirIndex, dir);
+        exists.Add((dirOff, DirMethods.opposite(dir)));
+        return true;
     }
     // only useful in above function WriteConnections
     private bool TryStep(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
@@ -300,11 +303,12 @@ public class Grid
 
     public void LogEntries()
     {
-        StringBuilder sb = new("[Grid.LogEntries] Grid contains keys:");
-        foreach(Offset x in grid.Keys)
-        {
-            sb.Append($"({x.x},{x.y}) ");
-        }
-        Debug.Log(sb.ToString());
+        doorwayGrid.LogEntries();
+        // StringBuilder sb = new("[Grid.LogEntries] Grid contains keys:");
+        // foreach(Offset x in grid.Keys)
+        // {
+        //     sb.Append($"({x.x},{x.y}) ");
+        // }
+        // Debug.Log(sb.ToString());
     }
 }

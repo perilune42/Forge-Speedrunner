@@ -1,5 +1,7 @@
 using UnityEngine;
 using Offset = UnityEngine.Vector2Int;
+using System.Collections.Generic;
+using System.Text;
 using static Direction;
 
 public class DoorwayGrid
@@ -11,9 +13,6 @@ public class DoorwayGrid
 
     public void InsertRoom(Room room, Offset off)
     {
-        Cell cell = new Cell(room, off);
-        uniqueCells.Add(cell);
-
         Offset xof = new(1,0);
         Offset yof = new(0,1);
         Offset leftStart = off - xof;
@@ -50,13 +49,13 @@ public class DoorwayGrid
     public void LogEntries()
     {
         StringBuilder sb = new("[DoorwayGrid.LogEntries] Grid contains the following:\n");
-        foreach(Offset x in upOpens.Keys)
+        foreach(Offset x in upOpens)
             sb.Append($"\t{x} opens UP.\n");
-        foreach(Offset x in downOpens.Keys)
+        foreach(Offset x in downOpens)
             sb.Append($"\t{x} opens DOWN.\n");
-        foreach(Offset x in leftOpens.Keys)
+        foreach(Offset x in leftOpens)
             sb.Append($"\t{x} opens LEFT.\n");
-        foreach(Offset x in rightOpens.Keys)
+        foreach(Offset x in rightOpens)
             sb.Append($"\t{x} opens RIGHT.\n");
         Debug.Log(sb.ToString());
     }

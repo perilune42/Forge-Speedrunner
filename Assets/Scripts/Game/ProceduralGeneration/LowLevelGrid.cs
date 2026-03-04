@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Text;
 using Offset = UnityEngine.Vector2Int;
 using static Direction;
 
@@ -38,7 +39,7 @@ public class LowLevelGrid<T>
     // oneliners using already defined methods
     public void Insert(T obj, Offset off) 
         => InsertRange(obj, off, new Offset(1,1));
-    public bool Check(Offset off) => TryGet(off, out _);
+    public bool Check(Offset off) => TryGetValue(off, out _);
 
     /*
      * Return FALSE if there's nothing here. 
@@ -46,7 +47,7 @@ public class LowLevelGrid<T>
      */
     public bool FirstInRange(Offset off, Offset size, out Offset offOut)
     {
-        offOut = new(INT_MIN,INT_MIN);
+        offOut = new(int.MinValue, int.MinValue);
         // i feel like negative size should be possible but alas
         if(size.x <= 0 || size.y <= 0)
             return false;
@@ -56,7 +57,7 @@ public class LowLevelGrid<T>
             for(int j = 0; j < size.y; j++)
         {
             offOut = off + new Offset(i,j);
-            if(TryGet(offOut, out _))
+            if(TryGetValue(offOut, out _))
                 return true;
         }
         return false;

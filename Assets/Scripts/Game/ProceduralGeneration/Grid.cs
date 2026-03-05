@@ -160,8 +160,13 @@ public class Grid
 
         // check if there's an opening here
         Direction oppositeDir = DirMethods.opposite(dir);
-        bool valid = doorwayGrid.Get(currentOff, dir) && doorwayGrid.Get(dirOff, oppositeDir);
-        if(!valid) return false;
+        DoorwayType currentType; DoorwayType dirType;
+        bool currentValid = doorwayGrid.Get(currentOff, dir, out currentType);
+        bool dirValid = doorwayGrid.Get(dirOff, oppositeDir, out dirType);
+        if(!currentValid || !dirValid)
+            return false;
+        if(currentType == dirType && currentType != DoorwayType.BOTH)
+            return false;
 
         // indices into the relevant doorway list
         int currentIndex; int dirIndex;

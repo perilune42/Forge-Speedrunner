@@ -11,6 +11,7 @@ public class Parry : Ability
     private int hitstopRemaining, parryPrimedRemaining, leniencyFramesRemaining;
     private float storedSpeed;
     private Vector2 storedVelocity;
+    public bool ParryPrimed => parryPrimedRemaining > 0;
 
     [SerializeField] ParticleSystem shockwaveParticles;
 
@@ -23,24 +24,15 @@ public class Parry : Ability
     [SerializeField] float speedMultiplier = 1f;
 
     [SerializeField] float minVerticalBoost;
-
+    [HideInInspector] public Entity SpecialEntity;
+    
     public override void Start()
     {
         base.Start();
 
         pm.OnHitWallAny += (e, dir) =>
         {
-            surfaceDir = dir;
-            storedSpeed = Vector2.Dot(pm.PreCollisionVelocity, dir);
-            storedVelocity = pm.PreCollisionVelocity;
-            if (parryPrimedRemaining > 0)
-            {
-                StartParry(dir);
-            }
-            else
-            {
-                leniencyFramesRemaining = maxLeniencyFrames;
-            }
+            CollideWithWall(e, dir);
         };
     }
 
@@ -88,6 +80,20 @@ public class Parry : Ability
         }
     }
 
+    public void CollideWithWall(Entity e, Vector2 dir)
+    {
+        surfaceDir = dir;
+        storedSpeed = Vector2.Dot(pm.PreCollisionVelocity, dir);
+        storedVelocity = pm.PreCollisionVelocity;
+        if (parryPrimedRemaining > 0)
+        {
+            StartParry(dir);
+        }
+        else
+        {
+            leniencyFramesRemaining = maxLeniencyFrames;
+        }
+    }
 
     public override float GetCooldown()
     {
@@ -175,6 +181,7 @@ public class Parry : Ability
         p.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, surfaceDir - perpendicularDir));
         p.Play();
 
+        if (SpecialEntity is Bouncer bouncer) bouncer.PlayBouncerEffects();
     }
 
     public override bool CanUseAbility()

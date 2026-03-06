@@ -25,7 +25,7 @@ public class Parry : Ability
 
     [SerializeField] float minVerticalBoost;
     [HideInInspector] public Entity SpecialEntity;
-    
+    public Action OnPrimeParry;
     public override void Start()
     {
         base.Start();
@@ -63,6 +63,7 @@ public class Parry : Ability
             {
                 stopParticleAction?.Invoke();
                 pm.CanClimb = true;
+                pm.IsInvulnerable = false;
             }
         }
         if (hitstopRemaining > 0)
@@ -120,6 +121,7 @@ public class Parry : Ability
         {
             pm.IsInvulnerable = true;
         }
+        OnPrimeParry?.Invoke();
     }
 
     private void StartParry(Vector2 hitSurfaceDir)
@@ -150,15 +152,26 @@ public class Parry : Ability
         }
         
 
-
         pm.Locked = false;
-        pm.Velocity = -surfaceDir * (storedSpeed * speedMultiplier + (surfaceDir.y == 0 ? baseReflectSpeed : 0));
-        pm.Velocity += perpendicularDir * storedSpeed * 0.5f * speedMultiplier;
-        pm.Velocity += new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x)) * storedVelocity;
-        if (surfaceDir.y == 0 && perpendicularDir != Vector2.down)
+        if (SpecialEntity is Drone drone)
         {
-            pm.Velocity += Vector2.up * minVerticalBoost;
+            if (CurrentLevel >= 1) storedSpeed = Mathf.Abs(storedSpeed);
+            pm.Velocity = (CurrentLevel >= 1 && inputDir != Vector2.zero ? inputDir : Vector2.right) 
+                * (storedSpeed * speedMultiplier);
+            pm.Velocity += Vector2.up * pm.MovementParams.JumpSpeed;
+            drone.Consume();
         }
+        else
+        {
+            pm.Velocity = -surfaceDir * (storedSpeed * speedMultiplier + (surfaceDir.y == 0 ? baseReflectSpeed : 0));
+            pm.Velocity += perpendicularDir * storedSpeed * 0.5f * speedMultiplier;
+            pm.Velocity += new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x)) * storedVelocity;
+            if (surfaceDir.y == 0 && perpendicularDir != Vector2.down)
+            {
+                pm.Velocity += Vector2.up * minVerticalBoost;
+            }
+        }
+        
 
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
         hitstopRemaining = 0;
@@ -182,6 +195,7 @@ public class Parry : Ability
         p.Play();
 
         if (SpecialEntity is Bouncer bouncer) bouncer.PlayBouncerEffects();
+        SpecialEntity = null;
     }
 
     public override bool CanUseAbility()

@@ -26,6 +26,15 @@ public class Drone : Entity
         animator = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        if (AbilityManager.Instance.TryGetAbility<Parry>(out Parry parry)) parry.OnPrimeParry += () =>
+        {
+            if (canJumpNow && pm.State == BodyState.InAir) TryConsume();
+        };
+
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -44,7 +53,7 @@ public class Drone : Entity
             {
                 TryConsume();
             }
-        } 
+        }
 
         if (active && canJumpNow)
         {
@@ -83,7 +92,7 @@ public class Drone : Entity
         {
             canJumpNow = true;
         }
-        
+
     }
 
     public override void OnPlayerExit()
@@ -100,8 +109,26 @@ public class Drone : Entity
 
         var grapple = AbilityManager.Instance.GetAbility<Grapple>();
         if (grapple != null && grapple.grappleState == GrappleState.Pulling) return false;
+        if (AbilityManager.Instance.TryGetAbility<Parry>(out Parry parry))
+        {
+            if (parry.ParryPrimed)
+            {
+                pm.PreCollisionVelocity = Vector2.right * pm.Velocity.magnitude;
+                parry.CollideWithWall(this, Vector2.one);
+                parry.SpecialEntity = this;
+                return false;
+            }
+        }
         pm.Jump();
         PInput.Instance.Jump.ConsumeBuffer();
+        Consume();
+
+        return true;
+    }
+
+    public void Consume()
+    {
+        
         pm.Velocity.y += ExtraJumpBoost;
         pm.onGround?.Invoke();
         AbilityManager.Instance.GetAbility<Dash>().Recharge();
@@ -112,8 +139,6 @@ public class Drone : Entity
         jumpParticles.Play();
 
         RuntimeManager.PlayOneShotAttached("event:/Drone Jumped on", gameObject);
-
-        return true;
     }
     private void Recharge()
     {

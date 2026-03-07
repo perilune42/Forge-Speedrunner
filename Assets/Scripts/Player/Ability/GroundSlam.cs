@@ -132,7 +132,6 @@ public class GroundSlam : Ability, IStatSource
 
     public void OnGround()
     {
-        Debug.Log(rampUpTime * heightConversion);
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion + minimumSpeedGain);
         PlayerMovement.SpecialState = SpecialState.Normal;
         PlayerMovement.TerminalVelocity = terminalVelocityDefault;

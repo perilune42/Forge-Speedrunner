@@ -22,6 +22,8 @@ public class Parry : Ability
     Vector2 surfaceDir;
     [SerializeField] float baseReflectSpeed = 6;
     [SerializeField] float speedMultiplier = 1f;
+    [SerializeField] private float verticalSpeedSoftcap;
+    [SerializeField] private float softcapAmount;
 
     [SerializeField] float minVerticalBoost;
     [HideInInspector] public Entity SpecialEntity;
@@ -83,17 +85,27 @@ public class Parry : Ability
 
     public void CollideWithWall(Entity e, Vector2 dir)
     {
-        surfaceDir = dir;
-        storedSpeed = Vector2.Dot(pm.PreCollisionVelocity, dir);
-        storedVelocity = pm.PreCollisionVelocity;
-        if (parryPrimedRemaining > 0)
-        {
-            StartParry(dir);
-        }
-        else
+        if (!ParryPrimed)
         {
             leniencyFramesRemaining = maxLeniencyFrames;
+            return;
         }
+        surfaceDir = dir;
+        Vector2 scaledVelocity = pm.PreCollisionVelocity;
+        scaledVelocity.y = Mathf.Abs(scaledVelocity.y);
+        if (scaledVelocity.y > verticalSpeedSoftcap)
+        {
+            float cappedSpeed = scaledVelocity.y - verticalSpeedSoftcap;
+            scaledVelocity.y = verticalSpeedSoftcap + cappedSpeed * softcapAmount;
+        }
+        if (pm.PreCollisionVelocity.y < 0) scaledVelocity.y *= -1;
+        Debug.Log(scaledVelocity);
+        storedSpeed = Vector2.Dot(scaledVelocity, dir);
+        Debug.Log(storedSpeed);
+        storedVelocity = scaledVelocity;
+        
+        StartParry(dir);
+        
     }
 
     public override float GetCooldown()
@@ -172,7 +184,7 @@ public class Parry : Ability
             }
         }
         
-
+        Debug.Log("total velocity: " + pm.Velocity.ToString());
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
         hitstopRemaining = 0;
         circle.enabled = false;

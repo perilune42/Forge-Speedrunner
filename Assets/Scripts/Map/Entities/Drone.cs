@@ -113,8 +113,8 @@ public class Drone : Entity
         {
             if (parry.ParryPrimed)
             {
-                pm.PreCollisionVelocity = Vector2.right * pm.Velocity.magnitude;
-                parry.CollideWithWall(this, Vector2.one);
+                pm.PreCollisionVelocity = pm.Velocity;
+                parry.CollideWithWall(this, Vector2.Normalize(-pm.Velocity));
                 parry.SpecialEntity = this;
                 return false;
             }

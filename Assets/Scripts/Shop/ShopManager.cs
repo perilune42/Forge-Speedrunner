@@ -304,7 +304,6 @@ public class ShopManager : Singleton<ShopManager>
     public void ReturnToWorld()
     {
         // SceneManager.LoadScene("World");
-        Game.Instance.StartNewRound();
         Game.Instance.ReturnToPlay(false);
     }
 

@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class ParallaxLayer : MonoBehaviour
@@ -16,15 +17,6 @@ public class ParallaxLayer : MonoBehaviour
     private int index => Game.Instance.BackgroundIndex;
     private SpriteRenderer baseTile => baseTiles[index];
 
-    private void OnValidate()
-    {
-        foreach (SpriteRenderer tile in baseTiles) tile.sortingOrder = Layer;
-        if (Camera.main != null)
-        {
-            transform.position = (Vector2)Camera.main.transform.position;
-        }
-        
-    }
 
     private void Awake()
     {

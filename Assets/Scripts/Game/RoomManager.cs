@@ -21,11 +21,6 @@ public class RoomManager : Singleton<RoomManager>
     public int BaseWidth = 64, BaseHeight = 36;
 
     public int TransitionWidth = 4;
-    public int TransitionFadeFrames = 20; // per side of room
-
-    // moved to CameraController.cs
-    //public BoxCollider2D CameraBounds;
-    //public CinemachineConfiner2D CameraConfiner;
 
     // we should move these prefabs out of here...
     public BoxCollider2D GuideRailPrefab;
@@ -46,6 +41,7 @@ public class RoomManager : Singleton<RoomManager>
 
     public bool TransitionOngoing = false;
 
+    private Vector2 preservedVelocity;
     
     
 
@@ -53,8 +49,6 @@ public class RoomManager : Singleton<RoomManager>
             respawnPosition = value;
             respawnIsSet = true;
     } }
-
-    public Action RunBetweenStates = null;
 
     public override void Awake()
     {
@@ -73,7 +67,6 @@ public class RoomManager : Singleton<RoomManager>
         ActivatableEntities = GetComponentsInChildren<ActivatableEntity>();
         originalPosition = Player.Instance.Movement.transform.position;
         originalRoom = findActiveRoom(AllRooms);
-        SpawnAtStart();
 
         // Set room to visited
         originalRoom.visited = true;
@@ -102,9 +95,9 @@ public class RoomManager : Singleton<RoomManager>
         
     }
 
-    public void SpawnAtStart()
+    public void SpawnAtStart(bool allowOverride = false)
     {
-        if (Game.Instance.OverrideStartingRoom)
+        if (allowOverride && Game.Instance.OverrideStartingRoom)
         {
             activeRoom = originalRoom;
             RespawnPosition = originalPosition;
@@ -132,7 +125,8 @@ public class RoomManager : Singleton<RoomManager>
         respawnIsSet = false;
         Vector2 dir = -previousDoorway.GetTransitionDirection();
         Debug.Log($"Spawning at doorway in room: {activeRoom}");
-        StartCoroutine(GoThroughDoorway(previousDoorway, DeterminePreservedVelocity(dir), dir));
+        preservedVelocity = DeterminePreservedVelocity(dir, true);
+        StartCoroutine(GoThroughDoorway(previousDoorway, dir));
     }
 
 
@@ -160,20 +154,7 @@ public class RoomManager : Singleton<RoomManager>
         return targetRoom;
     }
 
-    private Vector2 DeterminePreservedVelocity(Vector2 dir)
-    {
-        Vector2 preservedVelocity;
-        var pm = Player.Instance.Movement;
-        // on up transitions, give player a boost
-        const float upBoost = 1.5f;
-        if (dir == Vector2.up
-                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
-        {
-            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
-        }
-        else preservedVelocity = pm.Velocity;
-        return preservedVelocity;
-    }
+
 
     public void ResetAllEntities()
     {
@@ -187,6 +168,7 @@ public class RoomManager : Singleton<RoomManager>
         PlayerMovement pm = Player.Instance.Movement;
         pm.transform.position = originalPosition;
         pm.Velocity = new(0.0F, 0.0F);
+        preservedVelocity = Vector2.zero;
 
         // reset camera and room data
         previousDoorway = null;
@@ -200,6 +182,75 @@ public class RoomManager : Singleton<RoomManager>
         return;
     }
 
+    private Vector2 DeterminePreservedVelocity(Vector2 dir, bool setAsMinimum = false)
+    {
+        const float minTransitionSpeed = 8;
+        var pm = Player.Instance.Movement;
+        Vector2 preservedVelocity;
+        if (setAsMinimum)
+        {
+            preservedVelocity = dir * minTransitionSpeed;
+        }
+        else
+        {
+            preservedVelocity = pm.Velocity;
+        }
+        
+        // on up transitions, give player a boost
+        const float upBoost = 2.5f;
+        if (dir == Vector2.up
+                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
+        {
+            preservedVelocity = new(pm.Velocity.x, pm.MovementParams.JumpSpeed * upBoost);
+        }
+        // give some minimum velocity if the player is too slow
+        if (dir != Vector2.zero && Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
+        {
+            preservedVelocity = preservedVelocity - dir * Vector2.Dot(preservedVelocity, dir) + dir * minTransitionSpeed;
+        }
+        return preservedVelocity;
+    }
+    
+    // respawn location set by safe zones
+    public void Respawn()
+    {
+        if (respawnIsSet)   // normal respawn inside a room
+        {
+            preservedVelocity = Vector2.zero;
+            StartCoroutine(RoomTransition(activeRoom, RespawnPosition, Vector2.zero));
+        }
+        else if (previousDoorway != null)   // respawn not set yet, re-enter room
+        {
+            Vector2 dir = -previousDoorway.GetTransitionDirection();
+            preservedVelocity = DeterminePreservedVelocity(dir, true);
+            StartCoroutine(GoThroughDoorway(previousDoorway, dir));
+        }
+        else // died in starting room before respawn is set
+        {
+            preservedVelocity = Vector2.zero;
+            StartCoroutine(RoomTransition(activeRoom, originalPosition, Vector2.zero));
+        }
+            
+    }
+
+    public void ReEnterRoom()
+    {
+        PlayerMovement pm = Player.Instance.Movement;
+
+        if (previousDoorway == null)
+        {
+            StartCoroutine(RoomTransition(activeRoom, originalPosition, Vector2.zero));
+            return;
+        }
+
+
+        // come from the reverse direction this time
+        Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
+        preservedVelocity = DeterminePreservedVelocity(dir, true);
+        StartCoroutine(GoThroughDoorway(previousDoorway, dir));
+    }
+
+    // usually only used by actual room transitions between 2 doorways
     public void SwitchRoom(Doorway door1, Doorway door2)
     {
         PlayerMovement pm = Player.Instance.Movement;
@@ -219,57 +270,13 @@ public class RoomManager : Singleton<RoomManager>
         activeRoom.visited = true;
         door1.passage.visited = true;
         door2.passage.visited = true;
-
-        StartCoroutine(GoThroughDoorway(door2, DeterminePreservedVelocity(dir), dir));
-    }
-    
-    // respawn location set by safe zones
-    public void Respawn()
-    {
-        if (respawnIsSet)
-        {
-            StartCoroutine(RoomTransition(activeRoom, RespawnPosition, Vector2.zero, Vector2.zero));
-        }
-        else if (previousDoorway != null)
-        {
-            StartCoroutine(GoThroughDoorway(previousDoorway, Vector2.zero, -previousDoorway.GetTransitionDirection()));
-        }
-        else
-        {
-            StartCoroutine(RoomTransition(activeRoom, originalPosition, Vector2.zero, Vector2.zero));
-        }
-            
+        preservedVelocity = DeterminePreservedVelocity(dir);
+        StartCoroutine(GoThroughDoorway(door2, dir));
     }
 
-    public void ReEnterRoom()
-    {
-        PlayerMovement pm = Player.Instance.Movement;
-
-        if (previousDoorway == null)
-        {
-            StartCoroutine(RoomTransition(activeRoom, originalPosition, Vector2.zero, Vector2.zero));
-            return;
-        }
-
-
-        // come from the reverse direction this time
-        Vector2 dir = previousDoorway.GetTransitionDirection() * -1;
-
-        // no velocity for respawning
-        Vector2 preservedVelocity = 1.0F * dir;
-
-        const float upBoost = 1.5f;
-        if (dir == Vector2.up
-                && pm.Velocity.y < pm.MovementParams.JumpSpeed * upBoost)
-        {
-            preservedVelocity.y += pm.MovementParams.JumpSpeed * upBoost;
-        }
-
-        StartCoroutine(GoThroughDoorway(previousDoorway, preservedVelocity, dir));
-    }
-
-
-    private IEnumerator GoThroughDoorway(Doorway door2, Vector2 preservedVelocity, Vector2 dir)
+    // used any time the player pops out of a door
+    // preserved velocity should always have been set before entering this
+    private IEnumerator GoThroughDoorway(Doorway door2, Vector2 dir)
     {
         //if (!TransitionOngoing)
         {
@@ -283,40 +290,41 @@ public class RoomManager : Singleton<RoomManager>
             /**
              * start doing things to the player here
              */
+
             door2.SuppressNextTransition();
             respawnIsSet = false;
-            yield return RoomTransition(door2.enclosingRoom, newPlayerPos, preservedVelocity, dir);
+            yield return RoomTransition(door2.enclosingRoom, newPlayerPos, dir);
             door2.EnableTransition();
         }
 
     }
 
-    public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 preservedVelocity, Vector2 dir)
+    // beginning the actual state changes of entering a room
+    public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 dir)
     {
+        var pm = Player.Instance.Movement;
+
         TransitionOngoing = true;
         PInput.Instance.EnableControls = false;
-        yield return FadeToBlack.Instance.FadeOut();
-
-        AbilityManager.Instance.ResetAbilites();
-        Player.Instance.IsDead = false;
         if (dir == Vector2.up)
         {
             Player.Instance.Movement.GravityEnabled = false;
         }
+        // give the player a visual boost towards the door (does not affect preserved v)
+        pm.Velocity += dir * 5f;
+
+        yield return FadeToBlack.Instance.FadeOut();
+        AbilityManager.Instance.ResetAbilites();
+        Player.Instance.IsDead = false;
+
         CameraController.Instance.SnapToRoom(room);
-        WarpToPosition(position, preservedVelocity, dir);
+        WarpToPosition(position, dir);
 
-        PInput.Instance.EnableControls = true;
-        TransitionOngoing = false;
-        yield return FadeToBlack.Instance.FadeIn();
-    }
+        pm.Locked = true;
+        pm.GravityEnabled = true;
 
-    public void WarpToPosition(Vector2 position, Vector2 preservedVelocity, Vector2 dir, int lockDuration = 10)
-    {
-        PlayerMovement pm = Player.Instance.Movement;
-        pm.EndJump(true);
-        if (pm.SpecialState != SpecialState.Chronoshift && pm.SpecialState != SpecialState.GroundSlam) pm.SpecialState = SpecialState.Normal;
-
+        StartCoroutine(FadeToBlack.Instance.FadeIn());  // decouple control locking logic from visual animation
+        // apply forced movement on room entry here
         if (dir.y == 0)
         {
             PInput.Instance.MoveInputOverrride = dir;
@@ -324,19 +332,17 @@ public class RoomManager : Singleton<RoomManager>
         else if (dir.y == 1)
         {
             // going upwards: force move in facing direction to get to a ledge
-            PInput.Instance.MoveInputOverrride = pm.FacingDir;
+            PInput.Instance.MoveInputOverrride = Player.Instance.Movement.FacingDir;
         }
+        const int playerEnterDelay = 40;    // wait this long before player pops out
+        const int controlReturnDelay = 20;  // wait this long before player regains control
 
-        // suppress target trigger to avoid transitioning back
-        pm.transform.position = position;
-        pm.Locked = false;
-        const float minTransitionSpeed = 0;
-
-        // give some minimum velocity entering the room
-        if (dir != Vector2.zero && Vector2.Dot(preservedVelocity, dir) < minTransitionSpeed)
+        if (true || dir != Vector2.zero)
         {
-            preservedVelocity = preservedVelocity - dir * Vector2.Dot(preservedVelocity, dir) + dir * minTransitionSpeed;
+            for (int i = 0; i < playerEnterDelay; i++)
+                yield return new WaitForFixedUpdate();
         }
+        pm.Locked = false;
         if (dir != Vector2.zero)
         {
             pm.Velocity = preservedVelocity;
@@ -345,17 +351,23 @@ public class RoomManager : Singleton<RoomManager>
         {
             pm.Velocity = Vector2.zero;
         }
-        if (dir == Vector2.up)
-        {
-            pm.GravityEnabled = false;
-        }
-        StartCoroutine(Util.FDelayedCall(lockDuration, () =>
-        {
-            // Don't let player move early unless you fix issue with room transitions
-            //PInput.Instance.EnableControls = true;
-            PInput.Instance.MoveInputOverrride = Vector2.zero;
-            pm.GravityEnabled = true;
-        }));
+        for (int i = 0; i < controlReturnDelay; i++)
+            yield return new WaitForFixedUpdate();
+
+        // finally return controls to the player
+        PInput.Instance.MoveInputOverrride = Vector2.zero;
+        PInput.Instance.EnableControls = true;
+        TransitionOngoing = false;
+    }
+
+    // while screen is black, move the player here
+    public void WarpToPosition(Vector2 position, Vector2 dir)
+    {
+        PlayerMovement pm = Player.Instance.Movement;
+        pm.EndJump(true);
+        if (pm.SpecialState != SpecialState.Chronoshift && pm.SpecialState != SpecialState.GroundSlam) pm.SpecialState = SpecialState.Normal;
+
+        pm.transform.position = position;
     }
 
     // relative position from 0 to 1 in each axis, if in bounds

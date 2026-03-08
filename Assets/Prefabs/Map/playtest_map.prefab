@@ -4376,7 +4376,6 @@ MonoBehaviour:
   BaseWidth: 64
   BaseHeight: 36
   TransitionWidth: 4
-  TransitionFadeFrames: 20
   GuideRailPrefab: {fileID: 9020449635309121990, guid: 783ad65ffdfcd094694ddb6c961e92a5, type: 3}
   FreezeTriggerPrefab: {fileID: 9020449635309121990, guid: 56fac559a002d884aa6b1676921f8bbb, type: 3}
   BlockerHorzPrefab: {fileID: 9020449635309121990, guid: 74a2df4e21cec9449933074b41401604, type: 3}

@@ -105,7 +105,7 @@ public class Game : Singleton<Game> {
             Timer.targetSpeedrunTime += 300;
         }
         CurrentRound = 1;
-        ReturnToPlay(false);
+        ReturnToPlay(false, null, true);
     }
 
     public void FinishRound()
@@ -142,9 +142,19 @@ public class Game : Singleton<Game> {
     {
         CurrentRound++;
     }
-    public void ReturnToPlay(bool practiceMode, Doorway startDoorway = null)
+    public void ReturnToPlay(bool practiceMode, Doorway startDoorway = null, bool gameStart = false)
     {
         ShopManager.Instance.CloseShop();
+
+        if (startDoorway == null)
+        {
+            RoomManager.Instance.SpawnAtStart(gameStart);
+        }
+        else
+        {
+            RoomManager.Instance.SpawnAtDoorway(startDoorway);
+        }
+
         // reset rooms and player
         //RoomManager.Instance.gameObject.SetActive(true);
         RoomManager.Instance.ResetAllEntities();
@@ -165,16 +175,13 @@ public class Game : Singleton<Game> {
         IsPracticeMode = practiceMode;
         GameplayUI.Instance.TogglePracticeMode(practiceMode);
 
-        if (startDoorway == null)
-        {
-            RoomManager.Instance.SpawnAtStart();
-        }
-        else
-        {
-            RoomManager.Instance.SpawnAtDoorway(startDoorway);
-        }
+
         MusicPlayer.Instance.EnterPlay();
         GameplayUI.Instance.UpdateAbilityInfo();
+        if (!practiceMode && !gameStart)
+        {
+            StartNewRound();
+        }
     }
 
 
@@ -228,6 +235,10 @@ public class Game_Inspector : Editor
         if (Application.isPlaying && GUILayout.Button("Add 30 Seconds"))
         {
             Timer.speedrunTime += 30f;
+        }
+        if (Application.isPlaying && GUILayout.Button("Win Current Round"))
+        {
+            g.FinishRound();
         }
     }
 }

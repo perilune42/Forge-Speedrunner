@@ -138,11 +138,13 @@ public class Parry : Ability
 
     private void StartParry(Vector2 hitSurfaceDir)
     {
-        if (PlayerMovement.SpecialState == SpecialState.GroundSlam &&
-            AbilityManager.Instance.TryGetAbility<GroundSlam>(out GroundSlam gs))
-        {
-            gs.OnGround();
-        }
+        surfaceDir = hitSurfaceDir;
+        pm.onGround?.Invoke();
+        //if (PlayerMovement.SpecialState == SpecialState.GroundSlam &&
+        //    AbilityManager.Instance.TryGetAbility<GroundSlam>(out GroundSlam gs))
+        //{
+        //    gs.OnGround();
+        //}
         hitstopRemaining = hitstopFrames;
         parryPrimedRemaining = 0;
         circle.enabled = true;

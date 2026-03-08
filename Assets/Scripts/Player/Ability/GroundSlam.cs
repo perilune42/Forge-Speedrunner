@@ -39,7 +39,6 @@ public class GroundSlam : Ability, IStatSource
     public override void OnReset()
     {
         base.OnReset();
-        Debug.Log(Player.Instance.IsDead);
         if (Player.Instance.IsDead) ExitSlam();
     }
 
@@ -139,7 +138,7 @@ public class GroundSlam : Ability, IStatSource
         ExitSlam();
     }
 
-    private void ExitSlam()
+    public void ExitSlam()
     {
         PlayerMovement.SpecialState = SpecialState.Normal;
         PlayerMovement.TerminalVelocity = terminalVelocityDefault;

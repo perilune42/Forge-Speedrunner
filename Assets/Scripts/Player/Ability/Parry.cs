@@ -17,7 +17,7 @@ public class Parry : Ability
 
     PlayerMovement pm => Player.Instance.Movement;
 
-    [SerializeField]SpriteRenderer circle;
+    [SerializeField] SpriteRenderer circle;
 
     Vector2 surfaceDir;
     [SerializeField] float baseReflectSpeed = 6;
@@ -103,9 +103,9 @@ public class Parry : Ability
         storedSpeed = Vector2.Dot(scaledVelocity, dir);
         Debug.Log(storedSpeed);
         storedVelocity = scaledVelocity;
-        
+
         StartParry(dir);
-        
+
     }
 
     public override float GetCooldown()
@@ -162,14 +162,13 @@ public class Parry : Ability
         {
             perpendicularDir = inputDir * new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x));
         }
-        
+
 
         pm.Locked = false;
         if (SpecialEntity is Drone drone)
         {
-            if (CurrentLevel >= 1) storedSpeed = Mathf.Abs(storedSpeed);
-            pm.Velocity = (CurrentLevel >= 1 && inputDir != Vector2.zero ? inputDir : Vector2.right) 
-                * (storedSpeed * speedMultiplier);
+            storedSpeed = Mathf.Abs(storedSpeed);
+            pm.Velocity = inputDir * (storedSpeed * speedMultiplier);
             pm.Velocity += Vector2.up * pm.MovementParams.JumpSpeed;
             drone.Consume();
         }
@@ -183,12 +182,12 @@ public class Parry : Ability
                 pm.Velocity += Vector2.up * minVerticalBoost;
             }
         }
-        
+
         Debug.Log("total velocity: " + pm.Velocity.ToString());
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
         hitstopRemaining = 0;
         circle.enabled = false;
-        
+
 
         pm.ForceMove(inputDir, 3);
         StartCoroutine(Util.FDelayedCall(3, () =>

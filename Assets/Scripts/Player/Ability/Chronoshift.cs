@@ -152,7 +152,6 @@ public class Chronoshift : Ability, IStatSource
         curTeleportSpeed = teleportSpeed;
         PlayerMovement.Velocity = Vector2.zero;
 
-        Debug.Log(EntitiesToReset.Count);
         foreach(ActivatableEntity e in EntitiesToReset) e.ResetEntity();
 
         curKeyframe = keyframes[0];

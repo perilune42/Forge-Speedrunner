@@ -120,6 +120,7 @@ public class Drone : Entity
             }
         }
         pm.Jump();
+        pm.Velocity.y += ExtraJumpBoost;
         PInput.Instance.Jump.ConsumeBuffer();
         Consume();
 
@@ -129,7 +130,6 @@ public class Drone : Entity
     public void Consume()
     {
         
-        pm.Velocity.y += ExtraJumpBoost;
         pm.onGround?.Invoke();
         AbilityManager.Instance.GetAbility<Dash>().Recharge();
 

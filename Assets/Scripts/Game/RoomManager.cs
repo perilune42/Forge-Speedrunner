@@ -315,7 +315,7 @@ public class RoomManager : Singleton<RoomManager>
     {
         PlayerMovement pm = Player.Instance.Movement;
         pm.EndJump(true);
-        if (pm.SpecialState != SpecialState.Chronoshift) pm.SpecialState = SpecialState.Normal;  // todo: preserve some states such as ground slam
+        if (pm.SpecialState != SpecialState.Chronoshift && pm.SpecialState != SpecialState.GroundSlam) pm.SpecialState = SpecialState.Normal;
 
         if (dir.y == 0)
         {
@@ -330,7 +330,6 @@ public class RoomManager : Singleton<RoomManager>
         // suppress target trigger to avoid transitioning back
         pm.transform.position = position;
         pm.Locked = false;
-        if (pm.SpecialState != SpecialState.Chronoshift) pm.SpecialState = SpecialState.Normal;
         const float minTransitionSpeed = 0;
 
         // give some minimum velocity entering the room

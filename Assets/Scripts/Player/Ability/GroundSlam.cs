@@ -33,11 +33,14 @@ public class GroundSlam : Ability, IStatSource
             if (slammingUpwards && PlayerMovement.SpecialState == SpecialState.GroundSlam) OnGround();
         };
         rampUpVelocityDefault = rampUpVelocity;
+        terminalVelocityDefault = PlayerMovement.TerminalVelocity;
     }
 
     public override void OnReset()
     {
         base.OnReset();
+        Debug.Log(Player.Instance.IsDead);
+        if (Player.Instance.IsDead) ExitSlam();
     }
 
     protected override void FixedUpdate()
@@ -113,7 +116,6 @@ public class GroundSlam : Ability, IStatSource
         if (PlayerMovement.SpecialState == SpecialState.Dash) AbilityManager.Instance.GetAbility<Dash>().CancelDash();
         PlayerMovement.Velocity = GetSlamDir() * initialVelocity;
         PlayerMovement.SpecialState = SpecialState.GroundSlam;
-        terminalVelocityDefault = PlayerMovement.TerminalVelocity;
         PlayerMovement.TerminalVelocity = terminalVelocitySlam;
         rampUpVelocity = rampUpVelocityDefault;
         rampUpTime = 0;
@@ -133,12 +135,17 @@ public class GroundSlam : Ability, IStatSource
     public void OnGround()
     {
         PlayerMovement.Velocity = PlayerMovement.FacingDir * (rampUpTime * heightConversion + minimumSpeedGain);
+        RuntimeManager.PlayOneShotAttached("event:/Ground Slam", PlayerMovement.gameObject);
+        ExitSlam();
+    }
+
+    private void ExitSlam()
+    {
         PlayerMovement.SpecialState = SpecialState.Normal;
         PlayerMovement.TerminalVelocity = terminalVelocityDefault;
         slammingUpwards = false;
-        PlayerMovement.GravityMultiplier.Multipliers[this] = 1;
+        PlayerMovement.GravityMultiplier.Multipliers.Remove(this);
         stopParticleAction?.Invoke();
-        RuntimeManager.PlayOneShotAttached("event:/Ground Slam", PlayerMovement.gameObject);
     }
 
     private Vector2 GetSlamDir()

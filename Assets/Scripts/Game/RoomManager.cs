@@ -297,8 +297,8 @@ public class RoomManager : Singleton<RoomManager>
         PInput.Instance.EnableControls = false;
         yield return FadeToBlack.Instance.FadeOut();
 
-        Player.Instance.IsDead = false;
         AbilityManager.Instance.ResetAbilites();
+        Player.Instance.IsDead = false;
         if (dir == Vector2.up)
         {
             Player.Instance.Movement.GravityEnabled = false;

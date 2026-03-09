@@ -169,19 +169,19 @@ public class DoorwayGrid
     // NOTE: this control flow can easily be extracted into a different function.
     public List<Offset> NeighborsWithinRange(Offset start, Offset size)
     {
-        Offset leftStart = start;
-        Offset downStart = start;
-        Offset rightEnd = start + xof * size.x;
-        Offset upEnd = start + yof * size.y;
+        Offset leftInsideBase = start;
+        Offset downInsidebase = start;
+        Offset rightOutsideBase = start + xof * size.x;
+        Offset upOutsideBase = start + yof * size.y;
         List<Offset> values = new();
 
-        bool validSrc; bool validDst;
-        DoorwayType typeSrc; DoorwayType typeDst;
+        bool validSrc; DoorwayType typeSrc;
+        bool validDst; DoorwayType typeDst;
         for(int i = 0; i < size.y; i++)
         {
-            Offset leftInside = leftStart + yof * i;
+            Offset leftInside = leftInsideBase + yof * i;
             Offset leftOutside = leftInside - xof;
-            Offset rightOutside = rightEnd + yof * i;
+            Offset rightOutside = rightOutsideBase + yof * i;
             Offset rightInside = rightOutside - xof;
 
             validSrc = Get(leftInside, LEFT, out typeSrc);
@@ -197,9 +197,9 @@ public class DoorwayGrid
 
         for(int i = 0; i < size.x; i++)
         {
-            Offset downInside = downStart + xof * i;
+            Offset downInside = downInsidebase + xof * i;
             Offset downOutside = downInside - yof;
-            Offset upOutside = upEnd + xof * i;
+            Offset upOutside = upOutsideBase + xof * i;
             Offset upInside = upOutside - yof;
 
             validSrc = Get(downInside, DOWN, out typeSrc);

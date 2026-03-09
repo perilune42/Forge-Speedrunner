@@ -131,7 +131,13 @@ public class PathFactoryBuilder
 
         foreach(Cell c in grid.uniqueCells)
         {
-            Debug.Log($"{c.room} has neighbors: {grid.NeighborsOf(c).Count}");
+            StringBuilder sb = new($"{c.room} has neighbors: ");
+            foreach(Cell c2 in grid.NeighborsOf(c))
+            {
+                sb.Append($"{c2.room} ");
+            }
+            Debug.Log(sb.ToString());
+            // Debug.Log($"{c.room} has neighbors: {grid.NeighborsOf(c).Count}");
         }
 
         return grid.ProduceCreator();

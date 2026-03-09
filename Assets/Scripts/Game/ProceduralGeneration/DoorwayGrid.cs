@@ -161,38 +161,10 @@ public class DoorwayGrid
         Debug.Log(sb.ToString());
     }
 
-    internal readonly struct DoorData
-    {
-        public readonly Offset off;
-        public readonly Direction facing;
-        public readonly DoorwayType type;
-        public DoorData(Offset off, Direction facing, DoorwayType type)
-        {
-            this.off = off;
-            this.facing = facing;
-            this.type = type;
-        }
-    }
-
-    private bool GetAt(Offset off, Direction dir, out DoorData data)
-    {
-        data = default;
-
-        DoorwayType type;
-        if(!Get(off, dir, out type))
-            return false;
-
-        data = new DoorData(off, dir, type);
-        return true;
-    }
-
-    // Predicate condition that decides whether there is a connection between two locations
-    private bool HasConnection(DoorData dataSrc, DoorData dataDst)
-    {
-        bool facingCondition = dataSrc.facing == DirMethods.opposite(dataDst.facing);
-        bool typeCondition = dataSrc.type != dataDst.type || dataSrc.type == BOTH;
-        return (facingCondition && typeCondition);
-    }
+    /* Predicate condition that decides whether there is a connection between two locations
+    */
+    private bool HasConnection(DoorwayType typeSrc, DoorwayType typeDst)
+        => typeSrc != typeDst || typeSrc == BOTH;
 
     // NOTE: this control flow can easily be extracted into a different function.
     public List<Offset> NeighborsWithinRange(Offset start, Offset size)
@@ -204,31 +176,41 @@ public class DoorwayGrid
         List<Offset> values = new();
 
         bool validSrc; bool validDst;
-        DoorData dataSrc; DoorData dataDst;
-        for(int i = 0; i < size.x; i++)
-        {
-            validSrc = GetAt(leftStart + yof * i, LEFT, out dataSrc);
-            validDst = GetAt(leftStart + yof * i - xof, RIGHT, out dataDst);
-            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
-                values.Add(dataDst.off);
-
-            validSrc = GetAt(rightEnd + yof * i - xof, RIGHT, out dataSrc);
-            validDst = GetAt(rightEnd + yof * i, LEFT, out dataDst);
-            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
-                values.Add(dataDst.off);
-        }
-
+        DoorwayType typeSrc; DoorwayType typeDst;
         for(int i = 0; i < size.y; i++)
         {
-            validSrc = GetAt(downStart + xof * i, DOWN, out dataSrc);
-            validDst = GetAt(downStart + xof * i - yof, UP, out dataDst);
-            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
-                values.Add(dataDst.off);
+            Offset leftInside = leftStart + yof * i;
+            Offset leftOutside = leftInside - xof;
+            Offset rightOutside = rightEnd + yof * i;
+            Offset rightInside = rightOutside - xof;
 
-            validSrc = GetAt(upEnd + xof * i - yof, UP, out dataSrc);
-            validDst = GetAt(upEnd + xof * i, DOWN, out dataDst);
-            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
-                values.Add(dataDst.off);
+            validSrc = Get(leftInside, LEFT, out typeSrc);
+            validDst = Get(leftOutside, RIGHT, out typeDst);
+            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+                values.Add(leftOutside);
+
+            validSrc = Get(rightInside, RIGHT, out typeSrc);
+            validDst = Get(rightOutside, LEFT, out typeDst);
+            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+                values.Add(rightOutside);
+        }
+
+        for(int i = 0; i < size.x; i++)
+        {
+            Offset downInside = downStart + xof * i;
+            Offset downOutside = downInside - yof;
+            Offset upOutside = upEnd + xof * i;
+            Offset upInside = upOutside - yof;
+
+            validSrc = Get(downInside, DOWN, out typeSrc);
+            validDst = Get(downOutside, UP, out typeDst);
+            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+                values.Add(downOutside);
+
+            validSrc = Get(upInside, UP, out typeSrc);
+            validDst = Get(upOutside, DOWN, out typeDst);
+            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+                values.Add(upOutside);
         }
         return values;
     }

@@ -104,7 +104,7 @@ public class Dash : Ability, IStatSource
         {
             slam.ContinueSlam();
         }
-        else
+        else if (PlayerMovement.SpecialState == SpecialState.Dash)
         {
             // if we weren't groundslamming, this is a normal dash, so go back to normal state
             PlayerMovement.SpecialState = SpecialState.Normal;

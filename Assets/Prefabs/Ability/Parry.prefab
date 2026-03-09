@@ -163,7 +163,10 @@ MonoBehaviour:
   circle: {fileID: 7302307563846284303}
   baseReflectSpeed: 10
   speedMultiplier: 1.1
+  verticalSpeedSoftcap: 40
+  softcapAmount: 0.4
   minVerticalBoost: 8
+  SpecialEntity: {fileID: 0}
 --- !u!1 &7806262450183880219
 GameObject:
   m_ObjectHideFlags: 0

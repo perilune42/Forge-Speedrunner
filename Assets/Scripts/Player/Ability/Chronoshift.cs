@@ -72,7 +72,7 @@ public class Chronoshift : Ability, IStatSource
                     curKeyframe = keyframes[keyframeIndex];
                     if (curKeyframe.room != RoomManager.Instance.activeRoom)
                     {
-                        StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero, Vector2.zero));
+                        StartCoroutine(RoomManager.Instance.RoomTransition(curKeyframe.room, curKeyframe.position, Vector2.zero));
                         RoomManager.Instance.activeRoom = curKeyframe.room;
                     }
                     Timer.speedrunTime = curKeyframe.time;
@@ -152,7 +152,6 @@ public class Chronoshift : Ability, IStatSource
         curTeleportSpeed = teleportSpeed;
         PlayerMovement.Velocity = Vector2.zero;
 
-        Debug.Log(EntitiesToReset.Count);
         foreach(ActivatableEntity e in EntitiesToReset) e.ResetEntity();
 
         curKeyframe = keyframes[0];

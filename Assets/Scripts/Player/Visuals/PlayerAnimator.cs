@@ -60,6 +60,7 @@ public class PlayerAnimator : Singleton<PlayerAnimator>
         }
     }
 
+    [ContextMenu("Kill Player")]
     public void DieWithAnimation()
     {
         if (Player.Instance.IsDead) return;

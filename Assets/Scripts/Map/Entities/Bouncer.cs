@@ -27,43 +27,67 @@ public class Bouncer : Entity
         base.OnCollide(de, normal);
 
         if (de is not PlayerMovement) return;
-
+        PlayerMovement pm = de as PlayerMovement;
         if (currCooldown > 0) return;
-        // bool slammed = false;
 
-        bool isHorz = bounceDirection == PDir.Left || bounceDirection == PDir.Right;
-        if (isHorz)
-        {
-            de.Velocity.x = -de.Velocity.x + Util.PDir2Vec(bounceDirection).x * bounceSpeed;
-            de.Velocity.y = verticalBoost;
-        }
-        else
-        {
-            de.Velocity.y = Util.PDir2Vec(bounceDirection).y * bounceSpeed;
-            if (bounceDirection == PDir.Up) de.OnAirborne();
-            de.Velocity.x = 0;
-        }
+        Vector2 bounceVec = Util.PDir2Vec(bounceDirection);
+        
 
-        if (de is PlayerMovement pm)
+        
+
+        if (AbilityManager.Instance.TryGetAbility<Parry>(out Parry parry))
         {
-            SpecialState prevState = pm.SpecialState;
-            pm.onGround?.Invoke();
-            if (prevState == SpecialState.Dash)
+            if (parry.ParryPrimed)
             {
-                AbilityManager.Instance.GetAbility<Dash>().CancelDash();
+                pm.PreCollisionVelocity = -GetBounceVelcoity(bounceVec, pm);
+                parry.CollideWithWall(this, -bounceVec);
+                parry.SpecialEntity = this;
+                return;
             }
-            if (prevState == SpecialState.GroundSlam)
-            {
-                // less vertical boost when slammed
-                de.Velocity.y = Util.PDir2Vec(bounceDirection).y * bounceSpeed * 0.33f;
-            }
-            AbilityManager.Instance.GetAbility<Dash>().Recharge();
         }
+        pm.Velocity = GetBounceVelcoity(bounceVec, pm);
+        SpecialState prevState = pm.SpecialState;
+        pm.onGround?.Invoke();
+        if (prevState == SpecialState.Dash)
+        {
+            AbilityManager.Instance.GetAbility<Dash>().CancelDash();
+        }
+        else if (prevState == SpecialState.GroundSlam)
+        {
+            // less vertical boost when slammed
+            de.Velocity.y = bounceVec.y * bounceSpeed * 0.33f;
+        }
+        
+        AbilityManager.Instance.GetAbility<Dash>().Recharge();
 
+        PlayBouncerEffects();
+    }
+
+    public void PlayBouncerEffects()
+    {
         currCooldown = bounceCooldown;
         animator.Play("BouncerActive");
 
 
         RuntimeManager.PlayOneShotAttached("event:/Bouncepad", gameObject);
+    }
+
+    private Vector2 GetBounceVelcoity(Vector2 bounceVec, DynamicEntity de)
+    {
+        Vector2 velocity;
+        // bool slammed = false;
+        bool isHorz = bounceDirection == PDir.Left || bounceDirection == PDir.Right;
+        if (isHorz)
+        {
+            velocity.x = -de.Velocity.x + bounceVec.x * bounceSpeed;
+            velocity.y = verticalBoost;
+        }
+        else
+        {
+            velocity.y = bounceVec.y * bounceSpeed;
+            if (bounceDirection == PDir.Up) de.OnAirborne();
+            velocity.x = 0;
+        }
+        return velocity;
     }
 }

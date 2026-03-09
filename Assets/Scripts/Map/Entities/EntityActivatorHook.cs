@@ -4,8 +4,9 @@ public class EntityActivatorHook : ActivatableEntity
 
     public override bool IsSolid => false;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         HookedEntity.enabled = false;
     }
 

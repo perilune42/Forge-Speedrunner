@@ -7,7 +7,6 @@ public abstract class ActivatableEntity : Entity
     {
         if (AbilityManager.Instance.TryGetAbility<Chronoshift>(out Chronoshift chronoshift))
         {
-            Debug.Log("plz");
             if (chronoshift.CanTeleport && !chronoshift.EntitiesToReset.Contains(this)) chronoshift.EntitiesToReset.Add(this);
         }
     }

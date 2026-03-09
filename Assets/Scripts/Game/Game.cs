@@ -42,7 +42,7 @@ public class Game : Singleton<Game> {
     public bool AllRoomsDiscovered = false;
     [SerializeField] bool enableDebugControls = false;
 
-
+    public Action OnEnterWorld;
     public override void Awake()
     {
         base.Awake();
@@ -184,6 +184,7 @@ public class Game : Singleton<Game> {
         {
             StartNewRound();
         }
+        OnEnterWorld?.Invoke();
     }
 
 

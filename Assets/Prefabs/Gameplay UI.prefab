@@ -2106,7 +2106,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 17.600098, y: 20.599976}
+  m_AnchoredPosition: {x: 17.600098, y: 20.600098}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &758695778789148218
@@ -3872,6 +3872,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7643230051904650237}
   - component: {fileID: 3026011838845717671}
+  - component: {fileID: 7994782360273345515}
   m_Layer: 5
   m_Name: AbilityInfoParent
   m_TagString: Untagged
@@ -3924,6 +3925,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &7994782360273345515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7119059273899825493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbfff07f3b5044679af5d48feb5e8cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HideWhenPlayerBehind
+  detectionExpandAmount: 50
 --- !u!1 &7465044630885925037
 GameObject:
   m_ObjectHideFlags: 0

@@ -129,6 +129,11 @@ public class PathFactoryBuilder
             } while (i > 0 && genSize < pathSize);
         }
 
+        foreach(Cell c in grid.uniqueCells)
+        {
+            Debug.Log($"{c.room} has neighbors: {grid.NeighborsOf(c).Count}");
+        }
+
         return grid.ProduceCreator();
     }
 }

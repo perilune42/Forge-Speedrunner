@@ -6,7 +6,6 @@ using System;
 using static Direction;
 using static DoorwayType;
 
-
 /* Please forgive my bitpacking, Jacky. I had fun.
  */
 public class DoorwayGrid
@@ -24,6 +23,10 @@ public class DoorwayGrid
      *       There could be a better way to do this, should there be a DoorwayType.NONE.
      */
     Dictionary<Vector2Int, byte> opens = new();
+
+    // These are constants that are neat to have.
+    private static Offset xof = new Offset(1,0);
+    private static Offset yof = new Offset(1,0);
 
     /* From direction, get the "index" into the byte.
      */
@@ -70,8 +73,6 @@ public class DoorwayGrid
         // TODO: allocate a buffer once, and never reallocate
         byte[,] BUFFER = new byte[room.size.x, room.size.y];
 
-        Offset xof = new(1,0);
-        Offset yof = new(0,1);
         Offset leftStart = off - xof;
         Offset rightStart = off + xof * room.size;
         Offset upStart = off + yof * room.size;
@@ -158,5 +159,77 @@ public class DoorwayGrid
                 sb.Append($"(LEFT, {type})");
         }
         Debug.Log(sb.ToString());
+    }
+
+    internal readonly struct DoorData
+    {
+        public readonly Offset off;
+        public readonly Direction facing;
+        public readonly DoorwayType type;
+        public DoorData(Offset off, Direction facing, DoorwayType type)
+        {
+            this.off = off;
+            this.facing = facing;
+            this.type = type;
+        }
+    }
+
+    private bool GetAt(Offset off, Direction dir, out DoorData data)
+    {
+        data = default;
+
+        DoorwayType type;
+        if(!Get(off, dir, out type))
+            return false;
+
+        data = new DoorData(off, dir, type);
+        return true;
+    }
+
+    // Predicate condition that decides whether there is a connection between two locations
+    private bool HasConnection(DoorData dataSrc, DoorData dataDst)
+    {
+        bool facingCondition = dataSrc.facing == DirMethods.opposite(dataDst.facing);
+        bool typeCondition = dataSrc.type != dataDst.type || dataSrc.type == BOTH;
+        return (facingCondition && typeCondition);
+    }
+
+    // NOTE: this control flow can easily be extracted into a different function.
+    public List<Offset> NeighborsWithinRange(Offset start, Offset size)
+    {
+        Offset leftStart = start;
+        Offset downStart = start;
+        Offset rightEnd = start + xof * size.x;
+        Offset upEnd = start + yof * size.y;
+        List<Offset> values = new();
+
+        bool validSrc; bool validDst;
+        DoorData dataSrc; DoorData dataDst;
+        for(int i = 0; i < size.x; i++)
+        {
+            validSrc = GetAt(leftStart + yof * i, LEFT, out dataSrc);
+            validDst = GetAt(leftStart + yof * i - xof, RIGHT, out dataDst);
+            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
+                values.Add(dataDst.off);
+
+            validSrc = GetAt(rightEnd + yof * i - xof, RIGHT, out dataSrc);
+            validDst = GetAt(rightEnd + yof * i, LEFT, out dataDst);
+            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
+                values.Add(dataDst.off);
+        }
+
+        for(int i = 0; i < size.y; i++)
+        {
+            validSrc = GetAt(downStart + xof * i, DOWN, out dataSrc);
+            validDst = GetAt(downStart + xof * i - yof, UP, out dataDst);
+            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
+                values.Add(dataDst.off);
+
+            validSrc = GetAt(upEnd + xof * i - yof, UP, out dataSrc);
+            validDst = GetAt(upEnd + xof * i, DOWN, out dataDst);
+            if(validSrc && validDst && HasConnection(dataSrc, dataDst))
+                values.Add(dataDst.off);
+        }
+        return values;
     }
 }

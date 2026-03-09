@@ -186,6 +186,18 @@ public class Grid
         return true;
     }
 
+    public List<Cell> NeighborsOf(Cell c)
+    {
+        List<Offset> neighbors = doorwayGrid.NeighborsWithinRange(c.offset, c.room.size);
+        HashSet<Cell> cells = new();
+
+        foreach(Offset off in neighbors)
+        {
+            cells.Add(cellsByGrid.Get(off));
+        }
+        return cells.ToList();
+    }
+
     public void LogEntries()
     {
         doorwayGrid.LogEntries();

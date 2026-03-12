@@ -129,7 +129,8 @@ public class Grid
     public void WriteConnections(PathCreator pc)
     {
         HashSet<(Offset, Direction)> exists = new();
-        List<Offset> allOffsets = uniqueCells.Select(x => x.offset).ToList();
+        // List<Offset> allOffsets = uniqueCells.Select(x => x.offset).ToList();
+        List<Offset> allOffsets = doorwayGrid.AllOffsets.ToList();
         while(allOffsets.Count > 0)
         {
             // dequeue
@@ -164,20 +165,8 @@ public class Grid
             return false;
 
         // check if there's an opening here
-        Direction oppositeDir = DirMethods.opposite(dir);
-        DoorwayType currentType; DoorwayType dirType;
-        bool currentValid = doorwayGrid.Get(currentOff, dir, out currentType);
-        bool dirValid = doorwayGrid.Get(dirOff, oppositeDir, out dirType);
-        if(!currentValid || !dirValid)
-        {
-            Debug.Log($"Contains {currentOff}? {currentValid}. Contains {dirOff}? {dirValid}.");
+        if(!doorwayGrid.ConnectionGoingDir(currentOff, dirOff, dir))
             return false;
-        }
-        if(currentType == dirType && currentType != DoorwayType.BOTH)
-        {
-            Debug.Log($"{currentOff} is {currentType}. {dirOff} is {dirType}.");
-            return false;
-        }
 
         // indices into the relevant doorway list
         int currentIndex; int dirIndex;

@@ -151,9 +151,14 @@ public class PathCreator
             numNeighbors[conn.Source.offset] += 1;
             numNeighbors[conn.Sink.offset] += 1;
         }
+        int numSourceSink = 0;
         foreach(int num in numNeighbors.Values)
             if(num > 2)
                 return Status.DEAD_ENDS;
+            else if(num == 1)
+                numSourceSink++;
+        if(numSourceSink != 2)
+            return Status.DEAD_ENDS;
         return Status.ALL_CLEAR;
     }
 }

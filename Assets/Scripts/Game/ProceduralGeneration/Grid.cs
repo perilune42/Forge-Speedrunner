@@ -109,11 +109,6 @@ public class Grid
     public PathCreator ProduceCreator()
     {
         PathCreator pc = new(uniqueCells);
-        // add this to test doorwaygrid in a cse120 type of way
-        // Debug.Log("running doorwaygrid test");
-        // doorwayGrid.Test();
-        // Debug.Log("end of doorwaygrid test");
-        doorwayGrid.PrintAllDoorways(cellsByGrid);
         WriteConnections(pc);
         return pc;
     }

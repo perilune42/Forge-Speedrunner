@@ -19,6 +19,7 @@ public enum Status
     NO_FIN,
     UNDER_MIN,
     DEAD_ENDS,
+    NOT_ENOUGH_ENDS,
     ALL_CLEAR,
 }
 public class PathCreator
@@ -158,7 +159,7 @@ public class PathCreator
             else if(num == 1)
                 numSourceSink++;
         if(numSourceSink != 2)
-            return Status.DEAD_ENDS;
+            return Status.NOT_ENOUGH_ENDS;
         return Status.ALL_CLEAR;
     }
 }

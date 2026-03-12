@@ -270,13 +270,13 @@ public class DoorwayGrid
     }
 
     // NOTE: this control flow can easily be extracted into a different function.
-    public List<Offset> NeighborsWithinRange(Offset start, Offset size)
+    public List<(Offset, Direction)> NeighborsWithinRange(Offset start, Offset size)
     {
         Offset leftInsideBase = start;
         Offset downInsidebase = start;
         Offset rightOutsideBase = start + xof * size.x;
         Offset upOutsideBase = start + yof * size.y;
-        List<Offset> values = new();
+        List<(Offset, Direction)> values = new();
 
         bool validSrc; DoorwayType typeSrc;
         bool validDst; DoorwayType typeDst;
@@ -290,12 +290,12 @@ public class DoorwayGrid
             validSrc = Get(leftInside, LEFT, out typeSrc);
             validDst = Get(leftOutside, RIGHT, out typeDst);
             if(validSrc && validDst && HasConnection(typeSrc, typeDst))
-                values.Add(leftOutside);
+                values.Add((leftOutside, LEFT));
 
             validSrc = Get(rightInside, RIGHT, out typeSrc);
             validDst = Get(rightOutside, LEFT, out typeDst);
             if(validSrc && validDst && HasConnection(typeSrc, typeDst))
-                values.Add(rightOutside);
+                values.Add((rightOutside, RIGHT));
         }
 
         for(int i = 0; i < size.x; i++)
@@ -308,12 +308,12 @@ public class DoorwayGrid
             validSrc = Get(downInside, DOWN, out typeSrc);
             validDst = Get(downOutside, UP, out typeDst);
             if(validSrc && validDst && HasConnection(typeSrc, typeDst))
-                values.Add(downOutside);
+                values.Add((downOutside, DOWN));
 
             validSrc = Get(upInside, UP, out typeSrc);
             validDst = Get(upOutside, DOWN, out typeDst);
             if(validSrc && validDst && HasConnection(typeSrc, typeDst))
-                values.Add(upOutside);
+                values.Add((upOutside, UP));
         }
         return values;
     }

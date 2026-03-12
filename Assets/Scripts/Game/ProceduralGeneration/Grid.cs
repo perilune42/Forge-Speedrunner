@@ -129,69 +129,52 @@ public class Grid
     public void WriteConnections(PathCreator pc)
     {
         HashSet<(Offset, Direction)> exists = new();
-        // List<Offset> allOffsets = uniqueCells.Select(x => x.offset).ToList();
-        List<Offset> allOffsets = doorwayGrid.AllOffsets.ToList();
-        while(allOffsets.Count > 0)
+
+        Stack<Cell> unseen = new();
+        unseen.Push(cellsByGrid.Get(new Offset(0,0)));
+        HashSet<Cell> visited = new();
+
+        while(unseen.Count > 0)
         {
-            // dequeue
-            Offset current = allOffsets[allOffsets.Count-1];
-            allOffsets.RemoveAt(allOffsets.Count-1);
+            Cell currentCell = unseen.Pop();
+            List<(Offset, Direction)> neighbors = doorwayGrid.NeighborsWithinRange(currentCell.offset, currentCell.room.size);
 
-            // process in all directions
-            TryStep(current, UP, pc, exists);
-            TryStep(current, DOWN, pc, exists);
-            TryStep(current, LEFT, pc, exists);
-            TryStep(current, RIGHT, pc, exists);
+            foreach((Offset neighborOff, Direction dir) in neighbors)
+            {
+                if(exists.Contains((neighborOff, dir)))
+                    continue;
+
+                Cell neighborCell = cellsByGrid.Get(neighborOff);
+                Direction oppositeDir = DirMethods.opposite(dir);
+                Offset currentOff = DirMethods.calcOffset(neighborOff, oppositeDir);
+
+                int currentIndex; int neighborIndex;
+                if(dir == LEFT || dir == RIGHT)
+                {
+                    currentIndex = currentOff.y - currentCell.offset.y;
+                    neighborIndex = neighborOff.y - neighborCell.offset.y;
+                }
+                else
+                {
+                    currentIndex = currentOff.x - currentCell.offset.x;
+                    neighborIndex = neighborOff.x - neighborCell.offset.x;
+                }
+
+                pc.AddConnection(currentCell, neighborCell, currentIndex, neighborIndex, dir);
+
+                exists.Add((currentOff, oppositeDir));
+                if(!visited.Contains(neighborCell))
+                    unseen.Push(neighborCell);
+            }
         }
-    }
-    private bool TryStep(Offset currentOff, Direction dir, PathCreator pc, HashSet<(Offset, Direction)> exists)
-    {
-        Offset dirOff = DirMethods.calcOffset(currentOff, dir);
-
-        // do not build duplicate connections
-        if(exists.Contains((currentOff, dir)))
-        {
-            Debug.Log($"[WriteConnections] {currentOff} -> {dirOff}: duplicate");
-            return false;
-        }
-
-        // get cells, and make sure they are not the same
-        Cell currentCell; Cell dirCell;
-        if(!cellsByGrid.TryGetValue(currentOff, out currentCell))
-            return false;
-        if(!cellsByGrid.TryGetValue(dirOff, out dirCell))
-            return false;
-        if(currentCell == dirCell)
-            return false;
-
-        // check if there's an opening here
-        if(!doorwayGrid.ConnectionGoingDir(currentOff, dirOff, dir))
-            return false;
-
-        // indices into the relevant doorway list
-        int currentIndex; int dirIndex;
-        if(dir == LEFT || dir == RIGHT)
-        {
-            currentIndex = currentOff.y - currentCell.offset.y;
-            dirIndex = dirOff.y - dirCell.offset.y;
-        }
-        else
-        {
-            currentIndex = currentOff.x - currentCell.offset.x;
-            dirIndex = dirOff.x - dirCell.offset.x;
-        }
-
-        pc.AddConnection(currentCell, dirCell, currentIndex, dirIndex, dir);
-        exists.Add((dirOff, DirMethods.opposite(dir)));
-        return true;
     }
 
     public List<Cell> NeighborsOf(Cell c)
     {
-        List<Offset> neighbors = doorwayGrid.NeighborsWithinRange(c.offset, c.room.size);
+        List<(Offset, Direction)> neighbors = doorwayGrid.NeighborsWithinRange(c.offset, c.room.size);
         HashSet<Cell> cells = new();
 
-        foreach(Offset off in neighbors)
+        foreach((Offset off, Direction _) in neighbors)
         {
             cells.Add(cellsByGrid.Get(off));
         }

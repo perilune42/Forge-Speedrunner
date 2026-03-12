@@ -201,9 +201,6 @@ public class DoorwayGrid
     private bool HasConnection(DoorwayType typeSrc, DoorwayType typeDst)
         => typeSrc != typeDst || typeSrc == BOTH;
 
-    public bool ConnectionGoingDir(Offset src, Direction dir)
-        => ConnectionGoingDir(src, DirMethods.calcOffset(src, dir), dir);
-
     public bool ConnectionGoingDir(Offset src, Offset dst, Direction dir)
     {
         DoorwayType typeSrc, typeDst;
@@ -233,14 +230,10 @@ public class DoorwayGrid
             Offset rightOutside = rightOutsideBase + yof * i;
             Offset rightInside = rightOutside - xof;
 
-            validSrc = Get(leftInside, LEFT, out typeSrc);
-            validDst = Get(leftOutside, RIGHT, out typeDst);
-            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+            if(ConnectionGoingDir(leftInside, leftOutside, LEFT))
                 values.Add((leftOutside, LEFT));
 
-            validSrc = Get(rightInside, RIGHT, out typeSrc);
-            validDst = Get(rightOutside, LEFT, out typeDst);
-            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+            if(ConnectionGoingDir(rightInside, rightOutside, RIGHT))
                 values.Add((rightOutside, RIGHT));
         }
 
@@ -251,14 +244,10 @@ public class DoorwayGrid
             Offset upOutside = upOutsideBase + xof * i;
             Offset upInside = upOutside - yof;
 
-            validSrc = Get(downInside, DOWN, out typeSrc);
-            validDst = Get(downOutside, UP, out typeDst);
-            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+            if(ConnectionGoingDir(downInside, downOutside, DOWN))
                 values.Add((downOutside, DOWN));
 
-            validSrc = Get(upInside, UP, out typeSrc);
-            validDst = Get(upOutside, DOWN, out typeDst);
-            if(validSrc && validDst && HasConnection(typeSrc, typeDst))
+            if(ConnectionGoingDir(upInside, upOutside, UP))
                 values.Add((upOutside, UP));
         }
         return values;

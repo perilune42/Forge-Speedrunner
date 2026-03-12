@@ -6,10 +6,41 @@ using System;
 using static Direction;
 using static DoorwayType;
 
+
 /* Please forgive my bitpacking, Jacky. I had fun.
  */
 public class DoorwayGrid
 {
+    internal class Buffer
+    {
+        List<byte> _buf;
+        int rowDim;
+        public Buffer(Offset roomSize)
+        {
+            _buf = new();
+            Resize(roomSize);
+        }
+        public Buffer()
+        {
+            _buf = new();
+        }
+        public void Resize(Offset roomSize)
+        {
+            rowDim = roomSize.y;
+            _buf.Capacity = Math.Max(_buf.Capacity, roomSize.x * roomSize.y);
+            while(_buf.Count < _buf.Capacity)
+                _buf.Add(default);
+        }
+        public void Clear()
+        {
+            _buf.Clear();
+        }
+        public byte this[int x, int y]
+        {
+            get => _buf[x * rowDim + y];
+            set => _buf[x * rowDim + y] = value;
+        }
+    }
     /* Each element of this dictionary is using a packed data structure.
      * From least significant to most significant:
      * |UP[2]|DOWN[2]|LEFT[2]|RIGHT[2]|
@@ -24,11 +55,13 @@ public class DoorwayGrid
      */
     Dictionary<Vector2Int, byte> opens = new();
 
+    static Buffer BUFFER = new();
+
     // These are constants that are neat to have.
     private static Offset xof = new Offset(1,0);
     private static Offset yof = new Offset(0,1);
 
-    IEnumerable<Offset> AllOffsets => opens.Keys;
+    public IEnumerable<Offset> AllOffsets => opens.Keys;
 
     /* From direction, get the "index" into the byte.
      */
@@ -74,7 +107,7 @@ public class DoorwayGrid
     {
         Debug.Log($"Entering InsertRoom");
         // TODO: allocate a buffer once, and never reallocate
-        byte[,] BUFFER = new byte[room.size.x, room.size.y];
+        BUFFER.Resize(room.size);
 
         // up and down
         for(int i = 0; i < room.size.x; i++)
@@ -118,7 +151,8 @@ public class DoorwayGrid
             }
         }
         Debug.Log(sb.ToString());
-        TestInsertion(new Cell(room, off));
+        // TestInsertion(new Cell(room, off));
+        BUFFER.Clear();
         // if(!TestInsertion(new Cell(room, off)))
         //     Debug.LogError($"ERR: Insertion of {room} at {off} failed!");
     }
@@ -220,6 +254,20 @@ public class DoorwayGrid
     */
     private bool HasConnection(DoorwayType typeSrc, DoorwayType typeDst)
         => typeSrc != typeDst || typeSrc == BOTH;
+
+    public bool ConnectionGoingDir(Offset src, Direction dir)
+        => ConnectionGoingDir(src, DirMethods.calcOffset(src, dir), dir);
+
+    public bool ConnectionGoingDir(Offset src, Offset dst, Direction dir)
+    {
+        DoorwayType typeSrc, typeDst;
+        if(!Get(src, dir, out typeSrc))
+            return false;
+        if(!Get(dst, DirMethods.opposite(dir), out typeDst))
+            return false;
+
+        return HasConnection(typeSrc, typeDst);
+    }
 
     // NOTE: this control flow can easily be extracted into a different function.
     public List<Offset> NeighborsWithinRange(Offset start, Offset size)

@@ -26,7 +26,9 @@ public class DoorwayGrid
 
     // These are constants that are neat to have.
     private static Offset xof = new Offset(1,0);
-    private static Offset yof = new Offset(1,0);
+    private static Offset yof = new Offset(0,1);
+
+    IEnumerable<Offset> AllOffsets => opens.Keys;
 
     /* From direction, get the "index" into the byte.
      */
@@ -70,13 +72,9 @@ public class DoorwayGrid
 
     public void InsertRoom(Room room, Offset off)
     {
+        Debug.Log($"Entering InsertRoom");
         // TODO: allocate a buffer once, and never reallocate
         byte[,] BUFFER = new byte[room.size.x, room.size.y];
-
-        Offset leftStart = off - xof;
-        Offset rightStart = off + xof * room.size;
-        Offset upStart = off + yof * room.size;
-        Offset downStart = off - yof;
 
         // up and down
         for(int i = 0; i < room.size.x; i++)
@@ -104,19 +102,76 @@ public class DoorwayGrid
             }
         }
 
+        StringBuilder sb = new($"For room {room}, adding the following to DoorwayGrid:\n");
         for(int i = 0; i < room.size.x; i++)
             for(int j = 0; j < room.size.y; j++)
         {
             Offset localOff = new(i,j);
-
-            // this condition is true only when we are on the borders of the buffer.
-            bool onlyBordersCondition = i < 1 || i == room.size.x-1 || j < 1 || j == room.size.y-1;
-
-            // no point in storing literally nothing, when val == 0.
             byte val = BUFFER[i,j];
-            if(onlyBordersCondition && val != 0)
+
+            if(opens.ContainsKey(off+localOff))
+                Debug.LogError("[DoorwayGrid] ERR: Trying to insert where something already exists!");
+            if(val != 0)
+            {
+                sb.Append($"\t{off+localOff}, {Convert.ToString(val, 2)}");
                 opens.Add(off+localOff, val);
+            }
         }
+        Debug.Log(sb.ToString());
+        TestInsertion(new Cell(room, off));
+        // if(!TestInsertion(new Cell(room, off)))
+        //     Debug.LogError($"ERR: Insertion of {room} at {off} failed!");
+    }
+
+    public bool TestInsertion(Cell c)
+    {
+        Offset leftStart = c.offset;
+        Offset downStart = leftStart;
+        Offset rightStart = leftStart + ((c.room.size.x - 1) * xof);
+        Offset upStart = downStart + ((c.room.size.y - 1) * yof);
+
+        bool opensHas; bool roomHas; Offset current;
+        for(int i = 0; i < c.room.size.x; i++)
+        {
+            current = downStart + i * xof;
+            opensHas = Get(current, DOWN, out _);
+            roomHas = c.room.doorwaysDown[i] != null;
+            if(opensHas != roomHas)
+            {
+                Debug.LogError($"At {current}, direction DOWN: stored opening? {opensHas}. room opening? {roomHas}.");
+                // return false;
+            }
+
+            current = upStart + i * xof;
+            opensHas = Get(current, UP, out _);
+            roomHas = c.room.doorwaysUp[i] != null;
+            if(opensHas != roomHas)
+            {
+                Debug.LogError($"At {current}, direction UP: stored opening? {opensHas}. room opening? {roomHas}.");
+                // return false;
+            }
+        }
+        for(int i = 0; i < c.room.size.y; i++)
+        {
+            current = leftStart + i * yof;
+            opensHas = Get(current, LEFT, out _);
+            roomHas = c.room.doorwaysLeft[i] != null;
+            if(opensHas != roomHas)
+            {
+                Debug.LogError($"At {current}, direction LEFT: stored opening? {opensHas}. room opening? {roomHas}.");
+                // return false;
+            }
+
+            current = rightStart + i * yof;
+            opensHas = Get(current, RIGHT, out _);
+            roomHas = c.room.doorwaysRight[i] != null;
+            if(opensHas != roomHas)
+            {
+                Debug.LogError($"At {current}, direction RIGHT: stored opening? {opensHas}. room opening? {roomHas}.");
+                // return false;
+            }
+        }
+        return true;
     }
 
     public bool Get(Offset off, Direction dir, out DoorwayType type)
@@ -213,5 +268,107 @@ public class DoorwayGrid
                 values.Add(upOutside);
         }
         return values;
+    }
+
+    public void PrintAllDoorways(LowLevelGrid<Cell> cellsByGrid)
+    {
+        StringBuilder sb = new("All doorways in DoorwayGrid: \n");
+        DoorwayType typeSrc; Cell cellSrc;
+        DoorwayType typeDst; Cell cellDst;
+        foreach(Offset o in opens.Keys)
+        {
+            if(Get(o, UP, out typeSrc) 
+                    && Get(o+yof, DOWN, out typeDst) 
+                    && cellsByGrid.TryGetValue(o, out cellSrc)
+                    && cellsByGrid.TryGetValue(o+yof, out cellDst)
+                    && cellSrc != cellDst
+                    && HasConnection(typeSrc, typeDst))
+                sb.Append($"\t{o} -> {o + yof}\n");
+            if(Get(o, DOWN, out typeSrc)
+                    && Get(o-yof, UP, out typeDst)
+                    && cellsByGrid.TryGetValue(o, out cellSrc)
+                    && cellsByGrid.TryGetValue(o-yof, out cellDst)
+                    && cellSrc != cellDst
+                    && HasConnection(typeSrc, typeDst))
+                sb.Append($"\t{o} -> {o - yof}\n");
+            if(Get(o, LEFT, out typeSrc)
+                    && Get(o-xof, RIGHT, out typeDst)
+                    && cellsByGrid.TryGetValue(o, out cellSrc)
+                    && cellsByGrid.TryGetValue(o-xof, out cellDst)
+                    && cellSrc != cellDst
+                    && HasConnection(typeSrc, typeDst))
+                sb.Append($"\t{o} -> {o - xof}\n");
+            if(Get(o, RIGHT, out typeSrc)
+                    && Get(o+xof, LEFT, out typeDst)
+                    && cellsByGrid.TryGetValue(o, out cellSrc)
+                    && cellsByGrid.TryGetValue(o+xof, out cellDst)
+                    && cellSrc != cellDst
+                    && HasConnection(typeSrc, typeDst))
+                sb.Append($"\t{o} -> {o + xof}\n");
+        }
+        Debug.Log(sb.ToString());
+    }
+
+    // monstrosity that tests every possible combination
+    public void Test()
+    {
+        List<Direction> allDirs = new List<Direction>{UP, DOWN, LEFT, RIGHT};
+        List<DoorwayType> allTypes = new List<DoorwayType>{ENTRANCE, EXIT, BOTH};
+        List<(DoorwayType, Direction)> allCombs = new();
+
+        StringBuilder sb = new();
+        int numErrors = 0;
+
+        // generate every possible combination (81 iterations)
+        foreach(DoorwayType upType in allTypes)
+        foreach(DoorwayType downType in allTypes)
+        foreach(DoorwayType leftType in allTypes)
+        foreach(DoorwayType rightType in allTypes)
+        for(int iUp = 0; iUp < 2; iUp++)
+        for(int iDown = 0; iDown < 2; iDown++)
+        for(int iLeft = 0; iLeft < 2; iLeft++)
+        for(int iRight = 0; iRight < 2; iRight++)
+        {
+            bool hasUp = iUp == 1;
+            bool hasDown = iDown == 1;
+            bool hasLeft = iLeft == 1;
+            bool hasRight = iRight == 1;
+            byte packed = 0;
+            sb.Append($"For case UP:{upType}, DOWN:{downType}, LEFT:{leftType}, RIGHT:{rightType} --\n");
+            packed |= marshall(UP, upType);
+            packed |= marshall(DOWN, downType);
+            packed |= marshall(LEFT, leftType);
+            packed |= marshall(RIGHT, rightType);
+
+            DoorwayType typeUnmarshall;
+            if(unmarshallType(packed, UP, out typeUnmarshall) == hasUp)
+            {
+                if(typeUnmarshall != upType)
+                    sb.Append($"\tERR {numErrors++}: expected {upType} got {typeUnmarshall}.");
+            }
+            else
+                sb.Append($"\tERR {numErrors++}: expected UP exists == {hasUp}. did not get this.");
+            if(unmarshallType(packed, DOWN, out typeUnmarshall))
+            {
+                if(typeUnmarshall != downType)
+                    sb.Append($"\tERR {numErrors++}: expected {downType} got {typeUnmarshall}.");
+            }
+            else
+                sb.Append($"\tERR {numErrors++}: expected DOWN exists == {hasDown}. did not get this.");
+            if(unmarshallType(packed, LEFT, out typeUnmarshall))
+            {
+                if(typeUnmarshall != leftType)
+                    sb.Append($"\tERR {numErrors++}: expected {leftType} got {typeUnmarshall}.");
+            }
+            else
+                sb.Append($"\tERR {numErrors++}: expected LEFT exists == {hasLeft}. did not get this.");
+            if(unmarshallType(packed, RIGHT, out typeUnmarshall))
+            {
+                if(typeUnmarshall != rightType)
+                    sb.Append($"\tERR {numErrors++}: expected {rightType} got {typeUnmarshall}.");
+            }
+            else
+                sb.Append($"\tERR {numErrors++}: expected RIGHT exists == {hasRight}. did not get this.");
+        }
     }
 }

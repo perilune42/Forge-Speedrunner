@@ -109,6 +109,11 @@ public class Grid
     public PathCreator ProduceCreator()
     {
         PathCreator pc = new(uniqueCells);
+        // add this to test doorwaygrid in a cse120 type of way
+        // Debug.Log("running doorwaygrid test");
+        // doorwayGrid.Test();
+        // Debug.Log("end of doorwaygrid test");
+        doorwayGrid.PrintAllDoorways(cellsByGrid);
         WriteConnections(pc);
         return pc;
     }
@@ -164,9 +169,15 @@ public class Grid
         bool currentValid = doorwayGrid.Get(currentOff, dir, out currentType);
         bool dirValid = doorwayGrid.Get(dirOff, oppositeDir, out dirType);
         if(!currentValid || !dirValid)
+        {
+            Debug.Log($"Contains {currentOff}? {currentValid}. Contains {dirOff}? {dirValid}.");
             return false;
+        }
         if(currentType == dirType && currentType != DoorwayType.BOTH)
+        {
+            Debug.Log($"{currentOff} is {currentType}. {dirOff} is {dirType}.");
             return false;
+        }
 
         // indices into the relevant doorway list
         int currentIndex; int dirIndex;

@@ -128,11 +128,11 @@ public class DoorwayGrid
         {
             if(room.doorwaysUp[i] != null)
             {
-                BUFFER[i, room.size.y-1] |= marshall(UP, room.doorwaysUp[i].Type);
+                BUFFER[i, room.size.y-1] |= Pack(UP, room.doorwaysUp[i].Type);
             }
             if(room.doorwaysDown[i] != null)
             {
-                BUFFER[i, 0] |= marshall(DOWN, room.doorwaysDown[i].Type);
+                BUFFER[i, 0] |= Pack(DOWN, room.doorwaysDown[i].Type);
             }
         }
 
@@ -141,11 +141,11 @@ public class DoorwayGrid
         {
             if(room.doorwaysLeft[i] != null)
             {
-                BUFFER[0, i] |= marshall(LEFT, room.doorwaysLeft[i].Type);
+                BUFFER[0, i] |= Pack(LEFT, room.doorwaysLeft[i].Type);
             }
             if(room.doorwaysRight[i] != null)
             {
-                BUFFER[room.size.x-1, i] |= marshall(RIGHT, room.doorwaysRight[i].Type);
+                BUFFER[room.size.x-1, i] |= Pack(RIGHT, room.doorwaysRight[i].Type);
             }
         }
 
@@ -199,8 +199,15 @@ public class DoorwayGrid
         return HasConnection(typeSrc, typeDst);
     }
 
-    // NOTE: this control flow can easily be extracted into a different function.
-    public List<(Offset, Direction)> NeighborsWithinRange(Offset start, Offset size)
+    private bool PossibleConnection(Offset src, Offset dst, Direction dir)
+    {
+        DoorwayType typeSrc, typeDst;
+        if(!Get(src, dir, out typeSrc))
+            return false;
+        return typeSrc != ENTRANCE && !Get(dst, DirMethods.opposite(dir), out _);
+    }
+
+    public List<(Offset, Direction)> AllDoorwaysMatching(Offset start, Offset size, Func<Offset, Offset, Direction, bool> predicate)
     {
         Offset leftInsideBase = start;
         Offset downInsidebase = start;
@@ -217,10 +224,10 @@ public class DoorwayGrid
             Offset rightOutside = rightOutsideBase + yof * i;
             Offset rightInside = rightOutside - xof;
 
-            if(ConnectionGoingDir(leftInside, leftOutside, LEFT))
+            if(predicate(leftInside, leftOutside, LEFT))
                 values.Add((leftOutside, LEFT));
 
-            if(ConnectionGoingDir(rightInside, rightOutside, RIGHT))
+            if(predicate(rightInside, rightOutside, RIGHT))
                 values.Add((rightOutside, RIGHT));
         }
 
@@ -231,13 +238,24 @@ public class DoorwayGrid
             Offset upOutside = upOutsideBase + xof * i;
             Offset upInside = upOutside - yof;
 
-            if(ConnectionGoingDir(downInside, downOutside, DOWN))
+            if(predicate(downInside, downOutside, DOWN))
                 values.Add((downOutside, DOWN));
 
-            if(ConnectionGoingDir(upInside, upOutside, UP))
+            if(predicate(upInside, upOutside, UP))
                 values.Add((upOutside, UP));
         }
         return values;
+
+    }
+
+    public List<(Offset, Direction)> NeighborsWithinRange(Offset start, Offset size)
+    {
+        return AllDoorwaysMatching(start, size, ConnectionGoingDir);
+    }
+
+    public List<(Offset, Direction)> OpenSpots(Offset start, Offset size)
+    {
+        return AllDoorwaysMatching(start, size, PossibleConnection);
     }
 
     public void LogEntries()
@@ -247,13 +265,13 @@ public class DoorwayGrid
         {
             DoorwayType type;
             sb.Append($"\t{off} has: ");
-            if(unmarshallType(val, UP, out type))
+            if(UnpackTypeAtDirection(val, UP, out type))
                 sb.Append($"(UP, {type})");
-            if(unmarshallType(val, DOWN, out type))
+            if(UnpackTypeAtDirection(val, DOWN, out type))
                 sb.Append($"(DOWN, {type})");
-            if(unmarshallType(val, RIGHT, out type))
+            if(UnpackTypeAtDirection(val, RIGHT, out type))
                 sb.Append($"(RIGHT, {type})");
-            if(unmarshallType(val, LEFT, out type))
+            if(UnpackTypeAtDirection(val, LEFT, out type))
                 sb.Append($"(LEFT, {type})");
         }
         Debug.Log(sb.ToString());

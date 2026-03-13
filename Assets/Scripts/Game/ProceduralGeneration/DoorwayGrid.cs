@@ -6,11 +6,14 @@ using System;
 using static Direction;
 using static DoorwayType;
 
-
 /* Please forgive my bitpacking, Jacky. I had fun.
  */
 public class DoorwayGrid
 {
+    /* A byte buffer holding intermediate values. Intended to be used between
+     * calls to InsertRoom, and cleared every time.
+     * Prevents some allocations? I think it's good practice.
+     */
     internal class Buffer
     {
         List<byte> _buf;
@@ -41,6 +44,9 @@ public class DoorwayGrid
             set => _buf[x * rowDim + y] = value;
         }
     }
+
+
+
     /* Each element of this dictionary is using a packed data structure.
      * From least significant to most significant:
      * |UP[2]|DOWN[2]|LEFT[2]|RIGHT[2]|
@@ -55,17 +61,21 @@ public class DoorwayGrid
      */
     Dictionary<Vector2Int, byte> opens = new();
 
-    static Buffer BUFFER = new();
-
     // These are constants that are neat to have.
     private static Offset xof = new Offset(1,0);
     private static Offset yof = new Offset(0,1);
 
+    // Holds intermediate values. Intended to be room.size.x*room.size.y sized, at least.
+    static Buffer BUFFER = new();
+
+    // In case this ever needs to be iterated over.
     public IEnumerable<Offset> AllOffsets => opens.Keys;
+
+
 
     /* From direction, get the "index" into the byte.
      */
-    private byte marshallDir(Direction dir) => dir switch
+    private byte PackDirection(Direction dir) => dir switch
     {
         UP => 0,
         DOWN => 2,
@@ -75,7 +85,7 @@ public class DoorwayGrid
 
     /* Convert DoorwayType to one of 3 values. Realistically it's never going to be 0.
      */
-    private byte marshallType(DoorwayType type) => type switch
+    private byte PackDoorwayType(DoorwayType type) => type switch
     {
         ENTRANCE => 1,
         EXIT => 2,
@@ -85,15 +95,15 @@ public class DoorwayGrid
 
     /* The full operation to turn (Direction, DoorwayType) into byte value.
      */
-    private byte marshall(Direction dir, DoorwayType type) => Convert.ToByte(marshallType(type) << marshallDir(dir));
+    private byte Pack(Direction dir, DoorwayType type) => Convert.ToByte(PackDoorwayType(type) << PackDirection(dir));
 
     /* The (more elaborate) way to figure out the DoorwayType at a particular Direction for a given byte value.
      * Returns false if there isn't a DoorwayType to give back (no DoorwayType.NONE yet).
      */
-    private bool unmarshallType(byte val, Direction dir, out DoorwayType type)
+    private bool UnpackTypeAtDirection(byte val, Direction dir, out DoorwayType type)
     {
         type = BOTH;
-        byte important = Convert.ToByte((val >> marshallDir(dir)) & 3);
+        byte important = Convert.ToByte((val >> PackDirection(dir)) & 3);
         if(important == 0)
             return false;
         else if(important == 1)
@@ -103,13 +113,17 @@ public class DoorwayGrid
         return true;
     }
 
+    /* Predicate condition that decides whether there is a connection between two locations
+     */
+    private bool HasConnection(DoorwayType typeSrc, DoorwayType typeDst)
+        => typeSrc != typeDst || typeSrc == BOTH;
+
     public void InsertRoom(Room room, Offset off)
     {
-        Debug.Log($"Entering InsertRoom");
-        // TODO: allocate a buffer once, and never reallocate
+        // Resize makes sure we have *at least* enough room.
         BUFFER.Resize(room.size);
 
-        // up and down
+        // UP and DOWN doorways are along the x axis.
         for(int i = 0; i < room.size.x; i++)
         {
             if(room.doorwaysUp[i] != null)
@@ -122,7 +136,7 @@ public class DoorwayGrid
             }
         }
 
-        // right and left
+        // LEFT and RIGHT doorways are along the y axis.
         for(int i = 0; i < room.size.y; i++)
         {
             if(room.doorwaysLeft[i] != null)
@@ -135,22 +149,18 @@ public class DoorwayGrid
             }
         }
 
-        StringBuilder sb = new($"For room {room}, adding the following to DoorwayGrid:\n");
         for(int i = 0; i < room.size.x; i++)
             for(int j = 0; j < room.size.y; j++)
         {
             Offset localOff = new(i,j);
             byte val = BUFFER[i,j];
 
-            if(opens.ContainsKey(off+localOff))
-                Debug.LogError("[DoorwayGrid] ERR: Trying to insert where something already exists!");
             if(val != 0)
             {
-                sb.Append($"\t{off+localOff}, {Convert.ToString(val, 2)}");
                 opens.Add(off+localOff, val);
             }
         }
-        Debug.Log(sb.ToString());
+
         BUFFER.Clear();
     }
 
@@ -160,7 +170,7 @@ public class DoorwayGrid
         byte val;
         if(!opens.TryGetValue(off, out val))
             return false;
-        return unmarshallType(val, dir, out type);
+        return UnpackTypeAtDirection(val, dir, out type);
     }
 
     public bool GetEntrance(Offset off, Direction dir)
@@ -177,30 +187,7 @@ public class DoorwayGrid
         return valid && type != ENTRANCE;
     }
 
-    public void LogEntries()
-    {
-        StringBuilder sb = new("[DoorwayGrid.LogEntries] Grid contains the following:\n");
-        foreach((Offset off, byte val) in opens)
-        {
-            DoorwayType type;
-            sb.Append($"\t{off} has: ");
-            if(unmarshallType(val, UP, out type))
-                sb.Append($"(UP, {type})");
-            if(unmarshallType(val, DOWN, out type))
-                sb.Append($"(DOWN, {type})");
-            if(unmarshallType(val, RIGHT, out type))
-                sb.Append($"(RIGHT, {type})");
-            if(unmarshallType(val, LEFT, out type))
-                sb.Append($"(LEFT, {type})");
-        }
-        Debug.Log(sb.ToString());
-    }
-
-    /* Predicate condition that decides whether there is a connection between two locations
-    */
-    private bool HasConnection(DoorwayType typeSrc, DoorwayType typeDst)
-        => typeSrc != typeDst || typeSrc == BOTH;
-
+    // NOTE: can be made private. NeighborsWithinRange gets all possible connections.
     public bool ConnectionGoingDir(Offset src, Offset dst, Direction dir)
     {
         DoorwayType typeSrc, typeDst;
@@ -251,5 +238,24 @@ public class DoorwayGrid
                 values.Add((upOutside, UP));
         }
         return values;
+    }
+
+    public void LogEntries()
+    {
+        StringBuilder sb = new("[DoorwayGrid.LogEntries] Grid contains the following:\n");
+        foreach((Offset off, byte val) in opens)
+        {
+            DoorwayType type;
+            sb.Append($"\t{off} has: ");
+            if(unmarshallType(val, UP, out type))
+                sb.Append($"(UP, {type})");
+            if(unmarshallType(val, DOWN, out type))
+                sb.Append($"(DOWN, {type})");
+            if(unmarshallType(val, RIGHT, out type))
+                sb.Append($"(RIGHT, {type})");
+            if(unmarshallType(val, LEFT, out type))
+                sb.Append($"(LEFT, {type})");
+        }
+        Debug.Log(sb.ToString());
     }
 }

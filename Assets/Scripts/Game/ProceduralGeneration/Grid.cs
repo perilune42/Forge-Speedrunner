@@ -164,6 +164,7 @@ public class Grid
         }
     }
 
+    // TODO: revise this method to meet the needs of future algorithms.
     public List<Cell> NeighborsOf(Cell c)
     {
         List<(Offset, Direction)> neighbors = doorwayGrid.NeighborsWithinRange(c.offset, c.room.size);
@@ -179,5 +180,6 @@ public class Grid
     public void LogEntries()
     {
         doorwayGrid.LogEntries();
+        cellsByGrid.LogEntries();
     }
 }

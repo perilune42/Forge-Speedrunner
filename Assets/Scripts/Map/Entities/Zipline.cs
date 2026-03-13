@@ -87,6 +87,7 @@ public class Zipline : Entity, IInteractable
     private void RideZipline()
     {
         pm.State = BodyState.Override;
+        if (pm.SpecialState == SpecialState.GroundSlam) AbilityManager.Instance.GetAbility<GroundSlam>().ExitSlam();
         pm.SpecialState = SpecialState.Zipline;
         pm.transform.position = Util.ProjectPointOntoSegment(pm.transform.position, transform.position, node.position) + positionOffset;
         Vector2 vecToNode = (node.transform.position - transform.position).normalized;

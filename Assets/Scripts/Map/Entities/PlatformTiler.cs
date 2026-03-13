@@ -22,6 +22,7 @@ public class PlatformTiler : MonoBehaviour
 
     public bool capLeft, capRight;
 
+    public bool autoUpdate = false;
 
 
     public void Start()
@@ -37,12 +38,17 @@ public class PlatformTiler : MonoBehaviour
 
     public void Update()
     {
-        if (!enabled) return;
+        if (!enabled || !autoUpdate) return;
 
         // guards to prevent running at wrong time
         if(Application.isPlaying || !transform.hasChanged) return;
         if(!valueChanged) return;
+        ApplyTiling();
+    
+    }
 
+    public void ApplyTiling()
+    {
         if (length < 1) return;
 
         if (spriteRenderers == null)
@@ -84,7 +90,7 @@ public class PlatformTiler : MonoBehaviour
 
         // new size calculation
         // Rect dim = spriteRenderer.sprite.rect;
-        Vector2 newSize =  Vector2.one;
+        Vector2 newSize = Vector2.one;
         newSize.x *= length;
         // set size safely
         boxColl.size = new Vector2(newSize.x, boxColl.size.y);
@@ -103,4 +109,21 @@ public class PlatformTiler : MonoBehaviour
         EditorUtility.SetDirty(sr);
     }
 }
+
+[CustomEditor(typeof(PlatformTiler), true)]
+public class PlatformTiler_Inspector : Editor
+{
+    override public void OnInspectorGUI()
+    {
+        PlatformTiler p = (PlatformTiler)target;
+        DrawDefaultInspector();
+
+        if (GUILayout.Button("Update Now"))
+        {
+            p.ApplyTiling();
+            EditorUtility.SetDirty(p.gameObject);
+        }
+    }
+}
+
 #endif

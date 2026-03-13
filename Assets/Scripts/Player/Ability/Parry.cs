@@ -11,36 +11,30 @@ public class Parry : Ability
     private int hitstopRemaining, parryPrimedRemaining, leniencyFramesRemaining;
     private float storedSpeed;
     private Vector2 storedVelocity;
+    public bool ParryPrimed => parryPrimedRemaining > 0;
 
     [SerializeField] ParticleSystem shockwaveParticles;
 
     PlayerMovement pm => Player.Instance.Movement;
 
-    [SerializeField]SpriteRenderer circle;
+    [SerializeField] SpriteRenderer circle;
 
     Vector2 surfaceDir;
     [SerializeField] float baseReflectSpeed = 6;
     [SerializeField] float speedMultiplier = 1f;
+    [SerializeField] private float verticalSpeedSoftcap;
+    [SerializeField] private float softcapAmount;
 
     [SerializeField] float minVerticalBoost;
-
+    [HideInInspector] public Entity SpecialEntity;
+    public Action OnPrimeParry;
     public override void Start()
     {
         base.Start();
 
         pm.OnHitWallAny += (e, dir) =>
         {
-            surfaceDir = dir;
-            storedSpeed = Vector2.Dot(pm.PreCollisionVelocity, dir);
-            storedVelocity = pm.PreCollisionVelocity;
-            if (parryPrimedRemaining > 0)
-            {
-                StartParry(dir);
-            }
-            else
-            {
-                leniencyFramesRemaining = maxLeniencyFrames;
-            }
+            CollideWithWall(e, dir);
         };
     }
 
@@ -71,6 +65,7 @@ public class Parry : Ability
             {
                 stopParticleAction?.Invoke();
                 pm.CanClimb = true;
+                pm.IsInvulnerable = false;
             }
         }
         if (hitstopRemaining > 0)
@@ -88,6 +83,30 @@ public class Parry : Ability
         }
     }
 
+    public void CollideWithWall(Entity e, Vector2 dir)
+    {
+        if (!ParryPrimed)
+        {
+            leniencyFramesRemaining = maxLeniencyFrames;
+            return;
+        }
+        surfaceDir = dir;
+        Vector2 scaledVelocity = pm.PreCollisionVelocity;
+        scaledVelocity.y = Mathf.Abs(scaledVelocity.y);
+        if (scaledVelocity.y > verticalSpeedSoftcap)
+        {
+            float cappedSpeed = scaledVelocity.y - verticalSpeedSoftcap;
+            scaledVelocity.y = verticalSpeedSoftcap + cappedSpeed * softcapAmount;
+        }
+        if (pm.PreCollisionVelocity.y < 0) scaledVelocity.y *= -1;
+        Debug.Log(scaledVelocity);
+        storedSpeed = Vector2.Dot(scaledVelocity, dir);
+        Debug.Log(storedSpeed);
+        storedVelocity = scaledVelocity;
+
+        StartParry(dir);
+
+    }
 
     public override float GetCooldown()
     {
@@ -114,15 +133,18 @@ public class Parry : Ability
         {
             pm.IsInvulnerable = true;
         }
+        OnPrimeParry?.Invoke();
     }
 
     private void StartParry(Vector2 hitSurfaceDir)
     {
-        if (PlayerMovement.SpecialState == SpecialState.GroundSlam &&
-            AbilityManager.Instance.TryGetAbility<GroundSlam>(out GroundSlam gs))
-        {
-            gs.OnGround();
-        }
+        surfaceDir = hitSurfaceDir;
+        pm.onGround?.Invoke();
+        //if (PlayerMovement.SpecialState == SpecialState.GroundSlam &&
+        //    AbilityManager.Instance.TryGetAbility<GroundSlam>(out GroundSlam gs))
+        //{
+        //    gs.OnGround();
+        //}
         hitstopRemaining = hitstopFrames;
         parryPrimedRemaining = 0;
         circle.enabled = true;
@@ -142,22 +164,32 @@ public class Parry : Ability
         {
             perpendicularDir = inputDir * new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x));
         }
-        
 
 
         pm.Locked = false;
-        pm.Velocity = -surfaceDir * (storedSpeed * speedMultiplier + (surfaceDir.y == 0 ? baseReflectSpeed : 0));
-        pm.Velocity += perpendicularDir * storedSpeed * 0.5f * speedMultiplier;
-        pm.Velocity += new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x)) * storedVelocity;
-        if (surfaceDir.y == 0 && perpendicularDir != Vector2.down)
+        if (SpecialEntity is Drone drone)
         {
-            pm.Velocity += Vector2.up * minVerticalBoost;
+            storedSpeed = Mathf.Abs(storedSpeed);
+            pm.Velocity = inputDir * (storedSpeed * speedMultiplier);
+            pm.Velocity += Vector2.up * pm.MovementParams.JumpSpeed;
+            drone.Consume();
+        }
+        else
+        {
+            pm.Velocity = -surfaceDir * (storedSpeed * speedMultiplier + (surfaceDir.y == 0 ? baseReflectSpeed : 0));
+            pm.Velocity += perpendicularDir * storedSpeed * 0.5f * speedMultiplier;
+            pm.Velocity += new Vector2(Mathf.Abs(surfaceDir.y), Mathf.Abs(surfaceDir.x)) * storedVelocity;
+            if (surfaceDir.y == 0 && perpendicularDir != Vector2.down)
+            {
+                pm.Velocity += Vector2.up * minVerticalBoost;
+            }
         }
 
+        Debug.Log("total velocity: " + pm.Velocity.ToString());
         StartCoroutine(Util.FDelayedCall(30, stopParticleAction));
         hitstopRemaining = 0;
         circle.enabled = false;
-        
+
 
         pm.ForceMove(inputDir, 3);
         StartCoroutine(Util.FDelayedCall(3, () =>
@@ -175,6 +207,8 @@ public class Parry : Ability
         p.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, surfaceDir - perpendicularDir));
         p.Play();
 
+        if (SpecialEntity is Bouncer bouncer) bouncer.PlayBouncerEffects();
+        SpecialEntity = null;
     }
 
     public override bool CanUseAbility()

@@ -3106,6 +3106,7 @@ MonoBehaviour:
   spriteOffset: {x: 0, y: 0}
   capLeft: 0
   capRight: 0
+  autoUpdate: 0
 --- !u!1001 &9095515268764087790
 PrefabInstance:
   m_ObjectHideFlags: 0

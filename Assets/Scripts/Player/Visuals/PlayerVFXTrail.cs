@@ -26,6 +26,7 @@ public class PlayerVFXTrail : MonoBehaviour
 
     public Action PlayParticle(Color color)
     {
+        if (RoomManager.Instance.TransitionOngoing || Player.Instance.IsDead) return null;
         var particleObj = Instantiate(particlePrefab, transform);
         particle = particleObj.GetComponent<ParticleSystem>();
         particleRenderer = particleObj.GetComponent<ParticleSystemRenderer>();

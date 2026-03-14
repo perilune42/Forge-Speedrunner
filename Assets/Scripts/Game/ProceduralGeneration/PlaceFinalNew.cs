@@ -20,22 +20,22 @@ public class PlaceFinalNew : IAlgorithm
         List<(Offset, Direction)> possibleOpens = grid.OpenSpots(lastCell);
         possibleOpens.Shuffle();
 
-        if(possibleOpens.Count == 0)
-        {
-            Debug.Log("[PlaceFinalNew] zero?");
-            return false;
-        }
+        // if(possibleOpens.Count == 0)
+        // {
+        //     Debug.Log("[PlaceFinalNew] zero?");
+        //     return false;
+        // }
 
-        if(placedRooms.Contains(FinalRoom))
-            return false;
+        // Offset firstOff; Direction firstDir;
+        // if(!GetFirstMatching(possibleOpens, x => x == RIGHT, out firstOff, out firstDir))
+        // {
+        //     Debug.Log($"[PlaceFinalNew] Failed: no openings matching a direction. Cell: {lastCell.room}, {lastCell.offset}.");
+        //     return false;
+        // }
 
-        Offset firstOff; Direction firstDir;
-        if(!GetFirstMatching(possibleOpens, x => x == RIGHT, out firstOff, out firstDir))
-        {
-            Debug.Log($"[PlaceFinalNew] Failed: no openings matching a direction. Cell: {lastCell.room}, {lastCell.offset}.");
-            return false;
-        }
+        return possibleOpens.Where(x => x.Item2 == RIGHT)
+            .Any(rec => TryAdd(grid, FinalRoom, rec.Item1, rec.Item2, placedRooms, true));
 
-        return TryAdd(grid, FinalRoom, firstOff, firstDir, placedRooms);
+        // return TryAdd(grid, FinalRoom, firstOff, firstDir, placedRooms);
     }
 }

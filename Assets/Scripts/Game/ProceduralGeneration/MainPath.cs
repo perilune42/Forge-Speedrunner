@@ -41,15 +41,19 @@ public class MainPath : IAlgorithm
         List<(Offset, Direction)> possibleOpens = grid.OpenSpots(lastCell);
         possibleOpens.Shuffle();
 
-        Offset firstOff; Direction firstDir;
-        if(!GetFirstMatching(possibleOpens, x => x == RIGHT || x == UP, out firstOff, out firstDir))
-        {
-            Debug.Log($"[MainPath] Failed: no openings matching a direction. Cell: {lastCell.room}, {lastCell.offset}.");
-            return false;
-        }
+        // Offset firstOff; Direction firstDir;
+        // if(!GetFirstMatching(possibleOpens, x => x == RIGHT || x == UP, out firstOff, out firstDir))
+        // {
+        //     Debug.Log($"[MainPath] Failed: no openings matching a direction. Cell: {lastCell.room}, {lastCell.offset}.");
+        //     return false;
+        // }
 
-        List<Room> doorways = firstDir == RIGHT ? LeftEntrances : DownEntrances;
+        // List<Room> doorways = firstDir == RIGHT ? LeftEntrances : DownEntrances;
 
-        return TryAddFirst(grid, doorways, firstOff, firstDir, placedRooms);
+        return possibleOpens.Where(x => x.Item2 == RIGHT || x.Item2 == UP)
+            .Select(x => (x.Item1, x.Item2, x.Item2 == RIGHT ? LeftEntrances : DownEntrances))
+            .Any(rec => TryAddFirst(grid, rec.Item3, rec.Item1, rec.Item2, placedRooms, true));
+
+        // return TryAddFirst(grid, doorways, firstOff, firstDir, placedRooms);
     }
 }

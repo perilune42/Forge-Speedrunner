@@ -23,11 +23,11 @@ public abstract class IAlgorithm
                 return i;
         return -1;
     }
-    protected bool TryAdd(Grid grid, Room room, Offset off, Direction dir, HashSet<Room> placedRooms)
+    protected bool TryAdd(Grid grid, Room room, Offset off, Direction dir, HashSet<Room> placedRooms, bool removeDup)
     {
         Offset botleft;
 
-        if(placedRooms.Contains(room))
+        if(removeDup && placedRooms.Contains(room))
             return false;
         if(grid.CanFit(room, off, dir, out botleft))
         {
@@ -37,11 +37,11 @@ public abstract class IAlgorithm
         }
         return false;
     }
-    protected bool TryAddFirst(Grid grid, List<Room> rooms, Offset off, Direction dir, HashSet<Room> placedRooms)
+    protected bool TryAddFirst(Grid grid, List<Room> rooms, Offset off, Direction dir, HashSet<Room> placedRooms, bool removeDup)
     {
         foreach(Room room in rooms)
         {
-            if(TryAdd(grid, room, off, dir, placedRooms))
+            if(TryAdd(grid, room, off, dir, placedRooms, removeDup))
                 return true;
         }
         return false;

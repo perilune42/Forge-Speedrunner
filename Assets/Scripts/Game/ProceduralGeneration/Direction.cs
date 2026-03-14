@@ -24,7 +24,7 @@ public static class DirMethods
             endOffset.y--;
         return endOffset;
     }
-    public static List<Doorway> matchingDir(in Direction dir, in Room r)
+    public static List<Doorway> matchingDir(Direction dir, Room r)
     {
         return dir switch
         {

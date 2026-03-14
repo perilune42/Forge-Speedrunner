@@ -12,12 +12,14 @@ public class Grid
     private DoorwayGrid doorwayGrid;
     private LowLevelGrid<Cell> cellsByGrid;
     public List<Cell> uniqueCells;
+    public List<Cell> openCells;
 
     public Grid()
     {
         uniqueCells = new();
         cellsByGrid = new();
         doorwayGrid = new();
+        openCells = new();
     }
 
     /* Given a ROOM, an entry point at OFFSET, and an entry direction DIR, fit the room. 
@@ -117,6 +119,7 @@ public class Grid
     {
         Cell roomCell = new Cell(room, offset);
         uniqueCells.Add(roomCell); // also log the unique cell
+        openCells.Add(roomCell); // also log the unique cell
         doorwayGrid.InsertRoom(room, offset);
         cellsByGrid.InsertRange(roomCell, offset, room.size);
         return true;
@@ -175,6 +178,11 @@ public class Grid
             cells.Add(cellsByGrid.Get(off));
         }
         return cells.ToList();
+    }
+
+    public List<(Offset, Direction)> OpenSpots(Cell c)
+    {
+        return doorwayGrid.OpenSpots(c.offset, c.room.size);
     }
 
     public void LogEntries()

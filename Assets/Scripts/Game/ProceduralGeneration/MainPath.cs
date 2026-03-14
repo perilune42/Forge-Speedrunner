@@ -5,99 +5,55 @@ using System.Linq;
 using System.Collections;
 using System;
 using static Direction;
+using static DoorwayType;
 
-public class MainPath : IChoiceStrategy
+public class MainPath : IAlgorithm
 {
-    List<Room> LeftOnly;
-    List<Room> DownOnly;
-    Offset current;
+    List<Room> LeftEntrances;
+    List<Room> DownEntrances;
     public MainPath(Room[] roomPrefabs)
     {
-        LeftOnly = new();
-        DownOnly = new();
-        current = new(Int32.MinValue, Int32.MinValue);
+        LeftEntrances = new();
+        DownEntrances = new();
         for(int i = 0; i < roomPrefabs.Length; i++)
         {
             Room r = roomPrefabs[i];
-            List<Doorway> downs = r.doorwaysDown;
-            List<Doorway> lefts = r.doorwaysLeft;
-            bool hasLeft = lefts.Any(x => x != null && x.IsEntrance());
-            bool hasDown = downs.Any(x => x != null && x.IsEntrance());
+            bool hasUp = -1 != hasAny(DirMethods.matchingDir(UP, r), EXIT);
+            bool hasDown = -1 != hasAny(DirMethods.matchingDir(DOWN, r), EXIT);
+            bool hasLeft = -1 != hasAny(DirMethods.matchingDir(LEFT, r), ENTRANCE);
+            bool hasRight = -1 != hasAny(DirMethods.matchingDir(RIGHT, r), ENTRANCE);
+            if(!hasUp && !hasRight) continue;
             if(hasLeft)
-                LeftOnly.Add(r);
+                LeftEntrances.Add(r);
             if(hasDown)
-                DownOnly.Add(r);
+                DownEntrances.Add(r);
         }
-        LeftOnly.Shuffle();
-        DownOnly.Shuffle();
-        Debug.Log($"[MainPath.Constructor] have {LeftOnly.Count} rooms with left openings and {DownOnly.Count} rooms with down openings.");
+        LeftEntrances.Shuffle();
+        DownEntrances.Shuffle();
+        Debug.Log($"[MainPath.Constructor] have {LeftEntrances.Count} rooms with left openings and {DownEntrances.Count} rooms with down openings.");
     }
 
-    public int SelectIndex(in List<Direction> dirs, in List<Offset> offs, in Grid grid)
+    public override bool Run(Grid grid, HashSet<Room> placedRooms)
     {
-        return UnityEngine.Random.Range(0, dirs.Count);
+        int lastPosition = grid.uniqueCells.Count-1;
+        Cell lastCell = grid.uniqueCells[lastPosition];
 
-        // // access entire list in random order
-        // List<int> inds = Enumerable<int>.Range(0, dirs.Count);
-        // inds.Shuffle();
+        List<(Offset, Direction)> possibleOpens = grid.OpenSpots(lastCell);
+        possibleOpens.Shuffle();
 
-        // Direction dir; Offset off;
-        // foreach(int i in inds)
-        // {
-        //     dir = dirs[i];
-        //     off = offs[i];
-        //     // TODO: find a reason to do this. none yet.
-        // }
-    }
-
-    public Room FindRoom(Direction dir, Offset off, Grid grid, in HashSet<Room> placedRooms)
-    {
-        // if(off.y > current.y || off.x < current.x)
-        //     return null;
-        //
-        Debug.Log($"[MainPath.FindRoom] looking at {dir}, {off}.");
-
-        if(dir == LEFT || dir == DOWN)
-            return null;
-
-        List<Room> firstList; List<Room> secondList;
-        int ind = UnityEngine.Random.Range(0, 2);
-        (firstList, secondList) = ind == 1
-            ? (LeftOnly, DownOnly)
-            : (DownOnly, LeftOnly);
-
-        if(firstList.Count <= 0 && secondList.Count <= 0)
-            return null;
-
-        Direction opposite = DirMethods.opposite(dir);
-
-        for(int i = 0; i < firstList.Count; i++)
+        Offset firstOff = default; Direction firstDir = default;
+        bool success = false;
+        for(int i = 0; !success && i < possibleOpens.Count; i++)
         {
-            Room r = firstList[i];
-            if(off.y < current.y || off.x < current.x || placedRooms.Contains(r))
-                continue;
-            List<Doorway> doors = DirMethods.matchingDir(opposite, r);
-            if(doors.Any(x => x != null))
-            {
-                firstList.RemoveAt(i);
-                current = off;
-                return r;
-            }
+            (firstOff, firstDir) = possibleOpens[i];
+            if(firstDir == RIGHT || firstDir == UP)
+                success = true;
         }
-        for(int i = 0; i < secondList.Count; i++)
-        {
-            Room r = secondList[i];
-            if(off.y < current.y || off.x < current.x)
-                continue;
-            List<Doorway> doors = DirMethods.matchingDir(opposite, r);
-            if(doors.Any(x => x != null))
-            {
-                secondList.RemoveAt(i);
-                current = off;
-                return r;
-            }
-        }
+        if(!success)
+            return false;
 
-        return null;
+        List<Room> doorways = firstDir == RIGHT ? LeftEntrances : DownEntrances;
+
+        return TryAddFirst(grid, doorways, firstOff, firstDir, placedRooms);
     }
 }

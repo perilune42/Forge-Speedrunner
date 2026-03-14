@@ -11,12 +11,14 @@ public class PathFactoryBuilder
     private Room start;
     private Room finish;
     private List<(IChoiceStrategy, int, bool)> actions;
+    private List<(IAlgorithm, int)> actionsV2;
     private int min;
     private bool onePath;
     public PathFactoryBuilder()
     {
         // TODO: initialize stack with strategy pattern class to pick doorway
         actions = new();
+        actionsV2 = new();
         start = null;
         finish = null;
         onePath = false;
@@ -49,6 +51,11 @@ public class PathFactoryBuilder
     public PathFactoryBuilder WithAlgorithm(IChoiceStrategy strategy, int pathLength)
     {
         actions.Add((strategy, pathLength, onePath));
+        return this;
+    }
+    public PathFactoryBuilder WithAlgorithmV2(IAlgorithm algo, int pathLength)
+    {
+        actionsV2.Add((algo, pathLength));
         return this;
     }
     private int GenerateWith(IChoiceStrategy strategy, bool shouldCannibalize, GenStack stack, Grid grid, int pathLength, HashSet<Room> placedRooms)
@@ -140,6 +147,24 @@ public class PathFactoryBuilder
             // Debug.Log($"{c.room} has neighbors: {grid.NeighborsOf(c).Count}");
         }
 
+        return grid.ProduceCreator();
+    }
+    public PathCreator FinalizeV2()
+    {
+        Grid grid = new();
+        grid.InsertRoom(start, new Offset(0,0));
+        HashSet<Room> placedRooms = new();
+        foreach((IAlgorithm algo, int pathSize) in actionsV2)
+        {
+            for(int i = 0; i < pathSize; i++)
+            {
+                if(!algo.Run(grid, placedRooms))
+                {
+                    Debug.Log("We failed!");
+                    break;
+                }
+            }
+        }
         return grid.ProduceCreator();
     }
 }

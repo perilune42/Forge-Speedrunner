@@ -34,7 +34,7 @@ public class RandomChoice : IChoiceStrategy
                 continue;
             }
             Direction entranceDir = DirMethods.opposite(dir);
-            List<Doorway> currentDoors = DirMethods.matchingDir(in entranceDir, in current);
+            List<Doorway> currentDoors = DirMethods.matchingDir(entranceDir, current);
             bool hasDoorsThisWay = currentDoors.Any(x => x != null && x.IsEntrance());
             if(hasDoorsThisWay)
             {

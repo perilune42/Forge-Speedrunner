@@ -48,15 +48,15 @@ public class MapGen : MonoBehaviour
                 .WithStartRoom(start)
                 .WithMin(pathMin)
                 .OnePath()
-                .WithAlgorithm(new MainPathReal(roomPrefabs), pathSize)
+                .WithAlgorithmV2(new MainPath(roomPrefabs), pathSize)
                 // .WithAlgorithm(new RandomChoice(roomPrefabs), pathSize)
-                .WithAlgorithm(new BufferOption(roomPrefabs), 1)
-                .WithAlgorithm(new PlaceFinal(finish), 1);
+                .WithAlgorithmV2(new BufferOptionNew(roomPrefabs), 1)
+                .WithAlgorithmV2(new PlaceFinalNew(finish), 1);
 
     }
     private PathCreator runAlg()
     {
-        PathCreator pc = defaultBuilder().Finalize();
+        PathCreator pc = defaultBuilder().FinalizeV2();
         pc.PassPrefab = this.PassPrefab;
         pc.RegisterParent(transform);
         return pc;

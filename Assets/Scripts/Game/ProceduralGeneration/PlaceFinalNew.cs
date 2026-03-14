@@ -26,22 +26,15 @@ public class PlaceFinalNew : IAlgorithm
             return false;
         }
 
-        Offset firstOff = default; Direction firstDir = default;
-        bool success = false;
-        for(int i = 0; i < possibleOpens.Count; i++)
-        {
-            (firstOff, firstDir) = possibleOpens[i];
-            if(firstDir == RIGHT)
-            {
-                success = true;
-                break;
-            }
-        }
-        if(!success)
-            return false;
-
         if(placedRooms.Contains(FinalRoom))
             return false;
+
+        Offset firstOff; Direction firstDir;
+        if(!GetFirstMatching(possibleOpens, x => x == RIGHT, out firstOff, out firstDir))
+        {
+            Debug.Log($"[PlaceFinalNew] Failed: no openings matching a direction. Cell: {lastCell.room}, {lastCell.offset}.");
+            return false;
+        }
 
         return TryAdd(grid, FinalRoom, firstOff, firstDir, placedRooms);
     }

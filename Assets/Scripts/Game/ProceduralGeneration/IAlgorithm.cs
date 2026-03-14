@@ -1,5 +1,6 @@
 using UnityEngine;
 using Offset = UnityEngine.Vector2Int;
+using System;
 using System.Collections.Generic;
 
 public abstract class IAlgorithm
@@ -41,6 +42,18 @@ public abstract class IAlgorithm
         foreach(Room room in rooms)
         {
             if(TryAdd(grid, room, off, dir, placedRooms))
+                return true;
+        }
+        return false;
+    }
+    protected bool GetFirstMatching(List<(Offset, Direction)> spotList, Func<Direction, bool> pred, out Offset off, out Direction dir)
+    {
+        off = default;
+        dir = default;
+        for(int i = 0; i < spotList.Count; i++)
+        {
+            (off, dir) = spotList[i];
+            if(pred(dir))
                 return true;
         }
         return false;

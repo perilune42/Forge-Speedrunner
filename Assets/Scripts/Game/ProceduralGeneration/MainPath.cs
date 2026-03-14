@@ -41,16 +41,12 @@ public class MainPath : IAlgorithm
         List<(Offset, Direction)> possibleOpens = grid.OpenSpots(lastCell);
         possibleOpens.Shuffle();
 
-        Offset firstOff = default; Direction firstDir = default;
-        bool success = false;
-        for(int i = 0; !success && i < possibleOpens.Count; i++)
+        Offset firstOff; Direction firstDir;
+        if(!GetFirstMatching(possibleOpens, x => x == RIGHT || x == UP, out firstOff, out firstDir))
         {
-            (firstOff, firstDir) = possibleOpens[i];
-            if(firstDir == RIGHT || firstDir == UP)
-                success = true;
-        }
-        if(!success)
+            Debug.Log($"[MainPath] Failed: no openings matching a direction. Cell: {lastCell.room}, {lastCell.offset}.");
             return false;
+        }
 
         List<Room> doorways = firstDir == RIGHT ? LeftEntrances : DownEntrances;
 

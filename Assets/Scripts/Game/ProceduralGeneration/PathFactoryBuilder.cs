@@ -160,7 +160,7 @@ public class PathFactoryBuilder
             {
                 if(!algo.Run(grid, placedRooms))
                 {
-                    Debug.Log("We failed!");
+                    Debug.Log($"{algo} failed on run {i}!");
                     break;
                 }
             }

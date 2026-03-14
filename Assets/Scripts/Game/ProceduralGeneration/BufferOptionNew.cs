@@ -22,19 +22,12 @@ public class BufferOptionNew : IAlgorithm
         List<(Offset, Direction)> possibleOpens = grid.OpenSpots(lastCell);
         possibleOpens.Shuffle();
 
-        Offset firstOff = default; Direction firstDir = default;
-        bool success = false;
-        for(int i = 0; i < possibleOpens.Count; i++)
+        Offset firstOff; Direction firstDir;
+        if(!GetFirstMatching(possibleOpens, x => x == RIGHT || x == UP, out firstOff, out firstDir))
         {
-            (firstOff, firstDir) = possibleOpens[i];
-            if(firstDir == RIGHT)
-            {
-                success = true;
-                break;
-            }
-        }
-        if(!success)
+            Debug.Log($"[BufferOptionNew] Failed: no openings matching a direction. Cell: {lastCell.room}, {lastCell.offset}.");
             return false;
+        }
 
         return TryAddFirst(grid, RoomPrefabs, firstOff, firstDir, placedRooms);
     }

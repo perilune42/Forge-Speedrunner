@@ -10,7 +10,8 @@ public class BufferOptionNew : IAlgorithm
     public BufferOptionNew(Room[] prefabs)
     {
         RoomPrefabs = prefabs.ToList()
-            .FindAll(x => x != null && x.size.x == 1 && x.size.y == 1 && x.doorwaysRight.Any(y => y != null && y.IsExit()));
+            // .FindAll(x => x != null && x.size.x == 1 && x.size.y == 1 && x.doorwaysRight.Any(y => y != null && y.IsExit()));
+            .FindAll(x => x != null && x.size.x == 1 && x.size.y == 1 && -1 != hasAny(x.doorwaysRight, DoorwayType.EXIT));
     }
 
     public override bool Run(Grid grid, HashSet<Room> placedRooms)

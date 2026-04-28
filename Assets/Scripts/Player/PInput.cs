@@ -178,7 +178,7 @@ public class PInput : Singleton<PInput>
         const float RIGHT = 0f;
         const float UP = 90f;
         const float LEFT = 180f;
-        const float DOWN = 270f;
+        // const float DOWN = 270f;
 
         // Diagonal center angles
         const float UR = 45f;

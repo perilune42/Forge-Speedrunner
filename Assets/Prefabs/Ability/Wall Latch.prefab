@@ -61,7 +61,7 @@ MonoBehaviour:
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  StartUnlocked: 0
+  StartUnlocked: 1
   BindingDisplayString: 
   cooldown: 90
   info: {fileID: 0}

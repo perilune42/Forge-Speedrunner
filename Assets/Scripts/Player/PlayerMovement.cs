@@ -38,7 +38,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     private int maxWallCoyoteFrames = 8;
 
     private int forceMoveFrames = 0;
-    private int maxForceMoveFrames = 10;
+    private int maxForceMoveFrames = 4;
 
     private float retainedSpeed = 0;
     private bool hangTime = false;
@@ -351,19 +351,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
                 Jump();
                 PInput.Instance.Jump.ConsumeBuffer();
             }
-            /*
-            var dir = Vector2.right;
-            for (int i = 0; i < 2; i++)
-            {
-                if (CanLedgeClimb(dir))
-                {
-                    StartCoroutine(LedgeClimb(dir));
-                    PInput.Instance.Jump.ConsumeBuffer();
-                    break;
-                }
-                dir = Vector2.left;
-            }
-            */
         }
         else if (PInput.Instance.Jump.StoppedPressing)
         {
@@ -386,7 +373,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
             bool canWallClimb = CanWallClimb(new Vector2(dir.x, 0));
             if (canWallClimb) wallCoyoteFrames = maxWallCoyoteFrames;
             if (MoveDir.x != -dir.x
-                && IsInputtingWallClimb(dir)
                 && !CanLedgeClimb(new Vector2(dir.x, 0))
                 && canWallClimb
                 && SpecialState != SpecialState.WallClimb)
@@ -448,10 +434,17 @@ public class PlayerMovement : DynamicEntity, IStatSource
         return false;
     }
 
-    private bool IsInputtingWallClimb(Vector2 dir)
+    private Vector2 GetWallClimbDir(Vector2 dir)
     {
         var inputMove = PInput.Instance.MoveVector.NormalizePerAxis();
-        return (inputMove == Vector2.up && FacingDir.x == dir.x) || (inputMove.x == dir.x && inputMove.y >= 0);
+        if (inputMove.y > 0) {
+            return Vector2.up;
+        }
+        else if (inputMove.y < 0)
+        {
+            return Vector2.down;
+        }
+        return Vector2.zero;
     }
    
 
@@ -587,29 +580,38 @@ public class PlayerMovement : DynamicEntity, IStatSource
     private void ContinueWallClimb(Vector2 dir)
     {
         bool interrupt = false;
-        if (CanWallClimb(dir))
+        bool canWallClimb = CanWallClimb(dir);
+        Vector2 wallClimbDir = GetWallClimbDir(dir);
+
+        if (PInput.Instance.MoveVector.x == -lastClimbDir.x && State == BodyState.OnGround)
+        {
+            Debug.Log("leaving wall");
+            interrupt = true;
+        }
+        else if (canWallClimb && wallClimbDir == Vector2.up)
         {
             Velocity = new(0, MovementParams.ClimbSpeed);
         }
+        else if (canWallClimb && wallClimbDir == Vector2.down)
+        {
+            Velocity = new(0, -MovementParams.ClimbSpeed);
+        }
         else
         {
-            // likely reached top of wall
+            // staying in place or reached top of wall
+            if (!IsTouching(dir))
+            {
+                interrupt = true;
+            }
             Velocity = Vector2.zero;
         }
 
-        if (!IsInputtingWallClimb(dir))
+        if (CanLedgeClimb(dir))
         {
             interrupt = true;
-        }
-        else
-        {
-            if (CanLedgeClimb(dir))
-            {
-                interrupt = true;
-                wallCoyoteFrames = 0;
-                StartLedgeClimb(dir);
-                return;
-            }
+            wallCoyoteFrames = 0;
+            StartLedgeClimb(dir);
+            return;
         }
         if (interrupt)
         {

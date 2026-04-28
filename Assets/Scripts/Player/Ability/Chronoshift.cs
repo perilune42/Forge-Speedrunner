@@ -159,7 +159,7 @@ public class Chronoshift : Ability, IStatSource
         Timer.timeSpeedrun = false;
     }
 
-    public void Teleport(List<ChronoshiftKeyframe> keyframes, Vector3 endPos)
+    public void TeleportToStart(List<ChronoshiftKeyframe> keyframes, Vector3 endPos)
     {
         clone = Instantiate(clonePrefab, endPos, Quaternion.identity);
         PlayerVFXTrail vfx = clone.GetComponentInChildren<PlayerVFXTrail>();

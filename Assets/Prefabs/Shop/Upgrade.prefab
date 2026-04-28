@@ -192,6 +192,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Upgrade
   IsBought: 0
+  Ability: {fileID: 0}
+  UsesCharges: 0
   button: {fileID: 8363788472246593245}
   UpgradeImage: {fileID: 1193673274505713157}
   NameText: {fileID: 3828294297774471652}
@@ -265,7 +267,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4389677016964482232}
         m_TargetAssemblyTypeName: Upgrade, Assembly-CSharp
-        m_MethodName: BuyUpgrade
+        m_MethodName: SelectUpgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

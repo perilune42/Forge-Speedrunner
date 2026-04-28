@@ -57,6 +57,8 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private FullscreenMapUI shopMap;
     [SerializeField] private TMP_Text selectSpawnText;
 
+    private Upgrade selectedUpgrade;
+
     private bool goingToPracticeMode = false;
     public override void Awake()
     {
@@ -276,6 +278,39 @@ public class ShopManager : Singleton<ShopManager>
         moneyGainedText.text = $"+<sprite name=\"computer_chip\">{moneyGained}";
         Money += moneyGained;
         UpdateMoney();
+    }
+
+    public void SelectUpgrade(Upgrade upgrade)
+    {
+        selectedUpgrade = upgrade;
+        EquipSelectedUpgrade(0);
+    }
+
+    public void EquipSelectedUpgrade(int slot)
+    {
+        selectedUpgrade.BuyUpgrade();
+        Ability ability = selectedUpgrade.Ability;
+        if (ability is Chronoshift)
+        {
+            // if (AbilityManager.Instance.TotalChronoshiftCharges == 0) AbilityManager.Instance.GiveChronoshift();
+            AbilityManager.Instance.ChronoshiftCharges++;
+            AbilityManager.Instance.TotalChronoshiftCharges++;
+            return;
+        }
+
+        bool abilityExists = AbilityManager.Instance.PlayerAbilities.TryGetValue(ability.ID, out var existingAbility);
+        if (abilityExists)
+        {
+            existingAbility.CurrentLevel++;
+            existingAbility.UsesCharges = selectedUpgrade.UsesCharges;
+        }
+        else
+        {
+            AbilityManager.Instance.GivePlayerAbility(ability.ID);
+        }
+
+        selectedUpgrade = null;
+        UpdateShopAbilities();
     }
 
     public void UpdateMoney()

@@ -7,6 +7,7 @@ public class AbilitySlot : MonoBehaviour, IPointerDownHandler
 {
     // Whoever wrote this code, talked shit on my code
     // That was really hurtful, whoever that was
+    // ^ I'M SO SORRY IF IT WAS ME IT WASN'T PERSONAL
     [SerializeField] string inputName; // jank because InputActionReference is bugged on our version of the InputSystem
     // If we ever update the packages, we can use InputActionReferences instead
     private InputAction inputAction;

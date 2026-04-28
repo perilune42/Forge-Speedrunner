@@ -30,18 +30,6 @@ public class AbilityManager : Singleton<AbilityManager>
         GiveChronoshift();
     }
 
-    //private void OnGUI()
-    //{
-    //    GUILayout.BeginArea(new Rect(100, 0, 100, 100));
-    //    if (GUILayout.Button("Go to shop"))
-    //    {
-    //        // SceneManager.LoadScene("Shop");
-    //        Game.Instance.GoToShop(true);
-    //    }
-    //    GUILayout.EndArea();
-    //}
-
-
     private void GivePlayerAbilities()
     {
         foreach (Ability ability in PlayerAbilities.Values)

@@ -44,6 +44,7 @@ public class Dash : Ability, IStatSource
         {
             RefillDash();
         };
+        OnActivate += PlayerMovement.StartSprint;
     }
 
     

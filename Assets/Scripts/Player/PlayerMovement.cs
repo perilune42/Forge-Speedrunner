@@ -104,7 +104,6 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     private void Start()
     {
-        AbilityManager.Instance.GetAbility<Dash>().OnActivate += StartSprint;
         OnHitWallLeft += DoCollosionChecks;
         OnHitWallRight += DoCollosionChecks;
 
@@ -653,7 +652,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
         }
     }
 
-    private void StartSprint()
+    public void StartSprint()
     {
         isSprinting = true;
     }

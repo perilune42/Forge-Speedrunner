@@ -24,7 +24,6 @@ public class AbilityManager : Singleton<AbilityManager>
         base.Awake();
         PlayerAbilities = new();
         ChronoshiftInfoParent = GameObject.FindWithTag("CHRONOSHIFT_INFO_PARENT"); // jank because I can't push direct changes to the World scene
-        GivePlayerAbilities();
 
     }
 
@@ -32,6 +31,7 @@ public class AbilityManager : Singleton<AbilityManager>
     {
         TotalChronoshiftCharges = 0;
         ChronoshiftCharges = 0;
+        GivePlayerAbilities();
         GiveChronoshift();
     }
 

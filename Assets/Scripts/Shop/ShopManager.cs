@@ -33,8 +33,10 @@ public class ShopManager : Singleton<ShopManager>
     [Header("Upgrade Tab Refs")]
     [SerializeField] private Transform abilityLayoutGroup;
     [SerializeField] private Transform toolsLayoutGroup;
-    [SerializeField] private List<AbilitySlot> abilitySlots;
-    [SerializeField] private AbilitySlot dashAbilitySlot;
+    [SerializeField] private List<ShopAbilitySlot> abilitySlots;
+    private Dictionary<AbilitySlotID, ShopAbilitySlot> shopAbilitySlotDict = new();
+    private Dictionary<AbilitySlotID, ShopAbility> shopAbilityDict = new();
+
 
     [SerializeField] private Transform upgradeLayoutGroup;
 
@@ -57,13 +59,16 @@ public class ShopManager : Singleton<ShopManager>
     [SerializeField] private FullscreenMapUI shopMap;
     [SerializeField] private TMP_Text selectSpawnText;
 
-    private Upgrade selectedUpgrade;
+    private ShopAbilitySlot selectedAbilitySlot;
 
     private bool goingToPracticeMode = false;
     public override void Awake()
     {
         base.Awake();
-
+        foreach (var slot in abilitySlots)
+        {
+            shopAbilitySlotDict[slot.SlotID] = slot;
+        }
     }
 
     public int baseRerollCost = 10;
@@ -114,12 +119,14 @@ public class ShopManager : Singleton<ShopManager>
             Destroy(toolsLayoutGroup.GetChild(i).gameObject);
         }
 
-        var currentAbilities = AbilityManager.Instance.PlayerAbilities;
+        var currentAbilities = AbilityManager.Instance.GetAllAbilities();
         List<Ability> abilityChoices;
         if (currentAbilities.Count >= 5)
         {
             // if full, only choose from existing abilities
-            abilityChoices = GameRegistry.Instance.Abilities.Where(a => currentAbilities.ContainsKey(a.ID)).ToList().Shuffled();
+            abilityChoices = GameRegistry.Instance.Abilities.Where(
+                a => AbilityManager.Instance.GetAbilityByID(a.ID) != null
+                ).ToList().Shuffled();
         }
         else abilityChoices = GameRegistry.Instance.Abilities.Shuffled();
 
@@ -129,8 +136,10 @@ public class ShopManager : Singleton<ShopManager>
         {
             Ability possibleAbility = abilityChoices[idx];
             idx++;
-            bool abilityExists = currentAbilities.TryGetValue(possibleAbility.ID, out var currentAbility);
-            if (abilityExists && currentAbility.CurrentLevel >= currentAbility.AllLevels.Length - 1) continue; // upgrade is already max level
+            Ability currentAbility = AbilityManager.Instance.GetAbilityByID(possibleAbility.ID);
+            bool abilityExists = currentAbility != null;
+            if (abilityExists && currentAbility.CurrentLevel >= currentAbility.AllLevels.Length - 1) continue;
+            // upgrade is already max level
 
             GameObject newUpgrade = Instantiate(upgradePrefab, upgradeLayoutGroup);
             bool useCharges = false;
@@ -168,7 +177,7 @@ public class ShopManager : Singleton<ShopManager>
     {
         for (int i = 0; i < abilitySlots.Count; i++)
         {
-            AbilitySlot slot = abilitySlots[i];
+            ShopAbilitySlot slot = abilitySlots[i];
             for (int j = 0; j < slot.transform.childCount; j++)
             {
                 Transform child = slot.transform.GetChild(j);
@@ -180,21 +189,22 @@ public class ShopManager : Singleton<ShopManager>
         }
 
 
-
-        int index = 0;
-        foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
+        foreach (ShopAbilitySlot slot in abilitySlots)
         {
-            if (ability is Dash)
+            if (AbilityManager.Instance.PlayerAbilities.TryGetValue(slot.SlotID, out Ability ability)
+                && ability != null)
             {
-                GameObject dashShopAbility = Instantiate(shopAbilityPrefab, dashAbilitySlot.transform);
-                dashShopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
-                continue;
+                GameObject shopAbilityObj = Instantiate(shopAbilityPrefab, slot.transform);
+                ShopAbility shopAbility = shopAbilityObj.GetComponent<ShopAbility>();
+                shopAbility.Init(ability, ability.CurrentLevel);
+                shopAbilityDict[slot.SlotID] = shopAbility;
             }
-            if (index >= abilitySlots.Count) break;
-            GameObject shopAbility = Instantiate(shopAbilityPrefab, abilitySlots[index].transform);
-            shopAbility.GetComponent<ShopAbility>().Init(ability, ability.CurrentLevel);
-            index++;
+            else
+            {
+                shopAbilityDict[slot.SlotID] = null;
+            }
         }
+
     }
 
     private void ClearTooltipInfo()
@@ -282,12 +292,7 @@ public class ShopManager : Singleton<ShopManager>
 
     public void SelectUpgrade(Upgrade upgrade)
     {
-        selectedUpgrade = upgrade;
-        EquipSelectedUpgrade(0);
-    }
-
-    public void EquipSelectedUpgrade(int slot)
-    {
+        var selectedUpgrade = upgrade;
         selectedUpgrade.BuyUpgrade();
         Ability ability = selectedUpgrade.Ability;
         if (ability is Chronoshift)
@@ -297,8 +302,8 @@ public class ShopManager : Singleton<ShopManager>
             AbilityManager.Instance.TotalChronoshiftCharges++;
             return;
         }
-
-        bool abilityExists = AbilityManager.Instance.PlayerAbilities.TryGetValue(ability.ID, out var existingAbility);
+        Ability existingAbility = AbilityManager.Instance.GetAbilityByID(ability.ID);
+        bool abilityExists = existingAbility != null;
         if (abilityExists)
         {
             existingAbility.CurrentLevel++;
@@ -306,11 +311,22 @@ public class ShopManager : Singleton<ShopManager>
         }
         else
         {
-            AbilityManager.Instance.GivePlayerAbility(ability.ID);
+            foreach (var kvp in AbilityManager.Instance.PlayerAbilities)
+            {
+                if (kvp.Value == null && kvp.Key != AbilitySlotID.Dash)
+                {
+                    AbilityManager.Instance.GivePlayerAbility(ability.ID, kvp.Key);
+                    break;
+                }
+            }
         }
 
-        selectedUpgrade = null;
         UpdateShopAbilities();
+    }
+
+    public void EquipSelectedUpgrade(AbilitySlotID slot)
+    {
+        
     }
 
     public void UpdateMoney()
@@ -342,4 +358,26 @@ public class ShopManager : Singleton<ShopManager>
         Game.Instance.ReturnToPlay(false);
     }
 
+    public void ClickAbilitySlot(ShopAbilitySlot slot)
+    {
+        if (slot.SlotID == AbilitySlotID.Dash) return;
+        if (selectedAbilitySlot == null && AbilityManager.Instance.PlayerAbilities[slot.SlotID] != null)
+        {
+            // select existing ability
+            selectedAbilitySlot = slot;
+            shopAbilityDict[slot.SlotID].SetSelected(true);
+        }
+        else if (selectedAbilitySlot != null)
+        {
+            // swap with another slot
+            if (shopAbilityDict[selectedAbilitySlot.SlotID] != null)
+                shopAbilityDict[selectedAbilitySlot.SlotID].SetSelected(false);
+            if (slot != selectedAbilitySlot)
+            {
+                AbilityManager.Instance.SwapAbilities(slot.SlotID, selectedAbilitySlot.SlotID);
+                UpdateShopAbilities();
+            }
+            selectedAbilitySlot = null;
+        }
+    }
 }

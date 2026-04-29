@@ -29,8 +29,8 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     private void Update()
     {
         // can only buy if you already have the ability, or can fit a new one
-        bool canFitAbility = isTool || AbilityManager.Instance.PlayerAbilities.ContainsKey(Ability.ID)
-                             || AbilityManager.Instance.PlayerAbilities.Count < 5;
+        bool canFitAbility = isTool || AbilityManager.Instance.GetAbilityByID(Ability.ID) != null
+                             || AbilityManager.Instance.GetAllAbilities().Count < 5;
 
         // TODO - optimize
         if (CanBuy && canFitAbility)
@@ -101,13 +101,6 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Sprite icon = Ability.Icon;
-        string header;
-        if (isTool) header = Ability.Name;
-        else if (levelToUpgrade > 0) header = $"{Ability.Name} (Lvl. {levelToUpgrade} -> {levelToUpgrade + 1})";
-        else header = $"{Ability.name} (Lvl. 1)";
-        string description = Ability.AllLevels[levelToUpgrade].Description;
-
          ShopManager.Instance.ShowTooltipInfo(Ability, levelToUpgrade, true);
     }
 }

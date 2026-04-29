@@ -7,6 +7,8 @@ public class PInput : Singleton<PInput>
     // Use in other classes
     public Vector2 MoveVector;
     public InputButton Jump, Dash, Interact, Map, Chronoshift;
+    public InputButton Ability1, Ability2, Ability3, Ability4;
+    public Dictionary<AbilitySlotID, InputButton> AbilityButtonDict;
 
     // Internal vars
     private InputAction move;
@@ -15,8 +17,6 @@ public class PInput : Singleton<PInput>
     public Vector2 MoveInputOverrride = Vector2.zero;
 
     const float DEADZONE = 0.2f;
-
-    public List<InputButton> AbilityButtons;
 
     public List<InputButton> AllButtons;
 
@@ -102,17 +102,34 @@ public class PInput : Singleton<PInput>
         }
     }
 
-    private void Start()
+    public override void Awake()
     {
-        AbilityButtons = new();
+        base.Awake();
+        AbilityButtonDict = new();
         AllButtons = new();
 
         move = InputSystem.actions.FindAction("Move");
         Jump = new InputButton(InputSystem.actions.FindAction("Jump"), 8);
         Dash = new InputButton(InputSystem.actions.FindAction("Dash"), 8);
+        AbilityButtonDict[AbilitySlotID.Dash] = Dash;
         Interact = new InputButton(InputSystem.actions.FindAction("Interact"), 8);
         Map = new InputButton(InputSystem.actions.FindAction("Map"), 1);
         Chronoshift = new InputButton(InputSystem.actions.FindAction("Chronoshift"), 8);
+        Ability1 = new InputButton(InputSystem.actions.FindAction("Ability1"), 8);
+        AbilityButtonDict[AbilitySlotID.Ability1] = Ability1;
+        Ability2 = new InputButton(InputSystem.actions.FindAction("Ability2"), 8);
+        AbilityButtonDict[AbilitySlotID.Ability2] = Ability2;
+        Ability3 = new InputButton(InputSystem.actions.FindAction("Ability3"), 8);
+        AbilityButtonDict[AbilitySlotID.Ability3] = Ability3;
+        Ability4 = new InputButton(InputSystem.actions.FindAction("Ability4"), 8);
+        AbilityButtonDict[AbilitySlotID.Ability4] = Ability4;
+
+    }
+
+    private void Start()
+    {
+
+
     }
 
     private void Update()
@@ -153,13 +170,6 @@ public class PInput : Singleton<PInput>
         foreach (InputButton button in AllButtons) button.ConsumeBuffer();
     }
 
-    public InputButton AddAbilityInputButton()
-    {
-        // Debug.Log("Ability" + (AbilityButtons.Count + 1));
-        InputButton button = new InputButton(InputSystem.actions.FindAction("Ability" + (AbilityButtons.Count + 1)), 8);
-        AbilityButtons.Add(button);
-        return button;
-    }
 
     // AI slop yippee
     private static Vector2 GetDirection(

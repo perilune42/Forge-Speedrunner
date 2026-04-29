@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ShopAbility : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler
+public class ShopAbility : MonoBehaviour, IPointerEnterHandler
 {
     public static ShopAbility SelectedAbility;
 
@@ -24,21 +24,15 @@ public class ShopAbility : MonoBehaviour, IPointerEnterHandler, IPointerDownHand
         abilityImage.sprite = ability.Icon;
     }
 
-    private void Update()
-    {
-        abilityImage.color = this == SelectedAbility ? Color.gray : Color.white;
-    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-
         ShopManager.Instance.ShowTooltipInfo(ability, abilityLevel, false);
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void SetSelected(bool isSelected) 
     {
-        if (SelectedAbility == null) SelectedAbility = this;
-        else if (SelectedAbility == this) SelectedAbility = null;
-        // else rebind to
+        if (isSelected) abilityImage.color = Color.gray;
+        else abilityImage.color = Color.white;
     }
 }

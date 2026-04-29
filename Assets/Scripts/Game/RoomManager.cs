@@ -278,24 +278,22 @@ public class RoomManager : Singleton<RoomManager>
     // preserved velocity should always have been set before entering this
     private IEnumerator GoThroughDoorway(Doorway door2, Vector2 dir)
     {
-        //if (!TransitionOngoing)
-        {
-            // calculate new player position
-            Vector2 newPlayerPos = (Vector2)door2.transform.position;
-            if (door2.IsHorizontal())
-                newPlayerPos.y += relativePos.y;
-            else
-                newPlayerPos.x += relativePos.x;
 
-            /**
-             * start doing things to the player here
-             */
+        // calculate new player position
+        Vector2 newPlayerPos = (Vector2)door2.transform.position;
+        if (door2.IsHorizontal())
+            newPlayerPos.y += relativePos.y;
+        else
+            newPlayerPos.x += relativePos.x;
 
-            door2.SuppressNextTransition();
-            respawnIsSet = false;
-            yield return RoomTransition(door2.enclosingRoom, newPlayerPos, dir);
-            door2.EnableTransition();
-        }
+        /**
+            * start doing things to the player here
+            */
+
+        door2.SuppressNextTransition();
+        respawnIsSet = false;
+        yield return RoomTransition(door2.enclosingRoom, newPlayerPos, dir);
+        door2.EnableTransition();
 
     }
 
@@ -303,6 +301,8 @@ public class RoomManager : Singleton<RoomManager>
     public IEnumerator RoomTransition(Room room, Vector2 position, Vector2 dir)
     {
         var pm = Player.Instance.Movement;
+        bool skipAnimation = Player.Instance.Movement.SpecialState == SpecialState.Chronoshift;
+
 
         TransitionOngoing = true;
         PInput.Instance.EnableControls = false;
@@ -312,8 +312,10 @@ public class RoomManager : Singleton<RoomManager>
         }
         // give the player a visual boost towards the door (does not affect preserved v)
         pm.Velocity += dir * 5f;
-
-        yield return FadeToBlack.Instance.FadeOut();
+        if (!skipAnimation)
+        {
+            yield return FadeToBlack.Instance.FadeOut();
+        }
         AbilityManager.Instance.ResetAbilites();
         Player.Instance.IsDead = false;
 
@@ -323,7 +325,10 @@ public class RoomManager : Singleton<RoomManager>
         pm.Locked = true;
         pm.GravityEnabled = true;
 
-        StartCoroutine(FadeToBlack.Instance.FadeIn());  // decouple control locking logic from visual animation
+        if (!skipAnimation)
+        {
+            StartCoroutine(FadeToBlack.Instance.FadeIn());  // decouple control locking logic from visual animation
+        }
         // apply forced movement on room entry here
         if (dir.y == 0)
         {
@@ -337,7 +342,7 @@ public class RoomManager : Singleton<RoomManager>
         const int playerEnterDelay = 40;    // wait this long before player pops out
         const int controlReturnDelay = 20;  // wait this long before player regains control
 
-        if (true || dir != Vector2.zero)
+        if (!skipAnimation)
         {
             for (int i = 0; i < playerEnterDelay; i++)
                 yield return new WaitForFixedUpdate();

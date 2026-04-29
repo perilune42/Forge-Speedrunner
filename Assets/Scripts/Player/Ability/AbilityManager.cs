@@ -4,13 +4,18 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum AbilitySlotID
+{
+    Dash, Ability1, Ability2, Ability3, Ability4
+}
+
 public class AbilityManager : Singleton<AbilityManager>
 {
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent, ChronoshiftInfoParent;
     [SerializeField] private GameObject player;
     public PlayerMovement playerMovement;
-    public Dictionary<int, Ability> PlayerAbilities;
+    public Dictionary<AbilitySlotID, Ability> PlayerAbilities;
 
     [HideInInspector] public int ChronoshiftCharges, TotalChronoshiftCharges;
     public Chronoshift chronoshift;
@@ -30,25 +35,27 @@ public class AbilityManager : Singleton<AbilityManager>
         GiveChronoshift();
     }
 
-    //private void OnGUI()
-    //{
-    //    GUILayout.BeginArea(new Rect(100, 0, 100, 100));
-    //    if (GUILayout.Button("Go to shop"))
-    //    {
-    //        // SceneManager.LoadScene("Shop");
-    //        Game.Instance.GoToShop(true);
-    //    }
-    //    GUILayout.EndArea();
-    //}
-
-
-    private void GivePlayerAbilities()
+    // does NOT restore dash by default
+    private void ClearAbilities()
     {
         foreach (Ability ability in PlayerAbilities.Values)
         {
-            Destroy(ability.gameObject);
+            if (ability != null)
+                Destroy(ability.gameObject);
         }
-        PlayerAbilities.Clear();
+        PlayerAbilities = new()
+        {
+            [AbilitySlotID.Dash] = null,
+            [AbilitySlotID.Ability1] = null,
+            [AbilitySlotID.Ability2] = null,
+            [AbilitySlotID.Ability3] = null,
+            [AbilitySlotID.Ability4] = null
+        };
+    }
+
+    private void GivePlayerAbilities()
+    {
+        ClearAbilities();
         int count = 0;
         foreach (Ability presetAbility in GameRegistry.Instance.Abilities)
         {
@@ -61,7 +68,17 @@ public class AbilityManager : Singleton<AbilityManager>
                 else
                 {
                     if (presetAbility is Chronoshift) GiveChronoshift();
-                    else GivePlayerAbility(presetAbility.ID);
+                    else
+                    {
+                        foreach (AbilitySlotID slot in PlayerAbilities.Keys)
+                        {
+                            if (PlayerAbilities[slot] == null)
+                            {
+                                GivePlayerAbility(presetAbility.ID, slot);
+                                break;
+                            }
+                        }
+                    }
                     if (presetAbility.ID != 0) count++;
                 }
 
@@ -74,12 +91,13 @@ public class AbilityManager : Singleton<AbilityManager>
         Ability ability = Instantiate(GameRegistry.Instance.Chronoshift, player.transform);
         ability.ID = -1;
         chronoshift = ability as Chronoshift;
+        chronoshift.SetInputButton(PInput.Instance.Chronoshift);
     }
     
-    public void GivePlayerAbility(int index)
+    public void GivePlayerAbility(int index, AbilitySlotID slot)
     {
         Ability ability = Instantiate(GameRegistry.Instance.Abilities[index], player.transform);
-        PlayerAbilities[index] = ability;
+        PlayerAbilities[slot] = ability;
         ability.ID = index;
         ability.CurrentLevel = GameRegistry.Instance.Abilities[index].CurrentLevel;
         /*
@@ -90,6 +108,14 @@ public class AbilityManager : Singleton<AbilityManager>
             ability.CurCharges = ability.MaxCharges;
         }
         */
+        if (ability is Chronoshift)
+        {
+            ability.SetInputButton(PInput.Instance.Chronoshift);
+        }
+        else
+        {
+            ability.SetInputButton(PInput.Instance.AbilityButtonDict[slot]);
+        }
 
     }
 
@@ -99,9 +125,18 @@ public class AbilityManager : Singleton<AbilityManager>
         
         foreach (Ability ability in PlayerAbilities.Values)
         {
-            if  (ability.GetType() == typeof(T)) return ability as T;
+            if  (ability != null && ability.GetType() == typeof(T)) return ability as T;
         }
 
+        return null;
+    }
+
+    public Ability GetAbilityByID(int id)
+    {
+        foreach (Ability ability in PlayerAbilities.Values)
+        {
+            if (ability != null && ability.ID == id) return ability;
+        }
         return null;
     }
 
@@ -113,12 +148,12 @@ public class AbilityManager : Singleton<AbilityManager>
 
     public List<Ability> GetAllAbilities()
     {
-        return PlayerAbilities.Values.ToList();
+        return PlayerAbilities.Values.Where(a => a != null).ToList();
     }
 
     public void ResetAbilites()
     {
-        foreach (var ability in PlayerAbilities.Values)
+        foreach (var ability in GetAllAbilities())
         {
             ability.OnReset();
         }
@@ -127,7 +162,7 @@ public class AbilityManager : Singleton<AbilityManager>
 
     public void RechargeAbilities()
     {
-        foreach (Ability ability in PlayerAbilities.Values)
+        foreach (Ability ability in GetAllAbilities())
         {
             ability.Recharge();
             if (ability.UsesCharges)
@@ -135,6 +170,16 @@ public class AbilityManager : Singleton<AbilityManager>
                 ability.CurCharges = ability.MaxCharges;
             }
         }
+    }
+
+    public void SwapAbilities(AbilitySlotID slot1, AbilitySlotID slot2)
+    {
+        // C# my beloved
+        (PlayerAbilities[slot1], PlayerAbilities[slot2]) = (PlayerAbilities[slot2], PlayerAbilities[slot1]);
+        if (PlayerAbilities[slot1] != null) 
+            PlayerAbilities[slot1].SetInputButton(PInput.Instance.AbilityButtonDict[slot1]);
+        if (PlayerAbilities[slot2] != null)
+            PlayerAbilities[slot2].SetInputButton(PInput.Instance.AbilityButtonDict[slot2]);
     }
 }
 

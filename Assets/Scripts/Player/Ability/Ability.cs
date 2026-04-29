@@ -53,24 +53,7 @@ public abstract class Ability : MonoBehaviour
 
     public virtual void Start()
     {
-        // ability info handling moved to GameplayUI
-        if (this is Chronoshift)
-        {
-            SetInputButton(PInput.Instance.Chronoshift);
-        }
-        else
-        {
-            if (this is Dash)
-            {
-                SetInputButton(PInput.Instance.Dash);
-            }
-            else
-            {
-                SetInputButton(PInput.Instance.AddAbilityInputButton());
-            }
-        }
 
-        UpdateBindingText();
     }
 
 
@@ -142,6 +125,7 @@ public abstract class Ability : MonoBehaviour
     public void SetInputButton(PInput.InputButton button)
     {
         inputButton = button;
+        UpdateBindingText();
     }
     
     public void UpdateBindingText()

@@ -24,7 +24,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -101,7 +101,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,353 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bigMagnet_0
+      name: DashIcon_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 68
-        width: 22
-        height: 22
+        y: 0
+        width: 30
+        height: 30
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: abcedf475d03a4e3c9cf97d755d0918e
-      internalID: -1283296018
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_1
-      rect:
-        serializedVersion: 2
-        x: 22
-        y: 68
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0d4ba137efee9bc19ae649eab8da7ce8
-      internalID: 1179287608
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_2
-      rect:
-        serializedVersion: 2
-        x: 44
-        y: 68
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7b43dd82c41e0cbfbb93c26f00974354
-      internalID: 93538400
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_3
-      rect:
-        serializedVersion: 2
-        x: 66
-        y: 68
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d958d8481cedbb87c81ddcfec0947d90
-      internalID: -2004035640
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_4
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 46
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6c48e91e2e3057741bbf5b6c2c559957
-      internalID: -2013168469
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_5
-      rect:
-        serializedVersion: 2
-        x: 22
-        y: 46
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 307543064f221bf808c24b6e1124c395
-      internalID: 607917146
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_6
-      rect:
-        serializedVersion: 2
-        x: 44
-        y: 46
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a7a827b926db2dd94b4534ad729a4d16
-      internalID: 1706520947
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_7
-      rect:
-        serializedVersion: 2
-        x: 66
-        y: 46
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d3edafe6d274bc664b95de6afd144b26
-      internalID: 1306639247
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_8
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 24
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 280770ad0c6b9c6e493752a26757f5ae
-      internalID: -1635576008
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_9
-      rect:
-        serializedVersion: 2
-        x: 22
-        y: 24
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fdb8d3b0ec349e0a49b3751adce12b0b
-      internalID: -528377916
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_10
-      rect:
-        serializedVersion: 2
-        x: 44
-        y: 24
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 77816375c66db2db687deb5aa01fad58
-      internalID: 1862581523
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_11
-      rect:
-        serializedVersion: 2
-        x: 66
-        y: 24
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 664b8c265e693b182b766e2d5ce86e08
-      internalID: 438962204
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_12
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 2
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b317aa7a59fd3bab680ed8b541dd9afe
-      internalID: 1008263424
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_13
-      rect:
-        serializedVersion: 2
-        x: 22
-        y: 2
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 37a4e7b1ef1751f3a8b2cab06d61c4aa
-      internalID: 2010833989
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_14
-      rect:
-        serializedVersion: 2
-        x: 44
-        y: 2
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e3cf883403fe687d1bc7e1db2a73e277
-      internalID: 1691891649
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bigMagnet_15
-      rect:
-        serializedVersion: 2
-        x: 66
-        y: 2
-        width: 22
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 57c53437242cc539ca9dfedd4967a7bd
-      internalID: -418885013
+      spriteID: ba5c3e4644073b5b0800000000000000
+      internalID: -5353812092960651861
       vertices: []
       indices: 
       edges: []
@@ -469,35 +139,16 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceOnImport
-        value: True
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      bigMagnet_0: -1463533402
-      bigMagnet_1: -622414967
-      bigMagnet_10: -955964512
-      bigMagnet_11: -1964831094
-      bigMagnet_12: -363014300
-      bigMagnet_13: -1137949679
-      bigMagnet_14: -1021383419
-      bigMagnet_15: -829523278
-      bigMagnet_2: 288442995
-      bigMagnet_3: -49510341
-      bigMagnet_4: 739541251
-      bigMagnet_5: 1681690046
-      bigMagnet_6: 904139707
-      bigMagnet_7: -175081988
-      bigMagnet_8: -292254573
-      bigMagnet_9: 1673523303
+      DashIcon_0: -5353812092960651861
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

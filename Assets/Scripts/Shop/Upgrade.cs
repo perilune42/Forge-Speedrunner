@@ -9,9 +9,9 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 {
     public bool IsBought;
 
-    private Ability ability;
+    public Ability Ability;
     private int levelToUpgrade;
-    private bool usesCharges;
+    public bool UsesCharges;
 
     [SerializeField] private UnityEngine.UI.Button button;
     [SerializeField] private Image UpgradeImage;
@@ -20,7 +20,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private TMP_Text ChargeText;
     [SerializeField] private AbilityLevelUI levelUI;
     [SerializeField] private bool isTool; // whether this shows up in the Tools group and thus doesn't show its name or charge count
-    private int cost => ability.AllLevels[levelToUpgrade].Cost;
+    private int cost => Ability.AllLevels[levelToUpgrade].Cost;
     private bool HasEnoughMoney => ShopManager.Instance.Money - cost >= 0;
     private bool CanBuy => !IsBought && HasEnoughMoney;
     
@@ -29,8 +29,8 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     private void Update()
     {
         // can only buy if you already have the ability, or can fit a new one
-        bool canFitAbility = isTool || AbilityManager.Instance.PlayerAbilities.ContainsKey(ability.ID)
-                             || AbilityManager.Instance.PlayerAbilities.Count < 5;
+        bool canFitAbility = isTool || AbilityManager.Instance.GetAbilityByID(Ability.ID) != null
+                             || AbilityManager.Instance.GetAllAbilities().Count < 5;
 
         // TODO - optimize
         if (CanBuy && canFitAbility)
@@ -56,11 +56,16 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         }
     }
 
+    public void SelectUpgrade()
+    {
+        ShopManager.Instance.SelectUpgrade(this);
+    }
+
     public void BuyUpgrade()
     {
         if (IsBought)
         {
-            Debug.Log($"Already bought {ability.Name}");
+            Debug.Log($"Already bought {Ability.Name}");
         }
         else if (!HasEnoughMoney)
         {
@@ -72,37 +77,15 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
             ShopManager.Instance.UpdateMoney();
             CostText.text = "Bought";
             IsBought = true;
-
-            if (ability is Chronoshift) 
-            {
-                // if (AbilityManager.Instance.TotalChronoshiftCharges == 0) AbilityManager.Instance.GiveChronoshift();
-                AbilityManager.Instance.ChronoshiftCharges++;
-                AbilityManager.Instance.TotalChronoshiftCharges++;
-                return;
-            }
-
-            bool abilityExists = AbilityManager.Instance.PlayerAbilities.TryGetValue(ability.ID, out var existingAbility);
-            if (abilityExists)
-            {
-                existingAbility.CurrentLevel++;
-                existingAbility.UsesCharges = usesCharges;
-            }
-            else
-            {
-                AbilityManager.Instance.GivePlayerAbility(ability.ID);
-            }
-
-            
-            ShopManager.Instance.UpdateShopAbilities();
         }
     }
 
     public void Init(Ability ability, int level, bool usesCharges = false)
     {
         // Set data
-        this.ability = ability;
+        this.Ability = ability;
         levelToUpgrade = level;
-        this.usesCharges = usesCharges;
+        this.UsesCharges = usesCharges;
 
         // Set UI elements
         UpgradeImage.sprite = ability.Icon;
@@ -118,13 +101,6 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Sprite icon = ability.Icon;
-        string header;
-        if (isTool) header = ability.Name;
-        else if (levelToUpgrade > 0) header = $"{ability.Name} (Lvl. {levelToUpgrade} -> {levelToUpgrade + 1})";
-        else header = $"{ability.name} (Lvl. 1)";
-        string description = ability.AllLevels[levelToUpgrade].Description;
-
-         ShopManager.Instance.ShowTooltipInfo(ability, levelToUpgrade, true);
+         ShopManager.Instance.ShowTooltipInfo(Ability, levelToUpgrade, true);
     }
 }

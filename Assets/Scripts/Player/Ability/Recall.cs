@@ -59,7 +59,7 @@ public class Recall : Ability, IStatSource
 
             if (CurrentLevel >= 1)
             {
-                foreach (Ability ability in AbilityManager.Instance.PlayerAbilities.Values)
+                foreach (Ability ability in AbilityManager.Instance.GetAllAbilities())
                     ability.ModifyCooldown(-cooldownDecrease);
             }
             if (Vector3.Distance(PlayerMovement.transform.position, clone.transform.position) < 0.1f)

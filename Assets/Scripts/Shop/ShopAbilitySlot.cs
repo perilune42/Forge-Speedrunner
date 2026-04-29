@@ -3,14 +3,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class AbilitySlot : MonoBehaviour, IPointerDownHandler
+public class ShopAbilitySlot : MonoBehaviour, IPointerDownHandler
 {
     // Whoever wrote this code, talked shit on my code
     // That was really hurtful, whoever that was
+    // ^ I'M SO SORRY IF IT WAS ME IT WASN'T PERSONAL
     [SerializeField] string inputName; // jank because InputActionReference is bugged on our version of the InputSystem
     // If we ever update the packages, we can use InputActionReferences instead
     private InputAction inputAction;
     [SerializeField] public TMP_Text bindingText;
+    [SerializeField] public AbilitySlotID SlotID;
 
     private void Awake()
     {
@@ -39,14 +41,6 @@ public class AbilitySlot : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (ShopAbility.SelectedAbility != null)
-        {
-            // TODO - actually swap ability slots
-            // if self, return
-            // if other, swap
-            // if empty, move
-            Debug.Log("Swap Abilities!");
-            ShopAbility.SelectedAbility = null;
-        }
+        ShopManager.Instance.ClickAbilitySlot(this);
     }
 }

@@ -17,6 +17,13 @@ public class PlayerAnimator : Singleton<PlayerAnimator>
         {
             Util.SetLocalScaleX(gameObject, AbilityManager.Instance.GetAbility<WallLatch>().latchedDirection == Vector2.right ? 1 : -1);
         }
+        else if (playerMovement.SpecialState == SpecialState.WallLatch
+            || playerMovement.SpecialState == SpecialState.WallClimb
+            && playerMovement.Velocity.y == 0) {
+            // scuffed reversing fix
+            Util.SetLocalScaleX(gameObject, playerMovement.FacingDir == Vector2.left ? -1 : 1);
+
+        }
         else
         {
             Util.SetLocalScaleX(gameObject, playerMovement.FacingDir == Vector2.left ? 1 : -1);
@@ -31,11 +38,15 @@ public class PlayerAnimator : Singleton<PlayerAnimator>
         {
             anim.Play("PlayerDash");
         }
-        else if (playerMovement.SpecialState == SpecialState.WallClimb || playerMovement.SpecialState == SpecialState.LedgeClimb)
+        else if ((playerMovement.SpecialState == SpecialState.WallClimb 
+            || playerMovement.SpecialState == SpecialState.LedgeClimb)
+            && playerMovement.Velocity.y != 0)
         {
             anim.Play("PlayerClimb");
         }
-        else if (playerMovement.SpecialState == SpecialState.WallLatch)
+        else if (playerMovement.SpecialState == SpecialState.WallLatch
+            || playerMovement.SpecialState == SpecialState.WallClimb
+            || playerMovement.SpecialState == SpecialState.LedgeClimb)
         {
             anim.Play("PlayerHang");
         }

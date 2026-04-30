@@ -35,7 +35,7 @@ public class HideWhenPlayerBehind : MonoBehaviour
 
     void FixedUpdate()
     {
-
+        /*
         Vector2 playerScreenPos = cam.WorldToScreenPoint(player.position);
 
         
@@ -71,5 +71,6 @@ public class HideWhenPlayerBehind : MonoBehaviour
                 image.color = new Color(image.color.r, image.color.g, image.color.b, origAlpha[image]);
             }
         }
+        */
     }
 }

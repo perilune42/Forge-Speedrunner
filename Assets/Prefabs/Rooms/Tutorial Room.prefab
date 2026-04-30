@@ -328,7 +328,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Move towards purple climbable walls to ascend
+  m_text: Press W/S on climbable walls to climb up and down
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2f91637f850bbee47ac51e040ee40231, type: 2}
   m_sharedMaterial: {fileID: 2651591473766648675, guid: 2f91637f850bbee47ac51e040ee40231, type: 2}
@@ -778,7 +778,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Jump on drones while they are flashing green to regain your dash
+  m_text: Jump while near drones to gain a boost and regain your dash
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2f91637f850bbee47ac51e040ee40231, type: 2}
   m_sharedMaterial: {fileID: 2651591473766648675, guid: 2f91637f850bbee47ac51e040ee40231, type: 2}

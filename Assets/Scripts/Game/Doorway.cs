@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using static DoorwayType;
 
@@ -10,15 +11,19 @@ public enum DoorwayType
 
 public class Doorway : MonoBehaviour
 {
-    [HideInInspector] public Room enclosingRoom;
+    public Room enclosingRoom;
     public Passage passage;
     public DoorwayType Type;
 
     private bool suppressTransition = false;
 
+    private void OnValidate()
+    {
+    }
+
     private void Awake()
     {
-        enclosingRoom = GetComponentInParent<Room>();
+        if (enclosingRoom == null) enclosingRoom = GetComponentInParent<Room>();
     }
 
     public bool IsEntrance()
@@ -148,5 +153,26 @@ public class Doorway : MonoBehaviour
             indicator.transform.eulerAngles = new Vector3(0,0, Vector2.SignedAngle(Vector2.right, GetTransitionDirection()));
             indicator.transform.position = (Vector2)transform.position + -4 * GetTransitionDirection();
         }
+    }
+
+    public Vector2Int GetRoomOffset()
+    {
+        if (enclosingRoom.doorwaysLeft.Contains(this))
+        {
+            return new Vector2Int(0, GetIndex());
+        }
+        else if (enclosingRoom.doorwaysRight.Contains(this))
+        {
+            return new Vector2Int(enclosingRoom.size.x - 1, GetIndex());
+        }
+        else if (enclosingRoom.doorwaysUp.Contains(this))
+        {
+            return new Vector2Int(GetIndex(), enclosingRoom.size.y - 1);
+        }
+        else if (enclosingRoom.doorwaysDown.Contains(this))
+        {
+            return new Vector2Int(GetIndex(), 0);
+        }
+        return -Vector2Int.one;
     }
 }

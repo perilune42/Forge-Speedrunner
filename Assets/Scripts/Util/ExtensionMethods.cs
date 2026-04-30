@@ -37,7 +37,7 @@ public static class ExtensionMethods
         }
     }
 
-    public static List<T> Shuffled<T>(this IList<T> list)
+    public static List<T> Shuffled<T>(this IEnumerable<T> list)
     {
         var newList = new List<T>(list);
         var rng = new System.Random();

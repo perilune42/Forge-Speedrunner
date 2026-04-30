@@ -125,6 +125,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: 1x2 Sample
       objectReference: {fileID: 0}
+    - target: {fileID: 7211812201673711855, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7211812201673711855, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7682939128824420925, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Size.y
       value: 91

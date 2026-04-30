@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Room : MonoBehaviour
 {
@@ -56,6 +57,33 @@ public class Room : MonoBehaviour
         newEntity.transform.SetParent(entitiesContainer, true);
         Entities.Add(newEntity);
     }
+
+    public RoomBounds GetBounds()
+    {
+        var bounds = new RoomBounds();
+        bounds.min = gridPosition;
+        bounds.max = gridPosition + size;
+        return bounds;
+    }
+
+    public List<Doorway> GetAllDoorways()
+    {
+        List<Doorway> list = new List<Doorway>(doorwaysLeft);
+        list.AddRange(doorwaysRight);
+        list.AddRange(doorwaysUp);
+        list.AddRange(doorwaysDown);
+        return list;
+    }
+}
+
+public struct RoomBounds
+{
+    public Vector2Int min, max;
+    public bool Contains(Vector2Int pos)
+    {
+        return pos.x >= min.x && pos.x < max.x && pos.y >= min.y && pos.y < max.y;
+    }
+
 }
 
 #if UNITY_EDITOR
@@ -86,6 +114,16 @@ public class Room_Inspector : Editor
             }
             EditorUtility.SetDirty(room);
         }
+
+        if (GUILayout.Button("Assign Doorways"))
+        {
+            foreach (var door in room.GetComponentsInChildren<Doorway>())
+            {
+                door.enclosingRoom = room;
+                EditorUtility.SetDirty(room);
+            }
+        }
+        
     }
 }
 #endif

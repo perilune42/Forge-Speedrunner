@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 977158443261616737, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 977158443261616737, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_LocalPosition.z
@@ -47,6 +47,10 @@ PrefabInstance:
     - target: {fileID: 977158443261616737, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8971090619940998389, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Name
@@ -87,7 +91,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 977158443261616737, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 36
+      value: 36.5
       objectReference: {fileID: 0}
     - target: {fileID: 977158443261616737, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_LocalPosition.z
@@ -120,6 +124,10 @@ PrefabInstance:
     - target: {fileID: 977158443261616737, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8971090619940998389, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Name
@@ -156,7 +164,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1928248093444279697, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 128
+      value: 128.5
       objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: size.x

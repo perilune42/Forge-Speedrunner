@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   enclosingRoom: {fileID: 0}
   passage: {fileID: 0}
+  Type: 0
 --- !u!114 &5569747051238538922
 MonoBehaviour:
   m_ObjectHideFlags: 0

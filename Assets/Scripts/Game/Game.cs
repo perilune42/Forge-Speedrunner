@@ -22,7 +22,7 @@ public class Game : Singleton<Game> {
     public float RewardMultPerRound;
 
 
-    public MapGen Generator;
+    public MapGenerator Generator;
 
     [SerializeField] private RoomManager roomManagerRef;
     

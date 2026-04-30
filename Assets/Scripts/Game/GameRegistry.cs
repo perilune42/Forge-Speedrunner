@@ -8,9 +8,9 @@ public class GameRegistry : Singleton<GameRegistry>
     public Ability[] Abilities;
 
     // NOTE: make sure RoomPrefabs does not include StartRoom!
-    public GameObject[] RoomPrefabs;
-    public GameObject StartRoom;
-    public GameObject FinishRoom;
+    public Room[] RoomPrefabs;
+    public Room StartRoom;
+    public Room FinishRoom;
     public Chronoshift Chronoshift;
 
     public override void Awake()

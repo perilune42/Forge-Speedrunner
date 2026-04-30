@@ -15433,6 +15433,10 @@ PrefabInstance:
       propertyPath: Type
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 2839545975698212181}
     - target: {fileID: 5569747051238538922, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -16766,6 +16770,10 @@ PrefabInstance:
       propertyPath: Type
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 2839545975698212181}
     - target: {fileID: 8971090619940998389, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Name
       value: U0
@@ -16967,6 +16975,10 @@ PrefabInstance:
       propertyPath: Type
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 2839545975698212181}
     - target: {fileID: 8971090619940998389, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Name
       value: L0
@@ -17982,6 +17994,10 @@ PrefabInstance:
       propertyPath: Type
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 2839545975698212181}
     - target: {fileID: 8971090619940998389, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Name
       value: D0

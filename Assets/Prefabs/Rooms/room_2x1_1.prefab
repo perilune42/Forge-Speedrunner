@@ -6020,6 +6020,10 @@ PrefabInstance:
       propertyPath: Type
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 9005955553080816133}
     - target: {fileID: 8971090619940998389, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Name
       value: D1
@@ -8847,6 +8851,10 @@ PrefabInstance:
       propertyPath: 'doorwaysDown.Array.data[1]'
       value: 
       objectReference: {fileID: 7660793350470567763}
+    - target: {fileID: 6596935678007720696, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 9005955553080816133}
     - target: {fileID: 6612986043427267266, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Name
       value: room_2x1_1
@@ -8855,6 +8863,10 @@ PrefabInstance:
       propertyPath: Type
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6731073641933293876, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 9005955553080816133}
     - target: {fileID: 7227156499082401750, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Size.x
       value: 164
@@ -66247,6 +66259,10 @@ PrefabInstance:
       propertyPath: m_Tiles.Array.data[41].second.m_TileObjectToInstantiateIndex
       value: 65535
       objectReference: {fileID: 0}
+    - target: {fileID: 8723151164228887288, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 9005955553080816133}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 5930879309121374942, guid: dccce3af91cdb1947af866995adc7168, type: 3}
@@ -66509,6 +66525,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3085160965763011002, guid: dccce3af91cdb1947af866995adc7168, type: 3}
   m_PrefabInstance: {fileID: 6598772742944159568}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9005955553080816133 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+  m_PrefabInstance: {fileID: 6598772742944159568}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e3f8d4c371e24be8ddfc44c0c6b434, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Room
 --- !u!1001 &6963094204496424877
 PrefabInstance:
   m_ObjectHideFlags: 0

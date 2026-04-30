@@ -1422,6 +1422,10 @@ PrefabInstance:
       propertyPath: Type
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5342536695170344644, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 1544059992878153385}
     - target: {fileID: 8971090619940998389, guid: 2fb6f12482ca442a29e8b7d90d8bed51, type: 3}
       propertyPath: m_Name
       value: D1
@@ -3604,6 +3608,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8596897228344744, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 1544059992878153385}
     - target: {fileID: 24073935531169170, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
       propertyPath: m_Name
       value: room_2x1_0
@@ -3612,6 +3620,10 @@ PrefabInstance:
       propertyPath: Type
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 502748434484870756, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 1544059992878153385}
     - target: {fileID: 2573734050967329908, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
       propertyPath: m_Size.x
       value: 232
@@ -53225,6 +53237,17 @@ PrefabInstance:
       addedObject: {fileID: 5812477657247417762}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
+--- !u!114 &1544059992878153385 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9005955553080816133, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
+  m_PrefabInstance: {fileID: 7608284829145255084}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e3f8d4c371e24be8ddfc44c0c6b434, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Room
 --- !u!4 &1789393505466034758 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8161434382851368682, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}

@@ -12,7 +12,7 @@ public class Grid
 
 public enum ConnType
 {
-    SameRoom, Entrance, Exit, Both, Connected, Closed
+    SameRoom, Entrance, Exit, Both, Closed
 }
 
 public class Connection

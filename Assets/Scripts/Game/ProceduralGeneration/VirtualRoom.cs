@@ -8,6 +8,7 @@ public class VirtualRoom
     public Room roomBase;
     public Vector2Int gridPosition;
     public Vector2Int size;
+    public List<Cell> occupiedCells = new();
     public List<Connection> externalConnections = new();
 
     public RoomBounds GetBounds()

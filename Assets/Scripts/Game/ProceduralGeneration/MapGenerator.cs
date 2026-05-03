@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Content;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class MapGenerator : MonoBehaviour
 {
     [SerializeField] Passage passagePrefab;
     public Grid Grid = new();
+
+    [SerializeField] List<Room> standardRoomPrefabs;
+    [SerializeField] Room startRoomPrefab, finishRoomPrefab;
+    [SerializeField] Room interchangePrefab;
 
     private List<VirtualRoom> plannedRooms = new();
     private List<Room> createdRooms = new();
@@ -16,7 +20,7 @@ public class MapGenerator : MonoBehaviour
 
     public (List<Room>, List<Passage>) CreateMap()
     { 
-        roomPool = GameRegistry.Instance.RoomPrefabs.ToList();
+        roomPool = standardRoomPrefabs.ToList();
 
         plannedRooms = new();
         createdRooms = new();
@@ -26,7 +30,30 @@ public class MapGenerator : MonoBehaviour
         {
             roomPool[i].RoomID = i;
         }
-        CreateMainPath(roomPool, 10);
+
+        VirtualRoom startRoom = PlaceRoomWithOrigin(startRoomPrefab, new Vector2Int(0, 0), new());
+        var rooms = CreatePath(roomPool, startRoom, 2);
+        VirtualRoom interchange1 = AttachRandomRoom(rooms[^1], new List<Room>() { interchangePrefab });
+        rooms = CreatePath(roomPool, interchange1, 2);
+        VirtualRoom interchange2 = AttachRandomRoom(rooms[^1], new List<Room>() { interchangePrefab });
+        CreateEnding(roomPool, interchange2);
+
+        List<Room> savedPool = new(roomPool);
+
+        int bridgeAttempts = 50;
+        for (int i = 0; i < bridgeAttempts; i++)
+        {
+            if (TryBridge(roomPool, interchange1, interchange2, 5))
+            {
+                break;
+            }
+            else
+            {
+                roomPool = new(savedPool);
+            }
+        }
+
+        
 
         BuildRooms();
         return (createdRooms, createdPassages);
@@ -49,7 +76,7 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
-    VirtualRoom PlaceRoomWithOrigin(Room roomPrefab, Vector2Int origin)
+    VirtualRoom PlaceRoomWithOrigin(Room roomPrefab, Vector2Int origin, List<Connection> allowedConnections)
     {
         RoomBounds bounds = roomPrefab.GetBounds();
         VirtualRoom newRoom = new VirtualRoom(roomPrefab);
@@ -71,6 +98,7 @@ public class MapGenerator : MonoBehaviour
                 newCell.SetConnections(new Vector2Int(i, j));
 
                 Grid.Cells[cellPos] = newCell;
+                newRoom.occupiedCells.Add(newCell);
             }
         }
         // pass 2: mark cell connections
@@ -87,11 +115,9 @@ public class MapGenerator : MonoBehaviour
                     {
                         if (neighbor.OwnedRoom != newRoom)
                         {
-                            // set all connections if able
-                            if (Connection.CanConnect(cell.Connections[dir].type, neighbor.Connections[-dir].type)) {
-                                cell.Connections[dir].type = ConnType.Connected;
+                            if (Connection.CanConnect(cell.Connections[dir].type, neighbor.Connections[-dir].type)
+                                && allowedConnections.Contains(neighbor.Connections[-dir])) {
                                 cell.Connections[dir].attachedConn = neighbor.Connections[-dir];
-                                neighbor.Connections[-dir].type = ConnType.Connected;
                                 neighbor.Connections[-dir].attachedConn = cell.Connections[dir];
                             }
                         }
@@ -113,17 +139,58 @@ public class MapGenerator : MonoBehaviour
         if (CanPlaceRoomWithOrigin(roomPrefab, origin))
         {
             
-            return PlaceRoomWithOrigin(roomPrefab, origin); ;
+            return PlaceRoomWithOrigin(roomPrefab, origin, new() { attachPoint }); ;
         }
         return null;
     }
 
-    //VirtualRoom TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Doorway attachPoint)
-    //{
-    //    Connection attachPointConn = Grid.Cells[attachPoint.GetRoomOffset() + attachPoint.enclosingRoom.gridPosition]
-    //                                    .Connections[attachPoint.GetTransitionDirection().ToV2Int()];
-    //    return TryPlaceRoomWithDoorway(roomPrefab, door, attachPointConn);
-    //}
+    bool TryBridge(List<Room> pool, VirtualRoom start,  VirtualRoom end, int maxLength)
+    {
+        List<VirtualRoom> createdRooms = new();
+        VirtualRoom currEnd = start;
+        for (int i = 0; i < maxLength; i++)
+        {
+            var createdRoom = AttachRandomRoom(currEnd, pool);
+            if (createdRoom != null)
+            {
+                currEnd = createdRoom;
+                RemoveFromPool(pool, createdRoom);
+                createdRooms.Add(createdRoom);
+                if (TryConnectRooms(createdRoom, end) != null)
+                {
+                    Debug.Log("Bridge successful!");
+                    return true;
+                }
+            }
+        }
+        Debug.Log("Bridge failed");
+        foreach (var room in createdRooms)
+        {
+            RemoveRoom(room);
+        }
+
+        return false;
+    }
+
+    Connection TryConnectRooms(VirtualRoom room1, VirtualRoom room2)
+    {
+        foreach (var conn in room1.externalConnections)
+        {
+            if (conn.attachedConn != null) continue;
+            Cell cell = conn.cellRef;
+            Cell neighbor;
+            if (Grid.Cells.TryGetValue(cell.Position + conn.direction, out neighbor)
+                && neighbor.OwnedRoom == room2
+                && Connection.CanConnect(conn.type, neighbor.Connections[-conn.direction].type))
+            {
+                Connection otherConn = neighbor.Connections[-conn.direction];
+                conn.attachedConn = otherConn;
+                otherConn.attachedConn = conn;
+                return conn;
+            }
+        }
+        return null;
+    }
 
 
     VirtualRoom PlaceRoomRandomly(IEnumerable<Room> pool = null)
@@ -150,25 +217,31 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    void CreateMainPath(List<Room> pool, int numRooms)
+    List<VirtualRoom> CreatePath(List<Room> pool, VirtualRoom startPoint, int numRooms)
     {
-        VirtualRoom currentEnd = PlaceRoomWithOrigin(GameRegistry.Instance.StartRoom, new Vector2Int(0, 0));
+        List<VirtualRoom> roomsAdded = new List<VirtualRoom>();
+        VirtualRoom currentEnd = startPoint;
         VirtualRoom createdRoom = null;
 
-        for (int i = 0; i < numRooms - 3; i++)
+        for (int i = 0; i < numRooms; i++)
         {
             createdRoom = AttachRandomRoom(currentEnd, pool);
             if (createdRoom != null)
             {
                 currentEnd = createdRoom;
+                roomsAdded.Add(createdRoom);
                 RemoveFromPool(pool, createdRoom);
             }
         }
+        return roomsAdded;
+    }
 
+    void CreateEnding(List<Room> pool, VirtualRoom startPoint)
+    {
         List<Room> preFinalPool = pool.Where(r => r.doorwaysRight.Count(d => d != null) > 0).ToList();
-        VirtualRoom preFinal = AttachRandomRoom(currentEnd, preFinalPool);
+        VirtualRoom preFinal = AttachRandomRoom(startPoint, preFinalPool);
         RemoveFromPool(pool, preFinal);
-        List<Room> finalPool = new() { GameRegistry.Instance.FinishRoom };
+        List<Room> finalPool = new() { finishRoomPrefab };
         VirtualRoom final = AttachRandomRoom(preFinal, finalPool);
     }
 
@@ -223,6 +296,23 @@ public class MapGenerator : MonoBehaviour
         pool.Remove(pool.First(r => r.RoomID == toRemove.RoomID));
     }
 
+    void RemoveRoom(VirtualRoom room)
+    {
+        plannedRooms.Remove(room);
+        foreach (Cell cell in room.occupiedCells)
+        {
+            Grid.Cells.Remove(cell.Position);
+        }
+        foreach (Connection conn in room.externalConnections)
+        {
+            if (conn.attachedConn != null)
+            {
+                conn.attachedConn.attachedConn = null;
+            }
+        }
+    }
+
+
     void BuildRooms()
     {
         Dictionary<VirtualRoom, Room> roomMap = new();
@@ -239,7 +329,7 @@ public class MapGenerator : MonoBehaviour
             {
                 if (passageAttachments.ContainsKey(doorway)) continue;
                 Connection conn = Grid.Cells[room.gridPosition + doorway.GetRoomOffset()].Connections[doorway.GetTransitionDirection().ToV2Int()];
-                if (conn.type == ConnType.Connected)
+                if (conn.attachedConn != null)
                 {
                     Room connectedRoom = roomMap[conn.attachedConn.cellRef.OwnedRoom];
                     Doorway matchedDoorway = connectedRoom.GetAllDoorways()

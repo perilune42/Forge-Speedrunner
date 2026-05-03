@@ -52,4 +52,9 @@ public static class ExtensionMethods
         }
         return newList;
     }
+
+    public static Vector2Int ToV2Int(this Vector2 v)
+    {
+        return new Vector2Int(Mathf.FloorToInt(v.x), Mathf.FloorToInt(v.y));
+    }
 }

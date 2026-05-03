@@ -8820,6 +8820,10 @@ PrefabInstance:
       value: 128.5
       objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: RoomID
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: size.x
       value: 2
       objectReference: {fileID: 0}

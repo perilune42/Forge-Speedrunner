@@ -16335,6 +16335,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6991975626005184481, guid: 5ae00ec99d188f842a24cf2b78199604, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7008569696658352091, guid: 5ae00ec99d188f842a24cf2b78199604, type: 3}
       propertyPath: m_Name
       value: Finish Room

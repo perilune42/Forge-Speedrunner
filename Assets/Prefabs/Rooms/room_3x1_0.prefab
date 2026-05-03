@@ -77127,6 +77127,10 @@ PrefabInstance:
       value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 9005955553080816133, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
+      propertyPath: RoomID
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 9005955553080816133, guid: 776d381d21a36004b8e138d70525bd9d, type: 3}
       propertyPath: gridPosition.x
       value: -5
       objectReference: {fileID: 0}

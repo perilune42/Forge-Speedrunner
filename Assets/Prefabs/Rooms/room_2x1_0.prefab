@@ -53045,6 +53045,10 @@ PrefabInstance:
       value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9005955553080816133, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
+      propertyPath: RoomID
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 9005955553080816133, guid: 9f7bd21d945fafc4ea88f7af03267fdf, type: 3}
       propertyPath: gridPosition.y
       value: -3
       objectReference: {fileID: 0}

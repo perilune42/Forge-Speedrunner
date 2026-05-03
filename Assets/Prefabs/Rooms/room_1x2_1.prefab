@@ -2218,6 +2218,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1728105385210255962}
     - target: {fileID: 4536922741866191188, guid: e401c24f40cf29b408ebf61f69a14f0c, type: 3}
+      propertyPath: RoomID
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536922741866191188, guid: e401c24f40cf29b408ebf61f69a14f0c, type: 3}
       propertyPath: gridPosition.x
       value: 4
       objectReference: {fileID: 0}

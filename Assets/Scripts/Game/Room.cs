@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 
 public class Room : MonoBehaviour
 {
+    [HideInInspector] public int RoomID;
     public Vector2Int gridPosition;
     public Vector2Int size;
     public List<Doorway> doorwaysUp;
@@ -72,8 +73,9 @@ public class Room : MonoBehaviour
         list.AddRange(doorwaysRight);
         list.AddRange(doorwaysUp);
         list.AddRange(doorwaysDown);
-        return list;
+        return list.Where(d => d != null).ToList();
     }
+
 }
 
 public struct RoomBounds

@@ -280,6 +280,10 @@ PrefabInstance:
       propertyPath: 'doorwaysRight.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6596935678007720696, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: enclosingRoom
+      value: 
+      objectReference: {fileID: 2156488374747889740}
     - target: {fileID: 6612986043427267266, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: m_Name
       value: Finish Room
@@ -22843,6 +22847,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1445276472381158451}
   m_SourcePrefab: {fileID: 100100000, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+--- !u!114 &2156488374747889740 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+  m_PrefabInstance: {fileID: 4216911614373938457}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7008569696658352091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e3f8d4c371e24be8ddfc44c0c6b434, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Room
 --- !u!1 &7008569696658352091 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6612986043427267266, guid: dccce3af91cdb1947af866995adc7168, type: 3}

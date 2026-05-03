@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -8,19 +9,21 @@ public class MapGenerator : MonoBehaviour
 
     private List<Room> createdRooms = new();
     private List<Passage> createdPassages = new();
+
+    private List<Room> roomPool;
+
     public (List<Room>, List<Passage>) CreateMap()
-    {
+    { 
+        roomPool = GameRegistry.Instance.RoomPrefabs.ToList();
+
         createdRooms = new();
         createdPassages = new();
 
-        PlaceRoomWithOrigin(GameRegistry.Instance.StartRoom, new Vector2Int(0, 0));
-
-        const int numRooms = 5;
-
-        for (int i = 0; i < numRooms; i++)
+        for (int i = 0; i < roomPool.Count(); i++)
         {
-            PlaceRoomRandomly();
+            roomPool[i].RoomID = i;
         }
+        CreateMainPath(roomPool, 10);
 
         return (createdRooms, createdPassages);
     }
@@ -42,7 +45,7 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
-    void PlaceRoomWithOrigin(Room roomPrefab, Vector2Int origin)
+    Room PlaceRoomWithOrigin(Room roomPrefab, Vector2Int origin)
     {
         RoomBounds bounds = roomPrefab.GetBounds();
         var newRoom = Instantiate(roomPrefab);
@@ -56,7 +59,7 @@ public class MapGenerator : MonoBehaviour
                 if (Grid.Cells.ContainsKey(cellPos))
                 {
                     Debug.LogError("Room Overlap");
-                    return;
+                    return null;
                 }
                 Cell newCell = new Cell();
                 newCell.Position = cellPos;
@@ -97,24 +100,34 @@ public class MapGenerator : MonoBehaviour
             }
         }
         createdRooms.Add(newRoom);
+        return newRoom;
     }
 
-    bool TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Connection attachPoint)
+    Room TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Connection attachPoint)
     {
         // attach dir = which way the existing doorway (attachPoint) leads
-        if (!attachPoint.CanConnectToDoor(door)) return false;
+        if (!attachPoint.CanConnectToDoor(door)) return null ;
         Vector2Int origin = (attachPoint.cellRef.Position + attachPoint.direction) - door.GetRoomOffset();
         if (CanPlaceRoomWithOrigin(roomPrefab, origin))
         {
-            PlaceRoomWithOrigin(roomPrefab, origin);
-            return true;
+            
+            return PlaceRoomWithOrigin(roomPrefab, origin); ;
         }
-        return false;
+        return null;
     }
 
-    Room PlaceRoomRandomly()
+    Room TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Doorway attachPoint)
     {
-        foreach (Room roomCandidate in GameRegistry.Instance.RoomPrefabs.Shuffled())
+        Connection attachPointConn = Grid.Cells[attachPoint.GetRoomOffset() + attachPoint.enclosingRoom.gridPosition]
+                                        .Connections[attachPoint.GetTransitionDirection().ToV2Int()];
+        return TryPlaceRoomWithDoorway(roomPrefab, door, attachPointConn);
+    }
+
+
+    Room PlaceRoomRandomly(IEnumerable<Room> pool = null)
+    {
+        if (pool == null) pool = roomPool;
+        foreach (Room roomCandidate in pool.Shuffled())
         {
             foreach (Cell cell in Grid.Cells.Values.Shuffled())
             {
@@ -122,9 +135,10 @@ public class MapGenerator : MonoBehaviour
                 {
                     foreach (Doorway door in roomCandidate.GetAllDoorways().Shuffled())
                     {
-                        if (TryPlaceRoomWithDoorway(roomCandidate, door, conn))
+                        Room createdRoom = TryPlaceRoomWithDoorway(roomCandidate, door, conn);
+                        if (createdRoom != null)
                         {
-                            return createdRooms[^1];
+                            return createdRoom;
                         }
                     }
                 }
@@ -132,6 +146,79 @@ public class MapGenerator : MonoBehaviour
         }
         Debug.LogError("failed to place room");
         return null;
+    }
+
+    void CreateMainPath(List<Room> pool, int numRooms)
+    {
+        Room currentEnd = PlaceRoomWithOrigin(GameRegistry.Instance.StartRoom, new Vector2Int(0, 0));
+        Room createdRoom = null;
+
+        for (int i = 0; i < numRooms - 3; i++)
+        {
+            createdRoom = AttachRandomRoom(currentEnd, pool);
+            if (createdRoom != null)
+            {
+                currentEnd = createdRoom;
+                RemoveFromPool(pool, createdRoom);
+            }
+        }
+
+        List<Room> preFinalPool = pool.Where(r => r.doorwaysRight.Count(d => d != null) > 0).ToList();
+        Room preFinal = AttachRandomRoom(currentEnd, preFinalPool);
+        RemoveFromPool(pool, preFinal);
+        List<Room> finalPool = new() { GameRegistry.Instance.FinishRoom };
+        Room final = AttachRandomRoom(preFinal, finalPool);
+    }
+
+    // attach a random room to the specified room at a random doorway
+    Room AttachRandomRoom(Room room, IEnumerable<Room> pool = null)
+    {
+        if (pool == null) pool = roomPool;
+        Room createdRoom;
+
+        foreach (Room roomCandidate in pool.Shuffled())
+        {
+            foreach (Doorway fromDoorway in room.GetAllDoorways()
+                .Where(d => d.Type == DoorwayType.EXIT || d.Type == DoorwayType.BOTH).Shuffled())
+            {
+                foreach (Doorway toDoorway in roomCandidate.GetAllDoorways()
+                    .Where(d => d.Type == DoorwayType.ENTRANCE || d.Type == DoorwayType.BOTH).Shuffled())
+                {
+                    createdRoom = TryPlaceRoomWithDoorway(roomCandidate, toDoorway, fromDoorway);
+                    if (createdRoom != null)
+                    {
+                        return createdRoom;
+                    }
+                }
+            }
+        }
+        Debug.LogError("Error attaching random room");
+        return null;
+    }
+
+    // attach a random room to the specified room at a specified doorway
+    Room AttachRandomRoom(Room room, Doorway targetDoorway, IEnumerable<Room> pool = null)
+    {
+        if (pool == null) pool = roomPool;
+        Room createdRoom;
+        foreach (Room roomCandidate in pool.Shuffled())
+        {
+            foreach (Doorway toDoorway in roomCandidate.GetAllDoorways()
+                .Where(d => d.Type == DoorwayType.ENTRANCE || d.Type == DoorwayType.BOTH).Shuffled())
+            {
+                createdRoom = TryPlaceRoomWithDoorway(roomCandidate, toDoorway, targetDoorway);
+                if (createdRoom != null)
+                {
+                    return createdRoom;
+                }
+            }
+        }
+        return null;
+    }
+    
+    void RemoveFromPool(List<Room> pool, Room toRemove)
+    {
+        pool.Remove(pool.First(r => r.RoomID == toRemove.RoomID));
     }
 }
 
@@ -185,11 +272,6 @@ public class Connection
 
 public class Cell
 {
-
-
-
-
-
     public Room OwnedRoom;
     public Vector2Int Position;
     public Dictionary<Vector2Int, Connection> Connections = new();

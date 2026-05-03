@@ -2813,6 +2813,10 @@ PrefabInstance:
       value: room_1x1_6
       objectReference: {fileID: 0}
     - target: {fileID: 7211812201673711855, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: Type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7211812201673711855, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: enclosingRoom
       value: 
       objectReference: {fileID: 4694478281957723329}

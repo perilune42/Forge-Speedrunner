@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class MapGenerator : MonoBehaviour
 {
     [SerializeField] Passage passagePrefab;
     public Grid Grid = new();
 
+    private List<VirtualRoom> plannedRooms = new();
     private List<Room> createdRooms = new();
     private List<Passage> createdPassages = new();
 
@@ -16,6 +18,7 @@ public class MapGenerator : MonoBehaviour
     { 
         roomPool = GameRegistry.Instance.RoomPrefabs.ToList();
 
+        plannedRooms = new();
         createdRooms = new();
         createdPassages = new();
 
@@ -25,6 +28,7 @@ public class MapGenerator : MonoBehaviour
         }
         CreateMainPath(roomPool, 10);
 
+        BuildRooms();
         return (createdRooms, createdPassages);
     }
 
@@ -45,10 +49,10 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
-    Room PlaceRoomWithOrigin(Room roomPrefab, Vector2Int origin)
+    VirtualRoom PlaceRoomWithOrigin(Room roomPrefab, Vector2Int origin)
     {
         RoomBounds bounds = roomPrefab.GetBounds();
-        var newRoom = Instantiate(roomPrefab);
+        VirtualRoom newRoom = new VirtualRoom(roomPrefab);
         newRoom.gridPosition = origin;
         // pass 1: place all cells
         for (int i = 0; i < roomPrefab.size.x; i++)
@@ -86,11 +90,9 @@ public class MapGenerator : MonoBehaviour
                             // set all connections if able
                             if (Connection.CanConnect(cell.Connections[dir].type, neighbor.Connections[-dir].type)) {
                                 cell.Connections[dir].type = ConnType.Connected;
+                                cell.Connections[dir].attachedConn = neighbor.Connections[-dir];
                                 neighbor.Connections[-dir].type = ConnType.Connected;
-                                Passage newPassage = Instantiate(passagePrefab);
-                                newPassage.door1 = cell.Connections[dir].doorway;
-                                newPassage.door2 = neighbor.Connections[-dir].doorway;
-                                createdPassages.Add(newPassage);
+                                neighbor.Connections[-dir].attachedConn = cell.Connections[dir];
                             }
                         }
 
@@ -99,11 +101,11 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        createdRooms.Add(newRoom);
+        plannedRooms.Add(newRoom);
         return newRoom;
     }
 
-    Room TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Connection attachPoint)
+    VirtualRoom TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Connection attachPoint)
     {
         // attach dir = which way the existing doorway (attachPoint) leads
         if (!attachPoint.CanConnectToDoor(door)) return null ;
@@ -116,15 +118,15 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    Room TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Doorway attachPoint)
-    {
-        Connection attachPointConn = Grid.Cells[attachPoint.GetRoomOffset() + attachPoint.enclosingRoom.gridPosition]
-                                        .Connections[attachPoint.GetTransitionDirection().ToV2Int()];
-        return TryPlaceRoomWithDoorway(roomPrefab, door, attachPointConn);
-    }
+    //VirtualRoom TryPlaceRoomWithDoorway(Room roomPrefab, Doorway door, Doorway attachPoint)
+    //{
+    //    Connection attachPointConn = Grid.Cells[attachPoint.GetRoomOffset() + attachPoint.enclosingRoom.gridPosition]
+    //                                    .Connections[attachPoint.GetTransitionDirection().ToV2Int()];
+    //    return TryPlaceRoomWithDoorway(roomPrefab, door, attachPointConn);
+    //}
 
 
-    Room PlaceRoomRandomly(IEnumerable<Room> pool = null)
+    VirtualRoom PlaceRoomRandomly(IEnumerable<Room> pool = null)
     {
         if (pool == null) pool = roomPool;
         foreach (Room roomCandidate in pool.Shuffled())
@@ -135,7 +137,7 @@ public class MapGenerator : MonoBehaviour
                 {
                     foreach (Doorway door in roomCandidate.GetAllDoorways().Shuffled())
                     {
-                        Room createdRoom = TryPlaceRoomWithDoorway(roomCandidate, door, conn);
+                        VirtualRoom createdRoom = TryPlaceRoomWithDoorway(roomCandidate, door, conn);
                         if (createdRoom != null)
                         {
                             return createdRoom;
@@ -150,8 +152,8 @@ public class MapGenerator : MonoBehaviour
 
     void CreateMainPath(List<Room> pool, int numRooms)
     {
-        Room currentEnd = PlaceRoomWithOrigin(GameRegistry.Instance.StartRoom, new Vector2Int(0, 0));
-        Room createdRoom = null;
+        VirtualRoom currentEnd = PlaceRoomWithOrigin(GameRegistry.Instance.StartRoom, new Vector2Int(0, 0));
+        VirtualRoom createdRoom = null;
 
         for (int i = 0; i < numRooms - 3; i++)
         {
@@ -164,27 +166,27 @@ public class MapGenerator : MonoBehaviour
         }
 
         List<Room> preFinalPool = pool.Where(r => r.doorwaysRight.Count(d => d != null) > 0).ToList();
-        Room preFinal = AttachRandomRoom(currentEnd, preFinalPool);
+        VirtualRoom preFinal = AttachRandomRoom(currentEnd, preFinalPool);
         RemoveFromPool(pool, preFinal);
         List<Room> finalPool = new() { GameRegistry.Instance.FinishRoom };
-        Room final = AttachRandomRoom(preFinal, finalPool);
+        VirtualRoom final = AttachRandomRoom(preFinal, finalPool);
     }
 
     // attach a random room to the specified room at a random doorway
-    Room AttachRandomRoom(Room room, IEnumerable<Room> pool = null)
+    VirtualRoom AttachRandomRoom(VirtualRoom room, IEnumerable<Room> pool = null)
     {
         if (pool == null) pool = roomPool;
-        Room createdRoom;
+        VirtualRoom createdRoom;
 
         foreach (Room roomCandidate in pool.Shuffled())
         {
-            foreach (Doorway fromDoorway in room.GetAllDoorways()
-                .Where(d => d.Type == DoorwayType.EXIT || d.Type == DoorwayType.BOTH).Shuffled())
+            foreach (Connection fromConn in room.externalConnections
+                .Where(c => c.type == ConnType.Exit || c.type == ConnType.Both).Shuffled())
             {
                 foreach (Doorway toDoorway in roomCandidate.GetAllDoorways()
                     .Where(d => d.Type == DoorwayType.ENTRANCE || d.Type == DoorwayType.BOTH).Shuffled())
                 {
-                    createdRoom = TryPlaceRoomWithDoorway(roomCandidate, toDoorway, fromDoorway);
+                    createdRoom = TryPlaceRoomWithDoorway(roomCandidate, toDoorway, fromConn);
                     if (createdRoom != null)
                     {
                         return createdRoom;
@@ -196,17 +198,17 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    // attach a random room to the specified room at a specified doorway
-    Room AttachRandomRoom(Room room, Doorway targetDoorway, IEnumerable<Room> pool = null)
+    // attach a random room to the specified room at a specified connection
+    VirtualRoom AttachRandomRoom(VirtualRoom room, Connection targetConn, IEnumerable<Room> pool = null)
     {
         if (pool == null) pool = roomPool;
-        Room createdRoom;
+        VirtualRoom createdRoom;
         foreach (Room roomCandidate in pool.Shuffled())
         {
             foreach (Doorway toDoorway in roomCandidate.GetAllDoorways()
                 .Where(d => d.Type == DoorwayType.ENTRANCE || d.Type == DoorwayType.BOTH).Shuffled())
             {
-                createdRoom = TryPlaceRoomWithDoorway(roomCandidate, toDoorway, targetDoorway);
+                createdRoom = TryPlaceRoomWithDoorway(roomCandidate, toDoorway, targetConn);
                 if (createdRoom != null)
                 {
                     return createdRoom;
@@ -216,130 +218,49 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
     
-    void RemoveFromPool(List<Room> pool, Room toRemove)
+    void RemoveFromPool(List<Room> pool, VirtualRoom toRemove)
     {
         pool.Remove(pool.First(r => r.RoomID == toRemove.RoomID));
     }
-}
 
-public class Grid
-{
-    public Dictionary<Vector2Int, Cell> Cells = new();
-    public static readonly List<Vector2Int> Directions = new()
+    void BuildRooms()
     {
-        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
-    };
-}
-
-public enum ConnType
-{
-    SameRoom, Entrance, Exit, Both, Connected, Closed
-}
-
-public class Connection
-{
-    public ConnType type;
-    public Doorway doorway;
-    public Vector2Int direction;
-    public Cell cellRef;
-    public static ConnType FromDoorway(Doorway doorway)
-    {
-        return doorway.Type switch
+        Dictionary<VirtualRoom, Room> roomMap = new();
+        Dictionary<Doorway, Doorway> passageAttachments = new();
+        foreach (VirtualRoom vRoom in plannedRooms)
         {
-            DoorwayType.ENTRANCE => ConnType.Entrance,
-            DoorwayType.EXIT => ConnType.Exit,
-            DoorwayType.BOTH => ConnType.Both,
-            _ => ConnType.Closed
-        };
-    }
+            var newRoom = vRoom.Instantiate();
+            createdRooms.Add(newRoom);
+            roomMap[vRoom] = newRoom;
+        }
+        foreach (Room room in createdRooms)
+        {
+            foreach (Doorway doorway in room.GetAllDoorways())
+            {
+                if (passageAttachments.ContainsKey(doorway)) continue;
+                Connection conn = Grid.Cells[room.gridPosition + doorway.GetRoomOffset()].Connections[doorway.GetTransitionDirection().ToV2Int()];
+                if (conn.type == ConnType.Connected)
+                {
+                    Room connectedRoom = roomMap[conn.attachedConn.cellRef.OwnedRoom];
+                    Doorway matchedDoorway = connectedRoom.GetAllDoorways()
+                                                .First(d => d.GetRoomOffset() + connectedRoom.gridPosition == conn.attachedConn.cellRef.Position
+                                                && d.GetTransitionDirection().ToV2Int() == conn.attachedConn.direction);
+                    passageAttachments[matchedDoorway] = doorway;                    
+                }
+            }
+        }
+        foreach (var kvp in passageAttachments)
+        {
+            Passage newPassage = Instantiate(passagePrefab);
+            newPassage.door1 = kvp.Key;
+            newPassage.door2 = kvp.Value;
+            createdPassages.Add(newPassage);
+        }
 
-
-    public static bool CanConnect(ConnType conn1, ConnType conn2, bool recurse = true)
-    {
-        return (conn1 == ConnType.Entrance && conn2 == ConnType.Exit)
-            || (conn1 == ConnType.Both && conn2 == ConnType.Entrance)
-            || (conn1 == ConnType.Both && conn2 == ConnType.Exit)
-            || (conn1 == ConnType.Both && conn2 == ConnType.Both)
-            || (recurse && CanConnect(conn2, conn1, false));
-    }
-
-    public bool CanConnectToDoor(Doorway door)
-    {
-        if (door == null) return false;
-        return (Vector2)direction == -door.GetTransitionDirection() && CanConnect(type, FromDoorway(door));
     }
 }
 
-public class Cell
-{
-    public Room OwnedRoom;
-    public Vector2Int Position;
-    public Dictionary<Vector2Int, Connection> Connections = new();
+   
 
-
-    // only sets connections in isolation, ignores neighbors at this stage
-    public void SetConnections(Vector2Int roomOffset)
-    {
-        // default to same room everything first
-        foreach (var dir in Grid.Directions)
-        {
-            var conn = new Connection();
-            conn.type = ConnType.SameRoom;
-            conn.direction = dir;
-            conn.doorway = null;
-            conn.cellRef = this;
-            Connections[dir] = conn;
-        }
-        if (roomOffset.x == 0)
-        {
-            if (OwnedRoom.doorwaysLeft[roomOffset.y] != null)
-            {
-                Connections[Vector2Int.left].type = Connection.FromDoorway(OwnedRoom.doorwaysLeft[roomOffset.y]);
-                Connections[Vector2Int.left].doorway = OwnedRoom.doorwaysLeft[roomOffset.y];
-            }
-            else
-            {
-                Connections[Vector2Int.left].type = ConnType.Closed;
-            }
-        }
-        if (roomOffset.x == OwnedRoom.size.x - 1)
-        {
-            if (OwnedRoom.doorwaysRight[roomOffset.y] != null)
-            {
-                Connections[Vector2Int.right].type = Connection.FromDoorway(OwnedRoom.doorwaysRight[roomOffset.y]);
-                Connections[Vector2Int.right].doorway = OwnedRoom.doorwaysRight[roomOffset.y];
-            }
-            else
-            {
-                Connections[Vector2Int.right].type = ConnType.Closed;
-            }
-        }
-        if (roomOffset.y == 0)
-        {
-            if (OwnedRoom.doorwaysDown[roomOffset.x] != null)
-            {
-                Connections[Vector2Int.down].type = Connection.FromDoorway(OwnedRoom.doorwaysDown[roomOffset.x]);
-                Connections[Vector2Int.down].doorway = OwnedRoom.doorwaysDown[roomOffset.x];
-            }
-            else
-            {
-                Connections[Vector2Int.down].type = ConnType.Closed;
-            }
-        }
-        if (roomOffset.y == OwnedRoom.size.y - 1)
-        {
-            if (OwnedRoom.doorwaysUp[roomOffset.x] != null)
-            {
-                Connections[Vector2Int.up].type = Connection.FromDoorway(OwnedRoom.doorwaysUp[roomOffset.x]);
-                Connections[Vector2Int.up].doorway = OwnedRoom.doorwaysUp[roomOffset.x];
-
-            }
-            else
-            {
-                Connections[Vector2Int.up].type = ConnType.Closed;
-            }
-        }
-    }
-}
 
 

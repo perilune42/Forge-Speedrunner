@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Content;
 using UnityEngine;
+using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -9,6 +12,7 @@ public class MapGenerator : MonoBehaviour
     public Grid Grid;
 
     [SerializeField] List<Room> standardRoomPrefabs;
+    [SerializeField] List<Room> challengeRoomPrefabs;
     [SerializeField] Room startRoomPrefab, finishRoomPrefab;
     [SerializeField] Room interchangePrefab;
 
@@ -22,7 +26,7 @@ public class MapGenerator : MonoBehaviour
     {
 
         int attempts = 0;
-        while (attempts++ < 20)
+        while (attempts++ < 40)
         {
             if (TryCreateMap()) break;
         }
@@ -35,11 +39,13 @@ public class MapGenerator : MonoBehaviour
     bool TryCreateMap()
     {
         roomPool = standardRoomPrefabs.ToList();
+        var challengeRoomPool = challengeRoomPrefabs.ToList();
 
         Grid = new();
         plannedRooms = new();
         createdRooms = new();
         createdPassages = new();
+        var plannedChallengeRooms = new List<VirtualRoom>();
 
         for (int i = 0; i < roomPool.Count(); i++)
         {
@@ -50,9 +56,26 @@ public class MapGenerator : MonoBehaviour
         VirtualRoom startRoom = PlaceRoomWithOrigin(startRoomPrefab, new Vector2Int(0, 0), new());
         var path1 = CreatePath(roomPool, startRoom, Random.Range(1, 2));
         VirtualRoom interchange1 = AttachRandomRoom(path1[^1], new List<Room>() { interchangePrefab });
+        if (interchange1 == null) return false;
         var path2 = CreatePath(roomPool, interchange1, Random.Range(2, 3));
         VirtualRoom interchange2 = AttachRandomRoom(path2[^1], new List<Room>() { interchangePrefab });
-        CreateEnding(roomPool, interchange2);
+        if (interchange2 == null) return false;
+        if (!TryCreateEnding(roomPool, interchange2)) return false;
+
+        foreach (var pathRoom in path2.Shuffled())
+        {
+            var challenge = AttachRandomRoom(pathRoom, challengeRoomPool);
+            if (challenge == null)
+            {
+                return false;
+            }
+            else
+            {
+                plannedChallengeRooms.Add(challenge);
+                break;
+            }
+        }
+
 
         List<Room> savedPool = new(roomPool);
 
@@ -60,10 +83,27 @@ public class MapGenerator : MonoBehaviour
         bool success = false;
         for (int i = 0; i < bridgeAttempts; i++)
         {
-            if (TryBridge(roomPool, interchange1, interchange2, 5, out _, true))
+            if (TryBridge(roomPool, interchange1, interchange2, 2, 5, out var bridgeRooms, true))
             {
-                success = true;
-                break;
+                foreach (var pathRoom in bridgeRooms.Shuffled())
+                {
+                    var challenge = AttachRandomRoom(pathRoom, challengeRoomPool);
+                    if (challenge != null)
+                    {
+                        plannedChallengeRooms.Add(challenge);
+                        success = true;
+                        break;
+                    }
+                }
+                if (success) break;
+                else
+                {
+                    foreach (var pathRoom in bridgeRooms)
+                    {
+                        RemoveRoom(pathRoom);
+                    }
+                    roomPool = new(savedPool);
+                }
             }
             else
             {
@@ -77,20 +117,38 @@ public class MapGenerator : MonoBehaviour
 
         int attempts = 0;
         int createdPaths = 0;
+        int targetNumPaths = 2;
 
-        while (attempts++ < 100 && createdPaths < 3)
+        while (attempts++ < 10 && createdPaths < targetNumPaths)
         {
             success = false;
             foreach (VirtualRoom room in plannedRooms.Shuffled())
             {
                 foreach (VirtualRoom target in plannedRooms.Shuffled())
                 {
-                    if (TryBridge(roomPool, room, target, 7, out var pathRooms, true))
+                    if (TryBridge(roomPool, room, target, 2, 5, out var pathRooms, true))
                     {
-                        success = true;
-                        savedPool = new(roomPool);
-                        createdPaths++;
-                        break;
+                        foreach (var pathRoom in pathRooms.Shuffled())
+                        {
+                            var challenge = AttachRandomRoom(pathRoom, challengeRoomPool);
+                            if (challenge != null)
+                            {
+                                plannedChallengeRooms.Add(challenge);
+                                success = true;
+                                savedPool = new(roomPool);
+                                createdPaths++;
+                                break;
+                            }
+                        }
+                        if (success) break;
+                        else
+                        {
+                            foreach (var pathRoom in pathRooms)
+                            {
+                                RemoveRoom(pathRoom);
+                            }
+                            roomPool = new(savedPool);
+                        }
                     }
                     else
                     {
@@ -100,6 +158,11 @@ public class MapGenerator : MonoBehaviour
                 if (success) break;
             }
         }
+        if (createdPaths < targetNumPaths || plannedChallengeRooms.Count != 2 + targetNumPaths)
+        {
+            return false;
+        }
+
         Debug.Log($"created {createdPaths} additional paths");
         return true;
 
@@ -190,7 +253,7 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    bool TryBridge(List<Room> pool, VirtualRoom start, VirtualRoom end, int maxLength, out List<VirtualRoom> createdRooms, bool requireOpenings = false)
+    bool TryBridge(List<Room> pool, VirtualRoom start, VirtualRoom end, int minLength, int maxLength, out List<VirtualRoom> createdRooms, bool requireOpenings = false)
     {
         createdRooms = new();
         VirtualRoom currEnd = start;
@@ -202,8 +265,9 @@ public class MapGenerator : MonoBehaviour
                 currEnd = createdRoom;
                 RemoveFromPool(pool, createdRoom);
                 createdRooms.Add(createdRoom);
-                if (TryConnectRooms(createdRoom, end) != null)
+                if ( (i + 1 >= minLength) && TryConnectRooms(createdRoom, end) != null)
                 {
+
                     if (requireOpenings)
                     {
                         foreach (VirtualRoom pathRoom in createdRooms)
@@ -312,13 +376,16 @@ public class MapGenerator : MonoBehaviour
         return roomsAdded;
     }
 
-    void CreateEnding(List<Room> pool, VirtualRoom startPoint)
+    bool TryCreateEnding(List<Room> pool, VirtualRoom startPoint)
     {
         List<Room> preFinalPool = pool.Where(r => r.doorwaysRight.Count(d => d != null) > 0).ToList();
         VirtualRoom preFinal = AttachRandomRoom(startPoint, preFinalPool);
+        if (preFinal == null) return false;
         RemoveFromPool(pool, preFinal);
         List<Room> finalPool = new() { finishRoomPrefab };
         VirtualRoom final = AttachRandomRoom(preFinal, finalPool);
+        if (final == null) return false;
+        return true;
     }
 
     // attach a random room to the specified room at a random doorway
@@ -329,6 +396,7 @@ public class MapGenerator : MonoBehaviour
 
         foreach (Room roomCandidate in pool.Shuffled())
         {
+
             foreach (Connection fromConn in room.externalConnections
                 .Where(c => c.type == ConnType.Exit || c.type == ConnType.Both).Shuffled())
             {
@@ -342,6 +410,8 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
             }
+
+
         }
         return null;
     }

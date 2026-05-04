@@ -33,6 +33,8 @@ public class FullscreenMapUI : MonoBehaviour
 
     [SerializeField] private Image startPrefab;
     [SerializeField] private Image finishPrefab;
+    [SerializeField] private Image challengeMarkerPrefab;
+
 
     [SerializeField] [Range(0.1f, 1)] private float sizeMult = 1;
 
@@ -160,7 +162,11 @@ public class FullscreenMapUI : MonoBehaviour
                 //    relativeSize.y / (height * room.size.y) * youAreHereSize.y);
                 finishPin.transform.SetParent(roomContainer, true);
             }
-
+            if (room.isChallengeRoom)
+            {
+                GameObject challengePin = Instantiate(challengeMarkerPrefab, roomRect).GameObject();
+                challengePin.transform.SetParent(roomContainer, true);
+            }
 
             if (!shopMode && roomManager.activeRoom == room)
             {

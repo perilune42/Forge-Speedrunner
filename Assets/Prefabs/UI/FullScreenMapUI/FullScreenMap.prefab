@@ -238,6 +238,7 @@ MonoBehaviour:
   passageImage: {fileID: 4328790571213072890, guid: 2236d67d692364317bf4f105d1735a7a, type: 3}
   startPrefab: {fileID: 5278546728332927600, guid: bd4b65e86cd5a404ea5a6647c7920caf, type: 3}
   finishPrefab: {fileID: 5278546728332927600, guid: a46700ae3cfd7a941b0b31aa6e50d7a7, type: 3}
+  challengeMarkerPrefab: {fileID: 5278546728332927600, guid: b609004fdffecbc4b8b5b4e744b7f72e, type: 3}
   sizeMult: 0.85
   mapSpawnSelectorPrefab: {fileID: -4485618519477302183, guid: d75a38d518e3b4d4fbd908dcdc0c701e, type: 3}
   startSpawnSelectorPrefab: {fileID: -4485618519477302183, guid: e7220a42ddebe124f861a5927e30cd7b, type: 3}

@@ -6,7 +6,7 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
     [SerializeField] Passage passagePrefab;
-    public Grid Grid = new();
+    public Grid Grid;
 
     [SerializeField] List<Room> standardRoomPrefabs;
     [SerializeField] Room startRoomPrefab, finishRoomPrefab;
@@ -19,9 +19,24 @@ public class MapGenerator : MonoBehaviour
     private List<Room> roomPool;
 
     public (List<Room>, List<Passage>) CreateMap()
-    { 
+    {
+
+        int attempts = 0;
+        while (attempts++ < 20)
+        {
+            if (TryCreateMap()) break;
+        }
+        Debug.Log($"Created map in {attempts} attempts");
+
+        BuildRooms();
+        return (createdRooms, createdPassages);
+    }
+
+    bool TryCreateMap()
+    {
         roomPool = standardRoomPrefabs.ToList();
 
+        Grid = new();
         plannedRooms = new();
         createdRooms = new();
         createdPassages = new();
@@ -31,20 +46,23 @@ public class MapGenerator : MonoBehaviour
             roomPool[i].RoomID = i;
         }
 
+        // create 2 interchange rooms that are guaranteed to have 2 viable paths between them
         VirtualRoom startRoom = PlaceRoomWithOrigin(startRoomPrefab, new Vector2Int(0, 0), new());
-        var rooms = CreatePath(roomPool, startRoom, 2);
-        VirtualRoom interchange1 = AttachRandomRoom(rooms[^1], new List<Room>() { interchangePrefab });
-        rooms = CreatePath(roomPool, interchange1, 2);
-        VirtualRoom interchange2 = AttachRandomRoom(rooms[^1], new List<Room>() { interchangePrefab });
+        var path1 = CreatePath(roomPool, startRoom, Random.Range(1, 2));
+        VirtualRoom interchange1 = AttachRandomRoom(path1[^1], new List<Room>() { interchangePrefab });
+        var path2 = CreatePath(roomPool, interchange1, Random.Range(2, 3));
+        VirtualRoom interchange2 = AttachRandomRoom(path2[^1], new List<Room>() { interchangePrefab });
         CreateEnding(roomPool, interchange2);
 
         List<Room> savedPool = new(roomPool);
 
-        int bridgeAttempts = 50;
+        int bridgeAttempts = 20;
+        bool success = false;
         for (int i = 0; i < bridgeAttempts; i++)
         {
-            if (TryBridge(roomPool, interchange1, interchange2, 5))
+            if (TryBridge(roomPool, interchange1, interchange2, 5, out _, true))
             {
+                success = true;
                 break;
             }
             else
@@ -52,11 +70,39 @@ public class MapGenerator : MonoBehaviour
                 roomPool = new(savedPool);
             }
         }
+        if (!success) return false;
 
-        
+        // now try some random bullshit
+        savedPool = new(roomPool);
 
-        BuildRooms();
-        return (createdRooms, createdPassages);
+        int attempts = 0;
+        int createdPaths = 0;
+
+        while (attempts++ < 100 && createdPaths < 3)
+        {
+            success = false;
+            foreach (VirtualRoom room in plannedRooms.Shuffled())
+            {
+                foreach (VirtualRoom target in plannedRooms.Shuffled())
+                {
+                    if (TryBridge(roomPool, room, target, 7, out var pathRooms, true))
+                    {
+                        success = true;
+                        savedPool = new(roomPool);
+                        createdPaths++;
+                        break;
+                    }
+                    else
+                    {
+                        roomPool = new(savedPool);
+                    }
+                }
+                if (success) break;
+            }
+        }
+        Debug.Log($"created {createdPaths} additional paths");
+        return true;
+
     }
 
     bool CanPlaceRoomWithOrigin(Room roomPrefab, Vector2Int origin)
@@ -144,9 +190,9 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    bool TryBridge(List<Room> pool, VirtualRoom start,  VirtualRoom end, int maxLength)
+    bool TryBridge(List<Room> pool, VirtualRoom start, VirtualRoom end, int maxLength, out List<VirtualRoom> createdRooms, bool requireOpenings = false)
     {
-        List<VirtualRoom> createdRooms = new();
+        createdRooms = new();
         VirtualRoom currEnd = start;
         for (int i = 0; i < maxLength; i++)
         {
@@ -158,10 +204,35 @@ public class MapGenerator : MonoBehaviour
                 createdRooms.Add(createdRoom);
                 if (TryConnectRooms(createdRoom, end) != null)
                 {
-                    Debug.Log("Bridge successful!");
-                    return true;
+                    if (requireOpenings)
+                    {
+                        foreach (VirtualRoom pathRoom in createdRooms)
+                        {
+                            foreach (Connection conn in pathRoom.externalConnections)
+                            {
+                                // if there is at least one spot to attach a new room to
+                                if (conn.attachedConn == null && !Grid.Cells.ContainsKey(conn.GetConnectedPos()))
+                                {
+                                    Debug.Log("Bridge successful!");
+                                    return true;
+                                }
+                            }
+                        }
+                        Debug.Log("Bridge failed");
+                        foreach (var room in createdRooms)
+                        {
+                            RemoveRoom(room);
+                        }
+                        return false;
+                    }
+                    else
+                    {
+                        Debug.Log("Bridge successful!");
+                        return true;
+                    }
                 }
             }
+            else break;
         }
         Debug.Log("Bridge failed");
         foreach (var room in createdRooms)
@@ -172,21 +243,26 @@ public class MapGenerator : MonoBehaviour
         return false;
     }
 
-    Connection TryConnectRooms(VirtualRoom room1, VirtualRoom room2)
+    // room1 to room2 only
+    Connection TryConnectRooms(VirtualRoom room1, VirtualRoom room2, bool oneWay = true)
     {
         foreach (var conn in room1.externalConnections)
         {
             if (conn.attachedConn != null) continue;
+            if (conn.type == ConnType.Entrance) continue;
             Cell cell = conn.cellRef;
             Cell neighbor;
             if (Grid.Cells.TryGetValue(cell.Position + conn.direction, out neighbor)
-                && neighbor.OwnedRoom == room2
-                && Connection.CanConnect(conn.type, neighbor.Connections[-conn.direction].type))
+                && neighbor.OwnedRoom == room2)
             {
                 Connection otherConn = neighbor.Connections[-conn.direction];
-                conn.attachedConn = otherConn;
-                otherConn.attachedConn = conn;
-                return conn;
+                if (otherConn.type == ConnType.Exit) continue;
+                if (Connection.CanConnect(conn.type,otherConn.type))
+                {
+                    conn.attachedConn = otherConn;
+                    otherConn.attachedConn = conn;
+                    return conn;
+                }
             }
         }
         return null;
@@ -267,7 +343,6 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        Debug.LogError("Error attaching random room");
         return null;
     }
 

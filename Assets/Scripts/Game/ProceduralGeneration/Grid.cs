@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Grid
 {
@@ -47,6 +48,11 @@ public class Connection
     {
         if (door == null) return false;
         return (Vector2)direction == -door.GetTransitionDirection() && CanConnect(type, FromDoorway(door));
+    }
+
+    public Vector2Int GetConnectedPos()
+    {
+        return cellRef.Position + direction;
     }
 }
 
@@ -132,4 +138,6 @@ public class Cell
             Connections[Vector2Int.up] = conn;
         }
     }
+
+
 }

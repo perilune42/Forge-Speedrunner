@@ -13,8 +13,8 @@ public class FullscreenMapUI : MonoBehaviour
     private Vector2 screenRes;
     private int width;
     private int height;
-    private float maxPosX;
-    private float maxPosY;
+    private float minPosX, maxPosX;
+    private float minPosY, maxPosY;
     private Color panelColor;
     private Color newColor;
 
@@ -110,17 +110,15 @@ public class FullscreenMapUI : MonoBehaviour
         height = roomManager.BaseHeight;
         FindMaxXY();
 
-        Vector2 divided = screenRes / new Vector2 (maxPosX, maxPosY);
+        Vector2 divided = screenRes / new Vector2 (maxPosX - minPosX, maxPosY - minPosY);
         float unitX = sizeMult * (Mathf.Min(divided.x, divided.y) / 2);
         float unitY = unitX * height/width;
         //float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX - unitX*roomSizeMinus.x/(width));
         //float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY - unitY*roomSizeMinus.y/(height));
-        float offsetX = (negativePosRooms) ? (0) : (unitX * maxPosX);
-        float offsetY = (negativePosRooms) ? (0) : (unitY * maxPosY);
-        if (!negativePosRooms) {
-            unitX *= 2;
-            unitY *= 2;
-        }
+        float offsetX = unitX * (maxPosX + minPosX);
+        float offsetY = unitY * (maxPosY + minPosY);
+        unitX *= 2;
+        unitY *= 2;
 
         // show only visited rooms and passages
         for (int i = allRooms.Count - 1; i >= 0; i--)
@@ -246,23 +244,18 @@ public class FullscreenMapUI : MonoBehaviour
     // Finding the max X and Y of the grid positions of the room
     private void FindMaxXY()
     {
+        minPosX = 0;
+        minPosY = 0;
         maxPosX = 1; // Defaulted at 1
         maxPosY = 1; // Defaulted at 1
         foreach (Room room in allRooms)
         {
             int x = room.gridPosition.x;
             int y = room.gridPosition.y;
-            // Add one if positive x, y because the grid location is based on bottom left corner
-            int fixedX = (x > 0) ? (Mathf.Abs(x) + room.size.x) : Mathf.Abs(x); 
-            int fixedY = (y > 0) ? (Mathf.Abs(y) + room.size.y) : Mathf.Abs(y); 
-            if (fixedX > maxPosX)
-            {
-                maxPosX = fixedX;
-            }
-            if (fixedY > maxPosY)
-            {
-                maxPosY = fixedY;
-            }
+            maxPosX = Mathf.Max(maxPosX, x + room.size.x);
+            maxPosY = Mathf.Max(maxPosY, y + room.size.y);
+            minPosX = Mathf.Min(minPosX, x);
+            minPosY = Mathf.Min(minPosY, y);
         }
     }
 

@@ -11,6 +11,9 @@ public enum AbilitySlotID
 
 public class AbilityManager : Singleton<AbilityManager>
 {
+    public static Dictionary<AbilitySlotID, (int, int)> startingAbilities = null;       // slot: [ability id, level]
+
+
     public GameObject AbilityInfoPrefab;
     public GameObject AbilityInfoParent, ChronoshiftInfoParent;
     [SerializeField] private GameObject player;
@@ -57,33 +60,52 @@ public class AbilityManager : Singleton<AbilityManager>
     {
         ClearAbilities();
         int count = 0;
-        foreach (Ability presetAbility in GameRegistry.Instance.Abilities)
-        {
-            if (presetAbility.StartUnlocked)
-            {
-                if (count >= 4 && !(presetAbility is Chronoshift && ChronoshiftCharges > 0))
-                {
-                    Debug.LogWarning($"Ability {presetAbility.Name} not given");
-                }
-                else
-                {
-                    if (presetAbility is Chronoshift) GiveChronoshift();
-                    else
-                    {
-                        foreach (AbilitySlotID slot in PlayerAbilities.Keys)
-                        {
-                            if (PlayerAbilities[slot] == null)
-                            {
-                                GivePlayerAbility(presetAbility.ID, slot);
-                                break;
-                            }
-                        }
-                    }
-                    if (presetAbility.ID != 0) count++;
-                }
 
+        if (startingAbilities != null)
+        {
+            foreach (var kvp in startingAbilities)
+            {
+                var slot = kvp.Key;
+                var (abilityID, level) = kvp.Value;
+                if (abilityID != -1 && PlayerAbilities[slot] == null)
+                {
+                    GivePlayerAbility(abilityID, slot, level);
+                    break;
+                }
             }
         }
+        else
+        {
+            foreach (Ability presetAbility in GameRegistry.Instance.Abilities)
+            {
+                bool giveAbility = presetAbility.StartUnlocked;
+                if (giveAbility)
+                {
+                    if (count >= 4 && !(presetAbility is Chronoshift && ChronoshiftCharges > 0))
+                    {
+                        Debug.LogWarning($"Ability {presetAbility.Name} not given");
+                    }
+                    else
+                    {
+                        if (presetAbility is Chronoshift) GiveChronoshift();
+                        else
+                        {
+                            foreach (AbilitySlotID slot in PlayerAbilities.Keys)
+                            {
+                                if (PlayerAbilities[slot] == null)
+                                {
+                                    GivePlayerAbility(presetAbility.ID, slot);
+                                    break;
+                                }
+                            }
+                        }
+                        if (presetAbility.ID != 0) count++;
+                    }
+
+                }
+            }
+        }
+            
     }
 
     public void GiveChronoshift()
@@ -94,12 +116,12 @@ public class AbilityManager : Singleton<AbilityManager>
         chronoshift.SetInputButton(PInput.Instance.Chronoshift);
     }
     
-    public void GivePlayerAbility(int index, AbilitySlotID slot)
+    public void GivePlayerAbility(int index, AbilitySlotID slot, int level = -1)
     {
         Ability ability = Instantiate(GameRegistry.Instance.Abilities[index], player.transform);
         PlayerAbilities[slot] = ability;
         ability.ID = index;
-        ability.CurrentLevel = GameRegistry.Instance.Abilities[index].CurrentLevel;
+        ability.CurrentLevel = level != -1 ? level : GameRegistry.Instance.Abilities[index].CurrentLevel;
         /*
         if (ability.ID != 0 && (allAbilitiesAreCharged || ability.Data.UsesCharges))
         {

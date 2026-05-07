@@ -35,7 +35,7 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
     [SerializeField] private TMP_Text tooltipInfoDescriptionPrefab;
 
     private ShopAbilitySlot selectedAbilitySlot;
-
+    public StartingUpgrade SelectedUpgrade;
     
 
     [Serializable]
@@ -54,7 +54,7 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
         SetupAbilityChoices();
         UpdateShopAbilities();
         ClearTooltipInfo();
-
+        
     }
 
     void ResetStartingAbilities()
@@ -83,9 +83,14 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
 
         foreach (var abilityChoice in availableAbilities)
         {
-            GameObject newUpgrade = Instantiate(upgradePrefab, upgradeLayoutGroup);
-            newUpgrade.GetComponent<StartingUpgrade>().Init(abilityChoice.ability, abilityChoice.level , false);
+            StartingUpgrade newUpgrade = Instantiate(upgradePrefab, upgradeLayoutGroup).GetComponent<StartingUpgrade>();
+            newUpgrade.Init(abilityChoice.ability, abilityChoice.level , false);
+            if (abilityChoice.ability is Dash)
+            {
+                SelectUpgrade(newUpgrade);
+            }
         }
+
     }
 
 
@@ -114,7 +119,7 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
             {
                 GameObject shopAbilityObj = Instantiate(shopAbilityPrefab, slot.transform);
                 ShopAbility shopAbility = shopAbilityObj.GetComponent<ShopAbility>();
-                shopAbility.Init(ability, match.First().level);
+                shopAbility.Init(ability, AbilityManager.startingAbilities[slot.SlotID].Item2);
                 shopAbilityDict[slot.SlotID] = shopAbility;
             }
             else
@@ -183,13 +188,14 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
         ResetStartingAbilities();
         if (upgrade.Ability is Dash)
         {
-            AbilityManager.startingAbilities[AbilitySlotID.Dash] = (upgrade.Ability.ID, upgrade.Ability.CurrentLevel);
+            AbilityManager.startingAbilities[AbilitySlotID.Dash] = (upgrade.Ability.ID, upgrade.levelToUpgrade);
         }
         else
         {
             AbilityManager.startingAbilities[AbilitySlotID.Ability1] = (upgrade.Ability.ID, upgrade.Ability.CurrentLevel);
         }
         UpdateShopAbilities();
+        SelectedUpgrade = upgrade;
     }
  
     public void ClickAbilitySlot(ShopAbilitySlot slot)

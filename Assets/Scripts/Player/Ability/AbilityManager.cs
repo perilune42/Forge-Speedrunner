@@ -70,7 +70,6 @@ public class AbilityManager : Singleton<AbilityManager>
                 if (abilityID != -1 && PlayerAbilities[slot] == null)
                 {
                     GivePlayerAbility(abilityID, slot, level);
-                    break;
                 }
             }
         }

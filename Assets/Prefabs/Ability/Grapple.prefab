@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9a47e2576f6443e4881bafb345f8fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grapple
-  Name: Grapple
+  Name: Energy Tether
   Icon: {fileID: 21300000, guid: 15ee6fa21e5a1f5458c15e5d7fffa128, type: 3}
   AllLevels:
   - Description: Activate to throw a hook in the direction you are inputting. Hold

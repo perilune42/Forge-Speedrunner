@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d14e2bbc3f81d96984a62b69c9684fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Platform
-  Name: Crumbling Platform
+  Name: Hardlight Platform
   Icon: {fileID: 21300000, guid: dfbb3e782b1c232238de123b20cd4f75, type: 3}
   AllLevels:
   - Description: Summons a temporary platform beneath you.

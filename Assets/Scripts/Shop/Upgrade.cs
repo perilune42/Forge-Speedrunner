@@ -10,16 +10,16 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     public bool IsBought;
 
     public Ability Ability;
-    protected int levelToUpgrade;
+    public int levelToUpgrade;
     public bool UsesCharges;
 
-    [SerializeField] private UnityEngine.UI.Button button;
-    [SerializeField] private Image UpgradeImage;
-    [SerializeField] private TMP_Text NameText;
-    [SerializeField] private TMP_Text CostText;
-    [SerializeField] private TMP_Text ChargeText;
-    [SerializeField] private AbilityLevelUI levelUI;
-    [SerializeField] private bool isTool; // whether this shows up in the Tools group and thus doesn't show its name or charge count
+    [SerializeField] protected UnityEngine.UI.Button button;
+    [SerializeField] protected Image UpgradeImage;
+    [SerializeField] protected TMP_Text NameText;
+    [SerializeField] protected TMP_Text CostText;
+    [SerializeField] protected TMP_Text ChargeText;
+    [SerializeField] protected AbilityLevelUI levelUI;
+    [SerializeField] protected bool isTool; // whether this shows up in the Tools group and thus doesn't show its name or charge count
     private int cost => Ability.AllLevels[levelToUpgrade].Cost;
     private bool HasEnoughMoney => ShopManager.Instance.Money - cost >= 0;
     protected virtual bool CanBuy => !IsBought && HasEnoughMoney && CanFitAbility();
@@ -29,7 +29,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
                              || AbilityManager.Instance.GetAllAbilities().Count < 5;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         // TODO - optimize
         if (CanBuy)

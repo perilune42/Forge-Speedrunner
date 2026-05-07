@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da819a2250251a44b9cccf1b2ba6638b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallLatch
-  Name: Wall Latch
+  Name: Magnetic Clamp
   Icon: {fileID: 21300000, guid: 31fd9cd180505d24a994fcd4e135a045, type: 3}
   AllLevels:
   - Description: Activate while touching any wall to latch onto it in place. Jump

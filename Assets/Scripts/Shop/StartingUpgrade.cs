@@ -27,4 +27,27 @@ public class StartingUpgrade : Upgrade, IPointerEnterHandler
     {
          StartingAbilityManager.Instance.ShowTooltipInfo(Ability, levelToUpgrade, true);
     }
+
+    protected override void Update()
+    {
+        // TODO - optimize
+        if (StartingAbilityManager.Instance.SelectedUpgrade.Ability.ID != Ability.ID)
+        {
+            UpgradeImage.color = Color.white;
+            if (!isTool) NameText.color = Color.white;
+            button.interactable = true;
+        }
+        else
+        {
+            UpgradeImage.color = Color.gray;
+            if (!isTool) NameText.color = Color.lightGreen;
+            button.interactable = false;
+        }
+
+        if (!CanFitAbility() && CostText != null)
+        {
+            CostText.text = "FULL";
+        }
+    }
+
 }

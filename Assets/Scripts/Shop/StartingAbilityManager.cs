@@ -50,6 +50,15 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
     public override void Awake()
     {
         base.Awake();
+        ResetStartingAbilities();
+        SetupAbilityChoices();
+        UpdateShopAbilities();
+        ClearTooltipInfo();
+
+    }
+
+    void ResetStartingAbilities()
+    {
         AbilityManager.startingAbilities = new();
         foreach (var slot in abilitySlots)
         {
@@ -63,10 +72,6 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
             }
             shopAbilitySlotDict[slot.SlotID] = slot;
         }
-        SetupAbilityChoices();
-        UpdateShopAbilities();
-        ClearTooltipInfo();
-
     }
 
     public void SetupAbilityChoices()
@@ -175,9 +180,15 @@ public class StartingAbilityManager : Singleton<StartingAbilityManager>
 
     public void SelectUpgrade(StartingUpgrade upgrade)
     {
-        var selectedUpgrade = upgrade;
-        Ability ability = selectedUpgrade.Ability;
-
+        ResetStartingAbilities();
+        if (upgrade.Ability is Dash)
+        {
+            AbilityManager.startingAbilities[AbilitySlotID.Dash] = (upgrade.Ability.ID, upgrade.Ability.CurrentLevel);
+        }
+        else
+        {
+            AbilityManager.startingAbilities[AbilitySlotID.Ability1] = (upgrade.Ability.ID, upgrade.Ability.CurrentLevel);
+        }
         UpdateShopAbilities();
     }
  

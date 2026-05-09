@@ -27,7 +27,10 @@ public class ShopAbility : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ShopManager.Instance.ShowTooltipInfo(ability, abilityLevel, false);
+        if (ShopManager.Instance != null)
+            ShopManager.Instance.ShowTooltipInfo(ability, abilityLevel, false);
+        else
+            StartingAbilityManager.Instance.ShowTooltipInfo(ability, abilityLevel, false);
     }
 
     public void SetSelected(bool isSelected) 

@@ -41,6 +41,13 @@ public class ShopAbilitySlot : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        ShopManager.Instance.ClickAbilitySlot(this);
+        if (ShopManager.Instance != null)
+        {
+            ShopManager.Instance.ClickAbilitySlot(this);
+        }
+        else
+        {
+            StartingAbilityManager.Instance.ClickAbilitySlot(this);
+        }
     }
 }

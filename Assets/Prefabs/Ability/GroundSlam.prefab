@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df0f920493b24bdaa1acdb19bb22082c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundSlam
-  Name: Ground Slam
+  Name: Gravitic Slam
   Icon: {fileID: 21300000, guid: ce20aa1666105544d97c9c94a479cf21, type: 3}
   AllLevels:
   - Description: 'Activate to instantly slam downwards. On landing, gain forwards

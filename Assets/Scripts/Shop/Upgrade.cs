@@ -10,34 +10,34 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
     public bool IsBought;
 
     public Ability Ability;
-    private int levelToUpgrade;
+    public int levelToUpgrade;
     public bool UsesCharges;
 
-    [SerializeField] private UnityEngine.UI.Button button;
-    [SerializeField] private Image UpgradeImage;
-    [SerializeField] private TMP_Text NameText;
-    [SerializeField] private TMP_Text CostText;
-    [SerializeField] private TMP_Text ChargeText;
-    [SerializeField] private AbilityLevelUI levelUI;
-    [SerializeField] private bool isTool; // whether this shows up in the Tools group and thus doesn't show its name or charge count
+    [SerializeField] protected UnityEngine.UI.Button button;
+    [SerializeField] protected Image UpgradeImage;
+    [SerializeField] protected TMP_Text NameText;
+    [SerializeField] protected TMP_Text CostText;
+    [SerializeField] protected TMP_Text ChargeText;
+    [SerializeField] protected AbilityLevelUI levelUI;
+    [SerializeField] protected bool isTool; // whether this shows up in the Tools group and thus doesn't show its name or charge count
     private int cost => Ability.AllLevels[levelToUpgrade].Cost;
     private bool HasEnoughMoney => ShopManager.Instance.Money - cost >= 0;
-    private bool CanBuy => !IsBought && HasEnoughMoney;
-    
-
-
-    private void Update()
+    protected virtual bool CanBuy => !IsBought && HasEnoughMoney && CanFitAbility();
+    protected virtual bool CanFitAbility()
     {
-        // can only buy if you already have the ability, or can fit a new one
-        bool canFitAbility = isTool || AbilityManager.Instance.GetAbilityByID(Ability.ID) != null
+        return isTool || AbilityManager.Instance.GetAbilityByID(Ability.ID) != null
                              || AbilityManager.Instance.GetAllAbilities().Count < 5;
+    }
 
+    protected virtual void Update()
+    {
         // TODO - optimize
-        if (CanBuy && canFitAbility)
+        if (CanBuy)
         {
             UpgradeImage.color = Color.white;
             if (!isTool) NameText.color = Color.white;
-            CostText.color = Color.white;
+            if (CostText != null)
+                CostText.color = Color.white;
             if (!isTool) ChargeText.color = Color.white;
             button.interactable = true;
         }
@@ -45,23 +45,26 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         {
             UpgradeImage.color = Color.gray;
             if (!isTool) NameText.color = Color.lightGray;
-            CostText.color = Color.lightGray;
+            if (CostText != null)
+                CostText.color = Color.lightGray;
             if (!isTool) ChargeText.color = Color.lightGray;
             button.interactable = false;
         }
 
-        if (!canFitAbility)
+        if (!CanFitAbility() && CostText != null)
         {
             CostText.text = "FULL";
         }
     }
 
-    public void SelectUpgrade()
+
+
+    public virtual void SelectUpgrade()
     {
         ShopManager.Instance.SelectUpgrade(this);
     }
 
-    public void BuyUpgrade()
+    public virtual void BuyUpgrade()
     {
         if (IsBought)
         {
@@ -90,7 +93,10 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         // Set UI elements
         UpgradeImage.sprite = ability.Icon;
         if (!isTool) NameText.text = $"{ability.Name} (Lvl. {level+1})";
-        CostText.text = $"<sprite name=\"computer_chip\">{cost}";
+        if (CostText != null)
+        {
+            CostText.text = $"<sprite name=\"computer_chip\">{cost}";
+        }
         if (!isTool) ChargeText.text = usesCharges ? $"({ability.MaxCharges})" : "";
 
         if (!isTool && levelUI != null)
@@ -99,7 +105,7 @@ public class Upgrade : MonoBehaviour, IPointerEnterHandler
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
          ShopManager.Instance.ShowTooltipInfo(Ability, levelToUpgrade, true);
     }

@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb69e7a66f694537c97eed80ad4d4224, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rocket
-  Name: Rocket
+  Name: Booster Rocket
   Icon: {fileID: 21300000, guid: 9fb9934563483d43bbf98df48efaf053, type: 3}
   AllLevels:
   - Description: Attaches a rocket to your back and launch at high speed after a

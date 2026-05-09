@@ -137,8 +137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c884a39fb8affc042a78749af6f8f3fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parry
-  Name: Parry
-  Icon: {fileID: 21300000, guid: fe3f002b73e4b4b40bc323238646db1b, type: 3}
+  Name: Kinetic Repulsor
+  Icon: {fileID: 21300000, guid: c8b015b7e3894b59fb006328289a4930, type: 3}
   AllLevels:
   - Description: Activate just before hitting any surface to rebound with extra speed.
     Cost: 6

@@ -116,7 +116,8 @@ public class Game : Singleton<Game> {
     private IEnumerator FinishRoundCoroutine()
     {
         startTime = Timer.speedrunTime;
-        AbilityManager.Instance.GetAbility<Chronoshift>().TeleportToStart(ChronoshiftKeyframes, startPos);
+        ChronoshiftKeyframes.Add(new ChronoshiftKeyframe(startPos, 0, RoomManager.Instance.StartingRoom));
+        AbilityManager.Instance.GetAbility<Chronoshift>().TeleportToPos(ChronoshiftKeyframes, startPos);
         yield return new WaitUntil(() => Player.Instance.Movement.SpecialState != SpecialState.Chronoshift);
         Timer.speedrunTime = startTime;
         Timer.RecordTime();

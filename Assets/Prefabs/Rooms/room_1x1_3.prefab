@@ -14872,6 +14872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e3f8d4c371e24be8ddfc44c0c6b434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
+  RoomID: 2
   gridPosition: {x: 0, y: 0}
   size: {x: 1, y: 1}
   doorwaysUp:
@@ -14885,6 +14886,7 @@ MonoBehaviour:
   entitiesContainer: {fileID: 3085160965763011002}
   Entities: []
   visited: 0
+  isChallengeRoom: 0
 --- !u!1001 &366326790320557859
 PrefabInstance:
   m_ObjectHideFlags: 0

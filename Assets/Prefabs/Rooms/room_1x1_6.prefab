@@ -2797,6 +2797,10 @@ PrefabInstance:
       value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: RoomID
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: 'doorwaysLeft.Array.data[0]'
       value: 
       objectReference: {fileID: 0}

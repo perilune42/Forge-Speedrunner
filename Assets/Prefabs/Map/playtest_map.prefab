@@ -16847,6 +16847,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3961126856432143324, guid: 5a1e210001c0e7544855b0c745b7bf94, type: 3}
+      propertyPath: m_TileAssetArray.Array.data[1].m_Data
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3961126856432143324, guid: 5a1e210001c0e7544855b0c745b7bf94, type: 3}
       propertyPath: m_TileColorArray.Array.data[1].m_Data.a
       value: 1
       objectReference: {fileID: 0}

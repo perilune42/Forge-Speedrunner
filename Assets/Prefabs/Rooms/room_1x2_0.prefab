@@ -2623,6 +2623,10 @@ PrefabInstance:
       value: 72.5
       objectReference: {fileID: 0}
     - target: {fileID: 4536922741866191188, guid: e401c24f40cf29b408ebf61f69a14f0c, type: 3}
+      propertyPath: RoomID
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536922741866191188, guid: e401c24f40cf29b408ebf61f69a14f0c, type: 3}
       propertyPath: doorwaysUp.Array.size
       value: 1
       objectReference: {fileID: 0}

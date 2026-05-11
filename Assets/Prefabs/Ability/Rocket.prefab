@@ -55,12 +55,12 @@ MonoBehaviour:
   - Description: During flight, you can use the ability again to boost for amazing
       speed, at the cost of your steering.
     Cost: 25
-  ID: 7
+  ID: 5
   CurrentLevel: 0
   CurCharges: 0
   MaxCharges: 0
   UsesCharges: 0
-  StartUnlocked: 0
+  StartUnlocked: 1
   BindingDisplayString: 
   cooldown: 2400
   info: {fileID: 0}

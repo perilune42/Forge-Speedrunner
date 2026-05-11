@@ -11,7 +11,7 @@ public class Hazard : Entity
         {
             var dist = Hitbox.Distance(Player.Instance.Movement.Hurtbox);
             // stupid hack to bypass contact offset making hurtbox bigger
-            if (dist.distance <= -Physics2D.defaultContactOffset)
+            if (dist.distance < -(Physics2D.defaultContactOffset + 0.0001))
             {
                 PlayerAnimator.Instance.DieWithAnimation();
             }

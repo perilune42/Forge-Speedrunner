@@ -28,6 +28,7 @@ public class ShopManager : Singleton<ShopManager>
 
     [Header("Overview Tab Refs")]
     [SerializeField] private TMP_Text runTimeText;
+    [SerializeField] private TMP_Text dataText;
     [SerializeField] private TMP_Text moneyGainedText;
 
     [Header("Upgrade Tab Refs")]
@@ -84,6 +85,7 @@ public class ShopManager : Singleton<ShopManager>
         if (newRound)
         {
             currRerollCost = baseRerollCost;
+            dataText.text = $"<sprite name=\"data\">{Game.Instance.GetDataCollected()}";
             rerollCostText.text = $"<${currRerollCost}>";
             GainReward();
             RestockShop();

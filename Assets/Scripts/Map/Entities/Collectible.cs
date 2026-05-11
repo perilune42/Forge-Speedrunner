@@ -44,10 +44,11 @@ public class Collectible : ActivatableEntity
         
     }
 
-    private void Collect()
+    public void Collect(bool noTeleport = false)
     {
         IsCollected = true;
         sr.enabled = false;
+        if (noTeleport) return;
         List<ChronoshiftKeyframe> keyframes = new();
         for (int i = 0; i <= 10; i++)
         {

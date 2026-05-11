@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -9,6 +10,7 @@ using UnityEngine.Rendering;
 public class Game : Singleton<Game> {
     public int CurrentRound;
     public bool IsPracticeMode = false;
+
 
     [Header("Progression Modifiers")]
     public float initialGoalTime;
@@ -20,6 +22,9 @@ public class Game : Singleton<Game> {
     public float RewardHardcap; // total amount cannot exceed this much
     public float RewardThreshold; // must be under target time by this much to receive reward
     public float RewardMultPerRound;
+
+    [Header("Collectibles")]
+    public List<Collectible> Collectibles;
 
 
     public MapGenerator Generator;
@@ -57,6 +62,17 @@ public class Game : Singleton<Game> {
 
             roomManagerRef.StartingRoom = rooms[0];
             roomManagerRef.StartingSpawn = roomManagerRef.StartingRoom.GetComponent<SpawnRoom>().SpawnPoint;
+
+        }
+        List<ChallengeRoom> challengeRooms = new();
+        foreach (var room in roomManagerRef.AllRooms)
+        {
+            ChallengeRoom cRoom = room.GetComponent<ChallengeRoom>();
+            if (cRoom != null)
+            {
+                challengeRooms.Add(cRoom);
+                Collectibles.Add(cRoom.Collectible);
+            }
         }
     }
 
@@ -224,6 +240,11 @@ public class Game : Singleton<Game> {
         float newGoal = Mathf.Lerp(baseTime, Mathf.Min(baseTime,pbTime), t);
         return Util.RoundToNearest(newGoal, 5);
     }
+
+    public int GetDataCollected()
+    {
+        return Collectibles.Count(c => c.IsCollected);
+    }
 }
 
 #if UNITY_EDITOR
@@ -243,6 +264,13 @@ public class Game_Inspector : Editor
         if (Application.isPlaying && GUILayout.Button("Win Current Round"))
         {
             g.FinishRound();
+        }
+        if (Application.isPlaying && GUILayout.Button("Get All Collectibles"))
+        {
+            foreach (Collectible data in g.Collectibles)
+            {
+                data.Collect(true);
+            }
         }
     }
 }

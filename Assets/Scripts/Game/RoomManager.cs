@@ -70,6 +70,7 @@ public class RoomManager : Singleton<RoomManager>
 
         // Set room to visited
         originalRoom.visited = true;
+        AllRooms.First(r => r.GetComponent<FinishRoom>() != null).visited = true;
 
         if (Game.Instance.AllRoomsDiscovered)
         {

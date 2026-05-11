@@ -162,7 +162,7 @@ public class FullscreenMapUI : MonoBehaviour
                 //    relativeSize.y / (height * room.size.y) * youAreHereSize.y);
                 finishPin.transform.SetParent(roomContainer, true);
             }
-            if (room.isChallengeRoom)
+            if (room.GetComponent<ChallengeRoom>() != null)
             {
                 GameObject challengePin = Instantiate(challengeMarkerPrefab, roomRect).GameObject();
                 challengePin.transform.SetParent(roomContainer, true);

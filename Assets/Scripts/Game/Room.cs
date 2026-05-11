@@ -17,8 +17,6 @@ public class Room : MonoBehaviour
     [HideInInspector] public List<Entity> Entities;
     [HideInInspector] public bool visited = false;
 
-    public bool isChallengeRoom = false;
-
     private void OnValidate()
     {
         doorwaysUp = keepValid(doorwaysUp, false);

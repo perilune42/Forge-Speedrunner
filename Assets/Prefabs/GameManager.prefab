@@ -58,13 +58,16 @@ MonoBehaviour:
   RewardHardcap: 100
   RewardThreshold: 0.97
   RewardMultPerRound: 1.2
-  OverrideStartingRoom: 0
-  enableRandomMap: 1
-  AllRoomsDiscovered: 1
+  Collectibles: []
+  RewardPerExtraData: 25
   Generator: {fileID: 0}
   roomManagerRef: {fileID: 0}
   keyframeInterval: 60
   BackgroundIndex: 0
+  OverrideStartingRoom: 0
+  enableRandomMap: 1
+  AllRoomsDiscovered: 1
+  enableDebugControls: 0
 --- !u!114 &2865041078514351360
 MonoBehaviour:
   m_ObjectHideFlags: 0

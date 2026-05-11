@@ -25,6 +25,7 @@ public class Game : Singleton<Game> {
 
     [Header("Collectibles")]
     public List<Collectible> Collectibles;
+    public float RewardPerExtraData;
 
 
     public MapGenerator Generator;
@@ -80,7 +81,6 @@ public class Game : Singleton<Game> {
     {
         ChronoshiftKeyframes = new();
         nextKeyframeTime = keyframeInterval;
-        startPos = Player.Instance.Movement.transform.position;
     }
 
     void FixedUpdate()
@@ -122,6 +122,7 @@ public class Game : Singleton<Game> {
         }
         CurrentRound = 1;
         ReturnToPlay(false, null, true);
+        startPos = Player.Instance.Movement.transform.position;
     }
 
     public void FinishRound()
@@ -227,9 +228,13 @@ public class Game : Singleton<Game> {
         float bonus = Mathf.Pow(Mathf.Max(0, factor - 1) * RewardMultiplier, RewardDecay);
         reward += bonus;
         reward *= Mathf.Pow(RewardMultPerRound, CurrentRound - 1);
-        return Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward));
+        return Mathf.RoundToInt(Mathf.Min(RewardHardcap, reward)) + GetDataReward();
     }
 
+    public int GetDataReward()
+    {
+        return Mathf.RoundToInt((GetDataCollected() - GetDataRequired()) * RewardPerExtraData);
+    }
     
 
     public float GetNewGoal()
@@ -244,6 +249,16 @@ public class Game : Singleton<Game> {
     public int GetDataCollected()
     {
         return Collectibles.Count(c => c.IsCollected);
+    }
+
+    public int GetDataRequired()
+    {
+        return (CurrentRound - 1) / 2;
+    }
+
+    public int GetNextDataRequired()
+    {
+        return CurrentRound / 2;
     }
 }
 

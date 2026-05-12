@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class GameplayUI : Singleton<GameplayUI>
 {
     [SerializeField] TMP_Text currTimeText, targetTimeText, speedText, currRoundText;
+    [SerializeField] TMP_Text dataText;
+
 
     [SerializeField] GameObject practiceModeIndicator;
 
@@ -18,6 +20,7 @@ public class GameplayUI : Singleton<GameplayUI>
     public override void Awake()
     {
         base.Awake();
+        Game.Instance.OnUpdateDataCount += UpdateDataCollected;
     }
 
     private void Update()
@@ -42,6 +45,24 @@ public class GameplayUI : Singleton<GameplayUI>
         AbilityInfo chronoshiftInfo = Instantiate(abilityInfoPrefab, chronoshiftInfoParent);
         chronoshiftInfo.SetAbility(AbilityManager.Instance.chronoshift);
         chronoshiftInfo.gameObject.SetActive(AbilityManager.Instance.ChronoshiftCharges > 0);
+    }
+
+    public void UpdateDataCollected()
+    {
+        int count = Game.Instance.GetDataCollected();
+        int min = Game.Instance.GetDataRequired();
+        if (min == 0)
+        {
+            dataText.text = $"{count}";
+        }
+        else if (count < min)
+        {
+            dataText.text = $"<color=red>{count}</color>/{min}";
+        }
+        else
+        {
+            dataText.text = $"{count}/{min}";
+        }
     }
 
 

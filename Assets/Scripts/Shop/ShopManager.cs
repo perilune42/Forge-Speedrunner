@@ -26,6 +26,8 @@ public class ShopManager : Singleton<ShopManager>
 
     [SerializeField] private GameObject[] tabs;
 
+    [SerializeField] private TMP_Text minDataText;
+
     [Header("Overview Tab Refs")]
     [SerializeField] private TMP_Text runTimeText;
     [SerializeField] private TMP_Text dataText;
@@ -100,7 +102,16 @@ public class ShopManager : Singleton<ShopManager>
             RestockShop();
         }
 
-        SwitchTab((int)ShopTab.Review);
+        if (Game.Instance.GetNextDataRequired() > 0)
+        {
+            minDataText.text = $"Next Round:\n<sprite name=\"data\">{Game.Instance.GetNextDataRequired()} minimum";
+        }
+        else
+        {
+            minDataText.text = "";
+        }
+
+            SwitchTab((int)ShopTab.Review);
 
         UpdateRoundInfo();
 

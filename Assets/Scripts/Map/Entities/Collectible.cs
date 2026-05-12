@@ -10,7 +10,7 @@ public class Collectible : ActivatableEntity
     public bool IsCollected = false;
     ChallengeRoom challengeRoomRef;
 
-    [SerializeField] ParticleSystem particles;
+    [SerializeField] ParticleSystem collectParticles, idleParticles;
 
     protected override void Awake()
     {
@@ -44,10 +44,15 @@ public class Collectible : ActivatableEntity
         
     }
 
+
     public void Collect(bool noTeleport = false)
     {
         IsCollected = true;
         sr.enabled = false;
+        idleParticles.Stop();
+        Game.Instance.OnUpdateDataCount?.Invoke();
+        collectParticles.Play();
+
         if (noTeleport) return;
         List<ChronoshiftKeyframe> keyframes = new();
         for (int i = 0; i <= 10; i++)
@@ -56,7 +61,12 @@ public class Collectible : ActivatableEntity
             keyframes.Add(new ChronoshiftKeyframe(pos, Timer.speedrunTime, challengeRoomRef.GetComponent<Room>()));
         }
         AbilityManager.Instance.GetAbility<Chronoshift>().TeleportToPos(keyframes, challengeRoomRef.StartPoint.transform.position);
-        particles.Play();
+    }
+
+    [ContextMenu("Collect")]
+    public void CollectFromMenu()
+    {
+        Collect(true);
     }
 
     public override void OnActivate()
@@ -68,5 +78,6 @@ public class Collectible : ActivatableEntity
     {
         sr.enabled = true;
         IsCollected = false;
+        idleParticles.Play();
     }
 }

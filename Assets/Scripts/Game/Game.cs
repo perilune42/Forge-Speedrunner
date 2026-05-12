@@ -41,6 +41,7 @@ public class Game : Singleton<Game> {
 
     public int BackgroundIndex; // 0 - day, 1 - night, 2 - rain
     public Action OnLoadShop;
+    public Action OnUpdateDataCount;
 
     [Header("Debug Options")]
     public bool OverrideStartingRoom;
@@ -202,7 +203,11 @@ public class Game : Singleton<Game> {
         {
             StartNewRound();
         }
+        OnUpdateDataCount?.Invoke();
+
+
         OnEnterWorld?.Invoke();
+
     }
 
 

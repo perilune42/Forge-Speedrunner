@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class GameEndTrigger : Trigger 
 {
     [SerializeField] bool returnToMenu = false;
+    [SerializeField] bool win = false;
 
     public override void OnPlayerEnter()
     {
@@ -16,7 +17,14 @@ public class GameEndTrigger : Trigger
         {
             if (!Game.Instance.IsPracticeMode)
             {
-                Game.Instance.FinishRound();
+                if (win)
+                {
+                    Game.Instance.WinGame();
+                }
+                else if (Game.Instance.GetDataCollected() < Game.Instance.GetDataRequired())
+                {
+                    Game.Instance.FinishRound();
+                }
             }
             else
             {

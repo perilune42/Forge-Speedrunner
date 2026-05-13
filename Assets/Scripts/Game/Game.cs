@@ -11,6 +11,7 @@ public class Game : Singleton<Game> {
     public int CurrentRound;
     public bool IsPracticeMode = false;
 
+    public float TotalTime = 0f;
 
     [Header("Progression Modifiers")]
     public float initialGoalTime;
@@ -26,6 +27,7 @@ public class Game : Singleton<Game> {
     [Header("Collectibles")]
     public List<Collectible> Collectibles;
     public float RewardPerExtraData;
+    public int DataToWin = 3;
 
 
     public MapGenerator Generator;
@@ -76,6 +78,7 @@ public class Game : Singleton<Game> {
                 Collectibles.Add(cRoom.Collectible);
             }
         }
+        TotalTime = 0f;
     }
 
     void Start()
@@ -109,6 +112,15 @@ public class Game : Singleton<Game> {
         GameplayUI.Instance.GameEndUI.SetActive(true);
     }
 
+    public void WinGame()
+    {
+        //RoomManager.Instance.gameObject.SetActive(false);
+        TotalTime += Timer.speedrunTime;
+        Player.Instance.gameObject.SetActive(false);
+        Timer.Instance.Pause(true);
+        GameplayUI.Instance.ShowGameWin();
+    }
+
     public void StartGame()
     {
         //RoomManager.Instance.gameObject.SetActive(true);
@@ -138,6 +150,7 @@ public class Game : Singleton<Game> {
         AbilityManager.Instance.GetAbility<Chronoshift>().TeleportToPos(ChronoshiftKeyframes, startPos);
         yield return new WaitUntil(() => Player.Instance.Movement.SpecialState != SpecialState.Chronoshift);
         Timer.speedrunTime = startTime;
+        TotalTime += Timer.speedrunTime;
         Timer.RecordTime();
         GoToShop(true);
         ChronoshiftKeyframes.Clear();
@@ -258,12 +271,12 @@ public class Game : Singleton<Game> {
 
     public int GetDataRequired()
     {
-        return (CurrentRound - 1) / 2;
+        return Mathf.Min(DataToWin, (CurrentRound - 1) / 2);
     }
 
     public int GetNextDataRequired()
     {
-        return CurrentRound / 2;
+        return Mathf.Min(DataToWin, CurrentRound / 2);
     }
 }
 
@@ -291,6 +304,10 @@ public class Game_Inspector : Editor
             {
                 data.Collect(true);
             }
+        }
+        if (Application.isPlaying && GUILayout.Button("Win Game"))
+        {
+            g.WinGame();
         }
     }
 }

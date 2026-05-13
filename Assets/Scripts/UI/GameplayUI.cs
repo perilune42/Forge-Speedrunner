@@ -15,7 +15,8 @@ public class GameplayUI : Singleton<GameplayUI>
     [SerializeField] Transform abilityInfoParent, chronoshiftInfoParent;
     [SerializeField] AbilityInfo abilityInfoPrefab;
 
-    public GameObject GameEndUI;
+    public GameObject GameEndUI, GameWinUI;
+    [SerializeField] TMP_Text totalTimeText;
 
     public override void Awake()
     {
@@ -103,5 +104,11 @@ public class GameplayUI : Singleton<GameplayUI>
         Debug.Log("reset room");
         Play();
         RoomManager.Instance.ReEnterRoom();
+    }
+
+    public void ShowGameWin()
+    {
+        GameWinUI.SetActive(true);
+        totalTimeText.text = $"Total Time: {Util.GetTimeString(Game.Instance.TotalTime)}";
     }
 }

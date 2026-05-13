@@ -335,6 +335,10 @@ PrefabInstance:
       value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
+      propertyPath: RoomID
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839545975698212181, guid: dccce3af91cdb1947af866995adc7168, type: 3}
       propertyPath: isChallengeRoom
       value: 1
       objectReference: {fileID: 0}

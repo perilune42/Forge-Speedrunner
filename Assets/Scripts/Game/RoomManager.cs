@@ -269,8 +269,6 @@ public class RoomManager : Singleton<RoomManager>
         // set room to visited
         door1.enclosingRoom.visited = true;
         activeRoom.visited = true;
-        door1.passage.visited = true;
-        door2.passage.visited = true;
         preservedVelocity = DeterminePreservedVelocity(dir);
         StartCoroutine(GoThroughDoorway(door2, dir));
     }
@@ -364,6 +362,14 @@ public class RoomManager : Singleton<RoomManager>
         PInput.Instance.MoveInputOverrride = Vector2.zero;
         PInput.Instance.EnableControls = true;
         TransitionOngoing = false;
+        foreach (var passage in room.GetAllDoorways().Select(d => d.passage))
+        {
+            if (passage != null)
+            {
+                passage.visited = true;
+            }
+        }
+
     }
 
     // while screen is black, move the player here

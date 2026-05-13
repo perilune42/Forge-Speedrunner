@@ -130,6 +130,8 @@ public class FullscreenMapUI : MonoBehaviour
                 visitedRooms.Add(allRooms[i]);
             }
         }
+
+        HashSet<Passage> displayedPassages = new();
         
         foreach (Room room in visitedRooms)
         {
@@ -181,7 +183,7 @@ public class FullscreenMapUI : MonoBehaviour
                 
                 float x = door.transform.localPosition.x;
                 float y = door.transform.localPosition.y;
-                bool show = false;
+
 
                 Vector2 dir = door.GetTransitionDirection();
                 float xIdx, yIdx;
@@ -198,19 +200,18 @@ public class FullscreenMapUI : MonoBehaviour
                     yIdx = dir.y == 1 ? room.size.y : 0;
                 }
 
-                if (dir == Vector2.left || dir == Vector2.down) // Left or Down Door
-                {
-                    show = true;
-                }
                 Vector2 relPos = new Vector2(relativePos.x + xIdx * unitX, relativePos.y + yIdx * unitY);
+
+                bool show = !displayedPassages.Contains(door.passage);
+                
                 if (show) 
                 {
-                    
+                    displayedPassages.Add(door.passage);
                     GameObject passageObj = Instantiate(passageImage, transform).GameObject();
                     RectTransform passageRect = passageObj.GetComponent<RectTransform>();
                     passageRect.localPosition = relPos;
                     passageRect.sizeDelta = passageSize;
-                    if (dir == Vector2.down)
+                    if (dir.y != 0)
                     {
                         passageRect.Rotate(0, 0, 90f); 
                     }

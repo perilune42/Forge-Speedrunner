@@ -93,7 +93,14 @@ public class RoomManager : Singleton<RoomManager>
             pass.door2.passage = pass;
             if (Game.Instance.AllRoomsDiscovered) pass.visited = true;
         }
-        
+        foreach (var passage in AllRooms.First(r => r.GetComponent<SpawnRoom>() != null).GetAllDoorways().Select(d => d.passage))
+        {
+            if (passage != null)
+            {
+                passage.visited = true;
+            }
+        }
+
     }
 
     public void SpawnAtStart(bool allowOverride = false)

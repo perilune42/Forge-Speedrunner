@@ -21,7 +21,7 @@ public class GameEndTrigger : Trigger
                 {
                     Game.Instance.WinGame();
                 }
-                else if (Game.Instance.GetDataCollected() < Game.Instance.GetDataRequired())
+                else if (Game.Instance.GetDataCollected() < Game.Instance.DataToWin)
                 {
                     Game.Instance.FinishRound();
                 }

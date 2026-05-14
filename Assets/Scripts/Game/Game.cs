@@ -16,7 +16,6 @@ public class Game : Singleton<Game> {
     [Header("Progression Modifiers")]
     public float initialGoalTime;
     public float GoalTimeScale;  // next goaltime = prev goal * GTS, round to nearest 5
-    public float PBTimeScale; // if pb * pbtimescale < next goaltime, use the pb time instead
     public float RewardMultiplier;  // bonus reward = (goal/runtime - 1) * RM
     public float RewardDecay; // bonus reward = (bonus reward) ^ decay
     public float MinReward; // base added to bonus reward
@@ -127,7 +126,7 @@ public class Game : Singleton<Game> {
         Timer.targetSpeedrunTime = initialGoalTime;
         if (MainMenu.SelectedDifficulty == 2)
         {
-            Timer.targetSpeedrunTime -= 300;
+            Timer.targetSpeedrunTime -= 150;
         }
         else if (MainMenu.SelectedDifficulty == 0)
         {
@@ -257,10 +256,7 @@ public class Game : Singleton<Game> {
 
     public float GetNewGoal()
     {
-        float pbTime = Timer.previousSpeedrunTime * PBTimeScale;
-        float baseTime = Timer.previousTargetTime * GoalTimeScale;
-        float t = Mathf.Clamp01(CurrentRound / 5f); // at 5 rounds or above, completely determined by PB time
-        float newGoal = Mathf.Lerp(baseTime, Mathf.Min(baseTime,pbTime), t);
+        float newGoal = Timer.previousTargetTime * GoalTimeScale;
         return Util.RoundToNearest(newGoal, 5);
     }
 

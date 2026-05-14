@@ -94,7 +94,7 @@ public class ShopManager : Singleton<ShopManager>
             }
             else
             {
-                dataText.text = $"<sprite name=\"data\">{Game.Instance.GetDataCollected()} / <sprite name=\"data\">{Game.Instance.GetDataRequired()}";
+                dataText.text = $"<sprite name=\"data\">{Game.Instance.GetDataCollected()} / {Game.Instance.GetDataRequired()}";
             }
             dataRewardText.text = $"(+<sprite name=\"computer_chip\">{Game.Instance.GetDataReward()})";
             rerollCostText.text = $"<${currRerollCost}>";

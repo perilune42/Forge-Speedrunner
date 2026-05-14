@@ -307,10 +307,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c08241b44194c541b8ab08e93be0153, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
-  RoomPool: []
-  startRoomPrefab: {fileID: 0}
-  endRoomPrefab: {fileID: 0}
-  passagePrefab: {fileID: 0}
+  passagePrefab: {fileID: 355961881316764818, guid: 00729f379793327ef89a6c2b75b5bb83, type: 3}
+  standardRoomPrefabs:
+  - {fileID: 8492842689366219103, guid: 5a1e210001c0e7544855b0c745b7bf94, type: 3}
+  - {fileID: 6436166098343882939, guid: f85852808a71772438e73c6dc7fd8483, type: 3}
+  - {fileID: 2839545975698212181, guid: bd6e545b7392aa662970eeb29b1774b3, type: 3}
+  - {fileID: 6436166098343882939, guid: 1f1ad3aff3f9a745d9403bcfb48146dd, type: 3}
+  - {fileID: 7287895745054698081, guid: 86db325d7ce3c894daf2c41031ea53a7, type: 3}
+  - {fileID: 4694478281957723329, guid: e7daee4ce26f7c343af94c57e2836990, type: 3}
+  - {fileID: 421097564385530646, guid: 74049e4249172764b9ccf7a71e8bffc3, type: 3}
+  - {fileID: 1728105385210255962, guid: d4448a337c5ea9e4ab0ae389e63883cb, type: 3}
+  - {fileID: 8168246100887774759, guid: 1443104a20a34924a8295ccdb719292e, type: 3}
+  - {fileID: 1544059992878153385, guid: e893ce35b6c3570448721a4ea7cbaa89, type: 3}
+  - {fileID: 9005955553080816133, guid: 4c4806010c3fc244eb5524479c00c05a, type: 3}
+  - {fileID: 2839545975698212181, guid: a3fdcbbeea0ce1f469ed137148788894, type: 3}
+  - {fileID: 7134680887799843444, guid: 521ffd8b64a05734aa0cbbe65a422638, type: 3}
+  - {fileID: 7737228483722083470, guid: 29c834e0d9a51db4d8e3a438db8020b2, type: 3}
+  - {fileID: 9215629068588678981, guid: f91ca1eaa1ecc084fb9dfd7339205e65, type: 3}
+  - {fileID: 8612925249452957931, guid: 3f8e1fc265669584abe64305d12b158f, type: 3}
+  - {fileID: 896560755208805489, guid: a956a89a3f5930543b1afcbba11ea5be, type: 3}
+  challengeRoomPrefabs:
+  - {fileID: 8492842689366219103, guid: 354106e8d56b9d0488bd616b1a8e0c51, type: 3}
+  - {fileID: 8492842689366219103, guid: 9034f42057fbdc4459e737d33672b20d, type: 3}
+  - {fileID: 8492842689366219103, guid: 3a56415fd3847c147977cafd0276c3c2, type: 3}
+  - {fileID: 8492842689366219103, guid: 707bb9d685a23ba4abc9245418a3db88, type: 3}
+  startRoomPrefab: {fileID: 8946305061219333088, guid: 85f379ea719ff674c814141d167347e8, type: 3}
+  finishRoomPrefab: {fileID: 2156488374747889740, guid: 5ae00ec99d188f842a24cf2b78199604, type: 3}
+  interchangeRoomPrefabs:
+  - {fileID: 4536922741866191188, guid: 61f7406067c81ca4ca3b437b22c89ced, type: 3}
+  - {fileID: 9005955553080816133, guid: a86bf0be274b55f42bf1514a0b3c0169, type: 3}
 --- !u!1 &6109427135123148237
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,6 +501,34 @@ PrefabInstance:
     - target: {fileID: 661234957250522255, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
       propertyPath: m_Name
       value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: Generator
+      value: 
+      objectReference: {fileID: 6229605635627688306}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: GoalTimeScale
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: enableRandomMap
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: initialGoalTime
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: AllRoomsDiscovered
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: RewardMultPerRound
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2675210836383652523, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
+      propertyPath: OverrideStartingRoom
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8720639791676307369, guid: a96628e7a3b4c410fbbdca7ebdf66b6f, type: 3}
       propertyPath: m_LocalPosition.x

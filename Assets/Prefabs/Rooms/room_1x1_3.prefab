@@ -14886,7 +14886,6 @@ MonoBehaviour:
   entitiesContainer: {fileID: 3085160965763011002}
   Entities: []
   visited: 0
-  isChallengeRoom: 0
 --- !u!1001 &366326790320557859
 PrefabInstance:
   m_ObjectHideFlags: 0

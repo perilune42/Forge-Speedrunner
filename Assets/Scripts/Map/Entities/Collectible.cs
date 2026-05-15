@@ -37,7 +37,7 @@ public class Collectible : ActivatableEntity
     {
         base.OnCollide(de, normal);
         if (de is not PlayerMovement) return;
-        if (!IsCollected)
+        if (!IsCollected && !AbilityManager.Instance.chronoshift.CanTeleport)
         {
             Collect();
         }

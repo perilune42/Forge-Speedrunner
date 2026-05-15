@@ -176,7 +176,6 @@ public class RoomManager : Singleton<RoomManager>
         PlayerMovement pm = Player.Instance.Movement;
         pm.transform.position = originalPosition;
         pm.Velocity = new(0.0F, 0.0F);
-        preservedVelocity = Vector2.zero;
 
         // reset camera and room data
         previousDoorway = null;
@@ -412,7 +411,7 @@ public class RoomManager : Singleton<RoomManager>
             roomPos.x = room.gridPosition.x * BaseWidth * 1.2f;
             roomPos.y = room.gridPosition.y * BaseHeight * 1.2f;
             room.transform.position = roomPos;
-
+            room.transform.SetParent(transform);
             foreach (var e in room.Entities)
             {
                 e.OnValidate();

@@ -62,7 +62,7 @@ MonoBehaviour:
   UsesCharges: 0
   StartUnlocked: 0
   BindingDisplayString: 
-  cooldown: 2400
+  cooldown: 1800
   info: {fileID: 0}
   duration: 90
   windupDuration: 60

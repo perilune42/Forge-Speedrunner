@@ -177,6 +177,7 @@ public class Game : Singleton<Game> {
     {
         ShopManager.Instance.CloseShop();
 
+
         if (startDoorway == null)
         {
             RoomManager.Instance.SpawnAtStart(gameStart);
@@ -189,6 +190,8 @@ public class Game : Singleton<Game> {
         // reset rooms and player
         //RoomManager.Instance.gameObject.SetActive(true);
         RoomManager.Instance.ResetAllEntities();
+
+
         Player.Instance.gameObject.SetActive(true);
 
         // start the count at 0

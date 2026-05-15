@@ -168,6 +168,10 @@ public class FullscreenMapUI : MonoBehaviour
             {
                 GameObject challengePin = Instantiate(challengeMarkerPrefab, roomRect).GameObject();
                 challengePin.transform.SetParent(roomContainer, true);
+                if (!shopMode && room.GetComponent<ChallengeRoom>().Collectible.IsCollected) 
+                {
+                    challengePin.GetComponent<Image>().color = Color.gray4;
+                }
             }
 
             if (!shopMode && roomManager.activeRoom == room)

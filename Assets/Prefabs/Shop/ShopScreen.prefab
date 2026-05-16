@@ -1805,7 +1805,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 155.3, y: -236.16}
-  m_SizeDelta: {x: 192.6, y: 32.1}
+  m_SizeDelta: {x: 0, y: 32.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7835176150066317141
 CanvasRenderer:
@@ -3059,7 +3059,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -116.75, y: -179}
+  m_AnchoredPosition: {x: -116.75, y: -162.6}
   m_SizeDelta: {x: 233.5, y: 70.6}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &1543668882571711204
@@ -3090,7 +3090,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Collect <sprite name="data">3 to win!
+  m_text: Collect <sprite name="data">3 in one round to win!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2f91637f850bbee47ac51e040ee40231, type: 2}
   m_sharedMaterial: {fileID: 2651591473766648675, guid: 2f91637f850bbee47ac51e040ee40231, type: 2}
@@ -3590,7 +3590,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 188.605, y: -287.715}
-  m_SizeDelta: {x: 259.21, y: 48.01}
+  m_SizeDelta: {x: 0, y: 48.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8360983487798972191
 CanvasRenderer:

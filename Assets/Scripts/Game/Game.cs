@@ -218,6 +218,13 @@ public class Game : Singleton<Game> {
         {
             StartNewRound();
         }
+
+        foreach (var passage in RoomManager.Instance.AllPassages)
+        {
+            passage.door1.TogglePracticeMode(practiceMode);
+            passage.door2.TogglePracticeMode(practiceMode);
+        }
+
         OnUpdateDataCount?.Invoke();
 
 

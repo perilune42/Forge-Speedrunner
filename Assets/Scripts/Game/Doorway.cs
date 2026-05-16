@@ -14,6 +14,7 @@ public class Doorway : MonoBehaviour
     public Room enclosingRoom;
     public Passage passage;
     public DoorwayType Type;
+    [SerializeField] GameObject practiceModeBlocker;
 
     private bool suppressTransition = false;
 
@@ -174,5 +175,17 @@ public class Doorway : MonoBehaviour
             return new Vector2Int(GetIndex(), 0);
         }
         return -Vector2Int.one;
+    }
+
+    public void TogglePracticeMode(bool isPractice)
+    {
+        practiceModeBlocker.gameObject.SetActive(false);
+        if (isPractice)
+        {
+            if (!passage.door1.enclosingRoom.visited || !passage.door2.enclosingRoom.visited)
+            {
+                practiceModeBlocker.gameObject.SetActive(true);
+            }
+        }
     }
 }

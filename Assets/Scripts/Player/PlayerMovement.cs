@@ -327,6 +327,7 @@ public class PlayerMovement : DynamicEntity, IStatSource
     public override void OnGrounded(RaycastHit2D groundHit)
     {
         base.OnGrounded(groundHit);
+        
         onGround?.Invoke();
     }
 
@@ -387,6 +388,14 @@ public class PlayerMovement : DynamicEntity, IStatSource
 
     public bool CanJump(bool canOverride = true)
     {
+        foreach (Entity de in collidingEntities)
+        {
+            if (de is Hazard)
+            {
+                Debug.Log("Attempted to prevent spike jump");
+                PlayerAnimator.Instance.DieWithAnimation();
+            }
+        }
         return (canOverride && CanJumpOverride) || (
             !inHazard && (State == BodyState.OnGround || coyoteFrames > 0)
             && (SpecialState == SpecialState.Normal || SpecialState == SpecialState.Dash)

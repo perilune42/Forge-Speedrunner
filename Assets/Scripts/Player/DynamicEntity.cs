@@ -63,7 +63,7 @@ public class DynamicEntity : MonoBehaviour
     // Layers that this object interacts with via collision but not necessarily forces
     [SerializeField] protected LayerMask interactLayer;
 
-    private List<Entity> collidingEntities = new();
+    protected List<Entity> collidingEntities = new();
     protected bool inHazard = false;
 
     public const float CONTACT_OFFSET = 0.005f; // The gap between this body and a surface after a collision

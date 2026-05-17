@@ -4205,7 +4205,7 @@ MonoBehaviour:
     level: 0
   - ability: {fileID: -5565414379170223656, guid: 485c22146ab71704ebc1db7c63781223, type: 3}
     level: 0
-  - ability: {fileID: -8696215775585642300, guid: 1e65f5c5074a6ba049ca47c78d1a0d59, type: 3}
+  - ability: {fileID: 7235907492743171525, guid: 97a3057d9b8ffa140beb9a3fe1d480a7, type: 3}
     level: 0
 --- !u!1 &8198710341085909512
 GameObject:
